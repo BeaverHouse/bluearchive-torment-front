@@ -10,8 +10,8 @@ export const filteredPartys = (
         arrayIncludes(party.characters, includeArray) &&
         !arrayDuplicates(party.characters, excludeArray) &&
         (!assist || party.assist === assist) &&
-        party.party_count > partyCountRange[0] &&
-        party.party_count < partyCountRange[1]
+        party.party_count >= partyCountRange[0] &&
+        party.party_count <= partyCountRange[1]
     ))
 }
 
