@@ -58,7 +58,7 @@ const PartyView = ({
                 const targetParty = party.partys[i]
                 return targetParty ? (
                     <div style={{ display: "flex" }}>
-                        <Card.Grid style={labelStyle} hoverable={false}>1파티</Card.Grid>
+                        <Card.Grid style={labelStyle} hoverable={false}>{i + 1}파티</Card.Grid>
                         <Card.Grid style={strikerStyle} hoverable={false}>{targetParty.strikers[0]}</Card.Grid>
                         <Card.Grid style={strikerStyle} hoverable={false}>{targetParty.strikers[1]}</Card.Grid>
                         <Card.Grid style={strikerStyle} hoverable={false}>{targetParty.strikers[2]}</Card.Grid>

@@ -15,12 +15,14 @@ function App() {
   const [Page, setPage] = useState(1)
   const [PageSize, setPageSize] = useState(10)
 
-  console.log(PageSize)
-
   useEffect(() => {
     const json = require(`./data/${Season}.json`)
     setData(json)
   }, [Season])
+
+  useEffect(() => {
+    setPage(1)
+  }, [IncludeList, ExcludeList, Assist, PartyCountRange, PageSize])
 
   return (
     <div className="App" style={{
