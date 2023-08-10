@@ -1,4 +1,4 @@
-import { Tabs, Select, Spin, Slider, Pagination } from "antd";
+import { Select, Spin, Slider, Pagination } from "antd";
 import { tab_items } from "./constant";
 import { useEffect, useState } from "react";
 import { filteredPartys } from "./func";
