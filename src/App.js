@@ -18,6 +18,7 @@ function App() {
   useEffect(() => {
     const json = require(`./data/${Season}.json`)
     setData(json)
+    setPartyCountRange([1, 100])
   }, [Season])
 
   useEffect(() => {
@@ -36,7 +37,13 @@ function App() {
     }}>
       <h1>Blue Archive Torment</h1>
       <p>※ 조력자는 2번 사용한 경우에만 제대로 표시됩니다.</p>
-      <Tabs defaultActiveKey={Season} items={tab_items} onChange={setSeason} />
+      <Select
+        placeholder="캐릭터를 선택하세요"
+        value={Season}
+        onChange={setSeason}
+        style={{ width: "70%", margin: "6px auto" }}
+        options={tab_items}
+      />
       <br />
       {Data ? (
         <div style={{ width: "100%" }}>
@@ -54,7 +61,7 @@ function App() {
                 max={Data.max_party}
                 min={Data.min_party}
                 onChange={setPartyCountRange}
-                defaultValue={[Data.min_party, Data.max_party]}
+                value={PartyCountRange}
               />
               <div style={{ margin: "10px" }}><b>{Math.min(PartyCountRange[1], Data.max_party)}파티</b></div>
             </div>
