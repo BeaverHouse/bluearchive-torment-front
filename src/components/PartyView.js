@@ -17,7 +17,7 @@ const strikerStyle = {
     alignItems: "center",
 };
 const specialStyle = {
-    backgroundColor: "lightblue",
+    backgroundColor: "#d4ebf2",
     height: '20px',
     textAlign: 'center',
     display: "flex",
@@ -31,8 +31,8 @@ const PartyView = ({
 
     const getCharText = (char) => {
         const { name, star, assist } = char;
-        if (star > 0 && star < 5 && assist) return <b style={{ color: "#00a3d2" }}>{`${name} (A, ★${star})`}</b>
-        else if (star >= 5 && assist) return <b style={{ color: "#00a3d2" }}>{`${name} (A)`}</b>
+        if (star > 0 && star < 5 && assist) return <b style={{ color: "#880ED4" }}>{`${name} (A, ★${star})`}</b>
+        else if (star >= 5 && assist) return <b style={{ color: "#880ED4" }}>{`${name} (A)`}</b>
         else if (star > 0 && star < 5) return <b>{`${name} (★${star})`}</b>
         else return name
     }
