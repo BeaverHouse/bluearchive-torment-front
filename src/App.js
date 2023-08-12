@@ -7,23 +7,40 @@ import PartyView from "./components/PartyView";
 function App() {
 
   const [Season, setSeason] = useState("S47")
+  const [Loading, setLoading] = useState(false)
   const [Data, setData] = useState(null)
   const [IncludeList, setIncludeList] = useState([])
   const [ExcludeList, setExcludeList] = useState([])
+  const [UnderThreeList, setUnderThreeList] = useState([])
+  const [UnderFourList, setUnderFourList] = useState([])
   const [Assist, setAssist] = useState(undefined)
   const [PartyCountRange, setPartyCountRange] = useState([1, 100])
   const [Page, setPage] = useState(1)
   const [PageSize, setPageSize] = useState(10)
 
+  const changeSeason = (season) => {
+    setLoading(true)
+    setData(null)
+    try {
+      const json = require(`./data/${season}.json`)
+      setData(json)
+      setPartyCountRange([1, 100])
+      setSeason(season)
+    } catch (e) {
+      console.log(e)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
-    const json = require(`./data/${Season}.json`)
-    setData(json)
-    setPartyCountRange([1, 100])
+    changeSeason(Season)
   }, [Season])
+
 
   useEffect(() => {
     setPage(1)
-  }, [IncludeList, ExcludeList, Assist, PartyCountRange, PageSize])
+  }, [IncludeList, ExcludeList, Assist, PartyCountRange, PageSize, UnderThreeList, UnderFourList])
 
   return (
     <div className="App" style={{
@@ -36,24 +53,40 @@ function App() {
       margin: "0 auto"
     }}>
       <h1>Blue Archive Torment</h1>
-      <p>※ 조력자는 2번 사용한 경우에만 제대로 표시됩니다.</p>
-      <Select
-        placeholder="캐릭터를 선택하세요"
-        value={Season}
-        onChange={setSeason}
-        style={{ width: "70%", margin: "6px auto" }}
-        options={tab_items}
-      />
+
+      <div style={{
+        display: 'flex',
+        alignItems: "center",
+        justifyContent: "center",
+        textAlign: "center",
+        width: "80%"
+      }}>
+        <Select
+          placeholder="캐릭터를 선택하세요"
+          value={Season}
+          onChange={changeSeason}
+          style={{ width: "50%", marginRight: "30px" }}
+          options={tab_items}
+        />
+        <div>
+          ※ S47 시가지 예로니무스는
+          <br />
+          성급, 조력자 정보가 누락되어 있습니다.
+        </div>
+      </div>
+
       <br />
-      {Data ? (
+      {!Loading && Data ? (
         <div style={{ width: "100%" }}>
           <div style={{
-            display: 'flex',
+            display: 'grid',
+            gridTemplateColumns: "2fr 3fr 2fr 3fr",
             alignItems: "center",
-            margin: "10px auto"
+            justifyContent: "center"
           }}>
-            <div style={{ width: "150px" }}>파티 수</div>
-            <div style={{ width: "70%", display: "flex", alignItems: "center", justifyContent: "space-between", margin: "8px auto" }}>
+            {/* 파티 수 Filter */}
+            <div>파티 수</div>
+            <div style={{ width: "90%", display: "flex", alignItems: "center", justifyContent: "space-between", margin: "8px auto", gridColumn: "span 3" }}>
               <div style={{ margin: "10px" }}><b>{Math.max(PartyCountRange[0], Data.min_party)}파티</b></div>
               <Slider
                 range
@@ -65,58 +98,76 @@ function App() {
               />
               <div style={{ margin: "10px" }}><b>{Math.min(PartyCountRange[1], Data.max_party)}파티</b></div>
             </div>
-          </div>
-          <div style={{
-            display: 'flex',
-            alignItems: "center",
-          }}>
-            <div style={{ width: "150px" }}>포함할 캐릭터</div>
+            {/* 포함 캐릭터 Filter */}
+            <div>포함할 캐릭터</div>
             <Select
               mode="tags"
               placeholder="캐릭터를 선택하세요"
               defaultValue={[]}
               onChange={setIncludeList}
-              style={{ width: "70%", margin: "6px auto" }}
+              style={{ margin: "6px auto", width: "100%", gridColumn: "span 3" }}
               options={Data.filter.map((key) => ({
                 value: key, label: key
               }))}
             />
-          </div>
-          <div style={{
-            display: 'flex',
-            alignItems: "center",
-          }}>
-            <div style={{ width: "150px" }}>제외할 캐릭터</div>
+            {/* 제외 캐릭터 Filter */}
+            <div>제외할 캐릭터</div>
             <Select
               mode="tags"
               placeholder="제외할 캐릭터를 선택하세요"
               defaultValue={[]}
               onChange={setExcludeList}
-              style={{ width: "70%", margin: "6px auto" }}
+              style={{ margin: "6px auto", width: "100%", gridColumn: "span 3" }}
               options={Data.filter.map((key) => ({
                 value: key, label: key
               }))}
             />
-          </div>
-          <div style={{
-            display: 'flex',
-            alignItems: "center",
-          }}>
-            <div style={{ width: "150px" }}>조력자</div>
+            {/* 4성 Filter */}
+            {Season !== "S47" ? <>
+              <div>4성 이하 캐릭터</div>
+              <Select
+                mode="tags"
+                allowClear={true}
+                placeholder="4성 이하여야 하는 캐릭터를 선택하세요"
+                defaultValue={[]}
+                onChange={setUnderFourList}
+                style={{ width: "100%", margin: "6px auto" }}
+                options={Data.under4_filter.map((key) => ({
+                  value: key, label: key
+                }))}
+              />
+            </> : null}
+            {/* 조력자 Filter */}
+            <div style={{ gridRow: "span 2" }}>조력자</div>
             <Select
               allowClear={true}
               placeholder="조력자를 선택하세요"
               defaultValue={[]}
               onChange={setAssist}
-              style={{ width: "70%", margin: "6px auto" }}
+              style={{ width: "100%", margin: "6px auto", gridRow: "span 2", gridColumn: Season === "S47" ? "span 3" : null }}
               options={Data.assist_filter.map((key) => ({
                 value: key, label: key
               }))}
             />
+            {/* 3성 Filter */}
+            {Season !== "S47" ? <>
+              <div>3성 이하 캐릭터</div>
+              <Select
+                mode="tags"
+                allowClear={true}
+                placeholder="3성 이하여야 하는 캐릭터를 선택하세요"
+                defaultValue={[]}
+                onChange={setUnderThreeList}
+                style={{ width: "100%", margin: "6px auto" }}
+                options={Data.under3_filter.map((key) => ({
+                  value: key, label: key
+                }))}
+              />
+            </> : null}
           </div>
           <br />
           <Pagination
-            total={filteredPartys(Data, IncludeList, ExcludeList, Assist, PartyCountRange).length}
+            total={filteredPartys(Data, IncludeList, ExcludeList, Assist, PartyCountRange, UnderFourList, UnderThreeList).length}
             current={Page}
             onChange={setPage}
             pageSize={PageSize}
@@ -124,7 +175,7 @@ function App() {
             pageSizeOptions={[10, 20]}
           />
           <br />
-          {filteredPartys(Data, IncludeList, ExcludeList, Assist, PartyCountRange)
+          {filteredPartys(Data, IncludeList, ExcludeList, Assist, PartyCountRange, UnderFourList, UnderThreeList)
             .filter((_, idx) => idx >= (Page - 1) * PageSize && idx < Page * PageSize)
             .map((party, idx) =>
               <PartyView key={idx} party={party} />

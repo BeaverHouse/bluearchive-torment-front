@@ -29,6 +29,14 @@ const PartyView = ({
     party
 }) => {
 
+    const getCharText = (char) => {
+        const { name, star, assist } = char;
+        if (star > 0 && star < 5 && assist) return <b style={{ color: "#00a3d2" }}>{`${name} (A, ★${star})`}</b>
+        else if (star >= 5 && assist) return <b style={{ color: "#00a3d2" }}>{`${name} (A)`}</b>
+        else if (star > 0 && star < 5) return <b>{`${name} (★${star})`}</b>
+        else return name
+    }
+
     const restPartys = party.party_count > 4 ? (
         <Collapse
             size="small"
@@ -39,12 +47,12 @@ const PartyView = ({
                     party.partys.slice(4).map((p, idx) => (
                         <div style={{ display: "flex" }} key={idx}>
                             <Card.Grid style={labelStyle} hoverable={false}>{idx + 5}파티</Card.Grid>
-                            <Card.Grid style={strikerStyle} hoverable={false}>{p.strikers[0]}</Card.Grid>
-                            <Card.Grid style={strikerStyle} hoverable={false}>{p.strikers[1]}</Card.Grid>
-                            <Card.Grid style={strikerStyle} hoverable={false}>{p.strikers[2]}</Card.Grid>
-                            <Card.Grid style={strikerStyle} hoverable={false}>{p.strikers[3]}</Card.Grid>
-                            <Card.Grid style={specialStyle} hoverable={false}>{p.specials[0]}</Card.Grid>
-                            <Card.Grid style={specialStyle} hoverable={false}>{p.specials[1]}</Card.Grid>
+                            <Card.Grid style={strikerStyle} hoverable={false}>{getCharText(p.strikers[0])}</Card.Grid>
+                            <Card.Grid style={strikerStyle} hoverable={false}>{getCharText(p.strikers[1])}</Card.Grid>
+                            <Card.Grid style={strikerStyle} hoverable={false}>{getCharText(p.strikers[2])}</Card.Grid>
+                            <Card.Grid style={strikerStyle} hoverable={false}>{getCharText(p.strikers[3])}</Card.Grid>
+                            <Card.Grid style={specialStyle} hoverable={false}>{getCharText(p.specials[0])}</Card.Grid>
+                            <Card.Grid style={specialStyle} hoverable={false}>{getCharText(p.specials[1])}</Card.Grid>
                         </div>
                     ))
                 )
@@ -59,12 +67,12 @@ const PartyView = ({
                 return targetParty ? (
                     <div style={{ display: "flex" }}>
                         <Card.Grid style={labelStyle} hoverable={false}>{i + 1}파티</Card.Grid>
-                        <Card.Grid style={strikerStyle} hoverable={false}>{targetParty.strikers[0]}</Card.Grid>
-                        <Card.Grid style={strikerStyle} hoverable={false}>{targetParty.strikers[1]}</Card.Grid>
-                        <Card.Grid style={strikerStyle} hoverable={false}>{targetParty.strikers[2]}</Card.Grid>
-                        <Card.Grid style={strikerStyle} hoverable={false}>{targetParty.strikers[3]}</Card.Grid>
-                        <Card.Grid style={specialStyle} hoverable={false}>{targetParty.specials[0]}</Card.Grid>
-                        <Card.Grid style={specialStyle} hoverable={false}>{targetParty.specials[1]}</Card.Grid>
+                        <Card.Grid style={strikerStyle} hoverable={false}>{getCharText(targetParty.strikers[0])}</Card.Grid>
+                        <Card.Grid style={strikerStyle} hoverable={false}>{getCharText(targetParty.strikers[1])}</Card.Grid>
+                        <Card.Grid style={strikerStyle} hoverable={false}>{getCharText(targetParty.strikers[2])}</Card.Grid>
+                        <Card.Grid style={strikerStyle} hoverable={false}>{getCharText(targetParty.strikers[3])}</Card.Grid>
+                        <Card.Grid style={specialStyle} hoverable={false}>{getCharText(targetParty.specials[0])}</Card.Grid>
+                        <Card.Grid style={specialStyle} hoverable={false}>{getCharText(targetParty.specials[1])}</Card.Grid>
                     </div>
                 ) : null
             })}

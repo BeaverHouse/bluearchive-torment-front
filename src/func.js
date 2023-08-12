@@ -3,7 +3,9 @@ export const filteredPartys = (
     includeArray,
     excludeArray,
     assist,
-    partyCountRange
+    partyCountRange,
+    under4Array,
+    under3Array,
 ) => {
     const rawPartys = data.partys
     return rawPartys.filter((party) => (
@@ -11,7 +13,9 @@ export const filteredPartys = (
         !arrayDuplicates(party.characters, excludeArray) &&
         (!assist || party.assist === assist) &&
         party.party_count >= partyCountRange[0] &&
-        party.party_count <= partyCountRange[1]
+        party.party_count <= partyCountRange[1] &&
+        arrayIncludes(party.under3 || [], under3Array) &&
+        arrayIncludes(party.under4 || [], under4Array)
     ))
 }
 
