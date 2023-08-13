@@ -30,6 +30,8 @@ const PartyView = ({
 }) => {
 
     const getCharText = (char) => {
+        if (!char) return "";
+
         const { name, star, assist } = char;
         if (star > 0 && star < 5 && assist) return <b style={{ color: "#880ED4" }}>{`${name} (A, ★${star})`}</b>
         else if (star >= 5 && assist) return <b style={{ color: "#880ED4" }}>{`${name} (A)`}</b>
