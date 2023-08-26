@@ -41,6 +41,14 @@ export const tab_items = [
     },
     {
         value: 'B1',
-        label: `대결전 시즌1 시가지 비나`,
+        label: `대결전 베타1 시가지 비나`,
+    },
+    {
+        value: '3S1-T',
+        label: `대결전 시즌1 야외 페로로지라(토먼트)`,
+    },
+    {
+        value: '3S1-I',
+        label: `대결전 시즌1 야외 페로로지라(관통 인세인)`,
     },
 ]
