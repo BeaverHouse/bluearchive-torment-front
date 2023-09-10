@@ -1,9 +1,5 @@
 export const tab_items = [
     {
-        value: 'S47',
-        label: `시즌47 시가지 예로니무스`,
-    },
-    {
         value: 'S48',
         label: `시즌48 실내 고즈`,
     },
@@ -50,5 +46,9 @@ export const tab_items = [
     {
         value: '3S1-I',
         label: `대결전 시즌1 야외 페로로지라(관통 인세인)`,
+    },
+    {
+        value: 'S57',
+        label: `시즌56 야외 호버크래프트`,
     },
 ]

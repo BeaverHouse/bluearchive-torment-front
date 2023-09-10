@@ -1,4 +1,4 @@
-import { Select, Spin, Slider, Pagination } from "antd";
+import { Select, Spin, Slider, Pagination, Button } from "antd";
 import { tab_items } from "./constant";
 import { useEffect, useState } from "react";
 import { filteredPartys } from "./func";
@@ -6,7 +6,7 @@ import PartyView from "./components/PartyView";
 
 function App() {
 
-  const [Season, setSeason] = useState("S47")
+  const [Season, setSeason] = useState(tab_items[0].value)
   const [Loading, setLoading] = useState(false)
   const [Data, setData] = useState(null)
   const [IncludeList, setIncludeList] = useState([])
@@ -62,17 +62,14 @@ function App() {
         width: "80%"
       }}>
         <Select
-          placeholder="캐릭터를 선택하세요"
           value={Season}
           onChange={changeSeason}
           style={{ width: "50%", marginRight: "30px" }}
           options={tab_items}
         />
-        <div>
-          ※ S47 시가지 예로니무스는
-          <br />
-          성급, 조력자 정보가 누락되어 있습니다.
-        </div>
+        <Button href="https://arona.ai/raidreport" target="_blank" type="primary">
+          같이 보면 좋은 총력전 리포트 (Link)
+        </Button>
       </div>
 
       <br />
