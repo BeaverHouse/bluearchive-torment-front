@@ -1,51 +1,40 @@
 import { Select, Spin, Slider, Pagination, Button, Checkbox } from "antd";
-import { defaultJson, tab_items } from "./constant";
-import { useEffect, useState } from "react";
+import { tab_items } from "./constant";
+import { useCallback, useEffect, useState } from "react";
 import { filteredPartys } from "./func";
 import PartyView from "./components/PartyView";
-import { fromJS } from "immutable";
+import useBAStore from "./useStore";
+
 
 function App() {
 
-  const [Season, setSeason] = useState(() => {
-    const json_str = localStorage.getItem("BA_FILTER")
-    return fromJS(JSON.parse(json_str) || defaultJson).getIn(["season"], tab_items[0].value)
-  })
+  const {
+    Season,
+    IncludeList,
+    ExcludeList,
+    UnderThreeList,
+    UnderFourList,
+    Assist,
+    HardExclude,
+    AllowDuplicate,
+    setSeason,
+    setIncludeList,
+    setExcludeList,
+    setUnderThreeList,
+    setUnderFourList,
+    setAssist,
+    setHardExclude,
+    setAllowDuplicate,
+    removeFilters,
+  } = useBAStore();
+
   const [Loading, setLoading] = useState(false)
   const [Data, setData] = useState(null)
-  const [IncludeList, setIncludeList] = useState(() => {
-    const json_str = localStorage.getItem("BA_FILTER")
-    return fromJS(JSON.parse(json_str) || defaultJson).getIn(["include"], []).toJS()
-  })
-  const [ExcludeList, setExcludeList] = useState(() => {
-    const json_str = localStorage.getItem("BA_FILTER")
-    return fromJS(JSON.parse(json_str) || defaultJson).getIn(["exclude"], []).toJS()
-  })
-  const [UnderThreeList, setUnderThreeList] = useState(() => {
-    const json_str = localStorage.getItem("BA_FILTER")
-    return fromJS(JSON.parse(json_str) || defaultJson).getIn(["under3"], []).toJS()
-  })
-  const [UnderFourList, setUnderFourList] = useState(() => {
-    const json_str = localStorage.getItem("BA_FILTER")
-    return fromJS(JSON.parse(json_str) || defaultJson).getIn(["under4"], []).toJS()
-  })
-  const [Assist, setAssist] = useState(() => {
-    const json_str = localStorage.getItem("BA_FILTER")
-    return fromJS(JSON.parse(json_str) || defaultJson).getIn(["assist"], undefined)
-  })
   const [PartyCountRange, setPartyCountRange] = useState([1, 100])
   const [Page, setPage] = useState(1)
   const [PageSize, setPageSize] = useState(10)
-  const [HardExclude, setHardExclude] = useState(() => {
-    const json_str = localStorage.getItem("BA_FILTER")
-    return fromJS(JSON.parse(json_str) || defaultJson).getIn(["hardexclude"], false)
-  })
-  const [AllowDuplicate, setAllowDuplicate] = useState(() => {
-    const json_str = localStorage.getItem("BA_FILTER")
-    return fromJS(JSON.parse(json_str) || defaultJson).getIn(["allowduplicate"], true)
-  })
 
-  const changeSeason = (season) => {
+  const changeSeason = useCallback((season) => {
     setLoading(true)
     setData(null)
     try {
@@ -58,18 +47,13 @@ function App() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [setSeason])
 
   const resetFilter = () => {
     const go = window.confirm("모든 캐릭터 필터가 리셋됩니다.")
     if (go) {
-      setIncludeList([])
-      setExcludeList([])
-      setAssist(undefined)
-      setUnderThreeList([])
-      setUnderFourList([])
-      setHardExclude(false)
-      setAllowDuplicate(true)
+      console.log("Reset Filter")
+      removeFilters()
     }
   }
 
@@ -82,21 +66,10 @@ function App() {
 
   useEffect(() => {
     changeSeason(Season)
-  }, [Season])
+  }, [Season, changeSeason])
 
   useEffect(() => {
     setPage(1)
-    const json = {
-      "season": Season,
-      "include": IncludeList,
-      "exclude": ExcludeList,
-      "assist": Assist,
-      "under3": UnderThreeList,
-      "under4": UnderFourList,
-      "hardexclude": HardExclude,
-      "allowduplicate": AllowDuplicate
-    }
-    localStorage.setItem("BA_FILTER", JSON.stringify(json))
   }, [Season, IncludeList, ExcludeList, Assist, PartyCountRange, PageSize, UnderThreeList, UnderFourList, HardExclude, AllowDuplicate])
 
   return (
@@ -165,7 +138,7 @@ function App() {
             <Select
               mode="tags"
               placeholder="캐릭터를 선택하세요"
-              defaultValue={IncludeList}
+              value={IncludeList}
               onChange={setIncludeList}
               style={{ margin: "6px auto", width: "100%", gridColumn: "span 4" }}
               options={Data.filter.map((key) => ({
@@ -177,7 +150,7 @@ function App() {
             <Select
               mode="tags"
               placeholder="제외할 캐릭터를 선택하세요"
-              defaultValue={ExcludeList}
+              value={ExcludeList}
               onChange={setExcludeList}
               style={{ margin: "6px auto", width: "100%", gridColumn: "span 3" }}
               options={Data.filter.map((key) => ({
@@ -195,7 +168,7 @@ function App() {
               mode="tags"
               allowClear={true}
               placeholder="4성 이하여야 하는 캐릭터를 선택하세요"
-              defaultValue={UnderFourList}
+              value={UnderFourList}
               onChange={setUnderFourList}
               style={{ width: "100%", margin: "6px auto" }}
               options={Data.under4_filter.map((key) => ({
@@ -210,7 +183,7 @@ function App() {
               <Select
                 allowClear={true}
                 placeholder="조력자를 선택하세요"
-                defaultValue={Assist}
+                value={Assist}
                 onChange={setAssist}
                 style={{ width: "100%", margin: "6px auto" }}
                 options={Data.assist_filter.map((key) => ({
@@ -227,7 +200,7 @@ function App() {
               mode="tags"
               allowClear={true}
               placeholder="3성 이하여야 하는 캐릭터를 선택하세요"
-              defaultValue={UnderThreeList}
+              value={UnderThreeList}
               onChange={setUnderThreeList}
               style={{ width: "100%", margin: "6px auto" }}
               options={Data.under3_filter.map((key) => ({
