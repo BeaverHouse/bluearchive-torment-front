@@ -52,3 +52,14 @@ export const tab_items = [
         label: `시즌56 야외 호버크래프트`,
     },
 ]
+
+export const defaultJson = {
+    "season": tab_items[0].value,
+    "include": [],
+    "exclude": [],
+    "assist": undefined,
+    "under3": [],
+    "under4": [],
+    "hardexclude": false,
+    "allowduplicate": true
+}
