@@ -37,11 +37,11 @@ function App() {
   const [Page, setPage] = useState(1)
   const [PageSize, setPageSize] = useState(10)
   const [HardExclude, setHardExclude] = useState(() => {
-    const json_str = localStorage.getItem("BA_FILTER") || "{}"
+    const json_str = localStorage.getItem("BA_FILTER")
     return fromJS(JSON.parse(json_str) || defaultJson).getIn(["hardexclude"], false)
   })
   const [AllowDuplicate, setAllowDuplicate] = useState(() => {
-    const json_str = localStorage.getItem("BA_FILTER") || "{}"
+    const json_str = localStorage.getItem("BA_FILTER")
     return fromJS(JSON.parse(json_str) || defaultJson).getIn(["allowduplicate"], true)
   })
 
@@ -57,6 +57,19 @@ function App() {
       console.log(e)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const resetFilter = () => {
+    const go = window.confirm("모든 캐릭터 필터가 리셋됩니다.")
+    if (go) {
+      setIncludeList([])
+      setExcludeList([])
+      setAssist(undefined)
+      setUnderThreeList([])
+      setUnderFourList([])
+      setHardExclude(false)
+      setAllowDuplicate(true)
     }
   }
 
@@ -108,11 +121,19 @@ function App() {
         <Select
           value={Season}
           onChange={changeSeason}
-          style={{ width: "50%", marginRight: "30px" }}
+          style={{ width: "50%", marginRight: "20px" }}
           options={tab_items}
         />
-        <Button href="https://arona.ai/raidreport" target="_blank" type="primary">
+        <Button
+          style={{ width: "40%", marginRight: "40px" }}
+          href="https://arona.ai/raidreport"
+          target="_blank"
+          type="primary"
+        >
           같이 보면 좋은 총력전 리포트 (Link)
+        </Button>
+        <Button onClick={resetFilter} danger={true}>
+          필터 Reset
         </Button>
       </div>
 
