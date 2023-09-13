@@ -6,6 +6,8 @@ export const filteredPartys = (
     partyCountRange,
     under4Array,
     under3Array,
+    hardExclude,
+    allowDuplicate
 ) => {
     const rawPartys = data.partys
     return rawPartys.filter((party) => (
@@ -15,7 +17,9 @@ export const filteredPartys = (
         party.party_count >= partyCountRange[0] &&
         party.party_count <= partyCountRange[1] &&
         arrayIncludes(party.under3 || [], under3Array) &&
-        arrayIncludes(party.under4 || [], under4Array)
+        arrayIncludes(party.under4 || [], under4Array) &&
+        !(hardExclude && excludeArray.includes(party.assist)) &&            // 조력자 제외 체크 + 제외할 캐릭터에 조력자가 들어가야 false
+        (allowDuplicate || !party.characters.includes(party.assist))        // 중복 허용이면 무조건 패스, 아니면 캐릭풀과 조력자가 겹치면 안됨
     ))
 }
 

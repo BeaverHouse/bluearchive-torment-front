@@ -1,22 +1,49 @@
-import { Select, Spin, Slider, Pagination, Button } from "antd";
+import { Select, Spin, Slider, Pagination, Button, Checkbox } from "antd";
 import { tab_items } from "./constant";
 import { useEffect, useState } from "react";
 import { filteredPartys } from "./func";
 import PartyView from "./components/PartyView";
+import { fromJS } from "immutable";
 
 function App() {
 
-  const [Season, setSeason] = useState(tab_items[0].value)
+  const [Season, setSeason] = useState(() => {
+    const json_str = localStorage.getItem("BA_FILTER")
+    return fromJS(JSON.parse(json_str)).getIn(["season"], tab_items[0].value)
+  })
   const [Loading, setLoading] = useState(false)
   const [Data, setData] = useState(null)
-  const [IncludeList, setIncludeList] = useState([])
-  const [ExcludeList, setExcludeList] = useState([])
-  const [UnderThreeList, setUnderThreeList] = useState([])
-  const [UnderFourList, setUnderFourList] = useState([])
-  const [Assist, setAssist] = useState(undefined)
+  const [IncludeList, setIncludeList] = useState(() => {
+    const json_str = localStorage.getItem("BA_FILTER")
+    return fromJS(JSON.parse(json_str)).getIn(["include"], []).toJS()
+  })
+  const [ExcludeList, setExcludeList] = useState(() => {
+    const json_str = localStorage.getItem("BA_FILTER")
+    return fromJS(JSON.parse(json_str)).getIn(["exclude"], []).toJS()
+  })
+  const [UnderThreeList, setUnderThreeList] = useState(() => {
+    const json_str = localStorage.getItem("BA_FILTER")
+    return fromJS(JSON.parse(json_str)).getIn(["under3"], []).toJS()
+  })
+  const [UnderFourList, setUnderFourList] = useState(() => {
+    const json_str = localStorage.getItem("BA_FILTER")
+    return fromJS(JSON.parse(json_str)).getIn(["under4"], []).toJS()
+  })
+  const [Assist, setAssist] = useState(() => {
+    const json_str = localStorage.getItem("BA_FILTER")
+    return fromJS(JSON.parse(json_str)).getIn(["assist"], undefined)
+  })
   const [PartyCountRange, setPartyCountRange] = useState([1, 100])
   const [Page, setPage] = useState(1)
   const [PageSize, setPageSize] = useState(10)
+  const [HardExclude, setHardExclude] = useState(() => {
+    const json_str = localStorage.getItem("BA_FILTER")
+    return fromJS(JSON.parse(json_str)).getIn(["hardexclude"], false)
+  })
+  const [AllowDuplicate, setAllowDuplicate] = useState(() => {
+    const json_str = localStorage.getItem("BA_FILTER")
+    return fromJS(JSON.parse(json_str)).getIn(["allowduplicate"], true)
+  })
 
   const changeSeason = (season) => {
     setLoading(true)
@@ -33,14 +60,31 @@ function App() {
     }
   }
 
+  const toggleHardExclude = (e) => {
+    setHardExclude(e.target.checked)
+  }
+  const toggleAllowDuplicate = (e) => {
+    setAllowDuplicate(e.target.checked)
+  }
+
   useEffect(() => {
     changeSeason(Season)
   }, [Season])
 
-
   useEffect(() => {
     setPage(1)
-  }, [IncludeList, ExcludeList, Assist, PartyCountRange, PageSize, UnderThreeList, UnderFourList])
+    const json = {
+      "season": Season,
+      "include": IncludeList,
+      "exclude": ExcludeList,
+      "assist": Assist,
+      "under3": UnderThreeList,
+      "under4": UnderFourList,
+      "hardexclude": HardExclude,
+      "allowduplicate": AllowDuplicate
+    }
+    localStorage.setItem("BA_FILTER", JSON.stringify(json))
+  }, [Season, IncludeList, ExcludeList, Assist, PartyCountRange, PageSize, UnderThreeList, UnderFourList, HardExclude, AllowDuplicate])
 
   return (
     <div className="App" style={{
@@ -77,13 +121,13 @@ function App() {
         <div style={{ width: "100%" }}>
           <div style={{
             display: 'grid',
-            gridTemplateColumns: "2fr 3fr 2fr 3fr",
+            gridTemplateColumns: "2fr 3fr 2fr 1fr 2fr",
             alignItems: "center",
             justifyContent: "center"
           }}>
             {/* 파티 수 Filter */}
             <div>파티 수</div>
-            <div style={{ width: "90%", display: "flex", alignItems: "center", justifyContent: "space-between", margin: "8px auto", gridColumn: "span 3" }}>
+            <div style={{ width: "90%", display: "flex", alignItems: "center", justifyContent: "space-between", margin: "8px auto", gridColumn: "span 4" }}>
               <div style={{ margin: "10px" }}><b>{Math.max(PartyCountRange[0], Data.min_party)}파티</b></div>
               <Slider
                 range
@@ -100,9 +144,9 @@ function App() {
             <Select
               mode="tags"
               placeholder="캐릭터를 선택하세요"
-              defaultValue={[]}
+              defaultValue={IncludeList}
               onChange={setIncludeList}
-              style={{ margin: "6px auto", width: "100%", gridColumn: "span 3" }}
+              style={{ margin: "6px auto", width: "100%", gridColumn: "span 4" }}
               options={Data.filter.map((key) => ({
                 value: key, label: key
               }))}
@@ -112,59 +156,67 @@ function App() {
             <Select
               mode="tags"
               placeholder="제외할 캐릭터를 선택하세요"
-              defaultValue={[]}
+              defaultValue={ExcludeList}
               onChange={setExcludeList}
               style={{ margin: "6px auto", width: "100%", gridColumn: "span 3" }}
               options={Data.filter.map((key) => ({
                 value: key, label: key
               }))}
             />
+            <div>
+              <Checkbox onChange={toggleHardExclude} checked={HardExclude} value={HardExclude}>
+                조력자에서도 제외
+              </Checkbox>
+            </div>
             {/* 4성 Filter */}
-            {Season !== "S47" ? <>
-              <div>4성 이하 캐릭터</div>
-              <Select
-                mode="tags"
-                allowClear={true}
-                placeholder="4성 이하여야 하는 캐릭터를 선택하세요"
-                defaultValue={[]}
-                onChange={setUnderFourList}
-                style={{ width: "100%", margin: "6px auto" }}
-                options={Data.under4_filter.map((key) => ({
-                  value: key, label: key
-                }))}
-              />
-            </> : null}
-            {/* 조력자 Filter */}
-            <div style={{ gridRow: "span 2" }}>조력자</div>
+            <div>4성 이하 캐릭터</div>
             <Select
+              mode="tags"
               allowClear={true}
-              placeholder="조력자를 선택하세요"
-              defaultValue={[]}
-              onChange={setAssist}
-              style={{ width: "100%", margin: "6px auto", gridRow: "span 2", gridColumn: Season === "S47" ? "span 3" : null }}
-              options={Data.assist_filter.map((key) => ({
+              placeholder="4성 이하여야 하는 캐릭터를 선택하세요"
+              defaultValue={UnderFourList}
+              onChange={setUnderFourList}
+              style={{ width: "100%", margin: "6px auto" }}
+              options={Data.under4_filter.map((key) => ({
                 value: key, label: key
               }))}
             />
-            {/* 3성 Filter */}
-            {Season !== "S47" ? <>
-              <div>3성 이하 캐릭터</div>
+            {/* 조력자 Filter */}
+            <div style={{ gridRow: "span 2" }}>조력자</div>
+            <div
+              style={{ width: "100%", gridRow: "span 2", gridColumn: "span 2" }}
+            >
               <Select
-                mode="tags"
                 allowClear={true}
-                placeholder="3성 이하여야 하는 캐릭터를 선택하세요"
-                defaultValue={[]}
-                onChange={setUnderThreeList}
+                placeholder="조력자를 선택하세요"
+                defaultValue={Assist}
+                onChange={setAssist}
                 style={{ width: "100%", margin: "6px auto" }}
-                options={Data.under3_filter.map((key) => ({
+                options={Data.assist_filter.map((key) => ({
                   value: key, label: key
                 }))}
               />
-            </> : null}
+              <Checkbox onChange={toggleAllowDuplicate} checked={AllowDuplicate} value={AllowDuplicate}>
+                조력자 포함 중복 허용
+              </Checkbox>
+            </div>
+            {/* 3성 Filter */}
+            <div>3성 이하 캐릭터</div>
+            <Select
+              mode="tags"
+              allowClear={true}
+              placeholder="3성 이하여야 하는 캐릭터를 선택하세요"
+              defaultValue={UnderThreeList}
+              onChange={setUnderThreeList}
+              style={{ width: "100%", margin: "6px auto" }}
+              options={Data.under3_filter.map((key) => ({
+                value: key, label: key
+              }))}
+            />
           </div>
           <br />
           <Pagination
-            total={filteredPartys(Data, IncludeList, ExcludeList, Assist, PartyCountRange, UnderFourList, UnderThreeList).length}
+            total={filteredPartys(Data, IncludeList, ExcludeList, Assist, PartyCountRange, UnderFourList, UnderThreeList, HardExclude, AllowDuplicate).length}
             current={Page}
             onChange={setPage}
             pageSize={PageSize}
@@ -172,7 +224,7 @@ function App() {
             pageSizeOptions={[10, 20]}
           />
           <br />
-          {filteredPartys(Data, IncludeList, ExcludeList, Assist, PartyCountRange, UnderFourList, UnderThreeList)
+          {filteredPartys(Data, IncludeList, ExcludeList, Assist, PartyCountRange, UnderFourList, UnderThreeList, HardExclude, AllowDuplicate)
             .filter((_, idx) => idx >= (Page - 1) * PageSize && idx < Page * PageSize)
             .map((party, idx) =>
               <PartyView key={idx} party={party} />
