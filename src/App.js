@@ -8,40 +8,40 @@ import { fromJS } from "immutable";
 function App() {
 
   const [Season, setSeason] = useState(() => {
-    const json_str = localStorage.getItem("BA_FILTER")
+    const json_str = localStorage.getItem("BA_FILTER") || "{}"
     return fromJS(JSON.parse(json_str)).getIn(["season"], tab_items[0].value)
   })
   const [Loading, setLoading] = useState(false)
   const [Data, setData] = useState(null)
   const [IncludeList, setIncludeList] = useState(() => {
-    const json_str = localStorage.getItem("BA_FILTER")
+    const json_str = localStorage.getItem("BA_FILTER") || "{}"
     return fromJS(JSON.parse(json_str)).getIn(["include"], []).toJS()
   })
   const [ExcludeList, setExcludeList] = useState(() => {
-    const json_str = localStorage.getItem("BA_FILTER")
+    const json_str = localStorage.getItem("BA_FILTER") || "{}"
     return fromJS(JSON.parse(json_str)).getIn(["exclude"], []).toJS()
   })
   const [UnderThreeList, setUnderThreeList] = useState(() => {
-    const json_str = localStorage.getItem("BA_FILTER")
+    const json_str = localStorage.getItem("BA_FILTER") || "{}"
     return fromJS(JSON.parse(json_str)).getIn(["under3"], []).toJS()
   })
   const [UnderFourList, setUnderFourList] = useState(() => {
-    const json_str = localStorage.getItem("BA_FILTER")
+    const json_str = localStorage.getItem("BA_FILTER") || "{}"
     return fromJS(JSON.parse(json_str)).getIn(["under4"], []).toJS()
   })
   const [Assist, setAssist] = useState(() => {
-    const json_str = localStorage.getItem("BA_FILTER")
+    const json_str = localStorage.getItem("BA_FILTER") || "{}"
     return fromJS(JSON.parse(json_str)).getIn(["assist"], undefined)
   })
   const [PartyCountRange, setPartyCountRange] = useState([1, 100])
   const [Page, setPage] = useState(1)
   const [PageSize, setPageSize] = useState(10)
   const [HardExclude, setHardExclude] = useState(() => {
-    const json_str = localStorage.getItem("BA_FILTER")
+    const json_str = localStorage.getItem("BA_FILTER") || "{}"
     return fromJS(JSON.parse(json_str)).getIn(["hardexclude"], false)
   })
   const [AllowDuplicate, setAllowDuplicate] = useState(() => {
-    const json_str = localStorage.getItem("BA_FILTER")
+    const json_str = localStorage.getItem("BA_FILTER") || "{}"
     return fromJS(JSON.parse(json_str)).getIn(["allowduplicate"], true)
   })
 
