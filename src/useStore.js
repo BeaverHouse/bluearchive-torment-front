@@ -24,7 +24,6 @@ const useBAStore = create(immer(persist((set) => ({
 
     removeFilters: () => set((state) => ({
         ...state,
-        Season: tab_items[0].value,
         IncludeList: [],
         ExcludeList: [],
         UnderThreeList: [],
