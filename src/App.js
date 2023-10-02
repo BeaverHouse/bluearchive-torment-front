@@ -1,10 +1,13 @@
 import { Select, Spin, Slider, Pagination, Button, Checkbox } from "antd";
-import { tab_items } from "./constant";
+import { announceHTML, announceUpdate, tab_items } from "./constant";
 import { useCallback, useEffect, useState } from "react";
 import { filteredPartys } from "./func";
 import PartyView from "./components/PartyView";
 import useBAStore from "./useStore";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
+const AnnounceInfo = withReactContent(Swal)
 
 function App() {
 
@@ -65,6 +68,20 @@ function App() {
   }
 
   useEffect(() => {
+    const checkDay = window.localStorage.getItem("BA_INFO")
+    if (checkDay !== announceUpdate) {
+      // if(true) {
+      AnnounceInfo.fire({
+        title: 'Update',
+        html: announceHTML,
+        icon: 'info',
+      }).then(() => {
+        window.localStorage.setItem("BA_INFO", announceUpdate)
+      })
+    }
+  }, [])
+
+  useEffect(() => {
     changeSeason(Season)
   }, [Season, changeSeason])
 
@@ -109,7 +126,10 @@ function App() {
           필터 Reset
         </Button>
       </div>
-
+      <br />
+      {["3S2-T"].includes(Season) ? <b>
+        ※ 클리어 인원이 많아 최종 랭킹 in 1500만 표기합니다.
+      </b> : null}
       <br />
       {!Loading && Data ? (
         <div style={{ width: "100%" }}>
