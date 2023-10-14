@@ -40,11 +40,12 @@ function App() {
   const changeSeason = useCallback((season) => {
     setLoading(true)
     setData(null)
+    const key = tab_items.map((t) => t.value).includes(season) ? season : tab_items[0].value
     try {
-      const json = require(`./data/${season}.json`)
+      const json = require(`./data/${key}.json`)
       setData(json)
       setPartyCountRange([1, 100])
-      setSeason(season)
+      setSeason(key)
     } catch (e) {
       console.log(e)
     } finally {
