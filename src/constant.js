@@ -1,8 +1,6 @@
+// Used in bluearchive-torment-front
+
 export const tab_items = [
-    {
-        value: 'S48',
-        label: `시즌48 실내 고즈`,
-    },
     {
         value: 'S50',
         label: `시즌50 실내 헤세드`,
@@ -45,11 +43,15 @@ export const tab_items = [
     },
     {
         value: 'S57',
-        label: `시즌56 야외 호버크래프트`,
+        label: `시즌57 야외 호버크래프트`,
     },
     {
         value: '3S2-T',
         label: `대결전 시즌2 실내 시로쿠로`,
+    },
+    {
+        value: 'S58',
+        label: `시즌58 시가지 비나`,
     },
 ]
 
@@ -65,14 +67,14 @@ export const defaultJson = {
 }
 
 export const announceHTML = <div>
-    1. 대결전 시로쿠로 반영
+    1. S58 시가지 비나 반영
     <br />
     최종랭킹 상위 1500명만 표시했습니다.
     <br />
-    (토먼트 클리어 수 7000+)
+    (토먼트 클리어 약 2400)
     <br />
     <br />
-    2. 야외 비나 데이터 삭제
+    2. 실내 고즈 데이터 삭제
 </div>
 
-export const announceUpdate = "20231002"
+export const announceUpdate = "20231014"
