@@ -2,10 +2,6 @@
 
 export const tab_items = [
     {
-        value: 'S50',
-        label: `시즌50 실내 헤세드`,
-    },
-    {
         value: 'S51',
         label: `시즌51 시가지 시로쿠로`,
     },
@@ -53,6 +49,10 @@ export const tab_items = [
         value: 'S58',
         label: `시즌58 시가지 비나`,
     },
+    {
+        value: '3S3-T',
+        label: `대결전 시즌3 야외 카이텐(신비)`,
+    },
 ]
 
 export const defaultJson = {
@@ -67,14 +67,12 @@ export const defaultJson = {
 }
 
 export const announceHTML = <div>
-    1. S58 시가지 비나 반영
+    1. S3 대결전 신비 카이텐 반영
     <br />
-    최종랭킹 상위 1500명만 표시했습니다.
-    <br />
-    (토먼트 클리어 약 2400)
+    토먼트 클리어 1788명
     <br />
     <br />
-    2. 실내 고즈 데이터 삭제
+    2. 실내 헤세드 데이터 삭제
 </div>
 
-export const announceUpdate = "20231014"
+export const announceUpdate = "20231026"
