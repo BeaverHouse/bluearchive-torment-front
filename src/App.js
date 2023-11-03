@@ -327,7 +327,7 @@ function App() {
           <div
             style={{
               display: "flex",
-              justifyContent: "center",
+              justifyContent: "space-around",
               flexWrap: "wrap",
               width: "100%",
               overflowX: "auto",
