@@ -36,7 +36,7 @@ const PartyView = ({ party }) => {
     const textArr = [];
     if (star > 0 && star < 5) textArr.push(`(★${star})`);
     return (
-      <Tooltip title={name}>
+      <Tooltip title={assist ? `${name} (A)` : name}>
         <img
           src={`/image/${name}.webp`}
           alt={name}
@@ -75,22 +75,40 @@ const PartyView = ({ party }) => {
                   <Card.Grid style={labelStyle} hoverable={false}>
                     {idx + 5}P
                   </Card.Grid>
-                  <Card.Grid style={strikerStyle} hoverable={false}>
+                  <Card.Grid
+                    style={{ ...strikerStyle, padding: 5 }}
+                    hoverable={false}
+                  >
                     {getCharIcon(p.strikers[0])}
                   </Card.Grid>
-                  <Card.Grid style={strikerStyle} hoverable={false}>
+                  <Card.Grid
+                    style={{ ...strikerStyle, padding: 5 }}
+                    hoverable={false}
+                  >
                     {getCharIcon(p.strikers[1])}
                   </Card.Grid>
-                  <Card.Grid style={strikerStyle} hoverable={false}>
+                  <Card.Grid
+                    style={{ ...strikerStyle, padding: 5 }}
+                    hoverable={false}
+                  >
                     {getCharIcon(p.strikers[2])}
                   </Card.Grid>
-                  <Card.Grid style={strikerStyle} hoverable={false}>
+                  <Card.Grid
+                    style={{ ...strikerStyle, padding: 5 }}
+                    hoverable={false}
+                  >
                     {getCharIcon(p.strikers[3])}
                   </Card.Grid>
-                  <Card.Grid style={specialStyle} hoverable={false}>
+                  <Card.Grid
+                    style={{ ...specialStyle, padding: 5 }}
+                    hoverable={false}
+                  >
                     {getCharIcon(p.specials[0])}
                   </Card.Grid>
-                  <Card.Grid style={specialStyle} hoverable={false}>
+                  <Card.Grid
+                    style={{ ...specialStyle, padding: 5 }}
+                    hoverable={false}
+                  >
                     {getCharIcon(p.specials[1])}
                   </Card.Grid>
                 </div>

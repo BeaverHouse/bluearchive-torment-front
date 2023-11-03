@@ -121,7 +121,7 @@ function App() {
       className="App"
       style={{
         width: "100%",
-        maxWidth: 850,
+        maxWidth: 950,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
