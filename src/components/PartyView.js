@@ -8,7 +8,7 @@ const labelStyle = {
   textAlign: "center",
   display: "flex",
   alignItems: "center",
-  padding: 10,
+  padding: 6,
 };
 
 const strikerStyle = {

@@ -301,7 +301,6 @@ function App() {
               </Checkbox>
             </Collapse.Panel>
           </Collapse>
-          <div></div>
           <br />
           <Pagination
             total={
@@ -331,6 +330,7 @@ function App() {
               justifyContent: "center",
               flexWrap: "wrap",
               width: "100%",
+              overflowX: "auto",
             }}
           >
             {filteredPartys(
