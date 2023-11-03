@@ -7,7 +7,6 @@ import {
   Checkbox,
   Typography,
   Collapse,
-  Space,
 } from "antd";
 import { announceHTML, announceUpdate, tab_items } from "./constant";
 import { useCallback, useEffect, useState } from "react";
@@ -16,6 +15,7 @@ import PartyView from "./components/PartyView";
 import useBAStore from "./useStore";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { isMobile } from "react-device-detect";
 
 const AnnounceInfo = withReactContent(Swal);
 const { Text, Title } = Typography;
@@ -320,28 +320,38 @@ function App() {
             current={Page}
             onChange={setPage}
             pageSize={PageSize}
-            simple={false}
+            simple={isMobile}
             onShowSizeChange={(_, size) => setPageSize(size)}
             pageSizeOptions={[10, 20]}
           />
           <br />
-          {filteredPartys(
-            Data,
-            IncludeList,
-            ExcludeList,
-            Assist,
-            PartyCountRange,
-            UnderFourList,
-            UnderThreeList,
-            HardExclude,
-            AllowDuplicate
-          )
-            .filter(
-              (_, idx) => idx >= (Page - 1) * PageSize && idx < Page * PageSize
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              flexWrap: "wrap",
+              width: "100%",
+            }}
+          >
+            {filteredPartys(
+              Data,
+              IncludeList,
+              ExcludeList,
+              Assist,
+              PartyCountRange,
+              UnderFourList,
+              UnderThreeList,
+              HardExclude,
+              AllowDuplicate
             )
-            .map((party, idx) => (
-              <PartyView key={idx} party={party} />
-            ))}
+              .filter(
+                (_, idx) =>
+                  idx >= (Page - 1) * PageSize && idx < Page * PageSize
+              )
+              .map((party, idx) => (
+                <PartyView key={idx} party={party} />
+              ))}
+          </div>
         </>
       ) : (
         <Spin />
