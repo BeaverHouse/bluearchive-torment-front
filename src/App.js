@@ -326,9 +326,7 @@ function App() {
           <br />
           <div
             style={{
-              display: "flex",
-              justifyContent: "space-around",
-              flexWrap: "wrap",
+              margin: "0 auto",
               width: "100%",
               overflowX: "auto",
             }}

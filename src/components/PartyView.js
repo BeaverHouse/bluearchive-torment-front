@@ -8,6 +8,7 @@ const labelStyle = {
   textAlign: "center",
   display: "flex",
   alignItems: "center",
+  justifyContent: "center",
   padding: 6,
 };
 
