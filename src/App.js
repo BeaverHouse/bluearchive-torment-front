@@ -326,8 +326,9 @@ function App() {
           <br />
           <div
             style={{
-              margin: "0 auto",
               width: "100%",
+              minWidth: 400,
+              margin: "0 auto",
               overflowX: "auto",
             }}
           >
