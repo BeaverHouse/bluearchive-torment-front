@@ -31,11 +31,11 @@ export const tab_items = [
     },
     {
         value: '3S1-T',
-        label: `대결전 시즌1 야외 페로로지라(토먼트)`,
+        label: `대결전S1 야외 페로로지라(토먼트)`,
     },
     {
         value: '3S1-I',
-        label: `대결전 시즌1 야외 페로로지라(관통 인세인)`,
+        label: `대결전S1 야외 페로로지라(관통 인세인)`,
     },
     {
         value: 'S57',
