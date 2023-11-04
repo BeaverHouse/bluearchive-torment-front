@@ -327,7 +327,7 @@ function App() {
           <div
             style={{
               width: "100%",
-              minWidth: 400,
+              minWidth: 365,
               margin: "0 auto",
               overflowX: "auto",
             }}

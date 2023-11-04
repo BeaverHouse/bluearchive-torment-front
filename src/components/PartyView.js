@@ -18,7 +18,7 @@ const strikerStyle = {
   display: "flex",
   alignItems: "start",
   justifyContent: "center",
-  padding: 7.5,
+  padding: 7,
 };
 const specialStyle = {
   backgroundColor: "#d4ebf2",
@@ -26,7 +26,7 @@ const specialStyle = {
   display: "flex",
   alignItems: "start",
   justifyContent: "center",
-  padding: 7.5,
+  padding: 7,
 };
 
 const PartyView = ({ party }) => {
@@ -74,7 +74,7 @@ const PartyView = ({ party }) => {
               children: party.partys.slice(4).map((p, idx) => (
                 <div style={{ display: "flex" }} key={idx}>
                   <Card.Grid style={labelStyle} hoverable={false}>
-                    {idx + 5}P
+                    {idx + 5}
                   </Card.Grid>
                   <Card.Grid
                     style={{ ...strikerStyle, padding: 5 }}
@@ -123,15 +123,15 @@ const PartyView = ({ party }) => {
   return (
     <Card
       title={<Text>{`${party.rank}위 : ${party.score}점`}</Text>}
-      bodyStyle={{ padding: 5 }}
-      style={{ margin: "7px 3px 7px 3px" }}
+      bodyStyle={{ padding: 4 }}
+      style={{ margin: "7px 3px 0 3px" }}
     >
       {[0, 1, 2, 3].map((i) => {
         const targetParty = party.partys[i];
         return targetParty ? (
           <div style={{ display: "flex" }}>
             <Card.Grid style={labelStyle} hoverable={false}>
-              {i + 1}P
+              <Text strong>{i + 1}</Text>
             </Card.Grid>
             <Card.Grid style={strikerStyle} hoverable={false}>
               {getCharIcon(targetParty.strikers[0])}
