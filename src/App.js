@@ -121,7 +121,7 @@ function App() {
       className="App"
       style={{
         width: "100%",
-        maxWidth: 950,
+        maxWidth: 800,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -327,7 +327,7 @@ function App() {
           <div
             style={{
               width: "100%",
-              minWidth: 365,
+              minWidth: 345,
               margin: "0 auto",
               overflowX: "auto",
             }}

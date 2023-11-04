@@ -9,7 +9,8 @@ const labelStyle = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  padding: 6,
+  maxWidth: "25px",
+  padding: 4,
 };
 
 const strikerStyle = {
@@ -18,7 +19,7 @@ const strikerStyle = {
   display: "flex",
   alignItems: "start",
   justifyContent: "center",
-  padding: 7,
+  padding: 6,
 };
 const specialStyle = {
   backgroundColor: "#d4ebf2",
@@ -26,7 +27,7 @@ const specialStyle = {
   display: "flex",
   alignItems: "start",
   justifyContent: "center",
-  padding: 7,
+  padding: 6,
 };
 
 const PartyView = ({ party }) => {
@@ -77,37 +78,37 @@ const PartyView = ({ party }) => {
                     {idx + 5}
                   </Card.Grid>
                   <Card.Grid
-                    style={{ ...strikerStyle, padding: 5 }}
+                    style={{ ...strikerStyle, padding: 4.5 }}
                     hoverable={false}
                   >
                     {getCharIcon(p.strikers[0])}
                   </Card.Grid>
                   <Card.Grid
-                    style={{ ...strikerStyle, padding: 5 }}
+                    style={{ ...strikerStyle, padding: 4.5 }}
                     hoverable={false}
                   >
                     {getCharIcon(p.strikers[1])}
                   </Card.Grid>
                   <Card.Grid
-                    style={{ ...strikerStyle, padding: 5 }}
+                    style={{ ...strikerStyle, padding: 4.5 }}
                     hoverable={false}
                   >
                     {getCharIcon(p.strikers[2])}
                   </Card.Grid>
                   <Card.Grid
-                    style={{ ...strikerStyle, padding: 5 }}
+                    style={{ ...strikerStyle, padding: 4.5 }}
                     hoverable={false}
                   >
                     {getCharIcon(p.strikers[3])}
                   </Card.Grid>
                   <Card.Grid
-                    style={{ ...specialStyle, padding: 5 }}
+                    style={{ ...specialStyle, padding: 4.5 }}
                     hoverable={false}
                   >
                     {getCharIcon(p.specials[0])}
                   </Card.Grid>
                   <Card.Grid
-                    style={{ ...specialStyle, padding: 5 }}
+                    style={{ ...specialStyle, padding: 4.5 }}
                     hoverable={false}
                   >
                     {getCharIcon(p.specials[1])}
