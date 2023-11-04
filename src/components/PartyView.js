@@ -14,7 +14,7 @@ const labelStyle = {
 };
 
 const strikerStyle = {
-  backgroundColor: "lightyellow",
+  backgroundColor: "#ffffeb",
   textAlign: "center",
   display: "flex",
   alignItems: "start",
@@ -22,7 +22,7 @@ const strikerStyle = {
   padding: 6,
 };
 const specialStyle = {
-  backgroundColor: "#d4ebf2",
+  backgroundColor: "#f0fbff",
   textAlign: "center",
   display: "flex",
   alignItems: "start",
@@ -44,7 +44,7 @@ const PartyView = ({ party }) => {
           alt={name}
           width={isMobile ? 40 : 50}
           style={{
-            border: assist ? "3px solid #007FFF" : null,
+            border: assist ? "3px solid #4CBB17" : null,
             boxSizing: "border-box",
           }}
         />
@@ -52,7 +52,7 @@ const PartyView = ({ party }) => {
         {textArr.length > 0 ? (
           <Text
             style={{
-              color: assist ? "#007FFF" : "black",
+              color: assist ? "#4CBB17" : "black",
             }}
           >
             {textArr.join("\n")}
