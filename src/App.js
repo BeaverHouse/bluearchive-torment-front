@@ -156,7 +156,7 @@ function App() {
           같이 보면 좋은 총력전 리포트 (Link)
         </Button>
       </div>
-      {["3S2-T", "S58"].includes(Season) ? (
+      {["3S2-T", "S58", "S59"].includes(Season) ? (
         <>
           <br />
           <Text strong>※ 클리어 인원이 많아 최종 in1500만 표기합니다.</Text>
