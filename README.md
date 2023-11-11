@@ -1,4 +1,9 @@
 # BA Torment (UI)
+<h3>❗❗This app is KOREAN Only.❗❗</h3>
+
+<br>
+<br>
+<br>
 
 **231103 모바일 최적화 1차 작업**
 
