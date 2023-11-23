@@ -2,10 +2,6 @@
 
 export const tab_items = [
   {
-    value: "S52",
-    label: `시즌52 야외 카이텐`,
-  },
-  {
     value: "S53",
     label: `시즌53 야외 페로로지라`,
   },
@@ -53,6 +49,10 @@ export const tab_items = [
     value: "S59",
     label: `시즌59 야외 헤세드`,
   },
+  {
+    value: "3S4-T",
+    label: `대결전 시즌4 시가지 호드(관통)`,
+  },
 ];
 
 export const defaultJson = {
@@ -68,15 +68,13 @@ export const defaultJson = {
 
 export const announceHTML = (
   <div>
-    1. 시즌59 야외 헤세드 반영
+    1. 대결전 시즌4 시가지 호드 반영
     <br />
-    최종랭킹 상위 1500명만 표시했습니다.
-    <br />
-    <b>(토먼트 클리어 11995명)</b>
+    <b>토먼트 클리어 1126명</b>
     <br />
     <br />
-    2. 시가지 시로쿠로 데이터 삭제
+    2. 야외 카이텐 데이터 삭제
   </div>
 );
 
-export const announceUpdate = "20231108";
+export const announceUpdate = "20231123";
