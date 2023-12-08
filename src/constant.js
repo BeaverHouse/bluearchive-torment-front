@@ -2,10 +2,6 @@
 
 export const tab_items = [
   {
-    value: "S53",
-    label: `시즌53 야외 페로로지라`,
-  },
-  {
     value: "S54",
     label: `시즌54 실내 호드`,
   },
@@ -53,6 +49,10 @@ export const tab_items = [
     value: "3S4-T",
     label: `대결전 시즌4 시가지 호드(관통)`,
   },
+  {
+    value: "S60",
+    label: `시즌60 시가지 쿠로카게`,
+  },
 ];
 
 export const defaultJson = {
@@ -68,13 +68,13 @@ export const defaultJson = {
 
 export const announceHTML = (
   <div>
-    1. 대결전 시즌4 시가지 호드 반영
+    1. 시즌60 시가지 쿠로카게 반영
     <br />
-    <b>토먼트 클리어 1126명</b>
+    <b>토먼트 클리어 2478명</b>
     <br />
     <br />
-    2. 야외 카이텐 데이터 삭제
+    2. 야외 페로로지라 데이터 삭제
   </div>
 );
 
-export const announceUpdate = "20231123";
+export const announceUpdate = "20231208";
