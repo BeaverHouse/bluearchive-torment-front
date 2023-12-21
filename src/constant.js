@@ -2,10 +2,6 @@
 
 export const tab_items = [
   {
-    value: "S54",
-    label: `시즌54 실내 호드`,
-  },
-  {
     value: "S55",
     label: `시즌55 실내 그레고리오`,
   },
@@ -53,6 +49,10 @@ export const tab_items = [
     value: "S60",
     label: `시즌60 시가지 쿠로카게`,
   },
+  {
+    value: "3S5-T",
+    label: `대결전 시즌5 야외 고즈(관통)`,
+  },
 ];
 
 export const defaultJson = {
@@ -68,13 +68,15 @@ export const defaultJson = {
 
 export const announceHTML = (
   <div>
-    1. 시즌60 시가지 쿠로카게 반영
+    1. 대결전 시즌5 야외 고즈(관통) 반영
     <br />
-    <b>토먼트 클리어 2478명</b>
+    최종랭킹 상위 1500명만 표시했습니다.
+    <br />
+    <b>토먼트 클리어 9176명</b>
     <br />
     <br />
-    2. 야외 페로로지라 데이터 삭제
+    2. 실내 호드 데이터 삭제
   </div>
 );
 
-export const announceUpdate = "20231208";
+export const announceUpdate = "20231221";
