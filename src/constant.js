@@ -2,16 +2,8 @@
 
 export const tab_items = [
   {
-    value: "S55",
-    label: `시즌55 실내 그레고리오`,
-  },
-  {
     value: "S56",
     label: `시즌56 야외 고즈`,
-  },
-  {
-    value: "B1",
-    label: `대결전 베타1 시가지 비나`,
   },
   {
     value: "3S1-T",
@@ -53,6 +45,10 @@ export const tab_items = [
     value: "3S5-T",
     label: `대결전 시즌5 야외 고즈(관통)`,
   },
+  {
+    value: "S61",
+    label: `시즌61 야외 호버크래프트`,
+  },
 ];
 
 export const defaultJson = {
@@ -68,15 +64,17 @@ export const defaultJson = {
 
 export const announceHTML = (
   <div>
-    1. 대결전 시즌5 야외 고즈(관통) 반영
+    1. 시즌61 야외 호버크래프트 반영
     <br />
     최종랭킹 상위 1500명만 표시했습니다.
     <br />
-    <b>토먼트 클리어 9176명</b>
+    <b>토먼트 클리어 6750명</b>
     <br />
     <br />
-    2. 실내 호드 데이터 삭제
+    2. 베타 시가지 비나 데이터 삭제
+    <br />
+    3. 실내 그레고리오 데이터 삭제
   </div>
 );
 
-export const announceUpdate = "20231221";
+export const announceUpdate = "20240112";
