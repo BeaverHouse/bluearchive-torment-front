@@ -49,6 +49,10 @@ export const tab_items = [
     value: "S61",
     label: `시즌61 야외 호버크래프트`,
   },
+  {
+    value: "3S6-T",
+    label: `대결전 시즌6 시가지 시로쿠로(폭발)`,
+  },
 ];
 
 export const defaultJson = {
@@ -64,17 +68,12 @@ export const defaultJson = {
 
 export const announceHTML = (
   <div>
-    1. 시즌61 야외 호버크래프트 반영
+    1. 대결전 시즌6 시가지 시로쿠로(폭발) 반영
     <br />
     최종랭킹 상위 1500명만 표시했습니다.
     <br />
-    <b>토먼트 클리어 6750명</b>
-    <br />
-    <br />
-    2. 베타 시가지 비나 데이터 삭제
-    <br />
-    3. 실내 그레고리오 데이터 삭제
+    <b>토먼트 클리어 4932명</b>
   </div>
 );
 
-export const announceUpdate = "20240112";
+export const announceUpdate = "20240128";
