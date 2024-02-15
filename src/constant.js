@@ -2,10 +2,6 @@
 
 export const tab_items = [
   {
-    value: "S56",
-    label: `시즌56 야외 고즈`,
-  },
-  {
     value: "3S1-T",
     label: `대결전 시즌1 야외 페로로지라(토먼트)`,
   },
@@ -53,6 +49,10 @@ export const tab_items = [
     value: "3S6-T",
     label: `대결전 시즌6 시가지 시로쿠로(폭발)`,
   },
+  {
+    value: "S62",
+    label: `시즌62 실내 예로니무스`,
+  },
 ];
 
 export const defaultJson = {
@@ -68,12 +68,15 @@ export const defaultJson = {
 
 export const announceHTML = (
   <div>
-    1. 대결전 시즌6 시가지 시로쿠로(폭발) 반영
+    1. 시즌62 실내 예로니무스 반영
     <br />
     최종랭킹 상위 1500명만 표시했습니다.
     <br />
-    <b>토먼트 클리어 4932명</b>
+    <b>토먼트 클리어 20000명 +</b>
+    <br />
+    <br />
+    2. 시즌56 야외 고즈 데이터 삭제
   </div>
 );
 
-export const announceUpdate = "20240128";
+export const announceUpdate = "20240213";
