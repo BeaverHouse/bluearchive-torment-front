@@ -53,6 +53,10 @@ export const tab_items = [
     value: "S62",
     label: `시즌62 실내 예로니무스`,
   },
+  {
+    value: "3S7-T",
+    label: `대결전 시즌7 야외 카이텐(폭발)`,
+  },
 ];
 
 export const defaultJson = {
@@ -68,15 +72,12 @@ export const defaultJson = {
 
 export const announceHTML = (
   <div>
-    1. 시즌62 실내 예로니무스 반영
+    1. 대결전 시즌7 야외 카이텐(폭발) 반영
     <br />
     최종랭킹 상위 1500명만 표시했습니다.
     <br />
-    <b>토먼트 클리어 20000명 +</b>
-    <br />
-    <br />
-    2. 시즌56 야외 고즈 데이터 삭제
+    <b>토먼트 클리어 15000명 +</b>
   </div>
 );
 
-export const announceUpdate = "20240213";
+export const announceUpdate = "20240224";
