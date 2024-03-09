@@ -2,14 +2,6 @@
 
 export const tab_items = [
   {
-    value: "3S1-T",
-    label: `대결전 시즌1 야외 페로로지라(토먼트)`,
-  },
-  {
-    value: "3S1-I",
-    label: `대결전 시즌1 야외 페로로지라(관통 인세인)`,
-  },
-  {
     value: "S57",
     label: `시즌57 야외 호버크래프트`,
   },
@@ -57,6 +49,10 @@ export const tab_items = [
     value: "3S7-T",
     label: `대결전 시즌7 야외 카이텐(폭발)`,
   },
+  {
+    value: "S63",
+    label: `시즌63 실내 헤세드`,
+  },
 ];
 
 export const defaultJson = {
@@ -72,12 +68,12 @@ export const defaultJson = {
 
 export const announceHTML = (
   <div>
-    1. 대결전 시즌7 야외 카이텐(폭발) 반영
+    1. 시즌63 실내 헤세드 반영
     <br />
     최종랭킹 상위 1500명만 표시했습니다.
     <br />
-    <b>토먼트 클리어 15000명 +</b>
+    <b>토먼트 클리어 20000명 +</b>
   </div>
 );
 
-export const announceUpdate = "20240224";
+export const announceUpdate = "20240309";
