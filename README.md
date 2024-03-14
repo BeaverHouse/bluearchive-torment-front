@@ -1,70 +1,85 @@
-# Getting Started with Create React App
+<p align="center">
+  <a href="https://github.com/BeaverHouse/bluearchive-torment-front">
+    <img src="logo.png" alt="Logo">
+  </a>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+  <p align="center">
+    BA Torment : 블루아카이브 토먼트 파티찾기 도우미
+    <br>
+    <br>
+    <a href="https://bluearchive-torment.netlify.app/"><strong>View the website »</strong></a>
+    <br>
+    <br>
+    <a href="https://github.com/BeaverHouse/bluearchive-torment-front/issues">Bug Report</a>
+    |
+    <a href="https://github.com/BeaverHouse/bluearchive-torment-front/issues">Request to HU-Lee</a>
+  </p>
 
-## Available Scripts
+  <p align="center">
+    <a href="https://react.dev/">
+      <img src="https://img.shields.io/badge/React-61DAFB.svg?style=flat&logo=React&logoColor=black" alt="React">
+    </a>
+    <a href="https://developer.mozilla.org/ko/docs/Web/JavaScript">
+      <img src="https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=000&style=flat" alt="JavaScript">
+    </a>
+    <a href="https://eslint.org/">
+      <img src="https://img.shields.io/badge/ESLint-4B32C3?logo=eslint&logoColor=fff&style=flat" alt="ESLint">
+    </a>
+    <a href="https://yarnpkg.com/">
+      <img src="https://img.shields.io/badge/Yarn-2C8EBB?logo=yarn&logoColor=fff&style=flat" alt="Yarn">
+    </a>
+    <a href="./LICENSE">
+      <img src="https://img.shields.io/github/license/BeaverHouse/bluearchive-torment-front" alt="License">
+    </a>
+  </p>
+</p>
 
-In the project directory, you can run:
+<!-- Content -->
 
-### `yarn start`
+<br>
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Description
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+**❗❗This app is KOREAN Only.❗❗**
 
-### `yarn test`
+블루아카이브 토먼트 파티찾기 프론트엔드 코드입니다.  
+JavaScript로 작성되었습니다.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+파티 데이터는 Python을 통해 처리해서 JSON 형태로 사용하고 있습니다.  
+업데이트 주기가 2주당 1번 정도이기 때문에, 따로 서버는 구축하지 않았습니다.
 
-### `yarn build`
+[BeaverHouse/bluearchive-torment-parse](https://github.com/BeaverHouse/bluearchive-torment-parse)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+<br>
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Work
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+| 날짜    | 패치 내역                            |
+| ------- | ------------------------------------ |
+| 2023.07 | 사이트 오픈                          |
+| 2023.11 | UI, 모바일 환경 최적화 작업          |
+| 2024.03 | 전용무기 정보 표기 (일본 서버 S63 ~) |
 
-### `yarn eject`
+<br>
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## On local environment
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+**Install dependencies**
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```
+yarn install
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+**Run on local environment**
 
-## Learn More
+```
+yarn start
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+<br>
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Contributing
 
-### Code Splitting
+See the [CONTRIBUTING.md][contributing].
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+[contributing]: ./CONTRIBUTING.md
