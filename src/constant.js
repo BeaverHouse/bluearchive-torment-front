@@ -75,6 +75,10 @@ export const tabItems = [
     value: "S63",
     label: `시즌63 실내 헤세드`,
   },
+  {
+    value: "3S8-T",
+    label: `대결전 시즌8 시가지 비나(신비)`,
+  },
 ];
 
 export const defaultJson = {
@@ -89,11 +93,7 @@ export const defaultJson = {
 };
 
 export const announceHTML = (
-  <div>
-    1. 시즌63 헤세드부터 전용무기/성급 정보가 추가됩니다.
-    <br />
-    2. 시즌 57 야외 호버크래프트 데이터 삭제
-  </div>
+  <div>대결전 시즌8 시가지 비나(신비) 데이터 추가</div>
 );
 
-export const announceUpdate = "20240315";
+export const announceUpdate = "20240323";
