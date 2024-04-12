@@ -6,7 +6,6 @@ export const legacyTorments = [
   "S60",
   "S61",
   "S62",
-  "3S2-T",
   "3S3-T",
   "3S4-T",
   "3S5-T",
@@ -27,10 +26,6 @@ export const weaponLabels = [
 ];
 
 export const tabItems = [
-  {
-    value: "3S2-T",
-    label: `대결전 시즌2 실내 시로쿠로`,
-  },
   {
     value: "S58",
     label: `시즌58 시가지 비나`,
@@ -79,6 +74,10 @@ export const tabItems = [
     value: "3S8-T",
     label: `대결전 시즌8 시가지 비나(신비)`,
   },
+  {
+    value: "S64",
+    label: `시즌64 실내 페로로지라`,
+  },
 ];
 
 export const defaultJson = {
@@ -93,7 +92,11 @@ export const defaultJson = {
 };
 
 export const announceHTML = (
-  <div>대결전 시즌8 시가지 비나(신비) 데이터 추가</div>
+  <div>
+    1. 시즌64 실내 페로로지라 데이터 추가
+    <br />
+    2. 대결전 시즌2 실내 시로쿠로 데이터 삭제
+  </div>
 );
 
-export const announceUpdate = "20240323";
+export const announceUpdate = "20240412";
