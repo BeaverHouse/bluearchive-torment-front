@@ -26,10 +26,6 @@ export const weaponLabels = [
 
 export const tabItems = [
   {
-    value: "3S3-T",
-    label: `대결전 시즌3 야외 카이텐(신비)`,
-  },
-  {
     value: "S59",
     label: `시즌59 야외 헤세드`,
   },
@@ -77,6 +73,10 @@ export const tabItems = [
     value: "3S9-T",
     label: `대결전 시즌9 실내 그레고리오(관통)`,
   },
+  {
+    value: "S65",
+    label: `시즌65 시가지 호드`,
+  },
 ];
 
 export const defaultJson = {
@@ -92,10 +92,10 @@ export const defaultJson = {
 
 export const announceHTML = (
   <div>
-    1. 대결전 시즌9 실내 그레고리오(관통) 데이터 추가
+    1. 총력전 시즌65 시가지 호드 데이터 추가
     <br />
-    2. 시즌58 시가지 비나 데이터 삭제
+    2. 대결전 시즌3 야외 카이텐(신비) 데이터 삭제
   </div>
 );
 
-export const announceUpdate = "20240425";
+export const announceUpdate = "20240512";
