@@ -1,0 +1,20 @@
+- name: "Docs"
+  color: 96EFFF
+- name: "Feature"
+  color: FFD0EC
+- name: "Content/Data"
+  color: BFDADC
+- name: "Code clean/refactor"
+  color: 000000
+- name: "Question"
+  color: 5319E7
+
+- name: "Request"
+  color: C5E898
+- name: "Chore"
+  color: FEFAE0
+
+- name: "Security"
+  color: D04848
+- name: "Bug"
+  color: D04848
