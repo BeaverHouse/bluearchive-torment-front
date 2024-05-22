@@ -1,0 +1,38 @@
+name: Bug Report
+description: Write a bug report
+title: "[Bug]: "
+labels: ["Bug"]
+assignees:
+  - HU-Lee
+body:
+  - type: textarea
+    id: current-behavior
+    attributes:
+      label: Current behavior
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: If you don't know, just leave it blank.
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: textarea
+    id: other-information
+    attributes:
+      label: Other information
+      description: |
+        Add any related information.
+        - Device info
+        - OS
+        - Browser
+        - Reference
