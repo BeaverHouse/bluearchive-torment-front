@@ -1,0 +1,30 @@
+name: Request to HU-Lee
+description: Write a request about this repository
+labels: ["Request"]
+assignees:
+  - HU-Lee
+body:
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: What is your request about?
+      options:
+        - Feature request
+        - Codebase improvement
+        - Content/Data report
+        - Question
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: detailed-description
+    attributes:
+      label: Detailed description
+    validations:
+      required: true
+  - type: textarea
+    id: other-information
+    attributes:
+      label: Other information
+      description: Add any related information.
