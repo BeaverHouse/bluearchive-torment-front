@@ -1,7 +1,6 @@
 // Used in bluearchive-torment-front
 
 export const legacyTorments = [
-  "S60",
   "S61",
   "S62",
   "3S5-T",
@@ -22,10 +21,6 @@ export const weaponLabels = [
 ];
 
 export const tabItems = [
-  {
-    value: "S60",
-    label: `시즌60 시가지 쿠로카게`,
-  },
   {
     value: "3S5-T",
     label: `대결전 시즌5 야외 고즈(관통)`,
@@ -74,6 +69,10 @@ export const tabItems = [
     value: "S66",
     label: `시즌66 실내 고즈`,
   },
+  {
+    value: "3S11-T",
+    label: `대결전 시즌11 야외 호버크래프트(폭발)`,
+  },
 ];
 
 export const defaultJson = {
@@ -89,9 +88,9 @@ export const defaultJson = {
 
 export const announceHTML = (
   <div>
-    1. 총력전 시즌66 실내 고즈 데이터 추가
+    1. 대결전 시즌11 야외 호버크래프트(폭발) 데이터 추가
     <br />
-    2. 대결전 시즌4 시가지 호드(관통) 데이터 삭제
+    2. 시즌60 시가지 쿠로카게 데이터 삭제
   </div>
 );
 
