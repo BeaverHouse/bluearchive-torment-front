@@ -62,6 +62,10 @@ export const tabItems = [
   {
     value: "3S11-T",
     label: `대결전 시즌11 야외 호버크래프트(폭발)`,
+  },  
+  {
+    value: "S67",
+    label: `시즌67 야외 비나`,
   },
 ];
 
