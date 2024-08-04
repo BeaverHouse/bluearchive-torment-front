@@ -2,7 +2,6 @@
 
 export const legacyTorments = [
   "S62",
-  "3S6-T",
   "3S7-T",
 ];
 
@@ -19,10 +18,6 @@ export const weaponLabels = [
 ];
 
 export const tabItems = [
-  {
-    value: "3S6-T",
-    label: `대결전 시즌6 시가지 시로쿠로(폭발)`,
-  },
   {
     value: "S62",
     label: `시즌62 실내 예로니무스`,
@@ -62,10 +57,14 @@ export const tabItems = [
   {
     value: "3S11-T",
     label: `대결전 시즌11 야외 호버크래프트(폭발)`,
-  },  
+  },
   {
     value: "S67",
     label: `시즌67 야외 비나`,
+  },
+  {
+    value: "3S12-T",
+    label: `대결전 시즌12 실내 시로쿠로(관통)`,
   },
 ];
 
@@ -82,12 +81,10 @@ export const defaultJson = {
 
 export const announceHTML = (
   <div>
-    1. 총력전 시즌67 야외 비나 데이터 추가
+    1. 대결전 시즌12 실내 시로쿠로(관통) 데이터 추가
     <br />
-    2. 대결전 시즌5 야외 고즈 데이터 삭제
-    <br />
-    3. 시즌61 야외 호버크래프트 데이터 삭제
+    2. 대결전 시즌6 시가지 시로쿠로(폭발) 데이터 삭제
   </div>
 );
 
-export const announceUpdate = "20240718";
+export const announceUpdate = "20240804";
