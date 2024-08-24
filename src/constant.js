@@ -1,8 +1,6 @@
 // Used in bluearchive-torment-front
 
-export const legacyTorments = [
-  "3S7-T",
-];
+export const legacyTorments = [];
 
 export const weaponLabels = [
   "전5",
@@ -17,10 +15,6 @@ export const weaponLabels = [
 ];
 
 export const tabItems = [
-  {
-    value: "3S7-T",
-    label: `대결전 시즌7 야외 카이텐(폭발)`,
-  },
   {
     value: "S63",
     label: `시즌63 실내 헤세드`,
@@ -65,6 +59,10 @@ export const tabItems = [
     value: "S68",
     label: `시즌68 야외 페로로지라`,
   },
+  {
+    value: "3S13-T",
+    label: `대결전 시즌13 야외 고즈(관통)`,
+  },
 ];
 
 export const defaultJson = {
@@ -80,10 +78,10 @@ export const defaultJson = {
 
 export const announceHTML = (
   <div>
-    1. 시즌68 야외 페로로지라 데이터 추가
+    1. 대결전 시즌13 야외 고즈(관통) 데이터 추가
     <br />
-    2. 시즌62 실내 예로니무스 데이터 삭제
+    2. 대결전 시즌7 야외 카이텐(폭발) 데이터 삭제
   </div>
 );
 
-export const announceUpdate = "20240811";
+export const announceUpdate = "20240824";
