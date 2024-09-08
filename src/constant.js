@@ -16,10 +16,6 @@ export const weaponLabels = [
 
 export const tabItems = [
   {
-    value: "S63",
-    label: `시즌63 실내 헤세드`,
-  },
-  {
     value: "3S8-T",
     label: `대결전 시즌8 시가지 비나(신비)`,
   },
@@ -63,6 +59,10 @@ export const tabItems = [
     value: "3S13-T",
     label: `대결전 시즌13 야외 고즈(관통)`,
   },
+  {
+    value: "S69",
+    label: `시즌69 실내 시로쿠로`,
+  },
 ];
 
 export const defaultJson = {
@@ -78,10 +78,10 @@ export const defaultJson = {
 
 export const announceHTML = (
   <div>
-    1. 대결전 시즌13 야외 고즈(관통) 데이터 추가
+    1. 시즌69 실내 시로쿠로 데이터 추가
     <br />
-    2. 대결전 시즌7 야외 카이텐(폭발) 데이터 삭제
+    2. 시즌63 실내 헤세드 데이터 삭제
   </div>
 );
 
-export const announceUpdate = "20240824";
+export const announceUpdate = "20240908";
