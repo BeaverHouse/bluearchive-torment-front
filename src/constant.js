@@ -16,10 +16,6 @@ export const weaponLabels = [
 
 export const tabItems = [
   {
-    value: "3S8-T",
-    label: `대결전 시즌8 시가지 비나(신비)`,
-  },
-  {
     value: "S64",
     label: `시즌64 실내 페로로지라`,
   },
@@ -63,6 +59,10 @@ export const tabItems = [
     value: "S69",
     label: `시즌69 실내 시로쿠로`,
   },
+  {
+    value: "3S14-T",
+    label: `대결전 시즌14 야외 페로로지라(탄력)`,
+  },
 ];
 
 export const defaultJson = {
@@ -78,9 +78,9 @@ export const defaultJson = {
 
 export const announceHTML = (
   <div>
-    1. 시즌69 실내 시로쿠로 데이터 추가
+    1. 대결전 시즌14 야외 페로로지라(탄력) 추가
     <br />
-    2. 시즌63 실내 헤세드 데이터 삭제
+    2. 대결전 시즌8 시가지 비나(신비) 삭제
   </div>
 );
 
