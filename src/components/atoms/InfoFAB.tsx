@@ -17,7 +17,7 @@ const InfoFAB: React.FC = () => {
   return (
     <>
       <FloatButton.Group shape="circle">
-        <FloatButton.BackTop />
+        <FloatButton.BackTop visibilityHeight={0} target={() => document.body} />
         <FloatButton
           type="primary"
           icon={<InfoCircleOutlined />}
