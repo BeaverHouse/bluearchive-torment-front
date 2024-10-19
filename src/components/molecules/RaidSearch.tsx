@@ -52,6 +52,7 @@ const RaidSearch = ({ season, studentsMap }: RaidSearchProps) => {
     PageSize,
     HardExclude,
     AllowDuplicate,
+    YoutubeOnly,
     season,
   ]);
 
