@@ -9,6 +9,7 @@ interface V3BAState {
   Assist: Array<number> | undefined;
   HardExclude: boolean;
   AllowDuplicate: boolean;
+  YoutubeOnly: boolean;
 
   setV3Season: (val: string) => void;
   setIncludeList: (val: Array<number[]>) => void;
@@ -16,6 +17,7 @@ interface V3BAState {
   setAssist: (val: Array<number> | undefined) => void;
   setHardExclude: (val: boolean) => void;
   setAllowDuplicate: (val: boolean) => void;
+  setYoutubeOnly: (val: boolean) => void;
 
   removeFilters: () => void;
 }
@@ -26,6 +28,7 @@ const initialState = {
   Assist: undefined,
   HardExclude: false,
   AllowDuplicate: true,
+  YoutubeOnly: false,
 };
 
 const useBAStore = create(
@@ -45,6 +48,8 @@ const useBAStore = create(
           set((state) => ({ ...state, HardExclude: val })),
         setAllowDuplicate: (val) =>
           set((state) => ({ ...state, AllowDuplicate: val })),
+        setYoutubeOnly: (val) =>
+          set((state) => ({ ...state, YoutubeOnly: val })),
 
         removeFilters: () =>
           set(

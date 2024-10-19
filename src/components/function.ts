@@ -22,12 +22,14 @@ export const getFilters = (
 
 export const filteredPartys = (
   data: RaidData,
+  youtubeLinkInfos: YoutubeLinkInfo[],
   includeArray: Array<number[]>,
   excludeArray: Array<number>,
   assist: Array<number> | undefined,
   partyCountRange: number[],
   hardExclude: boolean,
-  allowDuplicate: boolean
+  allowDuplicate: boolean,
+  youtubeOnly: boolean
 ): PartyData[] => {
   const rawPartys = data.parties;
   return rawPartys.filter((party) => {
@@ -35,6 +37,8 @@ export const filteredPartys = (
     const partyFiltered = students.map((num) => Math.floor(num / 10));
     const codeFiltered = students.map((num) => Math.floor(num / 1000));
     const partyAssist = students.find((num) => num % 10 === 1) || null;
+    const youtubeUserIds = youtubeLinkInfos
+      .map((info) => info.userId);
 
     return (
       includeArray.every((arr) => partyFiltered.includes(getNumber(arr))) &&
@@ -47,7 +51,8 @@ export const filteredPartys = (
         (!partyAssist || excludeArray.includes(Math.floor(partyAssist / 100)))
       ) && // 옵션 비활성화 or 제외할 캐릭터에 조건자가 들어가야 false
       (allowDuplicate ||
-        Array.from(new Set(partyFiltered)).length === partyFiltered.length)
+        Array.from(new Set(partyFiltered)).length === partyFiltered.length) &&
+      (youtubeOnly ? youtubeUserIds.includes(party.USER_ID) : !youtubeOnly)
     );
   });
 };

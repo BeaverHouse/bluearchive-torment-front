@@ -32,11 +32,13 @@ const RaidSearch = ({ season, studentsMap }: RaidSearchProps) => {
     Assist,
     HardExclude,
     AllowDuplicate,
+    YoutubeOnly,
     setIncludeList,
     setExcludeList,
     setAssist,
     setHardExclude,
     setAllowDuplicate,
+    setYoutubeOnly,
     removeFilters,
   } = useBAStore();
 
@@ -204,6 +206,15 @@ const RaidSearch = ({ season, studentsMap }: RaidSearchProps) => {
         >
           조력자 포함 중복 허용
         </Checkbox>
+        <br />
+        <Checkbox
+          style={{ margin: 2 }}
+          onChange={(e) => setYoutubeOnly(e.target.checked)}
+          checked={YoutubeOnly}
+          value={YoutubeOnly}
+        >
+          Youtube 링크 (beta)
+        </Checkbox>
       </>
     );
   };
@@ -231,12 +242,14 @@ const RaidSearch = ({ season, studentsMap }: RaidSearchProps) => {
         total={
           filteredPartys(
             data,
+            youtubeLinkInfos,
             IncludeList,
             ExcludeList,
             Assist,
             PartyCountRange,
             HardExclude,
-            AllowDuplicate
+            AllowDuplicate,
+            YoutubeOnly
           ).length
         }
         align="center"
@@ -258,12 +271,14 @@ const RaidSearch = ({ season, studentsMap }: RaidSearchProps) => {
       >
         {filteredPartys(
           data,
+          youtubeLinkInfos,
           IncludeList,
           ExcludeList,
           Assist,
           PartyCountRange,
           HardExclude,
-          AllowDuplicate
+          AllowDuplicate,
+          YoutubeOnly
         )
           .filter(
             (_, idx) => idx >= (Page - 1) * PageSize && idx < Page * PageSize
