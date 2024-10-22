@@ -34,16 +34,19 @@ export const filteredPartys = (
   const rawPartys = data.parties;
   return rawPartys.filter((party) => {
     const students = Object.values(party.PARTY_DATA).flat();
-    const partyFiltered = students.map((num) => Math.floor(num / 10));
-    const codeFiltered = students.map((num) => Math.floor(num / 1000));
+    const codes = students.map((num) => Math.floor(num / 1000));
+    const detailedCodes = students.map((num) => Math.floor(num / 10));
+    const overallIncludeArray = includeArray.filter((arr) => arr.length === 1).map((arr) => arr[0]); 
+    const detailedIncludeArray = includeArray.filter((arr) => arr.length === 2).map(getNumber);
     const partyAssist = students.find((num) => num % 10 === 1) || null;
     const youtubeUserIds = youtubeLinkInfos
       .map((info) => info.userId);
 
     return (
-      includeArray.every((arr) => partyFiltered.includes(getNumber(arr))) &&
-      !excludeArray.some((num) => codeFiltered.includes(num)) &&
-      (!assist || partyAssist === getNumber(assist)*10+1) &&
+      overallIncludeArray.every((arr) => codes.includes(arr)) &&
+      detailedIncludeArray.every((arr) => detailedCodes.includes(arr)) &&
+      !excludeArray.some((num) => codes.includes(num)) &&
+      (!assist || partyAssist === getNumber(assist) * 10 + 1) &&
       Object.keys(party.PARTY_DATA).length >= partyCountRange[0] &&
       Object.keys(party.PARTY_DATA).length <= partyCountRange[1] &&
       !(
@@ -51,7 +54,7 @@ export const filteredPartys = (
         (!partyAssist || excludeArray.includes(Math.floor(partyAssist / 100)))
       ) && // 옵션 비활성화 or 제외할 캐릭터에 조건자가 들어가야 false
       (allowDuplicate ||
-        Array.from(new Set(partyFiltered)).length === partyFiltered.length) &&
+        Array.from(new Set(codes)).length === codes.length) &&
       (youtubeOnly ? youtubeUserIds.includes(party.USER_ID) : !youtubeOnly)
     );
   });
