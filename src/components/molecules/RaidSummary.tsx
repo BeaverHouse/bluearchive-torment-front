@@ -7,12 +7,6 @@ import Swal from "sweetalert2";
 
 const { Text, Title } = Typography;
 
-interface RaidSearchProps {
-  studentsMap: Record<string, string>;
-  season: string;
-  seasonDescription: string;
-}
-
 const strikerStyle: React.CSSProperties = {
   backgroundColor: "#ffffeb",
   width: "17%",
@@ -29,7 +23,7 @@ const RaidSummary = ({
   season,
   seasonDescription,
   studentsMap,
-}: RaidSearchProps) => {
+}: RaidConmponentProps) => {
   const [Character, setCharacter] = useState<number | null>(null);
 
   const getSummaryDataQuery = useQuery({

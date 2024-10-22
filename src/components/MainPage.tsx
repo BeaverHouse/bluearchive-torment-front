@@ -58,7 +58,13 @@ function MainPage() {
     {
       key: "search",
       label: "파티 찾기",
-      children: <RaidSearch studentsMap={studentsMap} season={season} />,
+      children: (
+        <RaidSearch
+          season={season}
+          seasonDescription={seasonDescription}
+          studentsMap={studentsMap}
+        />
+      ),
     },
     {
       key: "summary",
@@ -119,7 +125,12 @@ function MainPage() {
         </Button>
       </div>
       <br />
-      <Tabs defaultActiveKey="search" items={items} centered style={{ width: "98%", maxWidth: 1000 }} />
+      <Tabs
+        defaultActiveKey="search"
+        items={items}
+        centered
+        style={{ width: "98%", maxWidth: 1000 }}
+      />
     </div>
   );
 }
