@@ -367,7 +367,7 @@ const RaidSummary = ({
         </Card>
       )}
       <Title level={4}>공략 영상</Title>
-      {youtubeLinkInfos.map((linkInfo, idx) => (
+      {youtubeLinkInfos.slice(0, 10).map((linkInfo, idx) => (
         <div className="video-responsive" key={idx}>
           <iframe
             width="853"
