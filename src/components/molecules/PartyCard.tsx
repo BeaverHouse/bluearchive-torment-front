@@ -10,6 +10,7 @@ interface PartyCardProps {
   data: PartyData;
   season: string;
   studentsMap: Record<string, string>;
+  seasonDescription: string;
   linkInfos: YoutubeLinkInfo[];
 }
 
@@ -28,6 +29,7 @@ const specialStyle: React.CSSProperties = {
 const PartyCard: React.FC<PartyCardProps> = ({
   data,
   studentsMap,
+  seasonDescription,
   linkInfos,
   season,
 }) => {
@@ -58,7 +60,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
         </Button>
       )}
       {(linkInfos.length <= 0 || linkInfos[0].score === 0) && (
-        <YoutubeReportModal data={data} season={season} />
+        <YoutubeReportModal data={data} season={season} seasonDescription={seasonDescription} />
       )}
     </div>
   );

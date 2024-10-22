@@ -35,29 +35,32 @@ export const filteredPartys = (
   return rawPartys.filter((party) => {
     const students = Object.values(party.PARTY_DATA).flat();
     const codes = students.map((num) => Math.floor(num / 1000));
-    const detailedCodes = students.map((num) => Math.floor(num / 10));
-    const overallIncludeArray = includeArray.filter((arr) => arr.length === 1).map((arr) => arr[0]); 
-    const detailedIncludeArray = includeArray.filter((arr) => arr.length === 2).map(getNumber);
+    const pureStudents = students.filter((num) => num % 10 !== 1);
     const partyAssist = students.find((num) => num % 10 === 1) || null;
-    const youtubeUserIds = youtubeLinkInfos
-      .map((info) => info.userId);
+    const youtubeUserIds = youtubeLinkInfos.map((info) => info.userId);
 
     return (
-      overallIncludeArray.every((arr) => codes.includes(arr)) &&
-      detailedIncludeArray.every((arr) => detailedCodes.includes(arr)) &&
-      !excludeArray.some((num) => codes.includes(num)) &&
+      includeArray.every((arr) => students.some((num) => isInFilter(arr, num))) &&
+      // 포함 캐릭터에 대해서는 목록에 모두 있어야 함
+      !excludeArray.some((exclude) => (hardExclude ? students : pureStudents).some((num) => isInFilter([exclude], num))) &&
+      // 제외 캐릭터에 대해서는 아예 없어야 함 (조력자까지 제외하냐 여부)
       (!assist || partyAssist === getNumber(assist) * 10 + 1) &&
       Object.keys(party.PARTY_DATA).length >= partyCountRange[0] &&
       Object.keys(party.PARTY_DATA).length <= partyCountRange[1] &&
-      !(
-        hardExclude &&
-        (!partyAssist || excludeArray.includes(Math.floor(partyAssist / 100)))
-      ) && // 옵션 비활성화 or 제외할 캐릭터에 조건자가 들어가야 false
-      (allowDuplicate ||
-        Array.from(new Set(codes)).length === codes.length) &&
+      (allowDuplicate || Array.from(new Set(codes)).length === codes.length) &&
       (youtubeOnly ? youtubeUserIds.includes(party.USER_ID) : !youtubeOnly)
     );
   });
 };
 
 const getNumber = (arr: number[]) => arr[0] * 100 + arr[1];
+
+const isInFilter = (arr: number[], num: number) => {
+  if (arr.length === 2) {
+    return arr[0] * 100 + arr[1] === Math.floor(num / 10);
+  } else if (arr.length === 1) {
+    return arr[0] === Math.floor(num / 1000);
+  } else {
+    return false;
+  }
+};

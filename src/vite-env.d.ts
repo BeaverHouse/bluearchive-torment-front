@@ -36,6 +36,12 @@ interface RaidSummaryData {
   top5_partys: [string, number][];
 }
 
+interface RaidConmponentProps {
+  studentsMap: Record<string, string>;
+  season: string;
+  seasonDescription: string;
+}
+
 // Ant Design
 
 interface Option {

@@ -16,12 +16,7 @@ import PartyCard from "./PartyCard";
 
 const { Text } = Typography;
 
-interface RaidSearchProps {
-  studentsMap: Record<string, string>;
-  season: string;
-}
-
-const RaidSearch = ({ season, studentsMap }: RaidSearchProps) => {
+const RaidSearch = ({ season, studentsMap, seasonDescription }: RaidConmponentProps) => {
   const [PartyCountRange, setPartyCountRange] = useState([0, 99]);
   const [Page, setPage] = useState(1);
   const [PageSize, setPageSize] = useState(10);
@@ -289,9 +284,11 @@ const RaidSearch = ({ season, studentsMap }: RaidSearchProps) => {
               key={idx}
               data={party}
               season={season}
+              seasonDescription={seasonDescription}
               studentsMap={studentsMap}
-              linkInfos={youtubeLinkInfos
-                .filter((link) => link.userId === party.USER_ID)}
+              linkInfos={youtubeLinkInfos.filter(
+                (link) => link.userId === party.USER_ID
+              )}
             />
           ))}
       </div>

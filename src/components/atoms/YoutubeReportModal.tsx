@@ -3,20 +3,27 @@ import { Button, InputNumber, Modal, Space } from "antd";
 import Input from "antd/es/input/Input";
 import Swal from "sweetalert2";
 import VideoCameraAddOutlined from "@ant-design/icons/lib/icons/VideoCameraAddOutlined";
+import { translations } from "../constants";
 
 interface YoutubeReportModalProps {
   data: PartyData;
   season: string;
+  seasonDescription: string;
 }
 
 const YoutubeReportModal: React.FC<YoutubeReportModalProps> = ({
   data,
   season,
+  seasonDescription,
 }) => {
   const [open, setOpen] = useState(false);
   const [link, setLink] = useState("");
   const [score, setScore] = useState<number | null>();
   const [description, setDescription] = useState("");
+
+  const keywords = Object.keys(translations)
+    .filter((key) => seasonDescription.includes(key))
+    .map((key) => translations[key]);
 
   const showModal = () => {
     setOpen(true);
@@ -77,6 +84,17 @@ const YoutubeReportModal: React.FC<YoutubeReportModalProps> = ({
           </>
         )}
       >
+        <Input
+          style={{ width: 300, marginBottom: 10 }}
+          variant="filled"
+          onClick={() => {
+            window.navigator.clipboard.writeText(
+              keywords.join(" ") + ` TORMENT ${data.SCORE}`
+            );
+            Swal.fire("복사되었습니다!");
+          }}
+          value={keywords.join(" ") + ` TORMENT ${data.SCORE}`}
+        />
         <div>1. 영상 링크 입력</div>
         <ul>
           <li>
