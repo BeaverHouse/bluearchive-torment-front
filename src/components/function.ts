@@ -40,8 +40,8 @@ export const filteredPartys = (
     const youtubeUserIds = youtubeLinkInfos.map((info) => info.userId);
 
     return (
-      includeArray.every((arr) => students.some((num) => isInFilter(arr, num))) &&
-      // 포함 캐릭터에 대해서는 목록에 모두 있어야 함
+      includeArray.every((arr) => pureStudents.some((num) => isInFilter(arr, num))) &&
+      // 포함 캐릭터에 대해서는 본인 캐릭터 목록에 모두 있어야 함
       !excludeArray.some((exclude) => (hardExclude ? students : pureStudents).some((num) => isInFilter([exclude], num))) &&
       // 제외 캐릭터에 대해서는 아예 없어야 함 (조력자까지 제외하냐 여부)
       (!assist || partyAssist === getNumber(assist) * 10 + 1) &&
