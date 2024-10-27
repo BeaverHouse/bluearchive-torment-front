@@ -1,9 +1,12 @@
 import React, { useState } from "react";
-import { Button, InputNumber, Modal, Space } from "antd";
 import Input from "antd/es/input/Input";
 import Swal from "sweetalert2";
 import VideoCameraAddOutlined from "@ant-design/icons/lib/icons/VideoCameraAddOutlined";
 import { translations } from "../constants";
+import Space from "antd/es/space";
+import Button from "antd/es/button";
+import Modal from "antd/es/modal";
+import InputNumber from "antd/es/input-number";
 
 interface YoutubeReportModalProps {
   data: PartyData;

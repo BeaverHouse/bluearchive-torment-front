@@ -42,6 +42,12 @@ interface RaidConmponentProps {
   seasonDescription: string;
 }
 
+interface AnnouncementData {
+  announceContentCode: number;
+  koreanDescription: string;
+  title: string;
+}
+
 // Ant Design
 
 interface Option {

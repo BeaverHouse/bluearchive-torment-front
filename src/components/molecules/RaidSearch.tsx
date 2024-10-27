@@ -1,22 +1,26 @@
-import {
-  Select,
-  Slider,
-  Pagination,
-  Button,
-  Checkbox,
-  Typography,
-  Collapse,
-  Cascader,
-} from "antd";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import useBAStore from "../../useV3Store";
 import { filteredPartys, getFilters } from "../function";
 import PartyCard from "./PartyCard";
+import Typography from "antd/es/typography";
+import Button from "antd/es/button";
+import Slider from "antd/es/slider";
+import Cascader from "antd/es/cascader";
+import Select from "antd/es/select";
+import Checkbox from "antd/es/checkbox";
+import Collapse from "antd/es/collapse";
+import Pagination from "antd/es/pagination";
+import Empty from "antd/es/empty";
+import Spin from "antd/es/spin";
 
 const { Text } = Typography;
 
-const RaidSearch = ({ season, studentsMap, seasonDescription }: RaidConmponentProps) => {
+const RaidSearch = ({
+  season,
+  studentsMap,
+  seasonDescription,
+}: RaidConmponentProps) => {
   const [PartyCountRange, setPartyCountRange] = useState([0, 99]);
   const [Page, setPage] = useState(1);
   const [PageSize, setPageSize] = useState(10);
@@ -79,7 +83,7 @@ const RaidSearch = ({ season, studentsMap, seasonDescription }: RaidConmponentPr
   });
 
   if (getPartyDataQuery.isLoading || getLinksQuery.isLoading)
-    return <div>Loading...</div>;
+    return <Spin spinning={true} fullscreen/>;
 
   const data = getPartyDataQuery.data as RaidData;
   const youtubeLinkInfos: YoutubeLinkInfo[] = getLinksQuery.data;
@@ -215,6 +219,18 @@ const RaidSearch = ({ season, studentsMap, seasonDescription }: RaidConmponentPr
     );
   };
 
+  const parties = filteredPartys(
+    data,
+    youtubeLinkInfos,
+    IncludeList,
+    ExcludeList,
+    Assist,
+    PartyCountRange,
+    HardExclude,
+    AllowDuplicate,
+    YoutubeOnly
+  );
+
   return (
     <>
       <Collapse
@@ -235,19 +251,7 @@ const RaidSearch = ({ season, studentsMap, seasonDescription }: RaidConmponentPr
         ]}
       />
       <Pagination
-        total={
-          filteredPartys(
-            data,
-            youtubeLinkInfos,
-            IncludeList,
-            ExcludeList,
-            Assist,
-            PartyCountRange,
-            HardExclude,
-            AllowDuplicate,
-            YoutubeOnly
-          ).length
-        }
+        total={parties.length}
         align="center"
         current={Page}
         onChange={setPage}
@@ -265,32 +269,30 @@ const RaidSearch = ({ season, studentsMap, seasonDescription }: RaidConmponentPr
           overflowX: "auto",
         }}
       >
-        {filteredPartys(
-          data,
-          youtubeLinkInfos,
-          IncludeList,
-          ExcludeList,
-          Assist,
-          PartyCountRange,
-          HardExclude,
-          AllowDuplicate,
-          YoutubeOnly
-        )
-          .filter(
-            (_, idx) => idx >= (Page - 1) * PageSize && idx < Page * PageSize
-          )
-          .map((party, idx) => (
-            <PartyCard
-              key={idx}
-              data={party}
-              season={season}
-              seasonDescription={seasonDescription}
-              studentsMap={studentsMap}
-              linkInfos={youtubeLinkInfos.filter(
-                (link) => link.userId === party.USER_ID
-              )}
-            />
-          ))}
+        {parties.length > 0 ? (
+          parties
+            .filter(
+              (_, idx) => idx >= (Page - 1) * PageSize && idx < Page * PageSize
+            )
+            .map((party, idx) => (
+              <PartyCard
+                key={idx}
+                data={party}
+                season={season}
+                seasonDescription={seasonDescription}
+                studentsMap={studentsMap}
+                linkInfos={youtubeLinkInfos.filter(
+                  (link) => link.userId === party.USER_ID
+                )}
+              />
+            ))
+        ) : (
+          <Empty
+            image={<img src="empty.webp" alt="Empty" />}
+            imageStyle={{ height: 200 }}
+            description="검색 결과가 없어요."
+          />
+        )}
       </div>
     </>
   );
