@@ -7,6 +7,7 @@ import {
   Typography,
   Collapse,
   Cascader,
+  Empty,
 } from "antd";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -16,7 +17,11 @@ import PartyCard from "./PartyCard";
 
 const { Text } = Typography;
 
-const RaidSearch = ({ season, studentsMap, seasonDescription }: RaidConmponentProps) => {
+const RaidSearch = ({
+  season,
+  studentsMap,
+  seasonDescription,
+}: RaidConmponentProps) => {
   const [PartyCountRange, setPartyCountRange] = useState([0, 99]);
   const [Page, setPage] = useState(1);
   const [PageSize, setPageSize] = useState(10);
@@ -215,6 +220,18 @@ const RaidSearch = ({ season, studentsMap, seasonDescription }: RaidConmponentPr
     );
   };
 
+  const parties = filteredPartys(
+    data,
+    youtubeLinkInfos,
+    IncludeList,
+    ExcludeList,
+    Assist,
+    PartyCountRange,
+    HardExclude,
+    AllowDuplicate,
+    YoutubeOnly
+  );
+
   return (
     <>
       <Collapse
@@ -235,19 +252,7 @@ const RaidSearch = ({ season, studentsMap, seasonDescription }: RaidConmponentPr
         ]}
       />
       <Pagination
-        total={
-          filteredPartys(
-            data,
-            youtubeLinkInfos,
-            IncludeList,
-            ExcludeList,
-            Assist,
-            PartyCountRange,
-            HardExclude,
-            AllowDuplicate,
-            YoutubeOnly
-          ).length
-        }
+        total={parties.length}
         align="center"
         current={Page}
         onChange={setPage}
@@ -265,32 +270,30 @@ const RaidSearch = ({ season, studentsMap, seasonDescription }: RaidConmponentPr
           overflowX: "auto",
         }}
       >
-        {filteredPartys(
-          data,
-          youtubeLinkInfos,
-          IncludeList,
-          ExcludeList,
-          Assist,
-          PartyCountRange,
-          HardExclude,
-          AllowDuplicate,
-          YoutubeOnly
-        )
-          .filter(
-            (_, idx) => idx >= (Page - 1) * PageSize && idx < Page * PageSize
-          )
-          .map((party, idx) => (
-            <PartyCard
-              key={idx}
-              data={party}
-              season={season}
-              seasonDescription={seasonDescription}
-              studentsMap={studentsMap}
-              linkInfos={youtubeLinkInfos.filter(
-                (link) => link.userId === party.USER_ID
-              )}
-            />
-          ))}
+        {parties.length > 0 ? (
+          parties
+            .filter(
+              (_, idx) => idx >= (Page - 1) * PageSize && idx < Page * PageSize
+            )
+            .map((party, idx) => (
+              <PartyCard
+                key={idx}
+                data={party}
+                season={season}
+                seasonDescription={seasonDescription}
+                studentsMap={studentsMap}
+                linkInfos={youtubeLinkInfos.filter(
+                  (link) => link.userId === party.USER_ID
+                )}
+              />
+            ))
+        ) : (
+          <Empty
+            image={<img src="empty.webp" alt="Empty" />}
+            imageStyle={{ height: 200 }}
+            description="검색 결과가 없어요."
+          />
+        )}
       </div>
     </>
   );
