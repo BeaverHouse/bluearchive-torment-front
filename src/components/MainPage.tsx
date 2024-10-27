@@ -3,7 +3,7 @@ import useBAStore from "../useV3Store";
 import { useQuery } from "@tanstack/react-query";
 import RaidSearch from "./molecules/RaidSearch";
 import RaidSummary from "./molecules/RaidSummary";
-import InfoModal from "./atoms/InfoFAB";
+import InfoFAB from "./atoms/InfoFAB";
 
 const { Title } = Typography;
 
@@ -93,7 +93,7 @@ function MainPage() {
       }}
     >
       <Title level={3}>Blue Archive Torment </Title>
-      <InfoModal />
+      <InfoFAB />
 
       <div
         style={{
