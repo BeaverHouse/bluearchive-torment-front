@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import RaidSearch from "./molecules/RaidSearch";
 import RaidSummary from "./molecules/RaidSummary";
 import InfoFAB from "./atoms/InfoFAB";
+import NormalAnnounce from "./atoms/NormalAnnounce";
 
 const { Title } = Typography;
 
@@ -93,6 +94,7 @@ function MainPage() {
       }}
     >
       <Title level={3}>Blue Archive Torment </Title>
+      <NormalAnnounce />
       <InfoFAB />
 
       <div

@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import MainPage from "./components/MainPage";
+import ErrorPage from "./components/ErrorPage";
 
 function App() {
   const queryClient = new QueryClient({
@@ -18,7 +19,7 @@ function App() {
         {
           path: "/",
           element: <MainPage />,
-          errorElement: <div>error</div>,
+          errorElement: <ErrorPage />,
         },
       ],
     },
