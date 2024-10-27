@@ -9,6 +9,7 @@ import Card from "antd/es/card";
 import Col from "antd/es/col";
 import Row from "antd/es/row";
 import Select from "antd/es/select";
+import Spin from "antd/es/spin";
 
 const { Text, Title } = Typography;
 
@@ -67,7 +68,7 @@ const RaidSummary = ({
     .map((key) => translations[key]);
 
   if (getSummaryDataQuery.isLoading || getLinksQuery.isLoading)
-    return <div>Loading...</div>;
+    return <Spin spinning={true} fullscreen/>;
 
   const data = getSummaryDataQuery.data as RaidSummaryData;
   const youtubeLinkInfos: YoutubeLinkInfo[] = (

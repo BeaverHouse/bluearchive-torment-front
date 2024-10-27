@@ -8,6 +8,7 @@ import Typography from "antd/es/typography";
 import Tabs, { TabsProps } from "antd/es/tabs";
 import Select from "antd/es/select";
 import Button from "antd/es/button";
+import Spin from "antd/es/spin";
 
 const { Title } = Typography;
 
@@ -41,7 +42,7 @@ function MainPage() {
   });
 
   if (studentsQuery.isLoading || raidsQuery.isLoading) {
-    return <div>로딩중...</div>;
+    return <Spin spinning={true} fullscreen/>;
   }
 
   const studentsMap = studentsQuery.data as Record<string, string>;

@@ -12,6 +12,7 @@ import Checkbox from "antd/es/checkbox";
 import Collapse from "antd/es/collapse";
 import Pagination from "antd/es/pagination";
 import Empty from "antd/es/empty";
+import Spin from "antd/es/spin";
 
 const { Text } = Typography;
 
@@ -82,7 +83,7 @@ const RaidSearch = ({
   });
 
   if (getPartyDataQuery.isLoading || getLinksQuery.isLoading)
-    return <div>Loading...</div>;
+    return <Spin spinning={true} fullscreen/>;
 
   const data = getPartyDataQuery.data as RaidData;
   const youtubeLinkInfos: YoutubeLinkInfo[] = getLinksQuery.data;
