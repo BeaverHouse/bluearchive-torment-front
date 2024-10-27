@@ -28,6 +28,14 @@ function ErrorPage() {
       />
       <Button
         block
+        variant="solid"
+        onClick={() => window.location.reload()}
+        style={{ marginTop: 10, marginBottom: 10, width: 400 }}
+      >
+        새로고침
+      </Button>
+      <Button
+        block
         color="primary"
         variant="solid"
         href="mailto:haulrest@gmail.com"
