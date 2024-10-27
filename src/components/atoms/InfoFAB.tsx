@@ -1,7 +1,10 @@
 import React, { useState } from "react";
-import { Button, FloatButton, Modal, Space } from "antd";
 import InfoCircleOutlined from "@ant-design/icons/lib/icons/InfoCircleOutlined";
 import BuyMeACoffeeButton from "./Coffee";
+import FloatButton from "antd/es/float-button";
+import Modal from "antd/es/modal";
+import Button from "antd/es/button";
+import Space from "antd/es/space";
 
 const InfoFAB: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);

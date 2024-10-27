@@ -1,9 +1,14 @@
-import { Typography, Card, Table, Col, Row, Select, Input } from "antd";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import type { TableProps } from "antd";
 import { basePartyCounts, categoryLabels, translations } from "../constants";
 import Swal from "sweetalert2";
+import Typography from "antd/es/typography";
+import Table, { TableProps } from "antd/es/table";
+import Input from "antd/es/input";
+import Card from "antd/es/card";
+import Col from "antd/es/col";
+import Row from "antd/es/row";
+import Select from "antd/es/select";
 
 const { Text, Title } = Typography;
 

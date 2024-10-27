@@ -1,19 +1,17 @@
-import {
-  Select,
-  Slider,
-  Pagination,
-  Button,
-  Checkbox,
-  Typography,
-  Collapse,
-  Cascader,
-  Empty,
-} from "antd";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import useBAStore from "../../useV3Store";
 import { filteredPartys, getFilters } from "../function";
 import PartyCard from "./PartyCard";
+import Typography from "antd/es/typography";
+import Button from "antd/es/button";
+import Slider from "antd/es/slider";
+import Cascader from "antd/es/cascader";
+import Select from "antd/es/select";
+import Checkbox from "antd/es/checkbox";
+import Collapse from "antd/es/collapse";
+import Pagination from "antd/es/pagination";
+import Empty from "antd/es/empty";
 
 const { Text } = Typography;
 

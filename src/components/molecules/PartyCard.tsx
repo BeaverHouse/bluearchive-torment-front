@@ -1,8 +1,12 @@
 import React from "react";
-import { Card, Collapse, Tooltip, Typography, Button } from "antd";
 import { categoryLabels } from "../constants";
 import YoutubeReportModal from "../atoms/YoutubeReportModal";
 import YoutubeOutlined from "@ant-design/icons/lib/icons/YoutubeOutlined";
+import Typography from "antd/es/typography";
+import Button from "antd/es/button";
+import Tooltip from "antd/es/tooltip";
+import Collapse from "antd/es/collapse";
+import Card from "antd/es/card";
 
 const { Text } = Typography;
 
