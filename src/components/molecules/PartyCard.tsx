@@ -48,7 +48,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
       }}
     >
       {data.TORMENT_RANK}위: {data.SCORE}점
-      {data.FINAL_RANK !== data.TORMENT_RANK
+      {data.FINAL_RANK !== data.TORMENT_RANK && data.FINAL_RANK > 0
         ? ` (최종 ${data.FINAL_RANK}위)`
         : ""}
       {linkInfos.length > 0 && (
