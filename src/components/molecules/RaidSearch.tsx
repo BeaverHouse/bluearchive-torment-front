@@ -147,10 +147,9 @@ const RaidSearch = ({
             <div>
               {menu}
               <div style={{ padding: "4px 8px" }}>
-                <sub>1. 캐릭터의 성급은 1개만 선택해주세요.</sub>
-                <br />
                 <sup>
-                  2. 성급 관계없이 보고 싶다면 왼쪽 체크박스를 사용하세요.
+                  <br/>
+                  ※ 성급 관계없이 보고 싶다면 왼쪽 체크박스를 사용하세요.
                 </sup>
               </div>
             </div>
