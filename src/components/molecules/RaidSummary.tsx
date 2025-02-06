@@ -4,7 +4,6 @@ import {
   basePartyCounts,
   categoryLabels,
   lunaticMinScore,
-  tormentMinScore,
   translations,
 } from "../constants";
 import Swal from "sweetalert2";
@@ -98,7 +97,7 @@ const RaidSummary = ({
   const youtubeLinkInfos: YoutubeLinkInfo[] = (
     getLinksQuery.data as YoutubeLinkInfo[]
   ).filter(
-    (link) => level === "T" ? (link.score >= tormentMinScore && link.score < lunaticMinScore) : (link.score >= lunaticMinScore)
+    (link) => level === "L" ? (link.score >= lunaticMinScore) : (link.score > 0 && link.score < lunaticMinScore)
   );
 
 
