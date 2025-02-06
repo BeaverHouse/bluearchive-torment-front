@@ -3,6 +3,7 @@
 interface RaidInfo {
   id: string;
   description: string;
+  top_level: string;
 }
 
 interface YoutubeLinkInfo {

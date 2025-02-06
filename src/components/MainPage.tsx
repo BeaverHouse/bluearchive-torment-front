@@ -42,13 +42,14 @@ function MainPage() {
   });
 
   if (studentsQuery.isLoading || raidsQuery.isLoading) {
-    return <Spin spinning={true} fullscreen/>;
+    return <Spin spinning={true} fullscreen />;
   }
 
   const studentsMap = studentsQuery.data as Record<string, string>;
   const raidInfos = (raidsQuery.data as RaidInfo[]).map((raid) => ({
     value: raid.id,
     label: raid.description,
+    topLevel: raid.top_level,
   }));
 
   const season = raidInfos.map((raid) => raid.value).includes(V3Season)
@@ -58,6 +59,10 @@ function MainPage() {
   const seasonDescription = raidInfos.find(
     (raid) => raid.value === season
   )!.label;
+
+  const seasonTopLevel = raidInfos.find(
+    (raid) => raid.value === season
+  )!.topLevel;
 
   const items: TabsProps["items"] = [
     {
@@ -73,31 +78,32 @@ function MainPage() {
       ),
     },
     {
-
-      key: "summary-torment",
-      label: "요약 (토먼트)",
+      key: "summary",
+      label: "요약",
       children: (
         <RaidSummary
           season={season}
           seasonDescription={seasonDescription}
           studentsMap={studentsMap}
-          level="T"
+          level={seasonTopLevel === "L" ? "T" : seasonTopLevel}
         />
       ),
     },
-    {
-      key: "summary-lunatic",
-      label: "요약 (루나틱)",
-      children: (
-        <RaidSummary
-          season={season}
-          seasonDescription={seasonDescription}
-          studentsMap={studentsMap}
-          level="L"
-        />
-      ),
-    },
-  ];
+    seasonTopLevel === "L"
+      ? {
+          key: "summary-lunatic",
+          label: "요약 (루나틱)",
+          children: (
+            <RaidSummary
+              season={season}
+              seasonDescription={seasonDescription}
+              studentsMap={studentsMap}
+              level="L"
+            />
+          ),
+        }
+      : null,
+  ].filter((item) => item !== null);
 
   return (
     <div
