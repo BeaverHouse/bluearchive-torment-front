@@ -78,9 +78,8 @@ function MainPage() {
       ),
     },
     {
-
-      key: "summary-torment",
-      label: "요약 (토먼트)",
+      key: "summary",
+      label: "요약",
       children: (
         <RaidSummary
           season={season}
