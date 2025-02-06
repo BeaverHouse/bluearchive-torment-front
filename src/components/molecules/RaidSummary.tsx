@@ -93,7 +93,7 @@ const RaidSummary = ({
   }
 
   const searchKeyword =
-    keywords.join(" ") + " " + (level === "T" ? "TORMENT" : "LUNATIC");
+    (keywords.join(" ") + " " + (level === "T" ? "TORMENT" : (level === "L" ? "LUNATIC" : ""))).trim();
 
   const youtubeLinkInfos: YoutubeLinkInfo[] = (
     getLinksQuery.data as YoutubeLinkInfo[]
