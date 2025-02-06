@@ -289,7 +289,6 @@ const RaidSummary = ({
         %)
         <br />
         {level === "T" &&
-
           lunaticData.clear_count > 0 &&
           `(루나틱: ${lunaticClearPercent.toFixed(
             2
