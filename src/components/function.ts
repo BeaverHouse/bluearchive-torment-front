@@ -66,7 +66,7 @@ const isInFilter = (arr: number[], num: number) => {
 };
 
 const includeAll = (students: number[], includeArray: Array<number[]>) => {
-  const sortedIncludeArray = includeArray.sort((a, b) => a[0] - b[0]);
+  const sortedIncludeArray = [...includeArray].sort((a, b) => a[0] - b[0]);
   let lastChecked = -1;
   for (let i = 0; i < sortedIncludeArray.length; i++) {
     if (students.some((num) => isInFilter(sortedIncludeArray[i], num))) {
