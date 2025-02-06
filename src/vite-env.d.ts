@@ -15,6 +15,7 @@ interface YoutubeLinkInfo {
 interface PartyData {
   USER_ID: number;
   SCORE: number;
+  LEVEL: string;
   TORMENT_RANK: number;
   FINAL_RANK: number;
   PARTY_DATA: Record<string, number[]>;
@@ -40,6 +41,7 @@ interface RaidConmponentProps {
   studentsMap: Record<string, string>;
   season: string;
   seasonDescription: string;
+  level: string;
 }
 
 interface AnnouncementData {

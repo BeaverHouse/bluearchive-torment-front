@@ -23,6 +23,7 @@ export const getFilters = (
 export const filteredPartys = (
   data: RaidData,
   youtubeLinkInfos: YoutubeLinkInfo[],
+  levelList: string[],
   includeArray: Array<number[]>,
   excludeArray: Array<number>,
   assist: Array<number> | undefined,
@@ -40,6 +41,7 @@ export const filteredPartys = (
     const youtubeUserIds = youtubeLinkInfos.map((info) => info.userId);
 
     return (
+      levelList.includes(party.LEVEL) &&
       includeAll(pureStudents, includeArray) &&
       // 포함 캐릭터에 대해서는 본인 캐릭터 목록에 모두 있어야 함
       !excludeArray.some((exclude) => (hardExclude ? students : pureStudents).some((num) => isInFilter([exclude], num))) &&

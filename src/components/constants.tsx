@@ -32,3 +32,6 @@ export const translations: Record<string, string> = {
 export const basePartyCounts: number[] = [
   100, 200, 500, 1000, 2000, 5000, 10000, 20000,
 ];
+
+export const tormentMinScore = 31076000;
+export const lunaticMinScore = 44000000;

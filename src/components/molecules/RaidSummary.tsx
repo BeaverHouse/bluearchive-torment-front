@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { basePartyCounts, categoryLabels, translations } from "../constants";
+import {
+  basePartyCounts,
+  categoryLabels,
+  lunaticMinScore,
+  tormentMinScore,
+  translations,
+} from "../constants";
 import Swal from "sweetalert2";
 import Typography from "antd/es/typography";
 import Table, { TableProps } from "antd/es/table";
@@ -10,6 +16,7 @@ import Col from "antd/es/col";
 import Row from "antd/es/row";
 import Select from "antd/es/select";
 import Spin from "antd/es/spin";
+import Empty from "antd/es/empty";
 
 const { Text, Title } = Typography;
 
@@ -29,6 +36,7 @@ const RaidSummary = ({
   season,
   seasonDescription,
   studentsMap,
+  level,
 }: RaidConmponentProps) => {
   const [Character, setCharacter] = useState<number | null>(null);
 
@@ -36,7 +44,7 @@ const RaidSummary = ({
     queryKey: ["getSummaryData", season],
     queryFn: async () => {
       const res = await fetch(
-        `${import.meta.env.VITE_CDN_URL}/o/batorment/summary/${season}.json`
+        `${import.meta.env.VITE_CDN_URL}/o/batorment/v2/summary/${season}.json`
       );
       return res.json();
     },
@@ -68,12 +76,31 @@ const RaidSummary = ({
     .map((key) => translations[key]);
 
   if (getSummaryDataQuery.isLoading || getLinksQuery.isLoading)
-    return <Spin spinning={true} fullscreen/>;
+    return <Spin spinning={true} fullscreen />;
 
-  const data = getSummaryDataQuery.data as RaidSummaryData;
+  const tormentData = getSummaryDataQuery.data.torment as RaidSummaryData;
+  const lunaticData = getSummaryDataQuery.data.lunatic as RaidSummaryData;
+  const data = level === "T" ? tormentData : lunaticData;
+
+  if (data.clear_count === 0) {
+    return (
+      <Empty
+        image={<img src="empty.webp" alt="Empty" />}
+        imageStyle={{ height: 200 }}
+        description="클리어 데이터가 없어요."
+      />
+    );
+  }
+
+  const searchKeyword =
+    keywords.join(" ") + " " + (level === "T" ? "TORMENT" : "LUNATIC");
+
   const youtubeLinkInfos: YoutubeLinkInfo[] = (
     getLinksQuery.data as YoutubeLinkInfo[]
-  ).filter((link) => link.score > 0);
+  ).filter(
+    (link) => level === "T" ? (link.score >= tormentMinScore && link.score < lunaticMinScore) : (link.score >= lunaticMinScore)
+  );
+
 
   const CharIcon = (char_code: number) => {
     if (char_code === 0) return;
@@ -216,7 +243,9 @@ const RaidSummary = ({
   ];
 
   const partyCountData: PartyTableType[] = [
-    ...basePartyCounts.filter((count) => count < data.clear_count),
+    ...basePartyCounts.filter(
+      (count) => count < data.clear_count && `in${count}` in data.party_counts
+    ),
     data.clear_count,
   ].map((count) => ({
     key: `in ${count}`,
@@ -234,7 +263,12 @@ const RaidSummary = ({
     ),
   }));
 
-  const tormentPercent = Number(data.clear_count / 20000) * 100;
+  const tormentClearPercent = Number(tormentData.clear_count / 20000) * 100;
+  const lunaticClearPercent = Number(lunaticData.clear_count / 20000) * 100;
+  const clearPercent =
+    level === "T"
+      ? tormentClearPercent + lunaticClearPercent
+      : lunaticClearPercent;
 
   return (
     <>
@@ -244,14 +278,21 @@ const RaidSummary = ({
         style={{ width: 300, margin: 5 }}
         variant="filled"
         onClick={() => {
-          window.navigator.clipboard.writeText(keywords.join(" ") + " TORMENT");
+          window.navigator.clipboard.writeText(searchKeyword);
           Swal.fire("복사되었습니다!");
         }}
-        value={keywords.join(" ") + " TORMENT"}
+        value={searchKeyword}
       />
-      <Title level={4} style={{ color: tormentPercent > 50 ? "red" : "" }}>
-        Platinum 토먼트 클리어: {data.clear_count} ({tormentPercent.toFixed(2)}
+      <Title level={4} style={{ color: clearPercent > 50 ? "red" : "" }}>
+        Platinum 클리어 비율: {data.clear_count} (
+        {(level === "T" ? tormentClearPercent : lunaticClearPercent).toFixed(2)}
         %)
+        <br />
+        {level === "T" &&
+          lunaticData.clear_count > 0 &&
+          `(루나틱: ${lunaticClearPercent.toFixed(
+            2
+          )}%, 총합 ${clearPercent.toFixed(2)}%)`}
       </Title>
       <Title level={4}>Top 5 파티</Title>
       <Text strong>※ 전용무기와 배치는 고려하지 않았습니다.</Text>

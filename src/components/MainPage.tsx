@@ -31,7 +31,7 @@ function MainPage() {
   const raidsQuery = useQuery({
     queryKey: ["getRaids"],
     queryFn: async () => {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/raids`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/v2/raids`, {
         headers: {
           "Access-Control-Allow-Origin": "*",
         },
@@ -68,17 +68,32 @@ function MainPage() {
           season={season}
           seasonDescription={seasonDescription}
           studentsMap={studentsMap}
+          level="NOUSE"
         />
       ),
     },
     {
-      key: "summary",
-      label: "요약",
+
+      key: "summary-torment",
+      label: "요약 (토먼트)",
       children: (
         <RaidSummary
           season={season}
           seasonDescription={seasonDescription}
           studentsMap={studentsMap}
+          level="T"
+        />
+      ),
+    },
+    {
+      key: "summary-lunatic",
+      label: "요약 (루나틱)",
+      children: (
+        <RaidSummary
+          season={season}
+          seasonDescription={seasonDescription}
+          studentsMap={studentsMap}
+          level="L"
         />
       ),
     },
