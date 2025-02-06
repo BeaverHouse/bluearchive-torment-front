@@ -27,6 +27,7 @@ export const translations: Record<string, string> = {
   호버크래프트: "ホバー",
   그레고리오: "グレゴリオ",
   쿠로카게: "クロカゲ",
+  게부라: "ゲブラ",
 };
 
 export const basePartyCounts: number[] = [
