@@ -13,6 +13,7 @@ import Collapse from "antd/es/collapse";
 import Pagination from "antd/es/pagination";
 import Empty from "antd/es/empty";
 import Spin from "antd/es/spin";
+import { lunaticMinScore, tormentMinScore } from "../constants";
 
 const { Text } = Typography;
 
@@ -91,6 +92,9 @@ const RaidSearch = ({
   const data = getPartyDataQuery.data as RaidData;
   const youtubeLinkInfos: YoutubeLinkInfo[] = getLinksQuery.data;
 
+  const topScore = data.parties[0].SCORE;
+  const levelCategoryCount = topScore > lunaticMinScore ? 3 : (topScore > tormentMinScore ? 2 : 1);
+
   const levelOptions = [
     {
       value: "I",
@@ -104,7 +108,7 @@ const RaidSearch = ({
       value: "L",
       label: "Lunatic",
     },
-  ];
+  ].slice(0, levelCategoryCount);
 
   const confirmReset = () => {
     const confirm = window.confirm("모든 캐릭터 필터가 리셋됩니다.");
