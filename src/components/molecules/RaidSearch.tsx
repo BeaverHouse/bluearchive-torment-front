@@ -13,6 +13,7 @@ import Collapse from "antd/es/collapse";
 import Pagination from "antd/es/pagination";
 import Empty from "antd/es/empty";
 import Spin from "antd/es/spin";
+import { lunaticMinScore, tormentMinScore } from "../constants";
 
 const { Text } = Typography;
 
@@ -26,12 +27,14 @@ const RaidSearch = ({
   const [PageSize, setPageSize] = useState(10);
 
   const {
+    LevelList,
     IncludeList,
     ExcludeList,
     Assist,
     HardExclude,
     AllowDuplicate,
     YoutubeOnly,
+    setLevelList,
     setIncludeList,
     setExcludeList,
     setAssist,
@@ -44,6 +47,7 @@ const RaidSearch = ({
   useEffect(() => {
     setPage(1);
   }, [
+    LevelList,
     IncludeList,
     ExcludeList,
     Assist,
@@ -59,7 +63,7 @@ const RaidSearch = ({
     queryKey: ["getPartyData", season],
     queryFn: async () => {
       const res = await fetch(
-        `${import.meta.env.VITE_CDN_URL}/o/batorment/party/${season}.json`
+        `${import.meta.env.VITE_CDN_URL}/o/batorment/v2/party/${season}.json`
       );
       return res.json();
     },
@@ -83,10 +87,28 @@ const RaidSearch = ({
   });
 
   if (getPartyDataQuery.isLoading || getLinksQuery.isLoading)
-    return <Spin spinning={true} fullscreen/>;
+    return <Spin spinning={true} fullscreen />;
 
   const data = getPartyDataQuery.data as RaidData;
   const youtubeLinkInfos: YoutubeLinkInfo[] = getLinksQuery.data;
+
+  const topScore = data.parties[0].SCORE;
+  const levelCategoryCount = topScore > lunaticMinScore ? 3 : (topScore > tormentMinScore ? 2 : 1);
+
+  const levelOptions = [
+    {
+      value: "I",
+      label: "Insane",
+    },
+    {
+      value: "T",
+      label: "Torment",
+    },
+    {
+      value: "L",
+      label: "Lunatic",
+    },
+  ].slice(0, levelCategoryCount);
 
   const confirmReset = () => {
     const confirm = window.confirm("모든 캐릭터 필터가 리셋됩니다.");
@@ -110,6 +132,14 @@ const RaidSearch = ({
           필터 Reset
         </Button>
         <br />
+        {/* 난이도 Filter */}
+        <Text style={{ marginRight: 10 }}>난이도</Text>
+        <Checkbox.Group
+          value={LevelList}
+          onChange={setLevelList}
+          options={levelOptions}
+        />
+
         {/* 파티 수 Filter */}
         <div
           style={{
@@ -147,10 +177,8 @@ const RaidSearch = ({
             <div>
               {menu}
               <div style={{ padding: "4px 8px" }}>
-                <sub>1. 캐릭터의 성급은 1개만 선택해주세요.</sub>
-                <br />
                 <sup>
-                  2. 성급 관계없이 보고 싶다면 왼쪽 체크박스를 사용하세요.
+                  <br />※ 성급 관계없이 보고 싶다면 왼쪽 체크박스를 사용하세요.
                 </sup>
               </div>
             </div>
@@ -222,6 +250,7 @@ const RaidSearch = ({
   const parties = filteredPartys(
     data,
     youtubeLinkInfos,
+    LevelList,
     IncludeList,
     ExcludeList,
     Assist,

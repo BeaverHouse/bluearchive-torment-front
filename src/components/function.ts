@@ -23,6 +23,7 @@ export const getFilters = (
 export const filteredPartys = (
   data: RaidData,
   youtubeLinkInfos: YoutubeLinkInfo[],
+  levelList: string[],
   includeArray: Array<number[]>,
   excludeArray: Array<number>,
   assist: Array<number> | undefined,
@@ -40,7 +41,8 @@ export const filteredPartys = (
     const youtubeUserIds = youtubeLinkInfos.map((info) => info.userId);
 
     return (
-      includeArray.every((arr) => pureStudents.some((num) => isInFilter(arr, num))) &&
+      levelList.includes(party.LEVEL) &&
+      includeAll(pureStudents, includeArray) &&
       // 포함 캐릭터에 대해서는 본인 캐릭터 목록에 모두 있어야 함
       !excludeArray.some((exclude) => (hardExclude ? students : pureStudents).some((num) => isInFilter([exclude], num))) &&
       // 제외 캐릭터에 대해서는 아예 없어야 함 (조력자까지 제외하냐 여부)
@@ -63,4 +65,24 @@ const isInFilter = (arr: number[], num: number) => {
   } else {
     return false;
   }
+};
+
+const includeAll = (students: number[], includeArray: Array<number[]>) => {
+  const sortedIncludeArray = [...includeArray].sort((a, b) => a[0] - b[0]);
+  let lastChecked = -1;
+  for (let i = 0; i < sortedIncludeArray.length; i++) {
+    if (students.some((num) => isInFilter(sortedIncludeArray[i], num))) {
+      lastChecked = sortedIncludeArray[i][0];
+      continue;
+    } else if (lastChecked === sortedIncludeArray[i][0]) {
+      // 다른 성급의 캐릭터가 있으므로 넘어갑니다.
+      continue;
+    } else if (i < sortedIncludeArray.length - 1 && sortedIncludeArray[i][0] === sortedIncludeArray[i + 1][0]) {
+      // 다른 성급의 캐릭터가 남았으므로 넘어갑니다.
+      continue;
+    } else {
+      return false;
+    }
+  }
+  return true;
 };
