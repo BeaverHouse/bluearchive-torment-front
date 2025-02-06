@@ -80,7 +80,7 @@ const RaidSummary = ({
 
   const tormentData = getSummaryDataQuery.data.torment as RaidSummaryData;
   const lunaticData = getSummaryDataQuery.data.lunatic as RaidSummaryData;
-  const data = level === "T" ? tormentData : lunaticData;
+  const data = level === "L" ? lunaticData : tormentData;
 
   if (data.clear_count === 0) {
     return (
@@ -93,7 +93,7 @@ const RaidSummary = ({
   }
 
   const searchKeyword =
-    keywords.join(" ") + " " + (level === "T" ? "TORMENT" : "LUNATIC");
+    (keywords.join(" ") + " " + (level === "T" ? "TORMENT" : (level === "L" ? "LUNATIC" : ""))).trim();
 
   const youtubeLinkInfos: YoutubeLinkInfo[] = (
     getLinksQuery.data as YoutubeLinkInfo[]
@@ -283,7 +283,7 @@ const RaidSummary = ({
         }}
         value={searchKeyword}
       />
-      <Title level={4} style={{ color: clearPercent > 50 ? "red" : "" }}>
+      {level !== "I" && <Title level={4} style={{ color: clearPercent > 50 ? "red" : "" }}>
         Platinum 클리어 비율: {data.clear_count} (
         {(level === "T" ? tormentClearPercent : lunaticClearPercent).toFixed(2)}
         %)
@@ -293,7 +293,7 @@ const RaidSummary = ({
           `(루나틱: ${lunaticClearPercent.toFixed(
             2
           )}%, 총합 ${clearPercent.toFixed(2)}%)`}
-      </Title>
+      </Title>}
       <Title level={4}>Top 5 파티</Title>
       <Text strong>※ 전용무기와 배치는 고려하지 않았습니다.</Text>
       <div
