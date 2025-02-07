@@ -187,7 +187,7 @@ const RaidSearch = ({
           showSearch={{ filter }}
           value={IncludeList}
           onChange={setIncludeList}
-          style={{ width: "100%", marginBottom: 15 }}
+          style={{ width: "100%", marginBottom: 15, height: 32 }}
           options={getFilters(data.filters, studentsMap)}
         />
         {/* 제외 캐릭터 Filter */}
@@ -198,7 +198,7 @@ const RaidSearch = ({
           value={ExcludeList}
           onChange={setExcludeList}
           optionFilterProp="label"
-          style={{ width: "100%" }}
+          style={{ width: "100%", height: 32 }}
           options={Object.keys(data.filters).map((key) => ({
             value: Number(key),
             label: studentsMap[key],
@@ -222,7 +222,7 @@ const RaidSearch = ({
           value={Assist}
           onChange={setAssist}
           showSearch={{ filter }}
-          style={{ width: "100%" }}
+          style={{ width: "100%", height: 32 }}
           displayRender={(label) => label[1]}
           options={getFilters(data.assist_filters, studentsMap)}
         />
