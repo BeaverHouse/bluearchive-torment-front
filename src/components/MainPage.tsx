@@ -135,11 +135,11 @@ function MainPage() {
         <Select
           value={season}
           onChange={setV3Season}
-          style={{ width: 270, margin: 5 }}
+          style={{ width: 290, margin: 3 }}
           options={raidInfos}
         />
         <Button
-          style={{ width: 270, margin: 5 }}
+          style={{ width: 250, margin: 3 }}
           href={
             season.startsWith("3S")
               ? "https://arona.ai/eraidreport"
