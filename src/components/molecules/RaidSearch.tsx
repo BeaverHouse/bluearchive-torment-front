@@ -93,7 +93,8 @@ const RaidSearch = ({
   const youtubeLinkInfos: YoutubeLinkInfo[] = getLinksQuery.data;
 
   const topScore = data.parties[0].SCORE;
-  const levelCategoryCount = topScore > lunaticMinScore ? 3 : (topScore > tormentMinScore ? 2 : 1);
+  const levelCategoryCount =
+    topScore > lunaticMinScore ? 3 : topScore > tormentMinScore ? 2 : 1;
 
   const levelOptions = [
     {
@@ -170,40 +171,53 @@ const RaidSearch = ({
         <Text>
           포함할 <b>내 캐릭터</b>
         </Text>
-        <Cascader
-          multiple
-          changeOnSelect
-          dropdownRender={(menu) => (
-            <div>
-              {menu}
-              <div style={{ padding: "4px 8px" }}>
-                <sup>
-                  <br />※ 성급 관계없이 보고 싶다면 왼쪽 체크박스를 사용하세요.
-                </sup>
+        <div
+          style={{
+            width: "100%",
+            minHeight: 32,
+            marginBottom: 15,
+            display: "flex",
+          }}
+        >
+          <Cascader
+            multiple
+            changeOnSelect
+            dropdownRender={(menu) => (
+              <div>
+                {menu}
+                <div style={{ padding: "4px 8px" }}>
+                  <sup>
+                    <br />※ 성급 관계없이 보고 싶다면 왼쪽 체크박스를
+                    사용하세요.
+                  </sup>
+                </div>
               </div>
-            </div>
-          )}
-          placeholder="캐릭터를 선택하세요"
-          showSearch={{ filter }}
-          value={IncludeList}
-          onChange={setIncludeList}
-          style={{ width: "100%", marginBottom: 15, height: 32 }}
-          options={getFilters(data.filters, studentsMap)}
-        />
+            )}
+            placeholder="캐릭터를 선택하세요"
+            showSearch={{ filter }}
+            value={IncludeList}
+            style={{ width: "100%" }}
+            onChange={setIncludeList}
+            options={getFilters(data.filters, studentsMap)}
+          />
+        </div>
         {/* 제외 캐릭터 Filter */}
         <Text>제외할 캐릭터</Text>
-        <Select
-          mode="tags"
-          placeholder="제외할 캐릭터를 선택하세요"
-          value={ExcludeList}
-          onChange={setExcludeList}
-          optionFilterProp="label"
-          style={{ width: "100%", height: 32 }}
-          options={Object.keys(data.filters).map((key) => ({
-            value: Number(key),
-            label: studentsMap[key],
-          }))}
-        />
+        <div style={{ width: "100%", minHeight: 32, display: "flex" }}>
+          <Select
+            mode="tags"
+            placeholder="제외할 캐릭터를 선택하세요"
+            value={ExcludeList}
+            allowClear={true}
+            onChange={setExcludeList}
+            optionFilterProp="label"
+            style={{ width: "100%" }}
+            options={Object.keys(data.filters).map((key) => ({
+              value: Number(key),
+              label: studentsMap[key],
+            }))}
+          />
+        </div>
         <Checkbox
           style={{ margin: 2, marginBottom: 15 }}
           onChange={(e) => setHardExclude(e.target.checked)}
