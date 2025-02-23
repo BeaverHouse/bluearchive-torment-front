@@ -202,7 +202,9 @@ const RaidSearch = ({
           />
         </div>
         {/* 제외 캐릭터 Filter */}
-        <Text>제외할 캐릭터</Text>
+        <Text>
+          제외할 <b>내 캐릭터</b>
+        </Text>
         <div style={{ width: "100%", minHeight: 32, display: "flex" }}>
           <Select
             mode="tags"
