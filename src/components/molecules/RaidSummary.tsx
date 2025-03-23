@@ -91,15 +91,19 @@ const RaidSummary = ({
     );
   }
 
-  const searchKeyword =
-    (keywords.join(" ") + " " + (level === "T" ? "TORMENT" : (level === "L" ? "LUNATIC" : ""))).trim();
+  const searchKeyword = (
+    keywords.join(" ") +
+    " " +
+    (level === "T" ? "TORMENT" : level === "L" ? "LUNATIC" : "")
+  ).trim();
 
   const youtubeLinkInfos: YoutubeLinkInfo[] = (
     getLinksQuery.data as YoutubeLinkInfo[]
-  ).filter(
-    (link) => level === "L" ? (link.score >= lunaticMinScore) : (link.score > 0 && link.score < lunaticMinScore)
+  ).filter((link) =>
+    level === "L"
+      ? link.score >= lunaticMinScore
+      : link.score > 0 && link.score < lunaticMinScore
   );
-
 
   const CharIcon = (char_code: number) => {
     if (char_code === 0) return;
@@ -242,25 +246,21 @@ const RaidSummary = ({
   ];
 
   const partyCountData: PartyTableType[] = [
-    ...basePartyCounts.filter(
+    ...[...basePartyCounts, data.clear_count].filter(
       (count) => count < data.clear_count && `in${count}` in data.party_counts
     ),
-    data.clear_count,
-  ].map((count) => ({
-    key: `in ${count}`,
-    one: Number(
-      ((data.party_counts[`in${count}`][0] / count) * 100).toFixed(2)
-    ),
-    two: Number(
-      ((data.party_counts[`in${count}`][1] / count) * 100).toFixed(2)
-    ),
-    three: Number(
-      ((data.party_counts[`in${count}`][2] / count) * 100).toFixed(2)
-    ),
-    fourOrMore: Number(
-      ((data.party_counts[`in${count}`][3] / count) * 100).toFixed(2)
-    ),
-  }));
+  ].map((count) => {
+    const key = `in${count}`;
+    return {
+      key: `in ${count}`,
+      one: Number(((data.party_counts[key][0] / count) * 100).toFixed(2)),
+      two: Number(((data.party_counts[key][1] / count) * 100).toFixed(2)),
+      three: Number(((data.party_counts[key][2] / count) * 100).toFixed(2)),
+      fourOrMore: Number(
+        ((data.party_counts[key][3] / count) * 100).toFixed(2)
+      ),
+    };
+  });
 
   const tormentClearPercent = Number(tormentData.clear_count / 20000) * 100;
   const lunaticClearPercent = Number(lunaticData.clear_count / 20000) * 100;
@@ -282,17 +282,21 @@ const RaidSummary = ({
         }}
         value={searchKeyword}
       />
-      {level !== "I" && <Title level={4} style={{ color: clearPercent > 50 ? "red" : "" }}>
-        Platinum 클리어 비율: {data.clear_count} (
-        {(level === "T" ? tormentClearPercent : lunaticClearPercent).toFixed(2)}
-        %)
-        <br />
-        {level === "T" &&
-          lunaticData.clear_count > 0 &&
-          `(루나틱: ${lunaticClearPercent.toFixed(
+      {level !== "I" && (
+        <Title level={4} style={{ color: clearPercent > 50 ? "red" : "" }}>
+          Platinum 클리어 비율: {data.clear_count} (
+          {(level === "T" ? tormentClearPercent : lunaticClearPercent).toFixed(
             2
-          )}%, 총합 ${clearPercent.toFixed(2)}%)`}
-      </Title>}
+          )}
+          %)
+          <br />
+          {level === "T" &&
+            lunaticData.clear_count > 0 &&
+            `(루나틱: ${lunaticClearPercent.toFixed(
+              2
+            )}%, 총합 ${clearPercent.toFixed(2)}%)`}
+        </Title>
+      )}
       <Title level={4}>Top 5 파티</Title>
       <Text strong>※ 전용무기와 배치는 고려하지 않았습니다.</Text>
       <div
