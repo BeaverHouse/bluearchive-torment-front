@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Input from "antd/es/input/Input";
 import Swal from "sweetalert2";
 import VideoCameraAddOutlined from "@ant-design/icons/lib/icons/VideoCameraAddOutlined";
-import { translations } from "../constants";
+import { lunaticMinScore, tormentMinScore, translations } from "../constants";
 import Space from "antd/es/space";
 import Button from "antd/es/button";
 import Modal from "antd/es/modal";
@@ -64,6 +64,13 @@ const YoutubeReportModal: React.FC<YoutubeReportModalProps> = ({
   const handleCancel = () => {
     setOpen(false);
   };
+
+  const getDifficultyText = (score: number) => {
+    if (score >= lunaticMinScore) return "LUNATIC";
+    if (score >= tormentMinScore) return "TORMENT";
+    return "INSANE";
+  };
+
   return (
     <>
       <Space>
@@ -92,11 +99,15 @@ const YoutubeReportModal: React.FC<YoutubeReportModalProps> = ({
           variant="filled"
           onClick={() => {
             window.navigator.clipboard.writeText(
-              keywords.join(" ") + ` TORMENT ${data.SCORE}`
+              keywords.join(" ") +
+                ` ${getDifficultyText(data.SCORE)} ${data.SCORE}`
             );
             Swal.fire("복사되었습니다!");
           }}
-          value={keywords.join(" ") + ` TORMENT ${data.SCORE}`}
+          value={
+            keywords.join(" ") +
+            ` ${getDifficultyText(data.SCORE)} ${data.SCORE}`
+          }
         />
         <div>1. 영상 링크 입력</div>
         <ul>
