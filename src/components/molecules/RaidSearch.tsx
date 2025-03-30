@@ -86,6 +86,51 @@ const RaidSearch = ({
     throwOnError: true,
   });
 
+  // data가 변경될 때마다 필터 값을 업데이트
+  useEffect(() => {
+    const data = getPartyDataQuery.data as RaidData;
+    if (!data) return;
+
+    const validIncludeList = IncludeList.filter((item) =>
+      Object.keys(data.filters).some((key) => {
+        if (Number(key) !== item[0]) {
+          return false;
+        }
+        if (item.length > 1) {
+          return data.filters[key][item[1] % 9] > 0;
+        }
+        return true;
+      })
+    );
+
+    const validExcludeList = ExcludeList.filter((item) =>
+      Object.keys(data.filters).includes(item.toString())
+    );
+
+    const isAssistValid =
+      Assist &&
+      data.assist_filters[Assist[0]] &&
+      data.assist_filters[Assist[0]][Assist[1] % 9] > 0;
+
+    if (validIncludeList.length !== IncludeList.length) {
+      setIncludeList(validIncludeList);
+    }
+    if (validExcludeList.length !== ExcludeList.length) {
+      setExcludeList(validExcludeList);
+    }
+    if (!isAssistValid) {
+      setAssist(undefined);
+    }
+  }, [
+    getPartyDataQuery.data,
+    IncludeList,
+    ExcludeList,
+    Assist,
+    setIncludeList,
+    setExcludeList,
+    setAssist,
+  ]);
+
   if (getPartyDataQuery.isLoading || getLinksQuery.isLoading)
     return <Spin spinning={true} fullscreen />;
 
