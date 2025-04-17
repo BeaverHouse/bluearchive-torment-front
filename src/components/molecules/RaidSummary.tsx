@@ -247,7 +247,7 @@ const RaidSummary = ({
 
   const partyCountData: PartyTableType[] = [
     ...[...basePartyCounts, data.clear_count].filter(
-      (count) => count < data.clear_count && `in${count}` in data.party_counts
+      (count) => count <= data.clear_count && `in${count}` in data.party_counts
     ),
   ].map((count) => {
     const key = `in${count}`;
