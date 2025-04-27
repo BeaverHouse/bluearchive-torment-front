@@ -37,7 +37,12 @@ const PartyCard: React.FC<PartyCardProps> = ({
   linkInfos,
   season,
 }) => {
-  const partys = Object.values(data.PARTY_DATA);
+  const partys = Object.entries(data.PARTY_DATA)
+    .sort(
+      (a, b) =>
+        Number(a[0].replace("party_", "")) - Number(b[0].replace("party_", ""))
+    )
+    .map(([_, party]) => party);
 
   const title = (
     <div
@@ -64,7 +69,11 @@ const PartyCard: React.FC<PartyCardProps> = ({
         </Button>
       )}
       {(linkInfos.length <= 0 || linkInfos[0].score === 0) && (
-        <YoutubeReportModal data={data} season={season} seasonDescription={seasonDescription} />
+        <YoutubeReportModal
+          data={data}
+          season={season}
+          seasonDescription={seasonDescription}
+        />
       )}
     </div>
   );
