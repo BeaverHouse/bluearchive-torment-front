@@ -59,7 +59,7 @@ function NormalAnnounce() {
       description={
         <div style={{ whiteSpace: "pre-line" }}>
           <a href={data.link} target="_blank" rel="noopener noreferrer">
-            {data.title}
+            {data.state === "closed" ? data.link : data.title}
           </a>
         </div>
       }
