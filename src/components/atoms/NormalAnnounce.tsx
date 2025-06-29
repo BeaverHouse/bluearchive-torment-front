@@ -65,7 +65,7 @@ function NormalAnnounce() {
       }
       closable
       onClose={() => {
-        if (data.state === "closed") {
+        if (data.state === "closed" || data.category === "maintenance") {
           window.localStorage.setItem("BA_ANNOUNCE", String(data.createdTime));
         }
       }}
