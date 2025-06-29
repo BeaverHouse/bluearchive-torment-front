@@ -64,9 +64,11 @@ function NormalAnnounce() {
         </div>
       }
       closable
-      onClose={() =>
-        window.localStorage.setItem("BA_ANNOUNCE", String(data.createdTime))
-      }
+      onClose={() => {
+        if (data.state === "closed") {
+          window.localStorage.setItem("BA_ANNOUNCE", String(data.createdTime));
+        }
+      }}
     />
   );
 }
