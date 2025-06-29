@@ -2,7 +2,7 @@ import InfoFAB from "./atoms/InfoFAB";
 import Empty from "antd/es/empty";
 import Button from "antd/es/button/button";
 import Typography from "antd/es/typography";
-import EmergencyAnnounce from "./atoms/EmergencyAnnounce";
+import NormalAnnounce from "./atoms/NormalAnnounce";
 
 const { Title } = Typography;
 
@@ -20,7 +20,7 @@ function ErrorPage() {
       }}
     >
       <Title level={3}>Blue Archive Torment </Title>
-      <EmergencyAnnounce />
+      <NormalAnnounce />
       <Empty
         image={<img src="error.png" alt="Error" />}
         description="에러가 발생했어요.."

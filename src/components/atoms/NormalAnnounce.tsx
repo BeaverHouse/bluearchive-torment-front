@@ -5,37 +5,70 @@ function NormalAnnounce() {
   const { isPending, data, error } = useQuery<AnnouncementData, Error>({
     queryKey: ["normalAnnounce"],
     queryFn: () =>
-      fetch("https://announce.haulrest.me/api/history/latest/batorment").then(
-        (res) => {
-          if (res.ok) return res.json();
-          else if (res.status === 404)
-            return {
-              announceContentCode: -1,
-              koreanDescription: "",
-              title: "",
-            };
-          else throw new Error("Failed to fetch announce");
-        }
-      ),
+      fetch(
+        "https://raw.githubusercontent.com/BeaverHouse/service-status/refs/heads/master/assets/announce-status.json"
+      ).then((res) => {
+        if (res.ok) return res.json();
+        else
+          return {
+            state: "",
+            title: "",
+            link: "",
+            createdTime: "",
+            effect: [],
+            category: "",
+          };
+      }),
     throwOnError: true,
   });
 
-  const announceCode = window.localStorage.getItem("BA_ANNOUNCE");
+  const announceViewed =
+    window.localStorage.getItem("BA_ANNOUNCE") === data?.createdTime;
 
-  if (isPending || error || data.announceContentCode === -1) return null;
-  if (Number(announceCode) === data.announceContentCode) return null;
+  if (
+    isPending ||
+    error ||
+    !data.effect.includes("ba-torment") ||
+    announceViewed
+  )
+    return null;
+
+  const type =
+    data.state === "closed"
+      ? "success"
+      : data.category === "maintenance"
+      ? "warning"
+      : "error";
+
+  const message = () => {
+    if (data.state === "closed") {
+      if (data.category === "maintenance") return "점검 완료";
+      else return "장애 복구 완료";
+    } else {
+      if (data.category === "maintenance") return "점검 안내";
+      else return "장애가 발생했어요.";
+    }
+  };
 
   return (
     <Alert
       style={{ marginBottom: 10, width: "100%", textAlign: "left" }}
       showIcon
-      message={data.title}
+      type={type}
+      message={message()}
       description={
-        <div style={{ whiteSpace: "pre-line" }}>{data.koreanDescription}</div>
+        <div style={{ whiteSpace: "pre-line" }}>
+          <a href={data.link} target="_blank" rel="noopener noreferrer">
+            {data.state === "closed" ? data.link : data.title}
+          </a>
+        </div>
       }
       closable
-      onClose={() => window.localStorage.setItem("BA_ANNOUNCE", String(data.announceContentCode))}
-      type="info"
+      onClose={() => {
+        if (data.state === "closed" || data.category === "maintenance") {
+          window.localStorage.setItem("BA_ANNOUNCE", String(data.createdTime));
+        }
+      }}
     />
   );
 }
