@@ -46,9 +46,12 @@ interface RaidConmponentProps {
 }
 
 interface AnnouncementData {
-  announceContentCode: number;
-  koreanDescription: string;
+  state: string;
   title: string;
+  link: string;
+  createdTime: string;
+  effect: Array<string>;
+  category: string;
 }
 
 // Ant Design
