@@ -14,7 +14,7 @@ function NormalAnnounce() {
           <br />
           자세한 내용은{" "}
           <a
-            href="https://github.com/BeaverHouse/bluearchive-torment-front?tab=readme-ov-file#end-of-service"
+            href="https://github.com/BeaverHouse/bluearchive-torment-front?tab=readme-ov-file#-end-of-service"
             target="_blank"
           >
             링크
