@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Swal from "sweetalert2";
 import VideoCameraAddOutlined from "@ant-design/icons/lib/icons/VideoCameraAddOutlined";
 import Space from "antd/es/space";
 import Button from "antd/es/button";
@@ -16,10 +15,6 @@ const YoutubeReportModal: React.FC<YoutubeReportModalProps> = () => {
 
   const showModal = () => {
     setOpen(true);
-  };
-  const handleOk = () => {
-    Swal.fire("알림", "이제 영상 정보 업데이트를 지원하지 않아요.", "info");
-    setOpen(false);
   };
 
   const handleCancel = () => {
@@ -40,7 +35,7 @@ const YoutubeReportModal: React.FC<YoutubeReportModalProps> = () => {
       <Modal
         open={open}
         title="서비스 안내"
-        onOk={handleOk}
+        onOk={handleCancel}
         onCancel={handleCancel}
         footer={(_, { OkBtn, CancelBtn }) => (
           <>
