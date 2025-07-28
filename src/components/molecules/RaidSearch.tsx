@@ -73,18 +73,16 @@ const RaidSearch = ({
   const getLinksQuery = useQuery({
     queryKey: ["getLinks", season],
     queryFn: async () => {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/links/${season}`,
-        {
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-          },
-        }
-      );
-      return res.json();
+      try {
+        const linksModule = await import(`../../data/links/${season}.json`);
+        return linksModule.default;
+      } catch {
+        return [];
+      }
     },
-    throwOnError: true,
+    throwOnError: false,
   });
+
 
   // data가 변경될 때마다 필터 값을 업데이트
   useEffect(() => {
@@ -135,7 +133,7 @@ const RaidSearch = ({
     return <Spin spinning={true} fullscreen />;
 
   const data = getPartyDataQuery.data as RaidData;
-  const youtubeLinkInfos: YoutubeLinkInfo[] = getLinksQuery.data;
+  const youtubeLinkInfos: YoutubeLinkInfo[] = getLinksQuery.data || [];
 
   const topScore = data.parties[0].SCORE;
   const levelCategoryCount =

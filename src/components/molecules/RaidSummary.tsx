@@ -53,18 +53,16 @@ const RaidSummary = ({
   const getLinksQuery = useQuery({
     queryKey: ["getLinks", season],
     queryFn: async () => {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/links/${season}`,
-        {
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-          },
-        }
-      );
-      return res.json();
+      try {
+        const linksModule = await import(`../../data/links/${season}.json`);
+        return linksModule.default;
+      } catch {
+        return [];
+      }
     },
-    throwOnError: true,
+    throwOnError: false,
   });
+
 
   useEffect(() => {
     setCharacter(null);
@@ -98,7 +96,7 @@ const RaidSummary = ({
   ).trim();
 
   const youtubeLinkInfos: YoutubeLinkInfo[] = (
-    getLinksQuery.data as YoutubeLinkInfo[]
+    (getLinksQuery.data || []) as YoutubeLinkInfo[]
   ).filter((link) =>
     level === "L"
       ? link.score >= lunaticMinScore

@@ -1,74 +1,27 @@
-import { useQuery } from "@tanstack/react-query";
 import Alert from "antd/es/alert/Alert";
 
 function NormalAnnounce() {
-  const { isPending, data, error } = useQuery<AnnouncementData, Error>({
-    queryKey: ["normalAnnounce"],
-    queryFn: () =>
-      fetch(
-        "https://raw.githubusercontent.com/BeaverHouse/service-status/refs/heads/master/assets/announce-status.json"
-      ).then((res) => {
-        if (res.ok) return res.json();
-        else
-          return {
-            state: "",
-            title: "",
-            link: "",
-            createdTime: "",
-            effect: [],
-            category: "",
-          };
-      }),
-    throwOnError: true,
-  });
-
-  const announceViewed =
-    window.localStorage.getItem("BA_ANNOUNCE") === data?.createdTime;
-
-  if (
-    isPending ||
-    error ||
-    !data.effect.includes("ba-torment") ||
-    announceViewed
-  )
-    return null;
-
-  const type =
-    data.state === "closed"
-      ? "success"
-      : data.category === "maintenance"
-      ? "warning"
-      : "error";
-
-  const message = () => {
-    if (data.state === "closed") {
-      if (data.category === "maintenance") return "점검 완료";
-      else return "장애 복구 완료";
-    } else {
-      if (data.category === "maintenance") return "점검 안내";
-      else return "장애가 발생했어요.";
-    }
-  };
-
   return (
     <Alert
       style={{ marginBottom: 10, width: "100%", textAlign: "left" }}
       showIcon
-      type={type}
-      message={message()}
+      type="info"
+      message="서비스 업데이트 종료 안내"
       description={
-        <div style={{ whiteSpace: "pre-line" }}>
-          <a href={data.link} target="_blank" rel="noopener noreferrer">
-            {data.state === "closed" ? data.link : data.title}
+        <div>
+          이제 더 이상 업데이트가 되지 않을 예정입니다. 기존 데이터는 계속 조회
+          가능합니다.
+          <br />
+          자세한 내용은{" "}
+          <a
+            href="https://github.com/BeaverHouse/bluearchive-torment-front?tab=readme-ov-file#end-of-service"
+            target="_blank"
+          >
+            링크
           </a>
+          를 참고해 주세요.
         </div>
       }
-      closable
-      onClose={() => {
-        if (data.state === "closed" || data.category === "maintenance") {
-          window.localStorage.setItem("BA_ANNOUNCE", String(data.createdTime));
-        }
-      }}
     />
   );
 }
