@@ -9,9 +9,17 @@ function NormalAnnounce() {
       message="서비스 업데이트 종료 안내"
       description={
         <div>
-          Blue Archive Torment의 데이터 업데이트가 종료되었습니다.
+          이제 더 이상 업데이트가 되지 않을 예정입니다. 기존 데이터는 계속 조회
+          가능합니다.
           <br />
-          기존 데이터는 계속 조회 가능합니다.
+          자세한 내용은{" "}
+          <a
+            href="https://github.com/BeaverHouse/bluearchive-torment-front?tab=readme-ov-file#end-of-service"
+            target="_blank"
+          >
+            링크
+          </a>
+          를 참고해 주세요.
         </div>
       }
     />
