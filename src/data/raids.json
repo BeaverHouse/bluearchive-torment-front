@@ -98,5 +98,10 @@
     "id": "3S23-2",
     "description": "대결전 S23 시가지 예로니무스 (중장갑,토먼트)",
     "top_level": "T"
+  },
+  {
+    "id": "S79-0",
+    "description": "총력전 S79 실내 고즈",
+    "top_level": "L"
   }
 ]
