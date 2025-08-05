@@ -1,25 +1,5 @@
 [
   {
-    "id": "S74-0",
-    "description": "총력전 S74 야외 게부라 (첫 루나틱)",
-    "top_level": "L"
-  },
-  {
-    "id": "3S19-1",
-    "description": "대결전 S19 실내 그레고리오 (경장갑,인세인)",
-    "top_level": "I"
-  },
-  {
-    "id": "3S19-2",
-    "description": "대결전 S19 실내 그레고리오 (중장갑,인세인)",
-    "top_level": "I"
-  },
-  {
-    "id": "3S19-3",
-    "description": "대결전 S19 실내 그레고리오 (특수장갑,토먼트)",
-    "top_level": "T"
-  },
-  {
     "id": "S75-0",
     "description": "총력전 S75 시가지 쿠로카게",
     "top_level": "L"
@@ -103,5 +83,20 @@
     "id": "S79-0",
     "description": "총력전 S79 실내 고즈",
     "top_level": "L"
+  },
+  {
+    "id": "3S24-1",
+    "description": "대결전 S24 야외 카이텐 (특수장갑,토먼트)",
+    "top_level": "T"
+  },
+  {
+    "id": "3S24-2",
+    "description": "대결전 S24 야외 카이텐 (경장갑,인세인)",
+    "top_level": "I"
+  },
+  {
+    "id": "3S24-3",
+    "description": "대결전 S24 야외 카이텐 (탄력장갑,인세인)",
+    "top_level": "I"
   }
 ]
