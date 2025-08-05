@@ -36,32 +36,10 @@
 
 <!-- Content -->
 
-## ❌ End of Service
+## Currently under review
 
-안녕하세요. BA Torment 개발자입니다.  
-처음 사이트를 개발한지 2년 정도가 되었네요.
-
-다른 곳에도 글을 올리긴 했지만, BA Torment 서비스는 더 이상 업데이트가 되지 않을 예정입니다.
-
-BA Torment 사이트는 다른 분들이 작업한 데이터를 2차 가공해서 사용하여 파티 정보를 제공하는 사이트였습니다.  
-하지만 최근 데이터 소스가 더 이상 업데이트되지 않거나 접근할 수 없게 되었습니다.
-
-다른 방안도 고민해 보았지만 공수가 너무 컸고 결국 더 이상 사이트를 유지할 수 없다는 결론을 내렸습니다.
-
-현재 대결전 S23까지 있는 데이터는 그대로 조회 가능합니다. 한국 서버 기준 10~11월까지는 문제가 없을 거라 생각됩니다.  
-하지만 그 이후의 데이터는 더 이상 업데이트가 되지 않을 예정입니다. 사이트 코드도 약간의 정리 후 아카이브 예정입니다.
-
-앞으로의 계획은 잘 모르겠는데, 기회가 된다면 돌아오겠습니다.  
-그 동안 부족한 사이트 많이 사용해 주셔서 감사합니다.
-
-<details>
-  <summary>그동안의 기록들</summary>
-  
-  <img src="./memory/community.png" alt="Community">
-  <img src="./memory/news.png" alt="News">
-  <img src="./memory/youtube.png" alt="YouTube">
-  <img src="./memory/metrics.png" alt="Final metrics">
-</details>
+최근 데이터 소스에 관한 문제가 있었고, 복구에 성공했으나 프로젝트 지속과 방향성에 대한 고민을 하고 있습니다.  
+가급적이면 유지하는 방향을 선택하려고 하지만, 제 임의로 할 수 없는 부분도 있다 생각하여 그 부분에 대한 생각을 하고 있습니다.
 
 <br>
 
@@ -72,20 +50,21 @@ BA Torment 사이트는 다른 분들이 작업한 데이터를 2차 가공해�
 블루아카이브 토먼트 파티찾기 프론트엔드 코드입니다.  
 JavaScript로 작성되었습니다.
 
-파티 데이터는 Python을 통해 처리해서 JSON 형태로 사용하고 있습니다.  
-업데이트 주기가 2주당 1번 정도이기 때문에, 따로 서버는 구축하지 않았습니다.
-
-[BeaverHouse/bluearchive-torment-parse](https://github.com/BeaverHouse/bluearchive-torment-parse)
+파티 데이터는 Golang 코드를 통해 처리해서 JSON 형태로 가공해 사용하고 있습니다.
 
 <br>
 
 ## Work
 
-| 날짜    | 패치 내역                            |
-| ------- | ------------------------------------ |
-| 2023.07 | 사이트 오픈                          |
-| 2023.11 | UI, 모바일 환경 최적화 작업          |
-| 2024.03 | 전용무기 정보 표기 (일본 서버 S63 ~) |
+| 날짜    | 패치 내역                                                 |
+| ------- | --------------------------------------------------------- |
+| 2023.07 | 사이트 오픈                                               |
+| 2023.11 | UI, 모바일 환경 최적화 작업                               |
+| 2024.03 | 전용무기 정보 표기 (일본 서버 S63 ~)                      |
+| 2024.10 | 전체 데이터 검색 지원, Youtube 영상 업로드/검색 기능 추가 |
+| 2025.02 | 루나틱, 인세인 난이도 검색 지원                           |
+| 2025.07 | 데이터 수집 불가로 인한 서비스 중단 안내                  |
+| 2025.08 | 데이터 소스 복구, ???                                     |
 
 <br>
 
@@ -104,6 +83,17 @@ yarn start
 ```
 
 <br>
+
+## Other information
+
+<details>
+  <summary>그동안의 기록들</summary>
+  
+  <img src="./memory/community.png" alt="Community">
+  <img src="./memory/news.png" alt="News">
+  <img src="./memory/youtube.png" alt="YouTube">
+  <img src="./memory/metrics.png" alt="Final metrics">
+</details>
 
 ## Contributing
 
