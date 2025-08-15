@@ -8,6 +8,7 @@ export const categoryLabels: string[] = [
   "전1",
   "전2",
   "전3",
+  "전4",
 ];
 
 export const translations: Record<string, string> = {
