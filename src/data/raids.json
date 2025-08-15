@@ -1,10 +1,5 @@
 [
   {
-    "id": "S75-0",
-    "description": "총력전 S75 시가지 쿠로카게",
-    "top_level": "L"
-  },
-  {
     "id": "3S20-3",
     "description": "대결전 S20 야외 비나 (특수장갑,인세인)",
     "top_level": "I"
@@ -98,5 +93,10 @@
     "id": "3S24-3",
     "description": "대결전 S24 야외 카이텐 (탄력장갑,인세인)",
     "top_level": "I"
+  },
+  {
+    "id": "S80-0",
+    "description": "총력전 S80 시가지 호드",
+    "top_level": "L"
   }
 ]
