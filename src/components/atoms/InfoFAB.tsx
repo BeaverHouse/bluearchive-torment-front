@@ -1,91 +1,83 @@
-import React, { useState } from "react";
-import InfoCircleOutlined from "@ant-design/icons/lib/icons/InfoCircleOutlined";
+"use client";
+
+import React from "react";
+import { Info, ArrowUp } from "lucide-react";
 import BuyMeACoffeeButton from "./Coffee";
-import FloatButton from "antd/es/float-button";
-import Modal from "antd/es/modal";
-import Button from "antd/es/button";
-import Space from "antd/es/space";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const InfoFAB: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
+  const scrollToTop = () => {
+    document.body.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
     <>
-      <FloatButton.Group shape="circle">
-        <FloatButton.BackTop visibilityHeight={0} target={() => document.body} />
-        <FloatButton
-          type="primary"
-          icon={<InfoCircleOutlined />}
-          onClick={showModal}
-        />
-      </FloatButton.Group>
-      <Modal
-        title="BA Torment"
-        centered
-        open={isModalOpen}
-        onCancel={handleCancel}
-        okButtonProps={{ style: { display: "none" } }}
-      >
-        <p>Blue Archive copyrighted by NEXON GAMES & YOSTAR</p>
-        <p>2023-2024, powered by Austin</p>
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2">
+        <Button
+          size="icon"
+          variant="outline"
+          className="rounded-full"
+          onClick={scrollToTop}
+        >
+          <ArrowUp className="h-4 w-4" />
+        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button size="icon" className="rounded-full">
+              <Info className="h-4 w-4" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>BA Torment</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="text-sm text-muted-foreground">
+                <p>Blue Archive copyrighted by NEXON GAMES & YOSTAR</p>
+                <p>2023-2024, powered by Austin</p>
+              </div>
 
-        <Button
-          block
-          color="default"
-          variant="filled"
-          href="https://schaledb.com/"
-          target="_blank"
-        >
-          Schale DB
-        </Button>
-        <Button
-          block
-          color="default"
-          variant="filled"
-          href="https://arona.ai"
-          target="_blank"
-          style={{ marginTop: 10, marginBottom: 30 }}
-        >
-          ARONA.AI
-        </Button>
+              <div className="space-y-2">
+                <Button variant="outline" className="w-full" asChild>
+                  <a href="https://schaledb.com/" target="_blank">
+                    Schale DB
+                  </a>
+                </Button>
+                <Button variant="outline" className="w-full mb-6" asChild>
+                  <a href="https://arona.ai" target="_blank">
+                    ARONA.AI
+                  </a>
+                </Button>
 
-        <Button
-          block
-          color="primary"
-          variant="filled"
-          href="https://github.com/BeaverHouse/bluearchive-torment-front"
-          target="_blank"
-        >
-          GitHub
-        </Button>
-        <Button
-          block
-          color="primary"
-          variant="solid"
-          href="mailto:haulrest@gmail.com"
-          target="_blank"
-          style={{ marginTop: 10, marginBottom: 10 }}
-        >
-          오류 제보 (이메일)
-        </Button>
-        <Space
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            margin: "10px auto",
-          }}
-        >
-          <BuyMeACoffeeButton />
-        </Space>
-      </Modal>
+                <Button className="w-full" asChild>
+                  <a
+                    href="https://github.com/BeaverHouse/bluearchive-torment-front"
+                    target="_blank"
+                  >
+                    GitHub
+                  </a>
+                </Button>
+                <Button className="w-full" asChild>
+                  <a href="mailto:haulrest@gmail.com" target="_blank">
+                    오류 제보 (이메일)
+                  </a>
+                </Button>
+              </div>
+
+              <div className="flex justify-center mt-4">
+                <BuyMeACoffeeButton />
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
     </>
   );
 };

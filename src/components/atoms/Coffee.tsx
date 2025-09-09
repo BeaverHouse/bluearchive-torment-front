@@ -6,7 +6,7 @@ function BuyMeACoffeeButton() {
       rel="noreferrer"
       style={{ marginTop: "40px", marginBottom: "10px" }}
     >
-      <img src="./bmc-button.png" alt="buy me a coffee" width={200} />
+      <img src="/bmc-button.png" alt="buy me a coffee" width={200} />
     </a>
   );
 }
