@@ -100,11 +100,12 @@ const RaidSummary = ({
   });
 
   const getFilterDataQuery = useQuery({
-    queryKey: ["getFilterData", season],
+    queryKey: ["getFilterData", season, level],
     queryFn: async () => {
       try {
+        const filterPath = level === "L" ? "lunatic-filter" : "filter";
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_CDN_URL}/batorment/v3/filter/${season}.json`
+          `${process.env.NEXT_PUBLIC_CDN_URL}/batorment/v3/${filterPath}/${season}.json`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
