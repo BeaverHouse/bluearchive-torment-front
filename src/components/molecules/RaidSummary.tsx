@@ -103,7 +103,8 @@ const RaidSummary = ({
     queryKey: ["getFilterData", season, level],
     queryFn: async () => {
       try {
-        const filterPath = level === "L" ? "lunatic-filter" : "filter";
+        const filterPath =
+          level === "L" ? "lunatic-filter" : "nonlunatic-filter";
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_CDN_URL}/batorment/v3/${filterPath}/${season}.json`
         );
