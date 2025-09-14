@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useMemo, useCallback, useTransition, useDeferredValue } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -25,10 +25,26 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([])
   const [saving, setSaving] = useState(false)
   
+  // React 18 concurrent features
+  const [isPending, startTransition] = useTransition()
+  const deferredAnalysisResult = useDeferredValue(analysisResult)
+  
   const studentsMap = studentsData as Record<string, string>
 
+  // 검증은 deferred value로 처리 (비중요한 업데이트)
   useEffect(() => {
-    // 초기 데이터 로딩 시 skill_orders에 character_code 추가
+    startTransition(() => {
+      // 가벼운 검증만 수행
+      const errors = validateAnalysisResult({
+        ...deferredAnalysisResult,
+        skill_orders: deferredAnalysisResult.skill_orders
+      })
+      setValidationErrors(errors)
+    })
+  }, [deferredAnalysisResult])
+
+  // 초기 데이터 로딩만 별도 처리 (즉시 필요한 업데이트)
+  useEffect(() => {
     if (analysisResult.skill_orders.length > 0 && !analysisResult.skill_orders[0].character_code) {
       const updatedSkillOrders = analysisResult.skill_orders.map(skill => ({
         ...skill,
@@ -38,31 +54,22 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
         ...prev,
         skill_orders: updatedSkillOrders
       }))
-      return
     }
+  }, []) // 초기 한 번만 실행
 
-    // 데이터가 변경될 때마다 검증
-    const apiAnalysisResult = {
-      ...analysisResult,
-      skill_orders: convertSkillOrdersForAPI(analysisResult.skill_orders)
-    }
-    const errors = validateAnalysisResult(apiAnalysisResult)
-    setValidationErrors(errors)
-  }, [analysisResult])
-
-  const getCharacterName = (code: number): string => {
+  const getCharacterName = useCallback((code: number): string => {
     return studentsMap[code.toString()] || `캐릭터 ${code}`
-  }
+  }, [studentsMap])
 
-  const getCharacterOptions = () => {
+  const getCharacterOptions = useMemo(() => {
     return Object.entries(studentsMap).map(([code, name]) => ({
       code: parseInt(code),
       name
     })).sort((a, b) => a.name.localeCompare(b.name, 'ko'))
-  }
+  }, [studentsMap])
 
   // 특정 파티의 모든 캐릭터를 가져오는 함수
-  const getPartyCharacters = (partyNumber: number) => {
+  const getPartyCharacters = useCallback((partyNumber: number) => {
     const party = analysisResult.party_compositions.find(p => p.party_number === partyNumber)
     if (!party) return []
 
@@ -76,7 +83,7 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
       name: getCharacterName(char.code),
       type: char.type
     }))
-  }
+  }, [analysisResult.party_compositions, getCharacterName])
 
   // 스킬에서 현재 선택된 캐릭터 코드를 가져오는 함수
   const getSkillCharacterCode = (skill: any): number => {
@@ -124,7 +131,7 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
     }
   }
 
-  const addCharacterToParty = (partyNumber: number, type: 'striker' | 'special') => {
+  const addCharacterToParty = useCallback((partyNumber: number, type: 'striker' | 'special') => {
     setAnalysisResult(prev => ({
       ...prev,
       party_compositions: prev.party_compositions.map(party => {
@@ -147,9 +154,9 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
         return party
       })
     }))
-  }
+  }, [])
 
-  const removeCharacterFromParty = (partyNumber: number, type: 'striker' | 'special', index: number) => {
+  const removeCharacterFromParty = useCallback((partyNumber: number, type: 'striker' | 'special', index: number) => {
     setAnalysisResult(prev => ({
       ...prev,
       party_compositions: prev.party_compositions.map(party => {
@@ -163,9 +170,9 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
         return party
       })
     }))
-  }
+  }, [])
 
-  const updateCharacter = (partyNumber: number, type: 'striker' | 'special', index: number, updates: Partial<Character>) => {
+  const updateCharacter = useCallback((partyNumber: number, type: 'striker' | 'special', index: number, updates: Partial<Character>) => {
     setAnalysisResult(prev => ({
       ...prev,
       party_compositions: prev.party_compositions.map(party => {
@@ -180,14 +187,14 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
         return party
       })
     }))
-  }
+  }, [])
 
   // 스킬 순서에서 사용할 확장된 스킬 인터페이스
   interface ExtendedSkillOrder extends SkillOrder {
     character_code?: number // UI에서만 사용
   }
 
-  const addSkillOrder = (insertIndex?: number) => {
+  const addSkillOrder = useCallback((insertIndex?: number) => {
     const newSkill: ExtendedSkillOrder = {
       party_number: 1,
       cost: 0,
@@ -209,7 +216,7 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
         skill_orders: newSkillOrders
       }
     })
-  }
+  }, [])
 
   // 캐릭터 코드로부터 파티/타입/순서 역산
   const getCharacterPosition = (characterCode: number, partyNumber: number) => {
@@ -254,25 +261,25 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
     })
   }
 
-  const removeSkillOrder = (index: number) => {
+  const removeSkillOrder = useCallback((index: number) => {
     setAnalysisResult(prev => ({
       ...prev,
       skill_orders: prev.skill_orders.filter((_, i) => i !== index)
     }))
-  }
+  }, [])
 
-  const updateSkillOrder = (index: number, updates: Partial<SkillOrder>) => {
+  const updateSkillOrder = useCallback((index: number, updates: Partial<SkillOrder>) => {
     setAnalysisResult(prev => ({
       ...prev,
       skill_orders: prev.skill_orders.map((skill, i) => 
         i === index ? { ...skill, ...updates } : skill
       )
     }))
-  }
+  }, [])
 
-  const getPartyErrors = (partyNumber: number): ValidationError[] => {
+  const getPartyErrors = useCallback((partyNumber: number): ValidationError[] => {
     return validationErrors.filter(error => error.partyNumber === partyNumber)
-  }
+  }, [validationErrors])
 
   const hasErrors = validationErrors.length > 0
   
@@ -343,8 +350,8 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
           </CardContent>
         </Card>
 
-        {/* 전체 검증 오류 표시 */}
-        {hasErrors && (
+        {/* 전체 검증 오류 표시 - 검증 진행 중에는 숨김 */}
+        {hasErrors && !isPending && (
           <Alert className="mb-4 border-red-200 bg-red-50">
             <AlertTriangle className="h-4 w-4 text-red-500" />
             <AlertDescription>
@@ -437,7 +444,7 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
                                         <SelectValue placeholder="학생 선택" />
                                       </SelectTrigger>
                                       <SelectContent className="max-h-60">
-                                        {getCharacterOptions().map(option => (
+                                        {getCharacterOptions.map(option => (
                                           <SelectItem key={option.code} value={option.code.toString()}>
                                             <div className="flex items-center gap-2">
                                               <img 
@@ -543,7 +550,7 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
                                         <SelectValue placeholder="학생 선택" />
                                       </SelectTrigger>
                                       <SelectContent className="max-h-60">
-                                        {getCharacterOptions().map(option => (
+                                        {getCharacterOptions.map(option => (
                                           <SelectItem key={option.code} value={option.code.toString()}>
                                             <div className="flex items-center gap-2">
                                               <img 
@@ -641,131 +648,19 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
           </CardHeader>
           <CardContent>
             <div className="space-y-2 max-h-96 overflow-y-auto">
-              {analysisResult.skill_orders.map((skill, index) => {
-                const partyCharacters = getPartyCharacters(skill.party_number)
-                const currentCharacterCode = getSkillCharacterCode(skill)
-                
-                return (
-                  <div key={index}>
-                    <div className="border rounded p-3 bg-muted/30">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium">스킬 {index + 1}</span>
-                        <div className="flex gap-1">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="h-6 px-2"
-                            onClick={() => addSkillOrder(index)}
-                            disabled={hasPartyCompositionErrors}
-                          >
-                            <Plus className="h-3 w-3" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="h-6 w-6 p-0"
-                            onClick={() => removeSkillOrder(index)}
-                            disabled={hasPartyCompositionErrors}
-                          >
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-4 gap-2 mb-2">
-                        <div>
-                          <label className="block text-xs font-medium mb-1">파티</label>
-                          <Select
-                            value={skill.party_number.toString()}
-                            onValueChange={(value) => {
-                              const newPartyNumber = parseInt(value)
-                              updateSkillOrder(index, { 
-                                party_number: newPartyNumber,
-                                character_code: 10001 // 파티 변경시 기본 캐릭터로 리셋
-                              })
-                            }}
-                            disabled={hasPartyCompositionErrors}
-                          >
-                            <SelectTrigger className="text-xs w-full">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {analysisResult.party_compositions.map(party => (
-                                <SelectItem key={party.party_number} value={party.party_number.toString()}>
-                                  파티 {party.party_number}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div>
-                          <label className="block text-xs font-medium mb-1">학생</label>
-                          <Select
-                            value={currentCharacterCode.toString()}
-                            onValueChange={(value) => updateSkillOrder(index, { character_code: parseInt(value) })}
-                            disabled={hasPartyCompositionErrors}
-                          >
-                            <SelectTrigger className="text-xs w-full">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {partyCharacters.map(char => (
-                                <SelectItem key={char.code} value={char.code.toString()}>
-                                  <div className="flex items-center gap-2">
-                                    <img 
-                                      src={`${process.env.NEXT_PUBLIC_CDN_URL || ""}/batorment/character/${char.code}.webp`}
-                                      alt={char.name}
-                                      className="w-6 h-6 rounded object-cover"
-                                      onError={(e) => {
-                                        const target = e.target as HTMLImageElement
-                                        target.src = "/empty.webp"
-                                      }}
-                                    />
-                                    <span>{char.name} ({char.type === 'striker' ? 'S' : 'SP'})</span>
-                                  </div>
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div>
-                          <label className="block text-xs font-medium mb-1">시간</label>
-                          <Input
-                            value={skill.remaining_time}
-                            onChange={(e) => updateSkillOrder(index, { remaining_time: e.target.value })}
-                            placeholder="03:00.000"
-                            className="text-xs"
-                            disabled={hasPartyCompositionErrors}
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-medium mb-1">코스트</label>
-                          <Input
-                            type="number"
-                            min="0"
-                            max="10"
-                            step="0.1"
-                            value={(skill.cost / 10).toFixed(1)}
-                            onChange={(e) => updateSkillOrder(index, { cost: Math.round((parseFloat(e.target.value) || 0) * 10) })}
-                            className="text-xs"
-                            disabled={hasPartyCompositionErrors}
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium mb-1">설명 (선택사항)</label>
-                        <Textarea
-                          value={skill.description || ''}
-                          onChange={(e) => updateSkillOrder(index, { description: e.target.value })}
-                          placeholder="이 스킬 사용에 대한 설명을 입력하세요"
-                          className="text-xs"
-                          rows={2}
-                          disabled={hasPartyCompositionErrors}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )
-              })}
+              {analysisResult.skill_orders.map((skill, index) => (
+                <SkillOrderItem
+                  key={`skill-${index}-${skill.party_number}-${skill.character_code || 'default'}`}
+                  skill={skill}
+                  index={index}
+                  partyCharacters={getPartyCharacters(skill.party_number)}
+                  analysisResultPartyCompositions={analysisResult.party_compositions}
+                  hasPartyCompositionErrors={hasPartyCompositionErrors}
+                  updateSkillOrder={updateSkillOrder}
+                  removeSkillOrder={removeSkillOrder}
+                  addSkillOrder={addSkillOrder}
+                />
+              ))}
             </div>
           </CardContent>
         </Card>
@@ -773,3 +668,203 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
     </Card>
   )
 }
+
+// 개별 스킬 항목 컴포넌트 - State Colocation 적용
+const SkillOrderItem = React.memo(({ 
+  skill: initialSkill, 
+  index, 
+  partyCharacters, 
+  analysisResultPartyCompositions,
+  hasPartyCompositionErrors,
+  updateSkillOrder, 
+  removeSkillOrder,
+  addSkillOrder 
+}: {
+  skill: any
+  index: number
+  partyCharacters: Array<{ code: number, name: string, type: string }>
+  analysisResultPartyCompositions: any[]
+  hasPartyCompositionErrors: boolean
+  updateSkillOrder: (index: number, updates: any) => void
+  removeSkillOrder: (index: number) => void
+  addSkillOrder: (insertIndex?: number) => void
+}) => {
+  // 로컬 상태로 즉각적인 UI 업데이트
+  const [localSkill, setLocalSkill] = useState(initialSkill)
+  const [isPending, startTransition] = useTransition()
+  
+  // 초기값이 변경되면 로컬 상태 동기화
+  useEffect(() => {
+    setLocalSkill(initialSkill)
+  }, [initialSkill])
+  
+  const currentCharacterCode = localSkill.character_code || 10001
+  
+  // 즉각적 UI 업데이트 + 지연된 상태 전파
+  const updateField = useCallback((updates: any) => {
+    // 즉시 로컬 UI 업데이트
+    setLocalSkill(prev => ({ ...prev, ...updates }))
+    
+    // 상위 상태는 비중요 업데이트로 처리
+    startTransition(() => {
+      updateSkillOrder(index, updates)
+    })
+  }, [index, updateSkillOrder])
+  
+  // 입력 변경 핸들러들
+  const handlePartyChange = useCallback((value: string) => {
+    const newPartyNumber = parseInt(value)
+    updateField({ 
+      party_number: newPartyNumber,
+      character_code: 10001
+    })
+  }, [updateField])
+  
+  const handleCharacterChange = useCallback((value: string) => {
+    updateField({ character_code: parseInt(value) })
+  }, [updateField])
+  
+  const handleTimeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    updateField({ remaining_time: e.target.value })
+  }, [updateField])
+  
+  const handleCostChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    updateField({ cost: Math.round((parseFloat(e.target.value) || 0) * 10) })
+  }, [updateField])
+  
+  const handleDescriptionChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    updateField({ description: e.target.value })
+  }, [updateField])
+  
+  const handleAddSkill = useCallback(() => {
+    addSkillOrder(index)
+  }, [index, addSkillOrder])
+  
+  const handleRemoveSkill = useCallback(() => {
+    removeSkillOrder(index)
+  }, [index, removeSkillOrder])
+
+  return (
+    <div className="border rounded p-3 bg-muted/30">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-sm font-medium">스킬 {index + 1}</span>
+        <div className="flex gap-1">
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-6 px-2"
+            onClick={handleAddSkill}
+            disabled={hasPartyCompositionErrors}
+          >
+            <Plus className="h-3 w-3" />
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-6 w-6 p-0"
+            onClick={handleRemoveSkill}
+            disabled={hasPartyCompositionErrors}
+          >
+            <Trash2 className="h-3 w-3" />
+          </Button>
+        </div>
+      </div>
+      <div className="grid grid-cols-4 gap-2 mb-2">
+        <div>
+          <label className="block text-xs font-medium mb-1">파티</label>
+          <Select
+            value={localSkill.party_number.toString()}
+            onValueChange={handlePartyChange}
+            disabled={hasPartyCompositionErrors}
+          >
+            <SelectTrigger className="text-xs w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {analysisResultPartyCompositions.map(party => (
+                <SelectItem key={party.party_number} value={party.party_number.toString()}>
+                  파티 {party.party_number}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <label className="block text-xs font-medium mb-1">학생</label>
+          <Select
+            value={currentCharacterCode.toString()}
+            onValueChange={handleCharacterChange}
+            disabled={hasPartyCompositionErrors}
+          >
+            <SelectTrigger className="text-xs w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {partyCharacters.map(char => (
+                <SelectItem key={char.code} value={char.code.toString()}>
+                  <div className="flex items-center gap-2">
+                    <img 
+                      src={`${process.env.NEXT_PUBLIC_CDN_URL || ""}/batorment/character/${char.code}.webp`}
+                      alt={char.name}
+                      className="w-6 h-6 rounded object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement
+                        target.src = "/empty.webp"
+                      }}
+                    />
+                    <span>{char.name} ({char.type === 'striker' ? 'S' : 'SP'})</span>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <label className="block text-xs font-medium mb-1">시간</label>
+          <Input
+            value={localSkill.remaining_time}
+            onChange={handleTimeChange}
+            placeholder="03:00.000"
+            className="text-xs"
+            disabled={hasPartyCompositionErrors}
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-medium mb-1">코스트</label>
+          <Input
+            type="number"
+            min="0"
+            max="10"
+            step="0.1"
+            value={(localSkill.cost / 10).toFixed(1)}
+            onChange={handleCostChange}
+            className="text-xs"
+            disabled={hasPartyCompositionErrors}
+          />
+        </div>
+      </div>
+      <div>
+        <label className="block text-xs font-medium mb-1">설명 (선택사항)</label>
+        <Textarea
+          value={localSkill.description || ''}
+          onChange={handleDescriptionChange}
+          placeholder="이 스킬 사용에 대한 설명을 입력하세요"
+          className="text-xs"
+          rows={2}
+          disabled={hasPartyCompositionErrors}
+        />
+      </div>
+    </div>
+  )
+}, (prevProps, nextProps) => {
+  // 로컬 상태 사용으로 skill 프로퍼티 변경에 덜 민감하게
+  return (
+    prevProps.index === nextProps.index &&
+    prevProps.hasPartyCompositionErrors === nextProps.hasPartyCompositionErrors &&
+    prevProps.partyCharacters.length === nextProps.partyCharacters.length &&
+    prevProps.analysisResultPartyCompositions.length === nextProps.analysisResultPartyCompositions.length &&
+    // 깊은 비교 대신 얕은 비교로 성능 향상
+    prevProps.skill.party_number === nextProps.skill.party_number &&
+    prevProps.skill.character_code === nextProps.skill.character_code
+  )
+})

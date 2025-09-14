@@ -9,7 +9,8 @@ import { useParams } from "next/navigation"
 export default function VideoDetailPage() {
   const params = useParams()
   const videoId = params.id as string
-  const [video, setVideo] = useState<VideoAnalysisData | null>(null)
+  const [videos, setVideos] = useState<VideoAnalysisData[]>([])
+  const [currentVideo, setCurrentVideo] = useState<VideoAnalysisData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -20,7 +21,8 @@ export default function VideoDetailPage() {
         setError(null)
         const response = await getVideoDetail(videoId)
         if (response.data && response.data.length > 0) {
-          setVideo(response.data[0])
+          setVideos(response.data)
+          setCurrentVideo(response.data[0])
         } else {
           setError('비디오를 찾을 수 없습니다')
         }
@@ -56,7 +58,7 @@ export default function VideoDetailPage() {
     )
   }
 
-  if (!video) {
+  if (!currentVideo) {
     return (
       <div className="container mx-auto px-4 py-6">
         <div className="flex justify-center items-center py-12">
@@ -68,7 +70,11 @@ export default function VideoDetailPage() {
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <VideoDetail video={video} />
+      <VideoDetail 
+        videos={videos} 
+        currentVideo={currentVideo} 
+        onVideoChange={setCurrentVideo}
+      />
     </div>
   )
 }
