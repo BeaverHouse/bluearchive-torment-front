@@ -638,7 +638,7 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
               <Button 
                 size="sm" 
                 variant="outline" 
-                onClick={addSkillOrder}
+                onClick={() => addSkillOrder()}
                 disabled={hasPartyCompositionErrors}
               >
                 <Plus className="h-4 w-4 mr-1" />
@@ -703,7 +703,7 @@ const SkillOrderItem = React.memo(({
   // 즉각적 UI 업데이트 + 지연된 상태 전파
   const updateField = useCallback((updates: any) => {
     // 즉시 로컬 UI 업데이트
-    setLocalSkill(prev => ({ ...prev, ...updates }))
+    setLocalSkill((prev: any) => ({ ...prev, ...updates }))
     
     // 상위 상태는 비중요 업데이트로 처리
     startTransition(() => {

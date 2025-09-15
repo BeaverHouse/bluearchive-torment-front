@@ -32,8 +32,9 @@ async function fetchAPI<T>(endpoint: string): Promise<T> {
   }
 }
 
-export async function getVideoList(): Promise<VideoListResponse> {
-  return fetchAPI<VideoListResponse>('/v1/video-analysis/summary')
+export async function getVideoList(raidId?: string): Promise<VideoListResponse> {
+  const queryParam = raidId ? `?raid_id=${encodeURIComponent(raidId)}` : ''
+  return fetchAPI<VideoListResponse>(`/v1/video-analysis/summary${queryParam}`)
 }
 
 export async function getVideoDetail(videoId: string): Promise<VideoDetailResponse> {

@@ -20,6 +20,7 @@ export interface SkillOrder {
   type: string
   order: number
   description?: string
+  character_code?: number
 }
 
 export interface AnalysisResult {
@@ -60,9 +61,10 @@ export interface VideoData {
 export interface VideoListItem {
   video_id: string
   score: number
-  analysis_type: string
-  version: number
-  created_at: string
+  title: string
+  raid_id: string | null
+  updated_at: string
+  is_verified: boolean
 }
 
 export interface VideoListResponse {
@@ -78,5 +80,14 @@ export interface VideoListResponse {
 }
 
 export interface VideoDetailResponse {
+  video_id: string
+  title: string
+  raid_id: string | null
   data: VideoAnalysisData[]
+}
+
+export interface RaidData {
+  id: string
+  description: string
+  top_level: string
 }

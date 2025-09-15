@@ -2,14 +2,23 @@
 
 import { VideoDetail } from "@/components/VideoDetail"
 import { getVideoDetail } from "@/lib/api"
-import { VideoAnalysisData } from "@/types/video"
+import { VideoAnalysisData, VideoDetailResponse, RaidData } from "@/types/video"
 import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
+import raidsData from "../../../../data/raids.json"
+
+const raids: RaidData[] = raidsData as RaidData[]
+
+function getRaidName(raidId: string | null): string | null {
+  if (!raidId) return null
+  const raid = raids.find(r => r.id === raidId)
+  return raid?.description || null
+}
 
 export default function VideoDetailPage() {
   const params = useParams()
   const videoId = params.id as string
-  const [videos, setVideos] = useState<VideoAnalysisData[]>([])
+  const [videoDetail, setVideoDetail] = useState<VideoDetailResponse | null>(null)
   const [currentVideo, setCurrentVideo] = useState<VideoAnalysisData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -21,7 +30,7 @@ export default function VideoDetailPage() {
         setError(null)
         const response = await getVideoDetail(videoId)
         if (response.data && response.data.length > 0) {
-          setVideos(response.data)
+          setVideoDetail(response)
           setCurrentVideo(response.data[0])
         } else {
           setError('비디오를 찾을 수 없습니다')
@@ -70,8 +79,18 @@ export default function VideoDetailPage() {
 
   return (
     <div className="container mx-auto px-4 py-6">
+      {videoDetail && (
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold mb-2">{videoDetail.title}</h1>
+          {videoDetail.raid_id && (
+            <p className="text-muted-foreground">
+              <span className="font-medium">레이드:</span> {getRaidName(videoDetail.raid_id)}
+            </p>
+          )}
+        </div>
+      )}
       <VideoDetail 
-        videos={videos} 
+        videos={videoDetail?.data || []} 
         currentVideo={currentVideo} 
         onVideoChange={setCurrentVideo}
       />
