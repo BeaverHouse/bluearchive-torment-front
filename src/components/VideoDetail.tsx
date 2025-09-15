@@ -290,6 +290,7 @@ export function VideoDetail({ videos, currentVideo, onVideoChange }: VideoDetail
                   skillOrders={video.analysis_result.skill_orders}
                   totalScore={video.analysis_result.total_score}
                   validationErrors={video.analysis_result.validation_errors}
+                  analysisType={video.analysis_type}
                 />
               )}
             </TabsContent>
@@ -342,6 +343,7 @@ export function VideoDetail({ videos, currentVideo, onVideoChange }: VideoDetail
               skillOrders={currentVideo.analysis_result.skill_orders}
               totalScore={currentVideo.analysis_result.total_score}
               validationErrors={currentVideo.analysis_result.validation_errors}
+              analysisType={currentVideo.analysis_type}
             />
           )}
         </>
