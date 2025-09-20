@@ -1,6 +1,6 @@
-import { VideoListResponse, VideoDetailResponse } from '@/types/video'
+import { VideoListResponse, VideoDetailResponse, AnalysisResult } from '@/types/video'
 
-const BASE_URL = '/api'
+const BASE_URL = '/ba-analyzer/v1'
 
 class APIError extends Error {
   constructor(message: string, public status?: number) {
@@ -34,15 +34,15 @@ async function fetchAPI<T>(endpoint: string): Promise<T> {
 
 export async function getVideoList(raidId?: string): Promise<VideoListResponse> {
   const queryParam = raidId ? `?raid_id=${encodeURIComponent(raidId)}` : ''
-  return fetchAPI<VideoListResponse>(`/v1/video-analysis/summary${queryParam}`)
+  return fetchAPI<VideoListResponse>(`/video/analysis${queryParam}`)
 }
 
 export async function getVideoDetail(videoId: string): Promise<VideoDetailResponse> {
-  return fetchAPI<VideoDetailResponse>(`/v1/video-analysis/${videoId}`)
+  return fetchAPI<VideoDetailResponse>(`/video/analysis/${videoId}`)
 }
 
-export async function updateVideoAnalysis(videoId: string, analysisResult: any): Promise<VideoDetailResponse> {
-  const url = `/api/v1/video-analysis/${videoId}`
+export async function updateVideoAnalysis(videoId: string, analysisResult: AnalysisResult): Promise<VideoDetailResponse> {
+  const url = `/video/analysis/${videoId}`
   
   try {
     const response = await fetch(url, {

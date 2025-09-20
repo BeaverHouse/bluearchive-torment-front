@@ -1,87 +1,146 @@
 [
   {
     "id": "S76-0",
-    "description": "총력전 S76 야외 호버크래프트",
-    "top_level": "L"
+    "name": "총력전 S76 야외 호버크래프트",
+    "top_level": "L",
+    "party_updated": true
   },
   {
     "id": "3S21-3",
-    "description": "대결전 S21 실내 헤세드 (경장갑,인세인)",
-    "top_level": "I"
+    "name": "대결전 S21 실내 헤세드 (경장갑,인세인)",
+    "top_level": "I",
+    "party_updated": true
   },
   {
     "id": "3S21-1",
-    "description": "대결전 S21 실내 헤세드 (탄력장갑,토먼트)",
-    "top_level": "T"
+    "name": "대결전 S21 실내 헤세드 (탄력장갑,토먼트)",
+    "top_level": "T",
+    "party_updated": true
   },
   {
     "id": "3S21-2",
-    "description": "대결전 S21 실내 헤세드 (중장갑,인세인)",
-    "top_level": "I"
+    "name": "대결전 S21 실내 헤세드 (중장갑,인세인)",
+    "top_level": "I",
+    "party_updated": true
   },
   {
     "id": "S77-0",
-    "description": "총력전 S77 실내 그레고리오",
-    "top_level": "L"
+    "name": "총력전 S77 실내 그레고리오",
+    "top_level": "L",
+    "party_updated": true
   },
   {
     "id": "3S22-1",
-    "description": "대결전 S22 실내 시로쿠로 (중장갑,인세인)",
-    "top_level": "I"
+    "name": "대결전 S22 실내 시로쿠로 (중장갑,인세인)",
+    "top_level": "I",
+    "party_updated": true
   },
   {
     "id": "3S22-3",
-    "description": "대결전 S22 실내 시로쿠로 (특수장갑,인세인)",
-    "top_level": "I"
+    "name": "대결전 S22 실내 시로쿠로 (특수장갑,인세인)",
+    "top_level": "I",
+    "party_updated": true
   },
   {
     "id": "3S22-2",
-    "description": "대결전 S22 실내 시로쿠로 (탄력장갑,토먼트)",
-    "top_level": "T"
+    "name": "대결전 S22 실내 시로쿠로 (탄력장갑,토먼트)",
+    "top_level": "T",
+    "party_updated": true
   },
   {
     "id": "S78-0",
-    "description": "총력전 S78 야외 게부라",
-    "top_level": "L"
+    "name": "총력전 S78 야외 게부라",
+    "top_level": "L",
+    "party_updated": true
   },
   {
     "id": "3S23-3",
-    "description": "대결전 S23 시가지 예로니무스 (탄력장갑,인세인)",
-    "top_level": "I"
+    "name": "대결전 S23 시가지 예로니무스 (탄력장갑,인세인)",
+    "top_level": "I",
+    "party_updated": true
   },
   {
     "id": "3S23-1",
-    "description": "대결전 S23 시가지 예로니무스 (경장갑,인세인)",
-    "top_level": "I"
+    "name": "대결전 S23 시가지 예로니무스 (경장갑,인세인)",
+    "top_level": "I",
+    "party_updated": true
   },
   {
     "id": "3S23-2",
-    "description": "대결전 S23 시가지 예로니무스 (중장갑,토먼트)",
-    "top_level": "T"
+    "name": "대결전 S23 시가지 예로니무스 (중장갑,토먼트)",
+    "top_level": "T",
+    "party_updated": true
   },
   {
     "id": "S79-0",
-    "description": "총력전 S79 실내 고즈",
-    "top_level": "L"
+    "name": "총력전 S79 실내 고즈",
+    "top_level": "L",
+    "party_updated": true
   },
   {
     "id": "3S24-1",
-    "description": "대결전 S24 야외 카이텐 (특수장갑,토먼트)",
-    "top_level": "T"
+    "name": "대결전 S24 야외 카이텐 (특수장갑,토먼트)",
+    "top_level": "T",
+    "party_updated": true
   },
   {
     "id": "3S24-2",
-    "description": "대결전 S24 야외 카이텐 (경장갑,인세인)",
-    "top_level": "I"
+    "name": "대결전 S24 야외 카이텐 (경장갑,인세인)",
+    "top_level": "I",
+    "party_updated": true
   },
   {
     "id": "3S24-3",
-    "description": "대결전 S24 야외 카이텐 (탄력장갑,인세인)",
-    "top_level": "I"
+    "name": "대결전 S24 야외 카이텐 (탄력장갑,인세인)",
+    "top_level": "I",
+    "party_updated": true
   },
   {
     "id": "S80-0",
-    "description": "총력전 S80 시가지 호드",
-    "top_level": "L"
+    "name": "총력전 S80 시가지 호드",
+    "top_level": "L",
+    "party_updated": true
+  },
+  {
+    "id": "3S25-1",
+    "name": "대결전 S25 시가지 비나 (경장갑,인세인)",
+    "top_level": "I",
+    "party_updated": false
+  },
+  {
+    "id": "3S25-2",
+    "name": "대결전 S25 시가지 비나 (특수장갑,인세인)",
+    "top_level": "I",
+    "party_updated": false
+  },
+  {
+    "id": "3S25-3",
+    "name": "대결전 S25 시가지 비나 (탄력장갑,토먼트)",
+    "top_level": "T",
+    "party_updated": false
+  },
+  {
+    "id": "S81-0",
+    "name": "총력전 S81 야외 페로로지라",
+    "top_level": "L",
+    "party_updated": false
+  },
+  {
+    "id": "3S26-1",
+    "name": "대결전 S26 야외 헤세드 (경장갑,인세인)",
+    "top_level": "I",
+    "party_updated": false
+  },
+  {
+    "id": "3S26-2",
+    "name": "대결전 S26 야외 헤세드 (탄력장갑,토먼트)",
+    "top_level": "T",
+    "party_updated": false
+  },
+  {
+    "id": "3S26-3",
+    "name": "대결전 S26 야외 헤세드 (중장갑,인세인)",
+    "top_level": "I",
+    "party_updated": false
   }
 ]

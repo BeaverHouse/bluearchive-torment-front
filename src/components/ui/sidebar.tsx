@@ -145,7 +145,7 @@ function Sidebar({
   variant?: 'sidebar' | 'floating' | 'inset'
   collapsible?: 'offcanvas' | 'icon' | 'none'
 }) {
-  const { isMobile, open, openMobile, setOpenMobile } = useSidebar()
+  const { isMobile, open, openMobile, setOpenMobile, setOpen } = useSidebar()
 
   // 모바일에서는 Sheet로 표시
   if (isMobile) {
@@ -171,7 +171,6 @@ function Sidebar({
   }
 
   // 데스크탑에서는 오버레이로 표시
-  const { setOpen } = useSidebar()
   
   return (
     <>

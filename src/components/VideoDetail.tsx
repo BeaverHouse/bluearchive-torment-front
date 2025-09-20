@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { ArrowLeft, Edit3, Copy, Check } from "lucide-react"
 import { YouTubeEmbed } from "@/components/YouTubeEmbed"
-import { AIPartyDisplay } from "@/components/AIPartyDisplay"
+import PartyCard from "@/components/molecules/PartyCard"
 import { EditableAnalysisResult } from "@/components/EditableAnalysisResult"
 import { VideoAnalysisData } from "@/types/video"
 import Link from "next/link"
@@ -48,15 +48,7 @@ export function VideoDetail({ videos, currentVideo, onVideoChange }: VideoDetail
     return studentsMap[code.toString()] || `캐릭터 ${code}`
   }
 
-  const getStudentNameFromSkill = (skill: any, video: VideoAnalysisData): string => {
-    const party = video.analysis_result.party_compositions.find(p => p.party_number === skill.party_number)
-    if (!party) return "알 수 없음"
-    
-    const characters = skill.type === 'striker' ? party.strikers : party.specials
-    const character = characters[skill.order - 1]
-    
-    return character ? getCharacterName(character.code) : "알 수 없음"
-  }
+  // 새로운 데이터 구조에서는 스킬 순서 관련 함수 제거 (skillOrders가 빈 배열)
 
   const generateHTML = (video: VideoAnalysisData) => {
     const { analysis_result } = video
@@ -64,120 +56,40 @@ export function VideoDetail({ videos, currentVideo, onVideoChange }: VideoDetail
     let html = `
 <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px;">
   <h2 style="color: #1f2937; margin-bottom: 20px;">분석 결과 (${video.analysis_type === 'ai' ? 'AI 분석' : '사용자 분석'})</h2>
-  <p style="color: #6b7280; margin-bottom: 20px;">총점: ${analysis_result.total_score.toLocaleString()}</p>
+  <p style="color: #6b7280; margin-bottom: 20px;">총점: ${analysis_result.score.toLocaleString()}</p>
   
   <h3 style="color: #374151; margin: 30px 0 15px 0;">파티 구성</h3>`
 
-    analysis_result.party_compositions.forEach(party => {
+    analysis_result.partyData.forEach((party, index) => {
       html += `
   <div style="border: 1px solid #d1d5db; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
-    <h4 style="color: #111827; margin: 0 0 15px 0;">파티 ${party.party_number}</h4>
-    <div style="display: flex; gap: 20px;">
-      <div style="flex: 2;">
-        <div style="background: #dbeafe; padding: 10px; border-radius: 6px;">
-          <h5 style="color: #1e40af; margin: 0 0 10px 0; font-size: 14px;">STRIKER (${party.strikers.length}명)</h5>
-          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">`
+    <h4 style="color: #111827; margin: 0 0 15px 0;">파티 ${index + 1}</h4>
+    <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;">`
 
-      party.strikers.forEach((character, index) => {
-        const name = getCharacterName(character.code)
-        const starRank = character.star ? `${character.star}★` : '정보없음'
-        const weaponStar = character.weapon_star ? `전무 ${character.weapon_star}성` : '없음'
+      party.forEach(char => {
+        if (char === 0) {
+          html += `<div style="width: 50px; height: 50px;"></div>`
+          return
+        }
+        
+        const code = Math.floor(char / 1000)
+        const star = Math.floor((char % 1000) / 100)
+        const weapon = Math.floor((char % 100) / 10)
+        const assist = char % 10
+        const name = getCharacterName(code)
+        
         html += `
-            <div style="background: white; padding: 8px; border-radius: 4px; font-size: 12px;">
-              <div style="font-weight: bold;">${index + 1}. ${name}</div>
-              <div style="color: #6b7280;">${starRank} / ${weaponStar}</div>
-            </div>`
+        <div style="text-align: center; border: 1px solid #d1d5db; border-radius: 4px; padding: 8px;">
+          <div style="font-weight: bold; font-size: 12px; margin-bottom: 4px;">${name}</div>
+          <div style="font-size: 10px; color: #6b7280;">${star}★ / ${weapon}무</div>
+          ${assist ? '<div style="color: #10b981; font-size: 10px;">조력자</div>' : ''}
+        </div>`
       })
 
       html += `
-          </div>
-        </div>
-      </div>
-      <div style="flex: 1;">
-        <div style="background: #f3f4f6; padding: 10px; border-radius: 6px;">
-          <h5 style="color: #374151; margin: 0 0 10px 0; font-size: 14px;">SPECIAL (${party.specials.length}명)</h5>
-          <div style="display: flex; flex-direction: column; gap: 8px;">`
-
-      party.specials.forEach((character, index) => {
-        const name = getCharacterName(character.code)
-        const starRank = character.star ? `${character.star}★` : '정보없음'
-        const weaponStar = character.weapon_star ? `전무 ${character.weapon_star}성` : '없음'
-        html += `
-            <div style="background: white; padding: 8px; border-radius: 4px; font-size: 12px;">
-              <div style="font-weight: bold;">${index + 1}. ${name}</div>
-              <div style="color: #6b7280;">${starRank} / ${weaponStar}</div>
-            </div>`
-      })
-
-      html += `
-          </div>
-        </div>
-      </div>
     </div>
   </div>`
     })
-
-    html += `
-  <h3 style="color: #374151; margin: 30px 0 15px 0;">스킬 순서</h3>
-  <div style="overflow-x: auto;">
-    <table style="width: 100%; border-collapse: collapse; border: 1px solid #d1d5db;">
-      <thead>
-        <tr style="background: #f9fafb;">
-          <th style="border: 1px solid #d1d5db; padding: 8px; text-align: left; font-size: 14px;">파티</th>
-          <th style="border: 1px solid #d1d5db; padding: 8px; text-align: left; font-size: 14px;">시간</th>
-          <th style="border: 1px solid #d1d5db; padding: 8px; text-align: left; font-size: 14px;">학생</th>
-          <th style="border: 1px solid #d1d5db; padding: 8px; text-align: left; font-size: 14px;">코스트</th>`
-    
-    if (analysis_result.skill_orders.some(skill => skill.description)) {
-      html += `<th style="border: 1px solid #d1d5db; padding: 8px; text-align: left; font-size: 14px;">설명</th>`
-    }
-    
-    html += `
-        </tr>
-      </thead>
-      <tbody>`
-
-    const sortedSkills = [...analysis_result.skill_orders].sort((a, b) => {
-      if (a.party_number !== b.party_number) {
-        return a.party_number - b.party_number
-      }
-      return b.remaining_time.localeCompare(a.remaining_time)
-    })
-
-    sortedSkills.forEach(skill => {
-      const studentName = getStudentNameFromSkill(skill, video)
-      const typeLabel = skill.type === 'striker' ? 'S' : 'SP'
-      const cost = (skill.cost / 10).toFixed(1)
-      
-      html += `
-        <tr>
-          <td style="border: 1px solid #d1d5db; padding: 8px; font-size: 13px;">${skill.party_number}</td>
-          <td style="border: 1px solid #d1d5db; padding: 8px; font-size: 13px;">${skill.remaining_time}</td>
-          <td style="border: 1px solid #d1d5db; padding: 8px; font-size: 13px;">
-            <span style="background: ${skill.type === 'striker' ? '#3b82f6' : '#6b7280'}; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-right: 8px;">${typeLabel}</span>
-            ${studentName}
-          </td>
-          <td style="border: 1px solid #d1d5db; padding: 8px; font-size: 13px;">${cost}</td>`
-      
-      if (analysis_result.skill_orders.some(s => s.description)) {
-        html += `<td style="border: 1px solid #d1d5db; padding: 8px; font-size: 13px;">${skill.description || ''}</td>`
-      }
-      
-      html += `</tr>`
-    })
-
-    html += `
-      </tbody>
-    </table>
-  </div>`
-
-    if (analysis_result.description) {
-      html += `
-  <h3 style="color: #374151; margin: 30px 0 15px 0;">설명</h3>
-  <div style="background: #f9fafb; border: 1px solid #d1d5db; border-radius: 6px; padding: 15px;">
-    <p style="margin: 0; color: #374151; line-height: 1.5;">${analysis_result.description}</p>
-  </div>`
-    }
 
     html += `
 </div>`
@@ -285,12 +197,20 @@ export function VideoDetail({ videos, currentVideo, onVideoChange }: VideoDetail
                   onCancel={handleCancelEdit}
                 />
               ) : (
-                <AIPartyDisplay 
-                  partyCompositions={video.analysis_result.party_compositions}
-                  skillOrders={video.analysis_result.skill_orders}
-                  totalScore={video.analysis_result.total_score}
-                  validationErrors={video.analysis_result.validation_errors}
-                  analysisType={video.analysis_type}
+                <PartyCard
+                  data={{
+                    rank: 1,
+                    score: video.analysis_result.score,
+                    partyData: video.analysis_result.partyData,
+                  }}
+                  season=""
+                  studentsMap={studentsMap}
+                  seasonDescription=""
+                  linkInfos={[{
+                    userId: video.id,
+                    youtubeUrl: video.analysis_result.url,
+                    score: video.analysis_result.score
+                  }]}
                 />
               )}
             </TabsContent>
@@ -338,12 +258,20 @@ export function VideoDetail({ videos, currentVideo, onVideoChange }: VideoDetail
               onCancel={handleCancelEdit}
             />
           ) : (
-            <AIPartyDisplay 
-              partyCompositions={currentVideo.analysis_result.party_compositions}
-              skillOrders={currentVideo.analysis_result.skill_orders}
-              totalScore={currentVideo.analysis_result.total_score}
-              validationErrors={currentVideo.analysis_result.validation_errors}
-              analysisType={currentVideo.analysis_type}
+            <PartyCard
+              data={{
+                rank: 1,
+                score: currentVideo.analysis_result.score,
+                partyData: currentVideo.analysis_result.partyData,
+              }}
+              season=""
+              studentsMap={studentsMap}
+              seasonDescription=""
+              linkInfos={[{
+                userId: currentVideo.id,
+                youtubeUrl: currentVideo.analysis_result.url,
+                score: currentVideo.analysis_result.score
+              }]}
             />
           )}
         </>

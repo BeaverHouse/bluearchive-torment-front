@@ -16,7 +16,7 @@ const raids: RaidData[] = raidsData as RaidData[]
 function getRaidName(raidId: string | null): string | null {
   if (!raidId) return null
   const raid = raids.find(r => r.id === raidId)
-  return raid?.description || null
+  return raid?.name || null
 }
 
 export function VideoList({ videos }: VideoListProps) {

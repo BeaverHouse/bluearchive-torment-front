@@ -12,13 +12,13 @@ const raids: RaidData[] = raidsData as RaidData[]
 function getRaidName(raidId: string | null): string | null {
   if (!raidId) return null
   const raid = raids.find(r => r.id === raidId)
-  return raid?.description || null
+  return raid?.name || null
 }
 
 export default function VideoDetailPage() {
   const params = useParams()
   const videoId = params.id as string
-  const [videoDetail, setVideoDetail] = useState<VideoDetailResponse | null>(null)
+  const [videoDetail, setVideoDetail] = useState<VideoDetailResponse['data'] | null>(null)
   const [currentVideo, setCurrentVideo] = useState<VideoAnalysisData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -29,9 +29,9 @@ export default function VideoDetailPage() {
         setLoading(true)
         setError(null)
         const response = await getVideoDetail(videoId)
-        if (response.data && response.data.length > 0) {
-          setVideoDetail(response)
-          setCurrentVideo(response.data[0])
+        if (response.data.data && response.data.data.length > 0) {
+          setVideoDetail(response.data)
+          setCurrentVideo(response.data.data[0])
         } else {
           setError('비디오를 찾을 수 없습니다')
         }

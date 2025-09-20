@@ -22,7 +22,7 @@ export default function VideoAnalysisPage() {
         setError(null)
         const raidId = selectedRaid === "all" ? undefined : selectedRaid
         const response = await getVideoList(raidId)
-        setVideos(response.data)
+        setVideos(response.data.data)
       } catch (err) {
         setError(err instanceof Error ? err.message : '비디오 목록을 불러오는데 실패했습니다')
       } finally {
@@ -82,7 +82,7 @@ export default function VideoAnalysisPage() {
             <SelectItem value="all">전체</SelectItem>
             {raids.map((raid) => (
               <SelectItem key={raid.id} value={raid.id}>
-                {raid.description}
+                {raid.name}
               </SelectItem>
             ))}
           </SelectContent>

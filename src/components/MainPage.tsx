@@ -22,11 +22,13 @@ function MainPage() {
   const { V3Season, setV3Season } = useBAStore();
 
   const studentsMap = studentsData as Record<string, string>;
-  const raidInfos = (raidsData as RaidInfo[]).map((raid) => ({
-    value: raid.id,
-    label: raid.description,
-    topLevel: raid.top_level,
-  }));
+  const raidInfos = (raidsData as RaidInfo[])
+    .filter((raid) => raid.party_updated)
+    .map((raid) => ({
+      value: raid.id,
+      label: raid.name,
+      topLevel: raid.top_level,
+    }));
 
   const season = raidInfos.map((raid) => raid.value).includes(V3Season)
     ? V3Season

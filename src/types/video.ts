@@ -24,9 +24,9 @@ export interface SkillOrder {
 }
 
 export interface AnalysisResult {
-  party_compositions: PartyComposition[]
-  skill_orders: SkillOrder[]
-  total_score: number
+  partyData: number[][]
+  score: number
+  skillOrders: SkillOrder[]
   url: string
   description?: string
   validation_errors?: string[]
@@ -68,26 +68,35 @@ export interface VideoListItem {
 }
 
 export interface VideoListResponse {
-  data: VideoListItem[]
-  pagination: {
-    page: number
-    limit: number
-    total: number
-    total_pages: number
-    has_next: boolean
-    has_prev: boolean
+  status_code: number
+  message: string
+  data: {
+    data: VideoListItem[]
+    pagination: {
+      page: number
+      limit: number
+      total: number
+      total_pages: number
+      has_next: boolean
+      has_prev: boolean
+    }
   }
 }
 
 export interface VideoDetailResponse {
-  video_id: string
-  title: string
-  raid_id: string | null
-  data: VideoAnalysisData[]
+  status_code: number
+  message: string
+  data: {
+    video_id: string
+    title: string
+    raid_id: string | null
+    data: VideoAnalysisData[]
+  }
 }
 
 export interface RaidData {
   id: string
-  description: string
+  name: string
   top_level: string
+  party_updated: boolean
 }
