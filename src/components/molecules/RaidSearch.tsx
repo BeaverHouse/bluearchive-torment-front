@@ -27,7 +27,6 @@ import { lunaticMinScore, tormentMinScore } from "../constants";
 interface RaidComponentProps {
   season: string;
   studentsMap: Record<string, string>;
-  seasonDescription: string;
   level: string;
 }
 
@@ -64,7 +63,6 @@ interface YoutubeLinkInfo {
 const RaidSearch = ({
   season,
   studentsMap,
-  seasonDescription,
 }: RaidComponentProps) => {
   const [PartyCountRange, setPartyCountRange] = useState([0, 99]);
   const [Page, setPage] = useState(1);
@@ -555,8 +553,6 @@ const RaidSearch = ({
               <PartyCard
                 key={idx}
                 data={party as PartyData}
-                season={season}
-                seasonDescription={seasonDescription}
                 studentsMap={studentsMap}
                 linkInfos={youtubeLinkInfos.filter(
                   (link) => Math.abs(link.score - (party.score || 0)) < 1000

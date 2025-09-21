@@ -109,7 +109,6 @@ function MainPage() {
           <TabsContent value="search">
             <RaidSearch
               season={season}
-              seasonDescription={seasonDescription}
               studentsMap={studentsMap}
               level="NOUSE"
             />

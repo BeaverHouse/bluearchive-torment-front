@@ -187,7 +187,6 @@ export function AIPartyDisplay({ partyCompositions, skillOrders, validationError
         <div className="space-y-4">
           {partyCompositions.map((party) => {
             const partyErrors = getPartyValidationErrors(party.party_number)
-            const allCharacters = [...party.strikers, ...party.specials]
             
             return (
               <Card key={party.party_number} className="relative">

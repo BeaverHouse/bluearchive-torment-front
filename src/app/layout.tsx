@@ -1,8 +1,7 @@
 "use client";
 
-import type { Metadata } from "next";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun, Menu } from "lucide-react";

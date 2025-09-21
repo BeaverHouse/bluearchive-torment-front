@@ -248,9 +248,7 @@ export function VideoDetail({ videos, currentVideo, onVideoChange }: VideoDetail
                       score: video.analysis_result.score,
                       partyData: video.analysis_result.partyData,
                     }}
-                    season=""
                     studentsMap={studentsMap}
-                    seasonDescription=""
                     linkInfos={[]}
                   />
                   
@@ -363,9 +361,7 @@ export function VideoDetail({ videos, currentVideo, onVideoChange }: VideoDetail
                   score: currentVideo.analysis_result.score,
                   partyData: currentVideo.analysis_result.partyData,
                 }}
-                season=""
                 studentsMap={studentsMap}
-                seasonDescription=""
                 linkInfos={[]}
               />
               

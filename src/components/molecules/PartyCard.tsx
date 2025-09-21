@@ -40,18 +40,14 @@ interface YoutubeLinkInfo {
 
 interface PartyCardProps {
   data: PartyData;
-  season: string;
   studentsMap: Record<string, string>;
-  seasonDescription: string;
   linkInfos: YoutubeLinkInfo[];
 }
 
 const PartyCard: React.FC<PartyCardProps> = ({
   data,
   studentsMap,
-  seasonDescription,
   linkInfos,
-  season,
 }) => {
   const [openTooltips, setOpenTooltips] = React.useState<Set<string>>(
     new Set()
