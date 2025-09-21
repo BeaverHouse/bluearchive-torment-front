@@ -3,13 +3,23 @@
 import Link from "next/link"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Play, CheckCircle, Calendar } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Play, CheckCircle, Calendar, ChevronLeft, ChevronRight } from "lucide-react"
 import { VideoListItem, RaidData } from "@/types/video"
 import raidsData from "../../data/raids.json"
 import NormalAnnounce from "@/components/atoms/NormalAnnounce"
 
 interface VideoListProps {
   videos: VideoListItem[]
+  pagination: {
+    page: number
+    limit: number
+    total: number
+    total_pages: number
+    has_next: boolean
+    has_prev: boolean
+  }
+  onPageChange: (page: number) => void
 }
 
 const raids: RaidData[] = raidsData as RaidData[]
@@ -20,7 +30,7 @@ function getRaidName(raidId: string | null): string | null {
   return raid?.name || null
 }
 
-export function VideoList({ videos }: VideoListProps) {
+export function VideoList({ videos, pagination, onPageChange }: VideoListProps) {
   return (
     <div className="space-y-4">
       <NormalAnnounce />
@@ -75,6 +85,62 @@ export function VideoList({ videos }: VideoListProps) {
         </Link>
       ))}
       </div>
+      
+      {/* 페이지네이션 */}
+      {pagination.total_pages > 1 && (
+        <div className="flex items-center justify-center space-x-2 mt-8">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onPageChange(pagination.page - 1)}
+            disabled={!pagination.has_prev}
+            className="h-8 w-8 p-0"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          
+          <div className="flex items-center space-x-1">
+            {Array.from({ length: Math.min(5, pagination.total_pages) }, (_, i) => {
+              let pageNum;
+              if (pagination.total_pages <= 5) {
+                pageNum = i + 1;
+              } else if (pagination.page <= 3) {
+                pageNum = i + 1;
+              } else if (pagination.page >= pagination.total_pages - 2) {
+                pageNum = pagination.total_pages - 4 + i;
+              } else {
+                pageNum = pagination.page - 2 + i;
+              }
+              
+              return (
+                <Button
+                  key={pageNum}
+                  variant={pagination.page === pageNum ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => onPageChange(pageNum)}
+                  className="h-8 w-8 p-0"
+                >
+                  {pageNum}
+                </Button>
+              );
+            })}
+          </div>
+          
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onPageChange(pagination.page + 1)}
+            disabled={!pagination.has_next}
+            className="h-8 w-8 p-0"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+          
+          <div className="text-sm text-muted-foreground ml-4">
+            {pagination.total}개 중 {(pagination.page - 1) * pagination.limit + 1}-{Math.min(pagination.page * pagination.limit, pagination.total)}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
