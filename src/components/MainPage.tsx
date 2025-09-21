@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Link from "next/link";
+import { Play } from "lucide-react";
 
 function MainPage() {
   const { V3Season, setV3Season } = useBAStore();
@@ -91,6 +93,12 @@ function MainPage() {
             >
               총력전 리포트 (ARONA.AI)
             </a>
+          </Button>
+          <Button className="w-72 m-1 bg-blue-600 hover:bg-blue-700" asChild>
+            <Link href="/video-analysis">
+              <Play className="h-4 w-4 mr-2" />
+              영상 분석 (NEW)
+            </Link>
           </Button>
         </div>
         <br />
