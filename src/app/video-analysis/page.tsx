@@ -159,7 +159,7 @@ export default function VideoAnalysisPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
         <div className="mb-8">
           <p className="text-muted-foreground">
             총력전 영상을 분석하여 파티 구성과 스킬 순서를 확인하세요.
@@ -177,15 +177,15 @@ export default function VideoAnalysisPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
       <div className="mb-8">
         <p className="text-muted-foreground">
           총력전 영상을 분석하여 파티 구성과 스킬 순서를 확인하세요.
         </p>
       </div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
         <Select value={selectedRaid} onValueChange={handleRaidChange}>
-          <SelectTrigger className="w-64">
+          <SelectTrigger className="w-full sm:w-64">
             <SelectValue placeholder="레이드 선택" />
           </SelectTrigger>
           <SelectContent>
@@ -198,11 +198,11 @@ export default function VideoAnalysisPage() {
           </SelectContent>
         </Select>
 
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
           {/* 큐 상태 조회 버튼 */}
           <Dialog open={isQueueDialogOpen} onOpenChange={setIsQueueDialogOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline" onClick={handleFetchQueueStatus}>
+              <Button variant="outline" onClick={handleFetchQueueStatus} className="w-full sm:w-auto">
                 <Clock className="h-4 w-4 mr-2" />
                 분석 큐 상태
               </Button>
@@ -275,7 +275,7 @@ export default function VideoAnalysisPage() {
           {/* 영상 분석 추가 버튼 */}
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-blue-600 hover:bg-blue-700">
+              <Button className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
                 <Plus className="h-4 w-4 mr-2" />
                 영상 분석 추가
               </Button>

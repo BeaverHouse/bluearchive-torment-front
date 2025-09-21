@@ -52,7 +52,7 @@ export default function VideoDetailPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
         <div className="flex justify-center items-center py-12">
           <div className="text-muted-foreground">로딩 중...</div>
         </div>
@@ -69,7 +69,7 @@ export default function VideoDetailPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
       {videoDetail && (
         <div className="mb-6">
           <h1 className="text-2xl font-bold mb-2">{videoDetail.title}</h1>

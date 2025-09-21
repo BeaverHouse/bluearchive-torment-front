@@ -543,7 +543,7 @@ const RaidSearch = ({
           </SelectContent>
         </Select>
       </div>
-      <div className="w-full min-w-[345px] mx-auto mt-5 overflow-x-auto">
+      <div className="w-full mx-auto mt-5">
         {parties.length > 0 ? (
           parties
             .filter(
