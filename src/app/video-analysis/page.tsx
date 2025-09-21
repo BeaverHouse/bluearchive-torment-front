@@ -25,10 +25,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Clock, RefreshCw } from "lucide-react";
+import { Plus, Clock, RefreshCw, Copy, CheckCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import raidsData from "../../../data/raids.json";
 import ErrorPage from "@/components/ErrorPage";
+import { translations } from "@/components/constants";
+import Swal from "sweetalert2";
 
 const raids: RaidData[] = raidsData as RaidData[];
 
@@ -56,6 +58,9 @@ export default function VideoAnalysisPage() {
   const [isQueueDialogOpen, setIsQueueDialogOpen] = useState(false);
   const [queueItems, setQueueItems] = useState<QueueItem[]>([]);
   const [queueLoading, setQueueLoading] = useState(false);
+
+  // 검색어 복사
+  const [copiedSearchTerm, setCopiedSearchTerm] = useState(false);
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -157,6 +162,44 @@ export default function VideoAnalysisPage() {
     }
   };
 
+  // 검색어 생성 및 복사 함수
+  const generateSearchKeyword = (raidId: string) => {
+    const raid = raids.find((r) => r.id === raidId);
+    if (!raid) return "";
+
+    const keywords = Object.keys(translations)
+      .filter((key) => raid.name.includes(key))
+      .map((key) => translations[key]);
+
+    const level = raid.top_level;
+    const levelText = level === "T" ? "TORMENT" : level === "L" ? "LUNATIC" : "";
+
+    return (keywords.join(" ") + " " + levelText).trim();
+  };
+
+  const copySearchTerm = async () => {
+    if (selectedRaid === "all") {
+      Swal.fire("총력전을 선택해주세요!");
+      return;
+    }
+
+    const searchKeyword = generateSearchKeyword(selectedRaid);
+    if (!searchKeyword) {
+      Swal.fire("검색어를 생성할 수 없습니다!");
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(searchKeyword);
+      setCopiedSearchTerm(true);
+      setTimeout(() => setCopiedSearchTerm(false), 2000);
+      Swal.fire("검색어가 복사되었습니다!");
+    } catch (err) {
+      console.error("Failed to copy search term:", err);
+      Swal.fire("복사에 실패했습니다!");
+    }
+  };
+
   if (loading) {
     return (
       <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
@@ -183,6 +226,38 @@ export default function VideoAnalysisPage() {
           총력전 영상을 분석하여 파티 구성과 스킬 순서를 확인하세요.
         </p>
       </div>
+      {/* 선택된 총력전의 검색어 표시 */}
+      {selectedRaid !== "all" && (
+        <div className="mb-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 mb-4">
+            <span className="text-sm text-muted-foreground shrink-0">
+              검색어:
+            </span>
+            <code className="px-2 py-1 bg-muted rounded text-xs sm:text-sm break-all">
+              {generateSearchKeyword(selectedRaid)}
+            </code>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={copySearchTerm}
+              className="flex items-center gap-1 shrink-0"
+            >
+              {copiedSearchTerm ? (
+                <>
+                  <CheckCircle className="h-3 w-3" />
+                  <span className="hidden sm:inline">Copied!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="h-3 w-3" />
+                  <span className="hidden sm:inline">Copy</span>
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      )}
+
       <div className="mb-6 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
         <Select value={selectedRaid} onValueChange={handleRaidChange}>
           <SelectTrigger className="w-full sm:w-64">
