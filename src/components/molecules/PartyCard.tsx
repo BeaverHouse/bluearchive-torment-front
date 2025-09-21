@@ -73,8 +73,8 @@ const PartyCard: React.FC<PartyCardProps> = ({
       : []);
 
   return (
-    <Card className="relative m-1">
-      <CardContent className="px-4">
+    <Card className="relative w-full mx-auto mb-4 max-w-none">
+      <CardContent className="p-4">
         {/* Header with rank, score, and YouTube link */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
@@ -124,11 +124,11 @@ const PartyCard: React.FC<PartyCardProps> = ({
           {partys.slice(0, 4).map((party, partyIdx) => (
             <div
               key={partyIdx}
-              className="grid grid-cols-6 gap-4 p-2 rounded border bg-muted/30 justify-items-center"
+              className="grid grid-cols-6 gap-2 sm:gap-4 p-2 rounded border bg-muted/30 justify-items-center"
             >
               {party.map((char, charIdx) => {
                 if (char === 0)
-                  return <div key={charIdx} className="w-12 h-12"></div>;
+                  return <div key={charIdx} className="w-10 h-10 sm:w-12 sm:h-12"></div>;
 
                 const code = Math.floor(char / 1000);
                 const star = Math.floor((char % 1000) / 100);
@@ -194,7 +194,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
                           }}
                           onContextMenu={(e) => e.preventDefault()}
                         >
-                          <div className="w-12 h-12 mb-1 relative">
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 mb-1 relative">
                             <img
                               src={`${
                                 process.env.NEXT_PUBLIC_CDN_URL || ""
@@ -209,7 +209,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
                             />
                           </div>
                           <div
-                            className={`text-xs text-center truncate w-full ${
+                            className={`text-xs sm:text-xs text-center truncate w-full ${
                               assist
                                 ? "text-green-600 font-bold"
                                 : "text-muted-foreground"
@@ -243,12 +243,12 @@ const PartyCard: React.FC<PartyCardProps> = ({
                     {partys.slice(4).map((party, partyIdx) => (
                       <div
                         key={partyIdx + 4}
-                        className="grid grid-cols-6 gap-4 p-2 rounded border bg-muted/30 justify-items-center"
+                        className="grid grid-cols-6 gap-2 sm:gap-4 p-2 rounded border bg-muted/30 justify-items-center"
                       >
                         {party.map((char, charIdx) => {
                           if (char === 0)
                             return (
-                              <div key={charIdx} className="w-12 h-12"></div>
+                              <div key={charIdx} className="w-10 h-10 sm:w-12 sm:h-12"></div>
                             );
 
                           const code = Math.floor(char / 1000);
@@ -326,7 +326,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
                                     }}
                                     onContextMenu={(e) => e.preventDefault()}
                                   >
-                                    <div className="w-12 h-12 mb-1 relative">
+                                    <div className="w-10 h-10 sm:w-12 sm:h-12 mb-1 relative">
                                       <img
                                         src={`${
                                           process.env.NEXT_PUBLIC_CDN_URL || ""
@@ -341,7 +341,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
                                       />
                                     </div>
                                     <div
-                                      className={`text-xs text-center truncate w-full ${
+                                      className={`text-xs sm:text-xs text-center truncate w-full ${
                                         assist
                                           ? "text-green-600 font-bold"
                                           : "text-muted-foreground"

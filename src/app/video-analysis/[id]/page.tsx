@@ -32,7 +32,9 @@ export default function VideoDetailPage() {
         const response = await getVideoDetail(videoId)
         if (response.data.data && response.data.data.length > 0) {
           setVideoDetail(response.data)
-          setCurrentVideo(response.data.data[0])
+          // 사용자 분석이 있으면 우선 선택, 없으면 첫 번째 선택
+          const userAnalysis = response.data.data.find(video => video.analysis_type !== 'ai')
+          setCurrentVideo(userAnalysis || response.data.data[0])
         } else {
           setError('비디오를 찾을 수 없습니다')
         }
@@ -50,7 +52,7 @@ export default function VideoDetailPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
         <div className="flex justify-center items-center py-12">
           <div className="text-muted-foreground">로딩 중...</div>
         </div>
@@ -67,7 +69,7 @@ export default function VideoDetailPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
       {videoDetail && (
         <div className="mb-6">
           <h1 className="text-2xl font-bold mb-2">{videoDetail.title}</h1>
