@@ -5,7 +5,6 @@ import RaidSearch from "./molecules/RaidSearch";
 import RaidSummary from "./molecules/RaidSummary";
 import InfoFAB from "./atoms/InfoFAB";
 import NormalAnnounce from "./atoms/NormalAnnounce";
-import DarkModeToggle from "./atoms/DarkModeToggle";
 import studentsData from "../../data/students.json";
 import raidsData from "../../data/raids.json";
 import {
@@ -43,7 +42,6 @@ function MainPage() {
   )!.topLevel;
 
   return (
-    <DarkModeToggle>
       <div
         className="App"
         style={{
@@ -136,7 +134,6 @@ function MainPage() {
           )}
         </Tabs>
       </div>
-    </DarkModeToggle>
   );
 }
 
