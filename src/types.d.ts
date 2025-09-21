@@ -1,7 +1,8 @@
 interface RaidInfo {
   id: string;
-  description: string;
+  name: string;
   top_level: string;
+  party_updated: boolean;
 }
 
 interface Party {

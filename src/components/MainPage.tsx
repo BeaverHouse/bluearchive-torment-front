@@ -5,7 +5,6 @@ import RaidSearch from "./molecules/RaidSearch";
 import RaidSummary from "./molecules/RaidSummary";
 import InfoFAB from "./atoms/InfoFAB";
 import NormalAnnounce from "./atoms/NormalAnnounce";
-import DarkModeToggle from "./atoms/DarkModeToggle";
 import studentsData from "../../data/students.json";
 import raidsData from "../../data/raids.json";
 import {
@@ -22,11 +21,13 @@ function MainPage() {
   const { V3Season, setV3Season } = useBAStore();
 
   const studentsMap = studentsData as Record<string, string>;
-  const raidInfos = (raidsData as RaidInfo[]).map((raid) => ({
-    value: raid.id,
-    label: raid.description,
-    topLevel: raid.top_level,
-  }));
+  const raidInfos = (raidsData as RaidInfo[])
+    .filter((raid) => raid.party_updated)
+    .map((raid) => ({
+      value: raid.id,
+      label: raid.name,
+      topLevel: raid.top_level,
+    }));
 
   const season = raidInfos.map((raid) => raid.value).includes(V3Season)
     ? V3Season
@@ -41,7 +42,6 @@ function MainPage() {
   )!.topLevel;
 
   return (
-    <DarkModeToggle>
       <div
         className="App"
         style={{
@@ -109,7 +109,6 @@ function MainPage() {
           <TabsContent value="search">
             <RaidSearch
               season={season}
-              seasonDescription={seasonDescription}
               studentsMap={studentsMap}
               level="NOUSE"
             />
@@ -134,7 +133,6 @@ function MainPage() {
           )}
         </Tabs>
       </div>
-    </DarkModeToggle>
   );
 }
 

@@ -71,7 +71,6 @@ export const filteredPartys = (
     const codes = students.map((num) => Math.floor(num / 1000));
     const pureStudents = students.filter((num) => num % 10 !== 1);
     const partyAssist = students.find((num) => num % 10 === 1) || null;
-    const youtubeUserIds = youtubeLinkInfos.map((info) => info.userId);
     
     // v3에서는 LEVEL이 없으므로 점수로 난이도 판단
     const level = getScoreLevel(party.score);
