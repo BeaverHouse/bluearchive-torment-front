@@ -55,8 +55,21 @@ export function VideoDetail({ videos, currentVideo, onVideoChange }: VideoDetail
     
     let html = `
 <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px;">
-  <h2 style="color: #1f2937; margin-bottom: 20px;">분석 결과 (${video.analysis_type === 'ai' ? 'AI 분석' : '사용자 분석'})</h2>
   <p style="color: #6b7280; margin-bottom: 20px;">총점: ${analysis_result.score.toLocaleString()}</p>
+  
+  <!-- YouTube 임베드 -->
+  <div style="margin-bottom: 30px;">
+    <iframe 
+      width="100%" 
+      height="450" 
+      src="https://www.youtube.com/embed/${video.video_id}" 
+      title="YouTube video player" 
+      frameborder="0" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+      allowfullscreen
+      style="border-radius: 8px;">
+    </iframe>
+  </div>
   
   <h3 style="color: #374151; margin: 30px 0 15px 0;">파티 구성</h3>`
 
@@ -78,10 +91,20 @@ export function VideoDetail({ videos, currentVideo, onVideoChange }: VideoDetail
         const assist = char % 10
         const name = getCharacterName(code)
         
+        // 성급과 무기 표시 개선
+        let starWeaponText = ''
+        if (star > 0 && weapon === 0) {
+          starWeaponText = `${star}성`
+        } else if (star === 5 && weapon > 0) {
+          starWeaponText = `전${weapon}`
+        } else if (star > 0 && weapon > 0) {
+          starWeaponText = `${star}성 전${weapon}`
+        }
+        
         html += `
         <div style="text-align: center; border: 1px solid #d1d5db; border-radius: 4px; padding: 8px;">
           <div style="font-weight: bold; font-size: 12px; margin-bottom: 4px;">${name}</div>
-          <div style="font-size: 10px; color: #6b7280;">${star}★ / ${weapon}무</div>
+          <div style="font-size: 10px; color: #6b7280;">${starWeaponText}</div>
           ${assist ? '<div style="color: #10b981; font-size: 10px;">조력자</div>' : ''}
         </div>`
       })
@@ -90,6 +113,54 @@ export function VideoDetail({ videos, currentVideo, onVideoChange }: VideoDetail
     </div>
   </div>`
     })
+
+    // 스킬 순서 추가
+    if (analysis_result.skillOrders && analysis_result.skillOrders.length > 0) {
+      html += `
+  <h3 style="color: #374151; margin: 30px 0 15px 0;">스킬 순서</h3>
+  <div style="border: 1px solid #d1d5db; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="border-bottom: 1px solid #d1d5db;">
+          <th style="text-align: left; padding: 8px; font-size: 12px;">순서</th>
+          <th style="text-align: left; padding: 8px; font-size: 12px;">파티</th>
+          <th style="text-align: left; padding: 8px; font-size: 12px;">캐릭터</th>
+          <th style="text-align: left; padding: 8px; font-size: 12px;">코스트</th>
+          <th style="text-align: left; padding: 8px; font-size: 12px;">남은 시간</th>
+          <th style="text-align: left; padding: 8px; font-size: 12px;">설명</th>
+        </tr>
+      </thead>
+      <tbody>`
+
+      analysis_result.skillOrders.forEach((skill, index) => {
+        const party = analysis_result.partyData[skill.party_number - 1]
+        let characterName = '알 수 없음'
+        
+        if (party) {
+          const characterIndex = skill.type === 'striker' ? skill.order - 1 : skill.order - 1 + 4
+          const charValue = party[characterIndex]
+          if (charValue && charValue > 0) {
+            const code = Math.floor(charValue / 1000)
+            characterName = getCharacterName(code)
+          }
+        }
+
+        html += `
+        <tr style="border-bottom: 1px solid #e5e7eb;">
+          <td style="padding: 8px; font-size: 11px;">#${index + 1}</td>
+          <td style="padding: 8px; font-size: 11px;">파티 ${skill.party_number}</td>
+          <td style="padding: 8px; font-size: 11px;">${characterName}</td>
+          <td style="padding: 8px; font-size: 11px;">${skill.cost / 10}</td>
+          <td style="padding: 8px; font-size: 11px; font-family: monospace;">${skill.remaining_time}</td>
+          <td style="padding: 8px; font-size: 11px; color: #6b7280;">${skill.description || '-'}</td>
+        </tr>`
+      })
+
+      html += `
+      </tbody>
+    </table>
+  </div>`
+    }
 
     html += `
 </div>`
@@ -197,21 +268,89 @@ export function VideoDetail({ videos, currentVideo, onVideoChange }: VideoDetail
                   onCancel={handleCancelEdit}
                 />
               ) : (
-                <PartyCard
-                  data={{
-                    rank: 1,
-                    score: video.analysis_result.score,
-                    partyData: video.analysis_result.partyData,
-                  }}
-                  season=""
-                  studentsMap={studentsMap}
-                  seasonDescription=""
-                  linkInfos={[{
-                    userId: video.id,
-                    youtubeUrl: video.analysis_result.url,
-                    score: video.analysis_result.score
-                  }]}
-                />
+                <div className="space-y-6">
+                  <PartyCard
+                    data={{
+                      rank: 1,
+                      score: video.analysis_result.score,
+                      partyData: video.analysis_result.partyData,
+                    }}
+                    season=""
+                    studentsMap={studentsMap}
+                    seasonDescription=""
+                    linkInfos={[{
+                      userId: video.id,
+                      youtubeUrl: video.analysis_result.url,
+                      score: video.analysis_result.score
+                    }]}
+                  />
+                  
+                  {/* 스킬 순서 표시 */}
+                  {video.analysis_result.skillOrders && video.analysis_result.skillOrders.length > 0 && (
+                    <div className="bg-card border rounded-lg p-4">
+                      <h4 className="text-lg font-semibold mb-4">스킬 순서</h4>
+                      <div className="overflow-x-auto">
+                        <table className="w-full border-collapse">
+                          <thead>
+                            <tr className="border-b">
+                              <th className="text-left py-2 px-3 font-medium text-sm">순서</th>
+                              <th className="text-left py-2 px-3 font-medium text-sm">파티</th>
+                              <th className="text-left py-2 px-3 font-medium text-sm">캐릭터</th>
+                              <th className="text-left py-2 px-3 font-medium text-sm">코스트</th>
+                              <th className="text-left py-2 px-3 font-medium text-sm">남은 시간</th>
+                              <th className="text-left py-2 px-3 font-medium text-sm">설명</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {video.analysis_result.skillOrders.map((skill, index) => {
+                              // 해당 파티에서 캐릭터 찾기
+                              const party = video.analysis_result.partyData[skill.party_number - 1]
+                              let characterName = '알 수 없음'
+                              let characterCode = 0
+                              
+                              if (party) {
+                                const characterIndex = skill.type === 'striker' ? skill.order - 1 : skill.order - 1 + 4
+                                const charValue = party[characterIndex]
+                                if (charValue && charValue > 0) {
+                                  characterCode = Math.floor(charValue / 1000)
+                                  characterName = getCharacterName(characterCode)
+                                }
+                              }
+                              
+                              return (
+                                <tr key={index} className="border-b hover:bg-muted/50">
+                                  <td className="py-2 px-3 text-sm font-medium">#{index + 1}</td>
+                                  <td className="py-2 px-3 text-sm">파티 {skill.party_number}</td>
+                                  <td className="py-2 px-3 text-sm">
+                                    <div className="flex items-center gap-2">
+                                      {characterCode > 0 && (
+                                        <img
+                                          src={`${process.env.NEXT_PUBLIC_CDN_URL || ""}/batorment/character/${characterCode}.webp`}
+                                          alt={characterName}
+                                          className="w-6 h-6 object-cover rounded"
+                                          onError={(e) => {
+                                            const target = e.target as HTMLImageElement
+                                            target.src = "/empty.webp"
+                                          }}
+                                        />
+                                      )}
+                                      <span>{characterName}</span>
+                                    </div>
+                                  </td>
+                                  <td className="py-2 px-3 text-sm">{skill.cost / 10}</td>
+                                  <td className="py-2 px-3 text-sm font-mono">{skill.remaining_time}</td>
+                                  <td className="py-2 px-3 text-sm text-muted-foreground">
+                                    {skill.description || '-'}
+                                  </td>
+                                </tr>
+                              )
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+                </div>
               )}
             </TabsContent>
           ))}
@@ -258,21 +397,89 @@ export function VideoDetail({ videos, currentVideo, onVideoChange }: VideoDetail
               onCancel={handleCancelEdit}
             />
           ) : (
-            <PartyCard
-              data={{
-                rank: 1,
-                score: currentVideo.analysis_result.score,
-                partyData: currentVideo.analysis_result.partyData,
-              }}
-              season=""
-              studentsMap={studentsMap}
-              seasonDescription=""
-              linkInfos={[{
-                userId: currentVideo.id,
-                youtubeUrl: currentVideo.analysis_result.url,
-                score: currentVideo.analysis_result.score
-              }]}
-            />
+            <div className="space-y-6">
+              <PartyCard
+                data={{
+                  rank: 1,
+                  score: currentVideo.analysis_result.score,
+                  partyData: currentVideo.analysis_result.partyData,
+                }}
+                season=""
+                studentsMap={studentsMap}
+                seasonDescription=""
+                linkInfos={[{
+                  userId: currentVideo.id,
+                  youtubeUrl: currentVideo.analysis_result.url,
+                  score: currentVideo.analysis_result.score
+                }]}
+              />
+              
+              {/* 스킬 순서 표시 */}
+              {currentVideo.analysis_result.skillOrders && currentVideo.analysis_result.skillOrders.length > 0 && (
+                <div className="bg-card border rounded-lg p-4">
+                  <h4 className="text-lg font-semibold mb-4">스킬 순서</h4>
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr className="border-b">
+                          <th className="text-left py-2 px-3 font-medium text-sm">순서</th>
+                          <th className="text-left py-2 px-3 font-medium text-sm">파티</th>
+                          <th className="text-left py-2 px-3 font-medium text-sm">캐릭터</th>
+                          <th className="text-left py-2 px-3 font-medium text-sm">코스트</th>
+                          <th className="text-left py-2 px-3 font-medium text-sm">남은 시간</th>
+                          <th className="text-left py-2 px-3 font-medium text-sm">설명</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {currentVideo.analysis_result.skillOrders.map((skill, index) => {
+                          // 해당 파티에서 캐릭터 찾기
+                          const party = currentVideo.analysis_result.partyData[skill.party_number - 1]
+                          let characterName = '알 수 없음'
+                          let characterCode = 0
+                          
+                          if (party) {
+                            const characterIndex = skill.type === 'striker' ? skill.order - 1 : skill.order - 1 + 4
+                            const charValue = party[characterIndex]
+                            if (charValue && charValue > 0) {
+                              characterCode = Math.floor(charValue / 1000)
+                              characterName = getCharacterName(characterCode)
+                            }
+                          }
+                          
+                          return (
+                            <tr key={index} className="border-b hover:bg-muted/50">
+                              <td className="py-2 px-3 text-sm font-medium">#{index + 1}</td>
+                              <td className="py-2 px-3 text-sm">파티 {skill.party_number}</td>
+                              <td className="py-2 px-3 text-sm">
+                                <div className="flex items-center gap-2">
+                                  {characterCode > 0 && (
+                                    <img
+                                      src={`${process.env.NEXT_PUBLIC_CDN_URL || ""}/batorment/character/${characterCode}.webp`}
+                                      alt={characterName}
+                                      className="w-6 h-6 object-cover rounded"
+                                      onError={(e) => {
+                                        const target = e.target as HTMLImageElement
+                                        target.src = "/empty.webp"
+                                      }}
+                                    />
+                                  )}
+                                  <span>{characterName}</span>
+                                </div>
+                              </td>
+                              <td className="py-2 px-3 text-sm">{skill.cost / 10}</td>
+                              <td className="py-2 px-3 text-sm font-mono">{skill.remaining_time}</td>
+                              <td className="py-2 px-3 text-sm text-muted-foreground">
+                                {skill.description || '-'}
+                              </td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
           )}
         </>
       )}

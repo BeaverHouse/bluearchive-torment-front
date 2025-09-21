@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Play, CheckCircle, Calendar } from "lucide-react"
 import { VideoListItem, RaidData } from "@/types/video"
