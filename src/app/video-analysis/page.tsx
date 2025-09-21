@@ -39,7 +39,7 @@ export default function VideoAnalysisPage() {
   const [selectedRaid, setSelectedRaid] = useState<string>("all");
   const [pagination, setPagination] = useState({
     page: 1,
-    limit: 10,
+    limit: 15,
     total: 0,
     total_pages: 0,
     has_next: false,
