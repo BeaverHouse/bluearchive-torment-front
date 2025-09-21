@@ -182,34 +182,19 @@ export function VideoDetail({ videos, currentVideo, onVideoChange }: VideoDetail
 
   return (
     <div className="space-y-6">
-      {/* 뒤로가기 버튼 및 편집 버튼 */}
-      <div className="flex items-center justify-between gap-4">
+      {/* 뒤로가기 버튼 */}
+      <div className="flex items-center">
         <Link href="/video-analysis">
           <Button variant="ghost">
             <ArrowLeft className="h-4 w-4 mr-2" />
             목록으로
           </Button>
         </Link>
-        {!isEditing && (
-          <Button onClick={handleStartEdit} className="bg-blue-600 hover:bg-blue-700">
-            <Edit3 className="h-4 w-4 mr-2" />
-            분석 결과 편집
-          </Button>
-        )}
       </div>
 
       {/* YouTube 임베드 */}
       <YouTubeEmbed videoId={currentVideo.video_id} title={`Video ${currentVideo.id}`} />
 
-      {/* 비디오 정보 */}
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold text-foreground mb-2">Video ID: {currentVideo.video_id}</h1>
-          <p className="text-muted-foreground text-sm">
-            총 {videos.length}개의 분석 결과
-          </p>
-        </div>
-      </div>
 
       {/* 탭으로 여러 분석 결과 표시 */}
       {videos.length > 1 ? (
@@ -237,9 +222,9 @@ export function VideoDetail({ videos, currentVideo, onVideoChange }: VideoDetail
                 {copiedId === currentVideo.id ? '복사됨' : 'HTML 복사'}
               </Button>
               {!isEditing && (
-                <Button onClick={handleStartEdit} className="bg-blue-600 hover:bg-blue-700">
+                <Button onClick={handleStartEdit} size="sm">
                   <Edit3 className="h-4 w-4 mr-2" />
-                  분석 결과 편집
+                  편집
                 </Button>
               )}
             </div>
@@ -247,18 +232,6 @@ export function VideoDetail({ videos, currentVideo, onVideoChange }: VideoDetail
 
           {videos.map(video => (
             <TabsContent key={video.id} value={video.id.toString()}>
-              <div className="mb-4">
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <h3 className="text-lg font-semibold">
-                      {video.analysis_type === 'ai' ? 'AI 분석' : '사용자 분석'} 결과
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      생성일: {new Date(video.created_at).toLocaleDateString('ko-KR')} | 버전: {video.version}
-                    </p>
-                  </div>
-                </div>
-              </div>
 
               {/* AI 분석 결과 또는 편집 폼 */}
               {isEditing && video.id === currentVideo.id ? (
@@ -278,11 +251,7 @@ export function VideoDetail({ videos, currentVideo, onVideoChange }: VideoDetail
                     season=""
                     studentsMap={studentsMap}
                     seasonDescription=""
-                    linkInfos={[{
-                      userId: video.id,
-                      youtubeUrl: video.analysis_result.url,
-                      score: video.analysis_result.score
-                    }]}
+                    linkInfos={[]}
                   />
                   
                   {/* 스킬 순서 표시 */}
@@ -356,37 +325,27 @@ export function VideoDetail({ videos, currentVideo, onVideoChange }: VideoDetail
           ))}
         </Tabs>
       ) : (
-        <>
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <h3 className="text-lg font-semibold">
-                {currentVideo.analysis_type === 'ai' ? 'AI 분석' : '사용자 분석'} 결과
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                생성일: {new Date(currentVideo.created_at).toLocaleDateString('ko-KR')} | 버전: {currentVideo.version}
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => copyToClipboard(currentVideo)}
-                disabled={copiedId === currentVideo.id}
-              >
-                {copiedId === currentVideo.id ? (
-                  <Check className="h-4 w-4 mr-2" />
-                ) : (
-                  <Copy className="h-4 w-4 mr-2" />
-                )}
-                {copiedId === currentVideo.id ? '복사됨' : 'HTML 복사'}
-              </Button>
-              {!isEditing && (
-                <Button onClick={handleStartEdit} className="bg-blue-600 hover:bg-blue-700">
-                  <Edit3 className="h-4 w-4 mr-2" />
-                  분석 결과 편집
-                </Button>
+        <div className="space-y-4">
+          <div className="flex gap-2 justify-end">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => copyToClipboard(currentVideo)}
+              disabled={copiedId === currentVideo.id}
+            >
+              {copiedId === currentVideo.id ? (
+                <Check className="h-4 w-4 mr-2" />
+              ) : (
+                <Copy className="h-4 w-4 mr-2" />
               )}
-            </div>
+              {copiedId === currentVideo.id ? '복사됨' : 'HTML 복사'}
+            </Button>
+            {!isEditing && (
+              <Button onClick={handleStartEdit} size="sm">
+                <Edit3 className="h-4 w-4 mr-2" />
+                편집
+              </Button>
+            )}
           </div>
 
           {/* AI 분석 결과 또는 편집 폼 */}
@@ -407,11 +366,7 @@ export function VideoDetail({ videos, currentVideo, onVideoChange }: VideoDetail
                 season=""
                 studentsMap={studentsMap}
                 seasonDescription=""
-                linkInfos={[{
-                  userId: currentVideo.id,
-                  youtubeUrl: currentVideo.analysis_result.url,
-                  score: currentVideo.analysis_result.score
-                }]}
+                linkInfos={[]}
               />
               
               {/* 스킬 순서 표시 */}
@@ -481,7 +436,7 @@ export function VideoDetail({ videos, currentVideo, onVideoChange }: VideoDetail
               )}
             </div>
           )}
-        </>
+        </div>
       )}
     </div>
   )
