@@ -162,7 +162,7 @@ export default function VideoAnalysisPage() {
       <div className="container mx-auto px-4 py-6">
         <div className="mb-8">
           <p className="text-muted-foreground">
-            총력전 영상을 분석하여 파티 구성과 스킬 순서를 확인하세요
+            총력전 영상을 분석하여 파티 구성과 스킬 순서를 확인하세요.
           </p>
         </div>
         <div className="flex justify-center items-center py-12">
@@ -180,7 +180,7 @@ export default function VideoAnalysisPage() {
     <div className="container mx-auto px-4 py-6">
       <div className="mb-8">
         <p className="text-muted-foreground">
-          총력전 영상을 분석하여 파티 구성과 스킬 순서를 확인하세요
+          총력전 영상을 분석하여 파티 구성과 스킬 순서를 확인하세요.
         </p>
       </div>
       <div className="mb-6 flex items-center justify-between">
@@ -211,6 +211,12 @@ export default function VideoAnalysisPage() {
               <DialogHeader>
                 <DialogTitle>분석 큐 상태</DialogTitle>
               </DialogHeader>
+              <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-blue-800">
+                  ℹ️ 현재 영상 분석은 수동으로 처리되고 있습니다. 추후 자동화
+                  시스템으로 업데이트할 예정입니다.
+                </p>
+              </div>
               <div className="flex justify-end mb-4">
                 <Button
                   variant="outline"

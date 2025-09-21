@@ -23,6 +23,13 @@ export function VideoDetail({ videos, currentVideo, onVideoChange }: VideoDetail
   const [activeTab, setActiveTab] = useState(currentVideo.id.toString())
 
   const studentsMap = studentsData as Record<string, string>
+  
+  // 사용자 분석을 먼저, AI 분석을 나중에 정렬
+  const sortedVideos = [...videos].sort((a, b) => {
+    if (a.analysis_type !== 'ai' && b.analysis_type === 'ai') return -1
+    if (a.analysis_type === 'ai' && b.analysis_type !== 'ai') return 1
+    return 0
+  })
   const handleStartEdit = () => {
     setIsEditing(true)
   }
@@ -201,11 +208,21 @@ export function VideoDetail({ videos, currentVideo, onVideoChange }: VideoDetail
         <Tabs value={activeTab} onValueChange={handleTabChange}>
           <div className="flex items-center justify-between gap-4 mb-4">
             <TabsList>
-              {videos.map((video, index) => (
-                <TabsTrigger key={video.id} value={video.id.toString()}>
-                  {video.analysis_type === 'ai' ? 'AI 분석' : '사용자 분석'} {index + 1}
-                </TabsTrigger>
-              ))}
+              {sortedVideos.map((video) => {
+                if (video.analysis_type === 'ai') {
+                  return (
+                    <TabsTrigger key={video.id} value={video.id.toString()}>
+                      AI 분석
+                    </TabsTrigger>
+                  )
+                } else {
+                  return (
+                    <TabsTrigger key={video.id} value={video.id.toString()}>
+                      사용자 분석 v{video.version}
+                    </TabsTrigger>
+                  )
+                }
+              })}
             </TabsList>
             <div className="flex gap-2">
               <Button
@@ -230,7 +247,7 @@ export function VideoDetail({ videos, currentVideo, onVideoChange }: VideoDetail
             </div>
           </div>
 
-          {videos.map(video => (
+          {sortedVideos.map(video => (
             <TabsContent key={video.id} value={video.id.toString()}>
 
               {/* AI 분석 결과 또는 편집 폼 */}

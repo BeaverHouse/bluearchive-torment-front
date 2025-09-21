@@ -32,7 +32,9 @@ export default function VideoDetailPage() {
         const response = await getVideoDetail(videoId)
         if (response.data.data && response.data.data.length > 0) {
           setVideoDetail(response.data)
-          setCurrentVideo(response.data.data[0])
+          // 사용자 분석이 있으면 우선 선택, 없으면 첫 번째 선택
+          const userAnalysis = response.data.data.find(video => video.analysis_type !== 'ai')
+          setCurrentVideo(userAnalysis || response.data.data[0])
         } else {
           setError('비디오를 찾을 수 없습니다')
         }
