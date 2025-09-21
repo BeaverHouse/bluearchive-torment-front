@@ -6,6 +6,7 @@ import { VideoAnalysisData, VideoDetailResponse, RaidData } from "@/types/video"
 import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import raidsData from "../../../../data/raids.json"
+import ErrorPage from "@/components/ErrorPage"
 
 const raids: RaidData[] = raidsData as RaidData[]
 
@@ -58,23 +59,11 @@ export default function VideoDetailPage() {
   }
 
   if (error) {
-    return (
-      <div className="container mx-auto px-4 py-6">
-        <div className="flex justify-center items-center py-12">
-          <div className="text-red-500">{error}</div>
-        </div>
-      </div>
-    )
+    return <ErrorPage />
   }
 
   if (!currentVideo) {
-    return (
-      <div className="container mx-auto px-4 py-6">
-        <div className="flex justify-center items-center py-12">
-          <div className="text-muted-foreground">비디오를 찾을 수 없습니다</div>
-        </div>
-      </div>
-    )
+    return <ErrorPage />
   }
 
   return (

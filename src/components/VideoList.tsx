@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Play, CheckCircle, Calendar } from "lucide-react"
 import { VideoListItem, RaidData } from "@/types/video"
 import raidsData from "../../data/raids.json"
+import NormalAnnounce from "@/components/atoms/NormalAnnounce"
 
 interface VideoListProps {
   videos: VideoListItem[]
@@ -21,7 +22,9 @@ function getRaidName(raidId: string | null): string | null {
 
 export function VideoList({ videos }: VideoListProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="space-y-4">
+      <NormalAnnounce />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {videos.map((video) => (
         <Link key={video.video_id} href={`/video-analysis/${video.video_id}`}>
           <Card className="cursor-pointer hover:shadow-lg transition-shadow bg-card border-border h-full flex flex-col overflow-hidden p-0">
@@ -71,6 +74,7 @@ export function VideoList({ videos }: VideoListProps) {
           </Card>
         </Link>
       ))}
+      </div>
     </div>
   )
 }

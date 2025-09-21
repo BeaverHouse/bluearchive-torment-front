@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { Plus, Clock, RefreshCw } from "lucide-react"
 import { useEffect, useState } from "react"
 import raidsData from "../../../data/raids.json"
+import ErrorPage from "@/components/ErrorPage"
 
 const raids: RaidData[] = raidsData as RaidData[]
 
@@ -114,19 +115,7 @@ export default function VideoAnalysisPage() {
   }
 
   if (error) {
-    return (
-      <div className="container mx-auto px-4 py-6">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">게임 영상 분석</h1>
-          <p className="text-muted-foreground">
-            Blue Archive 총력전 영상을 분석하여 파티 구성과 스킬 순서를 확인하세요
-          </p>
-        </div>
-        <div className="flex justify-center items-center py-12">
-          <div className="text-red-500">{error}</div>
-        </div>
-      </div>
-    )
+    return <ErrorPage />
   }
 
   return (
