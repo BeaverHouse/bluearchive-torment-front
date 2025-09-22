@@ -25,6 +25,7 @@ export function VideoDetail({
   const [isEditing, setIsEditing] = useState(false);
   const [copiedId, setCopiedId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState(currentVideo.id.toString());
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
   const studentsMap = studentsData as Record<string, string>;
 
@@ -214,14 +215,84 @@ export function VideoDetail({
         </Link>
       </div>
 
-      {/* YouTube 임베드 */}
-      <YouTubeEmbed
-        videoId={currentVideo.video_id}
-        title={`Video ${currentVideo.id}`}
-      />
+      {/* 편집 모드일 때 Picture-in-Picture 스타일, 아닐 때 기존 레이아웃 */}
+      {isEditing ? (
+        <div className="relative">
+          {/* Picture-in-Picture 영상 플레이어 */}
+          <div className={`fixed top-20 right-4 z-40 shadow-2xl rounded-lg overflow-hidden bg-black transition-all duration-300 ${
+            isVideoPlaying 
+              ? 'w-[480px] h-[270px] md:w-[560px] md:h-[315px] lg:w-[640px] lg:h-[360px]' // 재생 중일 때 UI의 2/3 차지
+              : 'w-48 h-[108px] md:w-64 md:h-36'      // 일시정지일 때 작게
+          }`}>
+            <YouTubeEmbed
+              videoId={currentVideo.video_id}
+              title={`Video ${currentVideo.id}`}
+              onPlayStateChange={setIsVideoPlaying}
+            />
+          </div>
+          
+          {/* 편집 영역 - 전체 너비 활용 */}
+          <div className="space-y-6"> {/* padding 완전 제거로 전체 화면 활용 */}
+            {/* 편집 탭 헤더 */}
+            {videos.length > 1 && (
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <Tabs value={activeTab} onValueChange={handleTabChange}>
+                  <TabsList>
+                    {sortedVideos.map((video) => {
+                      if (video.analysis_type === "ai") {
+                        return (
+                          <TabsTrigger key={video.id} value={video.id.toString()}>
+                            AI 분석
+                          </TabsTrigger>
+                        );
+                      } else {
+                        return (
+                          <TabsTrigger key={video.id} value={video.id.toString()}>
+                            사용자 분석 v{video.version}
+                          </TabsTrigger>
+                        );
+                      }
+                    })}
+                  </TabsList>
+                </Tabs>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => copyToClipboard(currentVideo)}
+                    disabled={copiedId === currentVideo.id}
+                  >
+                    {copiedId === currentVideo.id ? (
+                      <Check className="h-4 w-4 mr-2" />
+                    ) : (
+                      <Copy className="h-4 w-4 mr-2" />
+                    )}
+                    {copiedId === currentVideo.id ? "복사됨" : "HTML 복사"}
+                  </Button>
+                </div>
+              </div>
+            )}
+            
+            {/* 편집 폼 */}
+            <EditableAnalysisResult
+              videoData={currentVideo}
+              onUpdate={handleUpdateVideo}
+              onCancel={handleCancelEdit}
+            />
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* YouTube 임베드 */}
+          <YouTubeEmbed
+            videoId={currentVideo.video_id}
+            title={`Video ${currentVideo.id}`}
+          />
+        </>
+      )}
 
-      {/* 탭으로 여러 분석 결과 표시 */}
-      {videos.length > 1 ? (
+      {/* 편집 모드가 아닐 때의 탭 레이아웃 */}
+      {!isEditing && videos.length > 1 ? (
         <Tabs value={activeTab} onValueChange={handleTabChange}>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
             <TabsList>
@@ -255,25 +326,17 @@ export function VideoDetail({
                 )}
                 {copiedId === currentVideo.id ? "복사됨" : "HTML 복사"}
               </Button>
-              {!isEditing && (
-                <Button onClick={handleStartEdit} size="sm">
-                  <Edit3 className="h-4 w-4 mr-2" />
-                  편집
-                </Button>
-              )}
+              <Button onClick={handleStartEdit} size="sm">
+                <Edit3 className="h-4 w-4 mr-2" />
+                편집
+              </Button>
             </div>
           </div>
 
           {sortedVideos.map((video) => (
             <TabsContent key={video.id} value={video.id.toString()}>
-              {/* AI 분석 결과 또는 편집 폼 */}
-              {isEditing && video.id === currentVideo.id ? (
-                <EditableAnalysisResult
-                  videoData={video}
-                  onUpdate={handleUpdateVideo}
-                  onCancel={handleCancelEdit}
-                />
-              ) : (
+              {/* AI 분석 결과 */}
+              {(
                 <div className="space-y-6 min-w-0">
                   <PartyCard
                     data={{
@@ -400,7 +463,7 @@ export function VideoDetail({
             </TabsContent>
           ))}
         </Tabs>
-      ) : (
+      ) : !isEditing && (
         <div className="space-y-4">
           <div className="flex gap-2 justify-end">
             <Button
@@ -416,22 +479,14 @@ export function VideoDetail({
               )}
               {copiedId === currentVideo.id ? "복사됨" : "HTML 복사"}
             </Button>
-            {!isEditing && (
-              <Button onClick={handleStartEdit} size="sm">
-                <Edit3 className="h-4 w-4 mr-2" />
-                편집
-              </Button>
-            )}
+            <Button onClick={handleStartEdit} size="sm">
+              <Edit3 className="h-4 w-4 mr-2" />
+              편집
+            </Button>
           </div>
 
-          {/* AI 분석 결과 또는 편집 폼 */}
-          {isEditing ? (
-            <EditableAnalysisResult
-              videoData={currentVideo}
-              onUpdate={handleUpdateVideo}
-              onCancel={handleCancelEdit}
-            />
-          ) : (
+          {/* AI 분석 결과 */}
+          {(
             <div className="space-y-6 min-w-0">
               <PartyCard
                 data={{
