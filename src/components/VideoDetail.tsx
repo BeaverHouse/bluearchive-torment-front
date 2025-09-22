@@ -293,7 +293,7 @@ export function VideoDetail({
                           스킬 순서
                         </h4>
                         <div className="overflow-x-auto">
-                          <table className="border-collapse" style={{width: 'max-content'}}>
+                          <table className="border-collapse" style={{width: 'max-content', margin: '0 auto'}}>
                               <thead>
                                 <tr className="border-b">
                                   <th className="text-left py-2 px-3 font-medium text-sm whitespace-nowrap">
@@ -449,7 +449,7 @@ export function VideoDetail({
                   <div className="bg-card border rounded-lg p-4" style={{width: '0', minWidth: '100%'}}>
                     <h4 className="text-lg font-semibold mb-4">스킬 순서</h4>
                     <div className="overflow-x-auto">
-                      <table className="border-collapse" style={{width: 'max-content'}}>
+                      <table className="border-collapse" style={{width: 'max-content', margin: '0 auto'}}>
                           <thead>
                             <tr className="border-b">
                               <th className="text-left py-2 px-3 font-medium text-sm whitespace-nowrap">
