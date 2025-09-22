@@ -42,12 +42,14 @@ interface PartyCardProps {
   data: PartyData;
   studentsMap: Record<string, string>;
   linkInfos: YoutubeLinkInfo[];
+  hideRank?: boolean;
 }
 
 const PartyCard: React.FC<PartyCardProps> = ({
   data,
   studentsMap,
   linkInfos,
+  hideRank = false,
 }) => {
   const [openTooltips, setOpenTooltips] = React.useState<Set<string>>(
     new Set()
@@ -78,9 +80,11 @@ const PartyCard: React.FC<PartyCardProps> = ({
         {/* Header with rank, score, and YouTube link */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="font-medium">
-              #{data.rank || data.TORMENT_RANK}위
-            </Badge>
+            {!hideRank && (
+              <Badge variant="outline" className="font-medium">
+                #{data.rank || data.TORMENT_RANK}위
+              </Badge>
+            )}
             <div className="flex items-center gap-1">
               <Trophy className="h-4 w-4 text-blue-600" />
               <span className="text-lg font-bold text-blue-600">

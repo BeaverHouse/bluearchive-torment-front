@@ -346,6 +346,7 @@ export function VideoDetail({
                     }}
                     studentsMap={studentsMap}
                     linkInfos={[]}
+                    hideRank={true}
                   />
 
                   {/* 스킬 순서 표시 */}
@@ -496,6 +497,7 @@ export function VideoDetail({
                 }}
                 studentsMap={studentsMap}
                 linkInfos={[]}
+                hideRank={true}
               />
 
               {/* 스킬 순서 표시 */}

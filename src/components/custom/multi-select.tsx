@@ -78,11 +78,11 @@ export function MultiSelect({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn("w-full justify-between", className)}
+          className={cn("w-full justify-between min-h-10", value.length > 0 ? "h-auto" : "", className)}
         >
-          <div className="flex-1 text-left truncate">
+          <div className={cn("flex-1 text-left", value.length > 0 ? "" : "truncate")}>
             {value.length > 0 ? (
-              <div className="flex flex-wrap gap-1">
+              <div className="flex flex-wrap gap-1 py-1">
                 {value.map((item, index) => {
                   const option = options.find((opt) => opt.value === item);
                   return (

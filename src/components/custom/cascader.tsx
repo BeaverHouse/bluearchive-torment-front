@@ -45,7 +45,7 @@ export function Cascader({
       return;
     }
 
-    const newValue = [...value];
+    let newValue = [...value];
     const existingIndex = newValue.findIndex(
       (item) =>
         item.length === selectedValue.length &&
@@ -53,9 +53,45 @@ export function Cascader({
     );
 
     if (existingIndex >= 0) {
+      // 이미 선택된 항목을 제거
       newValue.splice(existingIndex, 1);
     } else {
+      // 새로운 항목 추가
       newValue.push(selectedValue);
+
+      // 부모-자식 관계 처리
+      if (selectedValue.length === 1) {
+        // 부모 항목을 선택한 경우: 해당 부모의 모든 자식 항목 제거
+        newValue = newValue.filter(item => 
+          !(item.length === 2 && item[0] === selectedValue[0])
+        );
+      } else if (selectedValue.length === 2) {
+        // 자식 항목을 선택한 경우
+        const parentId = selectedValue[0];
+        const parent = options.find(opt => opt.value === parentId);
+        
+        if (parent?.children) {
+          // 같은 부모의 모든 자식이 선택되었는지 확인
+          const allChildrenSelected = parent.children.every(child =>
+            newValue.some(item => 
+              item.length === 2 && item[0] === parentId && item[1] === child.value
+            )
+          );
+          
+          if (allChildrenSelected) {
+            // 모든 자식이 선택되면 자식들을 제거하고 부모만 남김
+            newValue = newValue.filter(item => 
+              !(item.length === 2 && item[0] === parentId)
+            );
+            newValue.push([parentId]);
+          } else {
+            // 부모가 이미 선택되어 있다면 부모 제거
+            newValue = newValue.filter(item => 
+              !(item.length === 1 && item[0] === parentId)
+            );
+          }
+        }
+      }
     }
 
     onChange?.(newValue);
@@ -100,12 +136,12 @@ export function Cascader({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn("w-full justify-between", className)}
+          className={cn("w-full justify-between min-h-10", value.length > 0 && multiple ? "h-auto" : "", className)}
         >
-          <div className="flex-1 text-left truncate">
+          <div className={cn("flex-1 text-left", multiple && value.length > 0 ? "" : "truncate")}>
             {value.length > 0 ? (
               multiple ? (
-                <div className="flex flex-wrap gap-1">
+                <div className="flex flex-wrap gap-1 py-1">
                   {value.map((item, index) => {
                     const displayLabel = (() => {
                       if (item.length === 1) {
