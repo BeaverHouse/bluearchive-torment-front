@@ -8,11 +8,30 @@ import { Textarea } from "@/components/ui/textarea"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Trash2, Plus, Save, X, Clock } from "lucide-react"
+import { Trash2, Plus, Save, X, Clock, MoreHorizontal, Maximize2, Minimize2, GripVertical } from "lucide-react"
 import { AnalysisResult, VideoAnalysisData, SkillOrder } from "@/types/video"
 import { updateVideoAnalysis } from "@/lib/api"
 import studentsData from "../../data/students.json"
 import { SearchableSelect } from "@/components/SearchableSelect"
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core"
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable"
+import {
+  CSS,
+} from "@dnd-kit/utilities"
 
 interface EditableAnalysisResultProps {
   videoData: VideoAnalysisData
@@ -23,6 +42,7 @@ interface EditableAnalysisResultProps {
 export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: EditableAnalysisResultProps) {
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult>(videoData.analysis_result)
   const [saving, setSaving] = useState(false)
+  const [compactMode, setCompactMode] = useState(true) // 기본값을 컴팩트 모드로 설정
   
   const studentsMap = studentsData as Record<string, string>
 
@@ -160,6 +180,31 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
         i === index ? { ...skill, ...updates } : skill
       )
     }))
+  }, [])
+
+  // 드래그 앤 드롭 센서 설정
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  )
+
+  // 드래그 종료 핸들러
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event
+
+    if (over && active.id !== over.id) {
+      setAnalysisResult(prev => {
+        const oldIndex = prev.skillOrders.findIndex((_, i) => i.toString() === active.id)
+        const newIndex = prev.skillOrders.findIndex((_, i) => i.toString() === over.id)
+
+        return {
+          ...prev,
+          skillOrders: arrayMove(prev.skillOrders, oldIndex, newIndex)
+        }
+      })
+    }
   }, [])
 
   // 파티에서 사용 가능한 캐릭터 목록 가져오기
@@ -404,41 +449,109 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
       </Card>
 
       {/* 스킬 순서 */}
-      <Card>
+      <Card className="relative">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>스킬 순서</CardTitle>
-            <Button size="sm" onClick={addSkillOrder}>
-              <Plus className="h-4 w-4 mr-2" />
-              스킬 추가
-            </Button>
+            <div className="flex items-center gap-3">
+              <CardTitle>스킬 순서</CardTitle>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCompactMode(!compactMode)}
+                className="h-8"
+              >
+                {compactMode ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
+              </Button>
+            </div>
+            <Badge variant="outline" className="text-xs">
+              총 {analysisResult.skillOrders.length}개
+            </Badge>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="relative">
           {analysisResult.skillOrders.length === 0 ? (
             <Alert>
               <Clock className="h-4 w-4" />
               <AlertDescription>
-                스킬 순서가 없습니다. &quot;스킬 추가&quot; 버튼을 클릭하여 스킬을 추가하세요.
+                스킬 순서가 없습니다. 하단의 &quot;+&quot; 버튼을 클릭하여 스킬을 추가하세요.
               </AlertDescription>
             </Alert>
           ) : (
-            <div className="space-y-3">
-              {analysisResult.skillOrders.map((skill, index) => (
-                <SkillOrderItem
-                  key={index}
-                  skill={skill}
-                  index={index}
-                  partyData={analysisResult.partyData}
-                  getPartyCharacters={getPartyCharacters}
-                  updateSkillOrder={updateSkillOrder}
-                  removeSkillOrder={removeSkillOrder}
-                />
-              ))}
-            </div>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={analysisResult.skillOrders.map((_, index) => index.toString())}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="space-y-2 max-h-[70vh] overflow-y-auto pr-2">
+                  {analysisResult.skillOrders.map((skill, index) => (
+                    <SortableSkillOrderItem
+                      key={index}
+                      id={index.toString()}
+                      skill={skill}
+                      index={index}
+                      compactMode={compactMode}
+                      partyData={analysisResult.partyData}
+                      getPartyCharacters={getPartyCharacters}
+                      updateSkillOrder={updateSkillOrder}
+                      removeSkillOrder={removeSkillOrder}
+                    />
+                  ))}
+                </div>
+              </SortableContext>
+            </DndContext>
           )}
+          
+          {/* Floating 스킬 추가 버튼 */}
+          <div className="sticky bottom-0 mt-4 flex justify-center">
+            <Button 
+              onClick={addSkillOrder}
+              className="rounded-full h-12 w-12 shadow-lg"
+              size="icon"
+            >
+              <Plus className="h-6 w-6" />
+            </Button>
+          </div>
         </CardContent>
       </Card>
+    </div>
+  )
+}
+
+// Sortable 스킬 순서 아이템 컴포넌트
+interface SortableSkillOrderItemProps {
+  id: string
+  skill: SkillOrder
+  index: number
+  compactMode: boolean
+  partyData: number[][]
+  getPartyCharacters: (partyIndex: number) => Array<{code: number, name: string, slotIndex: number, type: string, order: number} | null>
+  updateSkillOrder: (index: number, updates: Partial<SkillOrder>) => void
+  removeSkillOrder: (index: number) => void
+}
+
+function SortableSkillOrderItem(props: SortableSkillOrderItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: props.id })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  }
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      <SkillOrderItem {...props} dragHandleProps={{ ...attributes, ...listeners }} />
     </div>
   )
 }
@@ -447,30 +560,119 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
 interface SkillOrderItemProps {
   skill: SkillOrder
   index: number
+  compactMode: boolean
   partyData: number[][]
   getPartyCharacters: (partyIndex: number) => Array<{code: number, name: string, slotIndex: number, type: string, order: number} | null>
   updateSkillOrder: (index: number, updates: Partial<SkillOrder>) => void
   removeSkillOrder: (index: number) => void
+  dragHandleProps?: Record<string, unknown>
 }
 
 function SkillOrderItem({
   skill,
   index,
+  compactMode,
   partyData,
   getPartyCharacters,
   updateSkillOrder,
-  removeSkillOrder
+  removeSkillOrder,
+  dragHandleProps
 }: SkillOrderItemProps) {
   const partyCharacters = getPartyCharacters(skill.party_number - 1)
+  const [expanded, setExpanded] = useState(false)
 
+  if (compactMode && !expanded) {
+    // 컴팩트 모드 - 한 줄로 표시
+    const currentCharacter = partyCharacters.find(
+      char => char && char.type === skill.type && char.order === skill.order
+    )
+
+    return (
+      <Card className="border rounded-lg bg-muted/30">
+        <CardContent className="px-3 py-2">
+          <div className="flex items-center gap-3">
+            <div
+              {...dragHandleProps}
+              className="cursor-grab active:cursor-grabbing touch-none"
+            >
+              <GripVertical className="h-4 w-4 text-muted-foreground" />
+            </div>
+            <Badge variant="outline" className="text-xs font-medium min-w-fit">
+              #{index + 1}
+            </Badge>
+            
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              {currentCharacter && (
+                <img
+                  src={`${process.env.NEXT_PUBLIC_CDN_URL || ""}/batorment/character/${currentCharacter.code}.webp`}
+                  alt={currentCharacter.name}
+                  className="w-5 h-5 object-cover rounded flex-shrink-0"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement
+                    target.src = "/empty.webp"
+                  }}
+                />
+              )}
+              <span className="text-sm font-medium truncate">
+                {currentCharacter?.name || '미선택'}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <span>P{skill.party_number}</span>
+              <span>{skill.cost / 10}</span>
+              <span className="font-mono">{skill.remaining_time}</span>
+            </div>
+
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setExpanded(true)}
+                className="h-6 w-6 p-0"
+              >
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => removeSkillOrder(index)}
+                className="h-6 w-6 p-0 text-red-500 hover:text-red-700"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  // 확장 모드 또는 기본 모드
   return (
     <Card className="border rounded-lg">
       <CardContent className="px-4 py-3">
         <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            <div
+              {...dragHandleProps}
+              className="cursor-grab active:cursor-grabbing touch-none"
+            >
+              <GripVertical className="h-4 w-4 text-muted-foreground" />
+            </div>
             <Badge variant="outline" className="font-medium">
               스킬 #{index + 1}
             </Badge>
+            {compactMode && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setExpanded(false)}
+                className="h-6 w-6 p-0"
+              >
+                <Minimize2 className="h-4 w-4" />
+              </Button>
+            )}
           </div>
           <Button
             size="sm"

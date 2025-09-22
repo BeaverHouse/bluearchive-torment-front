@@ -83,15 +83,15 @@ export function MultiSelect({
           <div className="flex-1 text-left truncate">
             {value.length > 0 ? (
               <div className="flex flex-wrap gap-1">
-                {value.slice(0, 3).map((item, index) => {
+                {value.map((item, index) => {
                   const option = options.find((opt) => opt.value === item);
                   return (
                     <span
                       key={index}
-                      className="inline-flex items-center gap-1 bg-red-100 text-red-800 px-2 py-0.5 rounded text-xs max-w-32 truncate"
+                      className="inline-flex items-center gap-1 bg-red-100 text-red-800 px-2 py-0.5 rounded text-xs min-w-0 shrink-0"
                       title={option?.label || item?.toString()}
                     >
-                      <span className="truncate">{option?.label || item}</span>
+                      <span className="min-w-0">{option?.label || item}</span>
                       <div
                         onClick={(e) => removeValue(item, e)}
                         className="ml-1 hover:text-red-600 cursor-pointer flex-shrink-0"
@@ -101,11 +101,6 @@ export function MultiSelect({
                     </span>
                   );
                 })}
-                {value.length > 3 && (
-                  <span className="text-xs text-muted-foreground">
-                    +{value.length - 3}개 더
-                  </span>
-                )}
               </div>
             ) : (
               <span className="text-muted-foreground">{placeholder}</span>

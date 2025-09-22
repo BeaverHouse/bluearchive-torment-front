@@ -67,6 +67,8 @@ const RaidSearch = ({
   const [PartyCountRange, setPartyCountRange] = useState([0, 99]);
   const [Page, setPage] = useState(1);
   const [PageSize, setPageSize] = useState(10);
+  const [pageInputValue, setPageInputValue] = useState("1");
+  const [isPageInputActive, setIsPageInputActive] = useState(false);
 
   const {
     LevelList,
@@ -88,6 +90,7 @@ const RaidSearch = ({
 
   useEffect(() => {
     setPage(1);
+    setPageInputValue("1");
   }, [
     LevelList,
     IncludeList,
@@ -100,6 +103,13 @@ const RaidSearch = ({
     YoutubeOnly,
     season,
   ]);
+
+  // Page가 변경될 때 pageInputValue 동기화 (사용자 입력 중이 아닐 때만)
+  useEffect(() => {
+    if (!isPageInputActive) {
+      setPageInputValue(Page.toString());
+    }
+  }, [Page, isPageInputActive]);
 
   const getPartyDataQuery = useQuery({
     queryKey: ["getPartyData", season],
@@ -500,20 +510,58 @@ const RaidSearch = ({
         </Button>
         <div className="flex items-center gap-2">
           <input
-            type="number"
-            min="1"
-            max={Math.ceil(parties.length / PageSize)}
-            value={Page}
+            type="text"
+            value={pageInputValue}
             onChange={(e) => {
-              const newPage = parseInt(e.target.value);
-              if (
-                !isNaN(newPage) &&
-                newPage >= 1 &&
-                newPage <= Math.ceil(parties.length / PageSize)
-              ) {
+              const value = e.target.value;
+              setPageInputValue(value);
+              
+              // 숫자가 아닌 문자 제거
+              const numericValue = value.replace(/[^0-9]/g, '');
+              
+              if (numericValue === '') {
+                // 빈 값이면 아무것도 하지 않음 (입력 중일 수 있음)
+                return;
+              }
+              
+              const newPage = parseInt(numericValue);
+              const maxPage = Math.ceil(parties.length / PageSize);
+              
+              if (newPage >= 1 && newPage <= maxPage) {
                 setPage(newPage);
               }
             }}
+            onFocus={() => {
+              setIsPageInputActive(true);
+              setPageInputValue('');
+            }}
+            onBlur={() => {
+              setIsPageInputActive(false);
+              
+              // 빈 값이면 첫 페이지로 fallback
+              if (pageInputValue === '' || pageInputValue === '0') {
+                setPage(1);
+                setPageInputValue('1');
+              } else {
+                // 유효하지 않은 값이면 현재 페이지로 복원
+                const numericValue = pageInputValue.replace(/[^0-9]/g, '');
+                const newPage = parseInt(numericValue);
+                const maxPage = Math.ceil(parties.length / PageSize);
+                
+                if (isNaN(newPage) || newPage < 1 || newPage > maxPage) {
+                  setPageInputValue(Page.toString());
+                } else {
+                  setPage(newPage);
+                  setPageInputValue(newPage.toString());
+                }
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                (e.target as HTMLInputElement).blur();
+              }
+            }}
+            placeholder="페이지"
             className="w-16 px-2 py-1 text-sm border rounded text-center"
           />
           <span className="text-sm">

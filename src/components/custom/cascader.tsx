@@ -106,7 +106,7 @@ export function Cascader({
             {value.length > 0 ? (
               multiple ? (
                 <div className="flex flex-wrap gap-1">
-                  {value.slice(0, 2).map((item, index) => {
+                  {value.map((item, index) => {
                     const displayLabel = (() => {
                       if (item.length === 1) {
                         const parent = options.find(
@@ -128,10 +128,10 @@ export function Cascader({
                     return (
                       <span
                         key={index}
-                        className="inline-flex items-center gap-1 bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-xs max-w-32 truncate"
+                        className="inline-flex items-center gap-1 bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-xs min-w-0 shrink-0"
                         title={displayLabel}
                       >
-                        <span className="truncate">{displayLabel}</span>
+                        <span className="min-w-0">{displayLabel}</span>
                         <div
                           onClick={(e) => {
                             e.stopPropagation();
@@ -144,11 +144,6 @@ export function Cascader({
                       </span>
                     );
                   })}
-                  {value.length > 2 && (
-                    <span className="text-xs text-muted-foreground">
-                      +{value.length - 2}개 더
-                    </span>
-                  )}
                 </div>
               ) : (
                 <span className="text-sm">
