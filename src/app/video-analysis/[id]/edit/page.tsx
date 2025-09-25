@@ -211,7 +211,7 @@ export default function VideoEditPage() {
         ref={videoRef}
         className={`fixed bottom-5 right-5 shadow-2xl rounded-lg overflow-hidden bg-black transition-all duration-300 pointer-events-auto ${
           isVideoExpanded
-            ? 'w-[600px] h-[338px] md:w-[720px] md:h-[405px] lg:w-[800px] lg:h-[450px]'
+            ? 'w-[800px] h-[450px] md:w-[960px] md:h-[540px] lg:w-[1080px] lg:h-[608px]'
             : 'w-[300px] h-[169px] md:w-[360px] md:h-[203px]'
         }`}
         style={{ zIndex: 9999 }}

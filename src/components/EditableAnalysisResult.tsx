@@ -131,13 +131,6 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
     }))
   }, [])
 
-  // URL 업데이트
-  const updateUrl = useCallback((newUrl: string) => {
-    setAnalysisResult(prev => ({
-      ...prev,
-      url: newUrl
-    }))
-  }, [])
 
   // 설명 업데이트
   const updateDescription = useCallback((newDescription: string) => {
@@ -286,7 +279,7 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
           <CardTitle>기본 정보</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3">
             <div>
               <label className="text-xs font-medium mb-2 block text-muted-foreground">점수</label>
               <Input
@@ -294,15 +287,6 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
                 value={analysisResult.score}
                 onChange={(e) => updateScore(parseInt(e.target.value) || 0)}
                 placeholder="점수를 입력하세요"
-                className="h-9 w-full"
-              />
-            </div>
-            <div>
-              <label className="text-xs font-medium mb-2 block text-muted-foreground">유튜브 URL</label>
-              <Input
-                value={analysisResult.url}
-                onChange={(e) => updateUrl(e.target.value)}
-                placeholder="유튜브 URL을 입력하세요"
                 className="h-9 w-full"
               />
             </div>
