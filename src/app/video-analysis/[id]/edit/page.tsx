@@ -3,8 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Copy, Check } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { YouTubeEmbed, YouTubePlayerRef } from "@/components/YouTubeEmbed";
 import { EditableAnalysisResult } from "@/components/EditableAnalysisResult";
 import { VideoAnalysisData } from "@/types/video";
@@ -24,7 +23,6 @@ export default function VideoEditPage() {
   // 상태 관리
   const [videos, setVideos] = useState<VideoAnalysisData[]>([]);
   const [currentVideo, setCurrentVideo] = useState<VideoAnalysisData | null>(null);
-  const [copiedId, setCopiedId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState("");
   const [isVideoExpanded, setIsVideoExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -77,10 +75,7 @@ export default function VideoEditPage() {
   // 비디오 상태 변화 처리
   const handleVideoPlayStateChange = useCallback((playing: boolean) => {
     console.log('🎵 Video play state changed:', playing);
-    if (playing) {
-      console.log('🔄 Expanding video due to play state change');
-      setIsVideoExpanded(true);
-    }
+    // 재생 상태로 인한 자동 확대 제거
   }, []);
 
   // 비디오 클릭 처리
@@ -88,12 +83,23 @@ export default function VideoEditPage() {
     console.log('👆 Video clicked, isVideoExpanded:', isVideoExpanded);
     
     if (!isVideoExpanded) {
-      console.log('▶️ Starting playback programmatically');
+      // 축소된 상태에서 클릭하면 확대만 하고 재생은 하지 않음
+      console.log('🔍 Expanding video without auto-play');
       setIsVideoExpanded(true);
-      
+    } else {
+      // 확대된 상태에서 클릭하면 재생/일시정지 토글
       if (youtubePlayerRef.current) {
-        console.log('✅ Player ref exists, calling playVideo()');
-        youtubePlayerRef.current.playVideo();
+        const currentState = youtubePlayerRef.current.getPlayerState();
+        console.log('🎵 Current player state:', currentState);
+        
+        // 재생 중이면 (state === 1) 일시정지, 아니면 재생
+        if (currentState === 1) {
+          console.log('⏸️ Pausing video');
+          youtubePlayerRef.current.pauseVideo();
+        } else {
+          console.log('▶️ Playing video');
+          youtubePlayerRef.current.playVideo();
+        }
       }
     }
   }, [isVideoExpanded]);
@@ -113,14 +119,6 @@ export default function VideoEditPage() {
     };
   }, []);
 
-  // 탭 변경 처리
-  const handleTabChange = (value: string) => {
-    setActiveTab(value);
-    const selectedVideo = videos.find((v) => v.id.toString() === value);
-    if (selectedVideo) {
-      setCurrentVideo(selectedVideo);
-    }
-  };
 
   // 비디오 업데이트 처리
   const handleUpdateVideo = (updatedVideo: VideoAnalysisData) => {
@@ -151,33 +149,6 @@ export default function VideoEditPage() {
   //   return studentsMap[code.toString()] || `캐릭터 ${code}`;
   // };
 
-  // HTML 복사 기능
-  const generateHTML = (video: VideoAnalysisData) => {
-    // VideoDetail.tsx의 generateHTML 함수와 동일한 로직
-    const { analysis_result } = video;
-    
-    const html = `<div>총점: ${analysis_result.score.toLocaleString()}</div>`;
-    // 실제 구현에서는 전체 HTML 생성 로직 추가
-    return html;
-  };
-
-  const copyToClipboard = async (video: VideoAnalysisData) => {
-    try {
-      const html = generateHTML(video);
-      await navigator.clipboard.writeText(html);
-      setCopiedId(video.id);
-      setTimeout(() => setCopiedId(null), 2000);
-    } catch (error) {
-      console.error("복사 실패:", error);
-      alert("복사에 실패했습니다.");
-    }
-  };
-
-  const sortedVideos = videos.length > 0 ? [...videos].sort((a, b) => {
-    if (a.analysis_type !== "ai" && b.analysis_type === "ai") return -1;
-    if (a.analysis_type === "ai" && b.analysis_type !== "ai") return 1;
-    return 0;
-  }) : [];
 
   // 로딩 중이거나 데이터가 없는 경우
   if (isLoading || !currentVideo) {
@@ -209,10 +180,10 @@ export default function VideoEditPage() {
       {/* Picture-in-Picture 영상 플레이어 */}
       <div 
         ref={videoRef}
-        className={`fixed bottom-5 right-5 shadow-2xl rounded-lg overflow-hidden bg-black transition-all duration-300 pointer-events-auto ${
+        className={`fixed top-5 left-5 shadow-2xl rounded-lg overflow-hidden bg-black transition-all duration-300 pointer-events-auto ${
           isVideoExpanded
-            ? 'w-[800px] h-[450px] md:w-[960px] md:h-[540px] lg:w-[1080px] lg:h-[608px]'
-            : 'w-[300px] h-[169px] md:w-[360px] md:h-[203px]'
+            ? 'w-[600px] h-[338px] md:w-[720px] md:h-[405px] lg:w-[800px] lg:h-[450px]'
+            : 'w-[240px] h-[135px] md:w-[280px] md:h-[158px]'
         }`}
         style={{ zIndex: 9999 }}
         onClick={(e) => {
@@ -231,46 +202,12 @@ export default function VideoEditPage() {
       </div>
       
       {/* 편집 영역 */}
-      <div className="space-y-6">
-        {/* 편집 탭 헤더 */}
-        {videos.length > 1 && (
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <Tabs value={activeTab} onValueChange={handleTabChange}>
-              <TabsList>
-                {sortedVideos.map((video) => {
-                  if (video.analysis_type === "ai") {
-                    return (
-                      <TabsTrigger key={video.id} value={video.id.toString()}>
-                        AI 분석
-                      </TabsTrigger>
-                    );
-                  } else {
-                    return (
-                      <TabsTrigger key={video.id} value={video.id.toString()}>
-                        사용자 분석 v{video.version}
-                      </TabsTrigger>
-                    );
-                  }
-                })}
-              </TabsList>
-            </Tabs>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => copyToClipboard(currentVideo)}
-                disabled={copiedId === currentVideo.id}
-              >
-                {copiedId === currentVideo.id ? (
-                  <Check className="h-4 w-4 mr-2" />
-                ) : (
-                  <Copy className="h-4 w-4 mr-2" />
-                )}
-                {copiedId === currentVideo.id ? "복사됨" : "HTML 복사"}
-              </Button>
-            </div>
-          </div>
-        )}
+      <div className="space-y-6 mt-[200px] md:mt-[180px] lg:mt-[160px]">
+        {/* 편집 헤더 */}
+        <div className="border-b pb-4">
+          <h2 className="text-2xl font-bold text-gray-900">분석 데이터 편집</h2>
+          <p className="text-gray-600 mt-1">파티 구성과 스킬 순서를 수정할 수 있습니다.</p>
+        </div>
         
         {/* 편집 폼 */}
         {currentVideo && (

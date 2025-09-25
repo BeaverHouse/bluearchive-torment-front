@@ -30,19 +30,29 @@ export default function VideoDetailPage() {
         setLoading(true)
         setError(null)
         
-        // 편집 완료 후 업데이트된 데이터가 있는지 확인
+        // 편집 완료 후 업데이터된 데이터가 있는지 확인
         const updatedData = sessionStorage.getItem('updatedVideoData')
         if (updatedData) {
           try {
             const { updatedVideos, updatedCurrentVideo } = JSON.parse(updatedData)
-            // 업데이트된 데이터로 설정
-            const videoDetailData = {
-              video_id: videoId,
-              data: updatedVideos,
-              title: videoDetail?.title || '',
-              raid_id: videoDetail?.raid_id || null
+            
+            // 기존 데이터가 없으면 먼저 API 호출해서 기본 정보 가져오기
+            if (!videoDetail) {
+              const response = await getVideoDetail(videoId)
+              setVideoDetail({
+                video_id: videoId,
+                data: updatedVideos,
+                title: response.data.title,
+                raid_id: response.data.raid_id
+              })
+            } else {
+              // 기존 데이터가 있으면 업데이트된 데이터만 교체
+              setVideoDetail({
+                ...videoDetail,
+                data: updatedVideos
+              })
             }
-            setVideoDetail(videoDetailData)
+            
             setCurrentVideo(updatedCurrentVideo)
             
             // 사용한 데이터 제거
