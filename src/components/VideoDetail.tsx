@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ArrowLeft, Edit3, Copy, Check } from "lucide-react";
@@ -25,7 +25,7 @@ export function VideoDetail({
   const [isEditing, setIsEditing] = useState(false);
   const [copiedId, setCopiedId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState(currentVideo.id.toString());
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [isVideoExpanded, setIsVideoExpanded] = useState(false);
 
   const studentsMap = studentsData as Record<string, string>;
 
@@ -37,16 +37,43 @@ export function VideoDetail({
   });
   const handleStartEdit = () => {
     setIsEditing(true);
+    setIsVideoExpanded(false); // 편집 시작 시 비디오 축소 상태로
   };
 
   const handleCancelEdit = () => {
     setIsEditing(false);
+    setIsVideoExpanded(false);
   };
 
   const handleUpdateVideo = (updatedVideo: VideoAnalysisData) => {
     onVideoChange(updatedVideo);
     setIsEditing(false);
+    setIsVideoExpanded(false);
   };
+
+  const handleVideoPlayStateChange = (playing: boolean) => {
+    if (playing) {
+      setIsVideoExpanded(true); // 재생 시작하면 확장
+    }
+  };
+
+  // useClickOutside 훅
+  const videoRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (videoRef.current && !videoRef.current.contains(event.target as Node)) {
+        setIsVideoExpanded(false);
+      }
+    };
+
+    if (isEditing) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [isEditing]);
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -217,22 +244,26 @@ export function VideoDetail({
 
       {/* 편집 모드일 때 Picture-in-Picture 스타일, 아닐 때 기존 레이아웃 */}
       {isEditing ? (
-        <div className="relative">
-          {/* Picture-in-Picture 영상 플레이어 */}
-          <div className={`fixed top-20 right-4 z-40 shadow-2xl rounded-lg overflow-hidden bg-black transition-all duration-300 ${
-            isVideoPlaying 
-              ? 'w-[480px] h-[270px] md:w-[560px] md:h-[315px] lg:w-[640px] lg:h-[360px]' // 재생 중일 때 UI의 2/3 차지
-              : 'w-48 h-[108px] md:w-64 md:h-36'      // 일시정지일 때 작게
-          }`}>
+        <>
+          {/* Picture-in-Picture 영상 플레이어 - 완전 분리된 레이어 */}
+          <div 
+            ref={videoRef}
+            className={`fixed bottom-5 right-5 shadow-2xl rounded-lg overflow-hidden bg-black transition-all duration-300 pointer-events-auto ${
+              isVideoExpanded
+                ? 'w-[600px] h-[338px] md:w-[720px] md:h-[405px] lg:w-[800px] lg:h-[450px]' // 확장된 상태
+                : 'w-[300px] h-[169px] md:w-[360px] md:h-[203px]' // 기본 상태
+            }`}
+            style={{ zIndex: 9999 }}
+          >
             <YouTubeEmbed
               videoId={currentVideo.video_id}
               title={`Video ${currentVideo.id}`}
-              onPlayStateChange={setIsVideoPlaying}
+              onPlayStateChange={handleVideoPlayStateChange}
             />
           </div>
           
-          {/* 편집 영역 - 전체 너비 활용 */}
-          <div className="space-y-6"> {/* padding 완전 제거로 전체 화면 활용 */}
+          {/* 편집 영역 - 일반 플로우 */}
+          <div className="space-y-6">
             {/* 편집 탭 헤더 */}
             {videos.length > 1 && (
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -280,7 +311,7 @@ export function VideoDetail({
               onCancel={handleCancelEdit}
             />
           </div>
-        </div>
+        </>
       ) : (
         <>
           {/* YouTube 임베드 */}
