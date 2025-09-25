@@ -59,11 +59,11 @@ export function AIPartyDisplay({ partyCompositions, skillOrders, validationError
     return character ? getCharacterName(character.code) : "알 수 없음"
   }
 
-  const hasValidationErrors = analysisType === 'ai' && validationErrors && validationErrors.length > 0 && validationErrors.some(error => error.trim().length > 0)
+  const hasValidationErrors = (analysisType === 'ai' || analysisType?.startsWith('ai-')) && validationErrors && validationErrors.length > 0 && validationErrors.some(error => error.trim().length > 0)
 
   // 파티별 validation 에러 매핑
   const getPartyValidationErrors = (partyNumber: number): string[] => {
-    if (analysisType !== 'ai' || !validationErrors) return []
+    if ((analysisType !== 'ai' && !analysisType?.startsWith('ai-')) || !validationErrors) return []
     return validationErrors.filter(error => 
       error && error.trim().length > 0 && (
         error.toLowerCase().includes(`party ${partyNumber}`) || 
@@ -171,7 +171,7 @@ export function AIPartyDisplay({ partyCompositions, skillOrders, validationError
         <CardTitle className="flex items-center justify-between">
           <span className="flex items-center gap-2">
             <Trophy className="h-5 w-5 text-blue-600" />
-            {analysisType === 'ai' ? 'AI 분석' : '사용자 분석'} 파티 구성
+            {(analysisType === 'ai' || analysisType?.startsWith('ai-')) ? 'AI 분석' : '사용자 분석'} 파티 구성
           </span>
           <div className="flex items-center gap-2">
             <Badge className="bg-primary text-primary-foreground text-lg px-4 py-2">
