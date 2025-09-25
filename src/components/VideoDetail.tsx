@@ -6,7 +6,6 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ArrowLeft, Edit3, Copy, Check } from "lucide-react";
 import { YouTubeEmbed } from "@/components/YouTubeEmbed";
 import PartyCard from "@/components/molecules/PartyCard";
-import { EditableAnalysisResult } from "@/components/EditableAnalysisResult";
 import { VideoAnalysisData } from "@/types/video";
 import Link from "next/link";
 import studentsData from "../../data/students.json";
@@ -22,10 +21,8 @@ export function VideoDetail({
   currentVideo,
   onVideoChange,
 }: VideoDetailProps) {
-  const [isEditing, setIsEditing] = useState(false);
   const [copiedId, setCopiedId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState(currentVideo.id.toString());
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
   const studentsMap = studentsData as Record<string, string>;
 
@@ -36,17 +33,18 @@ export function VideoDetail({
     return 0;
   });
   const handleStartEdit = () => {
-    setIsEditing(true);
+    // 새로운 편집 페이지로 이동 (상태 전달)
+    const editData = {
+      videos: videos,
+      currentVideo: currentVideo,
+      activeTab: activeTab
+    };
+    
+    // sessionStorage에 데이터 임시 저장
+    sessionStorage.setItem('editVideoData', JSON.stringify(editData));
+    window.location.href = `/video-analysis/${currentVideo.video_id}/edit`;
   };
 
-  const handleCancelEdit = () => {
-    setIsEditing(false);
-  };
-
-  const handleUpdateVideo = (updatedVideo: VideoAnalysisData) => {
-    onVideoChange(updatedVideo);
-    setIsEditing(false);
-  };
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -215,84 +213,14 @@ export function VideoDetail({
         </Link>
       </div>
 
-      {/* 편집 모드일 때 Picture-in-Picture 스타일, 아닐 때 기존 레이아웃 */}
-      {isEditing ? (
-        <div className="relative">
-          {/* Picture-in-Picture 영상 플레이어 */}
-          <div className={`fixed top-20 right-4 z-40 shadow-2xl rounded-lg overflow-hidden bg-black transition-all duration-300 ${
-            isVideoPlaying 
-              ? 'w-[480px] h-[270px] md:w-[560px] md:h-[315px] lg:w-[640px] lg:h-[360px]' // 재생 중일 때 UI의 2/3 차지
-              : 'w-48 h-[108px] md:w-64 md:h-36'      // 일시정지일 때 작게
-          }`}>
-            <YouTubeEmbed
-              videoId={currentVideo.video_id}
-              title={`Video ${currentVideo.id}`}
-              onPlayStateChange={setIsVideoPlaying}
-            />
-          </div>
-          
-          {/* 편집 영역 - 전체 너비 활용 */}
-          <div className="space-y-6"> {/* padding 완전 제거로 전체 화면 활용 */}
-            {/* 편집 탭 헤더 */}
-            {videos.length > 1 && (
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <Tabs value={activeTab} onValueChange={handleTabChange}>
-                  <TabsList>
-                    {sortedVideos.map((video) => {
-                      if (video.analysis_type === "ai") {
-                        return (
-                          <TabsTrigger key={video.id} value={video.id.toString()}>
-                            AI 분석
-                          </TabsTrigger>
-                        );
-                      } else {
-                        return (
-                          <TabsTrigger key={video.id} value={video.id.toString()}>
-                            사용자 분석 v{video.version}
-                          </TabsTrigger>
-                        );
-                      }
-                    })}
-                  </TabsList>
-                </Tabs>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => copyToClipboard(currentVideo)}
-                    disabled={copiedId === currentVideo.id}
-                  >
-                    {copiedId === currentVideo.id ? (
-                      <Check className="h-4 w-4 mr-2" />
-                    ) : (
-                      <Copy className="h-4 w-4 mr-2" />
-                    )}
-                    {copiedId === currentVideo.id ? "복사됨" : "HTML 복사"}
-                  </Button>
-                </div>
-              </div>
-            )}
-            
-            {/* 편집 폼 */}
-            <EditableAnalysisResult
-              videoData={currentVideo}
-              onUpdate={handleUpdateVideo}
-              onCancel={handleCancelEdit}
-            />
-          </div>
-        </div>
-      ) : (
-        <>
-          {/* YouTube 임베드 */}
-          <YouTubeEmbed
-            videoId={currentVideo.video_id}
-            title={`Video ${currentVideo.id}`}
-          />
-        </>
-      )}
+      {/* YouTube 임베드 */}
+      <YouTubeEmbed
+        videoId={currentVideo.video_id}
+        title={`Video ${currentVideo.id}`}
+      />
 
-      {/* 편집 모드가 아닐 때의 탭 레이아웃 */}
-      {!isEditing && videos.length > 1 ? (
+      {/* 탭 레이아웃 */}
+      {videos.length > 1 ? (
         <Tabs value={activeTab} onValueChange={handleTabChange}>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
             <TabsList>
@@ -464,7 +392,7 @@ export function VideoDetail({
             </TabsContent>
           ))}
         </Tabs>
-      ) : !isEditing && (
+      ) : (
         <div className="space-y-4">
           <div className="flex gap-2 justify-end">
             <Button
