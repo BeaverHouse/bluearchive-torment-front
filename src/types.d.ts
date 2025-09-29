@@ -14,3 +14,9 @@ interface Party {
   children: Array<number>;
   youtube_full: string | null;
 }
+
+interface PartyData {
+  rank: number;
+  score: number;
+  partyData: number[][];
+}

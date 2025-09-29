@@ -10,11 +10,6 @@ interface RaidData {
   parties: PartyData[];
 }
 
-interface PartyData {
-  rank: number;
-  score: number;
-  partyData: number[][];
-}
 
 interface YoutubeLinkInfo {
   userId: number;

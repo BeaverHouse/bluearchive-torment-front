@@ -36,13 +36,6 @@ interface FilterOption {
   children?: FilterOption[];
 }
 
-interface PartyData {
-  rank: number;
-  score: number;
-  partyData: number[][];
-  [key: string]: unknown;
-}
-
 interface RaidData {
   parties: PartyData[];
   minPartys: number;
