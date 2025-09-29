@@ -5,7 +5,8 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Play, CheckCircle, Calendar, ChevronLeft, ChevronRight } from "lucide-react"
-import { VideoListItem, RaidData } from "@/types/video"
+import { VideoListItem } from "@/types/video"
+import { RaidInfo } from "@/types/raid"
 import raidsData from "../../data/raids.json"
 import NormalAnnounce from "@/components/atoms/NormalAnnounce"
 
@@ -22,7 +23,7 @@ interface VideoListProps {
   onPageChange: (page: number) => void
 }
 
-const raids: RaidData[] = raidsData as RaidData[]
+const raids: RaidInfo[] = raidsData as RaidInfo[]
 
 function getRaidName(raidId: string | null): string | null {
   if (!raidId) return null

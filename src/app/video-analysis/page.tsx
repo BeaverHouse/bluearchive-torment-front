@@ -7,7 +7,8 @@ import {
   getQueueStatus,
   QueueItem,
 } from "@/lib/api";
-import { VideoListItem, RaidData } from "@/types/video";
+import { VideoListItem } from "@/types/video";
+import { RaidInfo } from "@/types/raid";
 import {
   Select,
   SelectContent,
@@ -32,7 +33,7 @@ import ErrorPage from "@/components/ErrorPage";
 import { translations } from "@/components/constants";
 import Swal from "sweetalert2";
 
-const raids: RaidData[] = raidsData as RaidData[];
+const raids: RaidInfo[] = raidsData as RaidInfo[];
 
 export default function VideoAnalysisPage() {
   const [videos, setVideos] = useState<VideoListItem[]>([]);

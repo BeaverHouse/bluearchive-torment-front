@@ -2,6 +2,8 @@
 
 import React from "react";
 import { categoryLabels } from "../constants";
+import { PartyData, YoutubeLinkInfo } from "@/types/raid";
+import { useTouchDevice } from "@/hooks/useTouchDevice";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,24 +21,6 @@ import {
 } from "@/components/ui/accordion";
 import { Youtube, Trophy } from "lucide-react";
 
-interface PartyData {
-  rank: number;
-  score: number;
-  partyData: number[][];
-  // v2 호환성을 위한 선택적 속성들
-  PARTY_DATA?: Record<string, number[]>;
-  LEVEL?: string;
-  USER_ID?: number;
-  TORMENT_RANK?: number;
-  SCORE?: number;
-  FINAL_RANK?: number;
-}
-
-interface YoutubeLinkInfo {
-  userId: number;
-  youtubeUrl: string;
-  score: number;
-}
 
 interface PartyCardProps {
   data: PartyData;
@@ -55,24 +39,9 @@ const PartyCard: React.FC<PartyCardProps> = ({
     new Set()
   );
 
-  const [isTouchDevice, setIsTouchDevice] = React.useState(false);
+  const { isTouchDevice } = useTouchDevice();
 
-  React.useEffect(() => {
-    setIsTouchDevice("ontouchstart" in window || navigator.maxTouchPoints > 0);
-  }, []);
-
-  // v3 또는 v2 데이터 구조 처리
-  const partys =
-    data.partyData ||
-    (data.PARTY_DATA
-      ? Object.entries(data.PARTY_DATA)
-          .sort(
-            (a, b) =>
-              Number(a[0].replace("party_", "")) -
-              Number(b[0].replace("party_", ""))
-          )
-          .map(([, party]) => party)
-      : []);
+  const partys = data.partyData;
 
   return (
     <Card className="relative w-full mx-auto mb-4 max-w-none">
@@ -82,27 +51,19 @@ const PartyCard: React.FC<PartyCardProps> = ({
           <div className="flex items-center gap-2">
             {!hideRank && (
               <Badge variant="outline" className="font-medium">
-                #{data.rank || data.TORMENT_RANK}위
+                #{data.rank}위
               </Badge>
             )}
             <div className="flex items-center gap-1">
               <Trophy className="h-4 w-4 text-blue-600" />
               <span className="text-lg font-bold text-blue-600">
-                {(data.score || data.SCORE || 0).toLocaleString()}
+                {(data.score || 0).toLocaleString()}
               </span>
               <span className="text-sm text-muted-foreground">점</span>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            {data.FINAL_RANK &&
-              data.FINAL_RANK !== (data.rank || data.TORMENT_RANK) &&
-              data.FINAL_RANK > 0 && (
-                <Badge variant="secondary" className="text-xs">
-                  최종 {data.FINAL_RANK}위
-                </Badge>
-              )}
-
             {linkInfos.length > 0 && (
               <Button
                 variant="destructive"
@@ -132,14 +93,19 @@ const PartyCard: React.FC<PartyCardProps> = ({
             >
               {party.map((char, charIdx) => {
                 if (char === 0)
-                  return <div key={charIdx} className="w-10 h-10 sm:w-12 sm:h-12"></div>;
+                  return (
+                    <div
+                      key={charIdx}
+                      className="w-10 h-10 sm:w-12 sm:h-12"
+                    ></div>
+                  );
 
                 const code = Math.floor(char / 1000);
                 const star = Math.floor((char % 1000) / 100);
                 const weapon = Math.floor((char % 100) / 10);
                 const assist = char % 10;
                 const name = studentsMap[code];
-                const tooltipId = `party-${data.USER_ID}-${partyIdx}-${charIdx}`;
+                const tooltipId = `party-${partyIdx}-${charIdx}`;
                 const isOpen = openTooltips.has(tooltipId);
 
                 return (
@@ -252,7 +218,10 @@ const PartyCard: React.FC<PartyCardProps> = ({
                         {party.map((char, charIdx) => {
                           if (char === 0)
                             return (
-                              <div key={charIdx} className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                              <div
+                                key={charIdx}
+                                className="w-10 h-10 sm:w-12 sm:h-12"
+                              ></div>
                             );
 
                           const code = Math.floor(char / 1000);
@@ -260,7 +229,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
                           const weapon = Math.floor((char % 100) / 10);
                           const assist = char % 10;
                           const name = studentsMap[code];
-                          const tooltipId = `party-accordion-${data.USER_ID}-${
+                          const tooltipId = `party-accordion-${
                             partyIdx + 4
                           }-${charIdx}`;
                           const isOpen = openTooltips.has(tooltipId);

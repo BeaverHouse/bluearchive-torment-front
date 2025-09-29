@@ -8,7 +8,7 @@ import { YouTubeEmbed } from "@/components/YouTubeEmbed";
 import PartyCard from "@/components/molecules/PartyCard";
 import { VideoAnalysisData } from "@/types/video";
 import Link from "next/link";
-import studentsData from "../../data/students.json";
+import { getStudentsMap, getCharacterName } from "@/utils/character";
 
 interface VideoDetailProps {
   videos: VideoAnalysisData[];
@@ -24,7 +24,7 @@ export function VideoDetail({
   const [copiedId, setCopiedId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState(currentVideo.id.toString());
 
-  const studentsMap = studentsData as Record<string, string>;
+  const studentsMap = getStudentsMap();
 
   // 사용자 분석을 먼저, AI 분석을 나중에 정렬
   const sortedVideos = [...videos].sort((a, b) => {
@@ -54,9 +54,6 @@ export function VideoDetail({
     }
   };
 
-  const getCharacterName = (code: number): string => {
-    return studentsMap[code.toString()] || `캐릭터 ${code}`;
-  };
 
   // 새로운 데이터 구조에서는 스킬 순서 관련 함수 제거 (skillOrders가 빈 배열)
 
@@ -99,7 +96,7 @@ export function VideoDetail({
         const star = Math.floor((char % 1000) / 100);
         const weapon = Math.floor((char % 100) / 10);
         const assist = char % 10;
-        const name = getCharacterName(code);
+        const name = getCharacterName(code, studentsMap);
 
         // 성급과 무기 표시 개선
         let starWeaponText = "";
@@ -156,7 +153,7 @@ export function VideoDetail({
           const charValue = party[characterIndex];
           if (charValue && charValue > 0) {
             const code = Math.floor(charValue / 1000);
-            characterName = getCharacterName(code);
+            characterName = getCharacterName(code, studentsMap);
           }
         }
 
@@ -330,7 +327,7 @@ export function VideoDetail({
                                           charValue / 1000
                                         );
                                         characterName =
-                                          getCharacterName(characterCode);
+                                          getCharacterName(characterCode, studentsMap);
                                       }
                                     }
 
@@ -479,7 +476,7 @@ export function VideoDetail({
                                       charValue / 1000
                                     );
                                     characterName =
-                                      getCharacterName(characterCode);
+                                      getCharacterName(characterCode, studentsMap);
                                   }
                                 }
 

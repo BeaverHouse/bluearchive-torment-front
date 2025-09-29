@@ -7,22 +7,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { CascaderOption, BaseSelectProps } from "@/types/ui";
 
-export interface CascaderOption {
-  value: number;
-  label: string;
-  children?: CascaderOption[];
-}
-
-interface CascaderProps {
+interface CascaderProps extends BaseSelectProps {
   options: CascaderOption[];
   value?: number[][];
   onChange?: (value: number[][]) => void;
-  placeholder?: string;
-  className?: string;
   multiple?: boolean;
-  allowClear?: boolean;
-  showSearch?: boolean;
 }
 
 export function Cascader({

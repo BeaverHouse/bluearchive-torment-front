@@ -1,31 +1,10 @@
-import { categoryLabels } from "./constants";
-
-interface Option {
-  value: number;
-  label: string;
-  children?: Option[];
-}
-
-interface RaidData {
-  parties: PartyData[];
-}
-
-interface PartyData {
-  rank: number;
-  score: number;
-  partyData: number[][];
-}
-
-interface YoutubeLinkInfo {
-  userId: number;
-  youtubeUrl: string;
-  score: number;
-}
+import { categoryLabels, lunaticMinScore, tormentMinScore } from "./constants";
+import { RaidData, PartyData, YoutubeLinkInfo, FilterOption } from "@/types/raid";
 
 export const getFilters = (
   rawData: Record<string, Record<string, number>>,
   studentsMap: Record<string, string>
-): Option[] => {
+): FilterOption[] => {
   return Object.keys(rawData).map((key) => ({
     value: Number(key),
     label: studentsMap[key],
@@ -85,15 +64,15 @@ export const filteredPartys = (
       party.partyData.length >= partyCountRange[0] &&
       party.partyData.length <= partyCountRange[1] &&
       (allowDuplicate || Array.from(new Set(codes)).length === codes.length) &&
-      (!youtubeOnly || youtubeLinkInfos.some(link => Math.abs(link.score - party.score) < 1000))
+      (!youtubeOnly || youtubeLinkInfos.some(link => link.score == party.score))
     );
   });
 };
 
 const getScoreLevel = (score: number): string => {
   // 점수 기반으로 난이도 판단 (임시 로직, 실제 기준에 맞게 조정 필요)
-  if (score >= 50000000) return "L"; // Lunatic
-  if (score >= 30000000) return "T"; // Torment
+  if (score >= lunaticMinScore) return "L"; // Lunatic
+  if (score >= tormentMinScore) return "T"; // Torment
   return "I"; // Insane
 };
 

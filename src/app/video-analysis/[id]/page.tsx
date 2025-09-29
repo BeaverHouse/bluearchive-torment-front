@@ -2,13 +2,14 @@
 
 import { VideoDetail } from "@/components/VideoDetail"
 import { getVideoDetail } from "@/lib/api"
-import { VideoAnalysisData, VideoDetailResponse, RaidData } from "@/types/video"
+import { VideoAnalysisData, VideoDetailResponse } from "@/types/video"
+import { RaidInfo } from "@/types/raid"
 import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import raidsData from "../../../../data/raids.json"
 import ErrorPage from "@/components/ErrorPage"
 
-const raids: RaidData[] = raidsData as RaidData[]
+const raids: RaidInfo[] = raidsData as RaidInfo[]
 
 function getRaidName(raidId: string | null): string | null {
   if (!raidId) return null

@@ -28,13 +28,8 @@ import {
 } from "lucide-react";
 import Swal from "sweetalert2";
 import { VideoIcon } from "@radix-ui/react-icons";
-
-interface RaidComponentProps {
-  season: string;
-  seasonDescription: string;
-  studentsMap: Record<string, string>;
-  level: string;
-}
+import { RaidComponentProps } from "@/types/raid";
+import { useTouchDevice } from "@/hooks/useTouchDevice";
 
 interface RaidSummaryData {
   clearCount: number;
@@ -66,7 +61,7 @@ interface PartyTableType {
 
 const RaidSummary = ({
   season,
-  seasonDescription,
+  seasonDescription = "",
   studentsMap,
   level,
 }: RaidComponentProps) => {
@@ -74,11 +69,7 @@ const RaidSummary = ({
   const [copiedSearchTerm, setCopiedSearchTerm] = useState(false);
   const [showAllHighUsage, setShowAllHighUsage] = useState(false);
   const [openTooltips, setOpenTooltips] = useState<Set<string>>(new Set());
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
-
-  useEffect(() => {
-    setIsTouchDevice("ontouchstart" in window || navigator.maxTouchPoints > 0);
-  }, []);
+  const { isTouchDevice } = useTouchDevice();
 
   const getSummaryDataQuery = useQuery({
     queryKey: ["getSummaryData", season],
