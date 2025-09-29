@@ -11,8 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Trash2, Plus, Save, X, Clock, MoreHorizontal, Maximize2, Minimize2, GripVertical } from "lucide-react"
 import { AnalysisResult, VideoAnalysisData, SkillOrder } from "@/types/video"
 import { updateVideoAnalysis } from "@/lib/api"
-import studentsData from "../../data/students.json"
 import { SearchableSelect } from "@/components/SearchableSelect"
+import { getStudentsMap, getCharacterName } from "@/utils/character"
 import {
   DndContext,
   closestCenter,
@@ -44,11 +44,8 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
   const [saving, setSaving] = useState(false)
   const [compactMode, setCompactMode] = useState(true) // 기본값을 컴팩트 모드로 설정
   
-  const studentsMap = studentsData as Record<string, string>
+  const studentsMap = getStudentsMap()
 
-  const getCharacterName = useCallback((code: number): string => {
-    return studentsMap[code.toString()] || `캐릭터 ${code}`
-  }, [studentsMap])
 
   const getCharacterOptions = () => {
     return Object.entries(studentsMap).map(([code, name]) => ({
@@ -213,14 +210,14 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
         
         return {
           code: info.code,
-          name: getCharacterName(info.code),
+          name: getCharacterName(info.code, studentsMap),
           slotIndex,
           type: slotIndex < 4 ? 'striker' : 'special', // 첫 4개는 스트라이커, 마지막 2개는 스페셜
           order: (slotIndex < 4 ? slotIndex : slotIndex - 4) + 1
         }
       })
       .filter(Boolean)
-  }, [analysisResult.partyData, getCharacterName])
+  }, [analysisResult.partyData, studentsMap])
 
   // 캐릭터 코드에서 정보 추출
   const parseCharacterInfo = (charValue: number) => {

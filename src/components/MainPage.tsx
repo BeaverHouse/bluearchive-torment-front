@@ -5,7 +5,6 @@ import RaidSearch from "./molecules/RaidSearch";
 import RaidSummary from "./molecules/RaidSummary";
 import InfoFAB from "./atoms/InfoFAB";
 import NormalAnnounce from "./atoms/NormalAnnounce";
-import studentsData from "../../data/students.json";
 import raidsData from "../../data/raids.json";
 import {
   Select,
@@ -17,11 +16,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RaidInfo } from "@/types/raid";
+import { getStudentsMap } from "@/utils/character";
 
 function MainPage() {
   const { V3Season, setV3Season } = useBAStore();
 
-  const studentsMap = studentsData as Record<string, string>;
+  const studentsMap = getStudentsMap();
   const raidInfos = (raidsData as RaidInfo[])
     .filter((raid) => raid.party_updated)
     .map((raid) => ({

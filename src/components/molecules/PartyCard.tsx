@@ -3,6 +3,7 @@
 import React from "react";
 import { categoryLabels } from "../constants";
 import { PartyData, YoutubeLinkInfo } from "@/types/raid";
+import { useTouchDevice } from "@/hooks/useTouchDevice";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -38,11 +39,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
     new Set()
   );
 
-  const [isTouchDevice, setIsTouchDevice] = React.useState(false);
-
-  React.useEffect(() => {
-    setIsTouchDevice("ontouchstart" in window || navigator.maxTouchPoints > 0);
-  }, []);
+  const { isTouchDevice } = useTouchDevice();
 
   const partys = data.partyData;
 

@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import useBAStore from "../../store/useBAStore";
 import { filteredPartys, getFilters } from "../function";
 import PartyCard from "./PartyCard";
-import { RaidData, PartyData, FilterData, FilterOption, YoutubeLinkInfo } from "@/types/raid";
+import { RaidData, PartyData, FilterData, FilterOption, YoutubeLinkInfo, RaidComponentProps } from "@/types/raid";
 import { Button } from "../ui/button";
 import {
   Select,
@@ -25,11 +25,6 @@ import { Cascader } from "../custom/cascader";
 import { MultiSelect } from "../custom/multi-select";
 import { lunaticMinScore, tormentMinScore } from "../constants";
 
-interface RaidComponentProps {
-  season: string;
-  studentsMap: Record<string, string>;
-  level: string;
-}
 
 
 const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {

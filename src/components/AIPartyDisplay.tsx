@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -13,7 +13,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { PartyComposition, Character, SkillOrder } from "@/types/video"
-import studentsData from "../../data/students.json"
+import { getStudentsMap, getCharacterName } from "@/utils/character"
+import { useTouchDevice } from "@/hooks/useTouchDevice"
 
 interface AIPartyDisplayProps {
   partyCompositions: PartyComposition[]
@@ -25,17 +26,9 @@ interface AIPartyDisplayProps {
 
 export function AIPartyDisplay({ partyCompositions, skillOrders, validationErrors, totalScore, analysisType = 'ai' }: AIPartyDisplayProps) {
   const [openTooltips, setOpenTooltips] = useState<Set<string>>(new Set())
-  const [isTouchDevice, setIsTouchDevice] = useState(false)
+  const { isTouchDevice } = useTouchDevice()
   
-  const studentsMap = studentsData as Record<string, string>
-
-  useEffect(() => {
-    setIsTouchDevice("ontouchstart" in window || navigator.maxTouchPoints > 0)
-  }, [])
-
-  const getCharacterName = (code: number): string => {
-    return studentsMap[code.toString()] || `캐릭터 ${code}`
-  }
+  const studentsMap = getStudentsMap()
 
   const getStarRankLabel = (character: Character): string => {
     if (character.star_rank) return character.star_rank
@@ -73,7 +66,7 @@ export function AIPartyDisplay({ partyCompositions, skillOrders, validationError
   }
 
   const renderCharacter = (character: Character, index: number, partyNumber: number, type: 'striker' | 'special') => {
-    const name = getCharacterName(character.code)
+    const name = getCharacterName(character.code, studentsMap)
     const starRank = getStarRankLabel(character)
     const tooltipId = `ai-party-${partyNumber}-${type}-${index}`
     const isOpen = openTooltips.has(tooltipId)

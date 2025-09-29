@@ -33,3 +33,10 @@ export interface FilterOption {
   label: string;
   children?: FilterOption[];
 }
+
+export interface RaidComponentProps {
+  season: string;
+  studentsMap: Record<string, string>;
+  level: string;
+  seasonDescription?: string;
+}
