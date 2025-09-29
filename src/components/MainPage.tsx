@@ -44,103 +44,93 @@ function MainPage() {
   )!.topLevel;
 
   return (
+    <div
+      className="App"
+      style={{
+        width: "100%",
+        maxWidth: 800,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        textAlign: "center",
+        margin: "0 auto",
+        padding: "5px",
+      }}
+    >
+      <NormalAnnounce />
+      <InfoFAB />
+
       <div
-        className="App"
         style={{
-          width: "100%",
-          maxWidth: 800,
           display: "flex",
-          flexDirection: "column",
+          flexWrap: "wrap",
           alignItems: "center",
+          justifyContent: "center",
           textAlign: "center",
-          margin: "0 auto",
-          padding: "5px",
+          width: "90%",
         }}
       >
-        <NormalAnnounce />
-        <InfoFAB />
-
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            alignItems: "center",
-            justifyContent: "center",
-            textAlign: "center",
-            width: "90%",
-          }}
-        >
-          <Select value={season} onValueChange={setV3Season}>
-            <SelectTrigger className="w-72 m-1">
-              <SelectValue placeholder="시즌 선택" />
-            </SelectTrigger>
-            <SelectContent>
-              {raidInfos.map((raid) => (
-                <SelectItem key={raid.value} value={raid.value}>
-                  {raid.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button className="w-72 m-1" asChild>
-            <a
-              href={
-                season.startsWith("3S")
-                  ? "https://arona.ai/eraidreport"
-                  : "https://arona.ai/raidreport"
-              }
-              target="_blank"
-            >
-              총력전 리포트 (ARONA.AI)
-            </a>
-          </Button>
-          <Button className="w-72 m-1 bg-blue-600 hover:bg-blue-700" asChild>
-            <Link href="/video-analysis">
-              <Play className="h-4 w-4 mr-2" />
-              영상 분석 (NEW)
-            </Link>
-          </Button>
-        </div>
-        <br />
-        <Tabs defaultValue="search" className="w-full max-w-4xl">
-          <TabsList
-            className={`grid w-full ${
-              seasonTopLevel === "L" ? "grid-cols-3" : "grid-cols-2"
-            }`}
+        <Select value={season} onValueChange={setV3Season}>
+          <SelectTrigger className="w-72 m-1">
+            <SelectValue placeholder="시즌 선택" />
+          </SelectTrigger>
+          <SelectContent>
+            {raidInfos.map((raid) => (
+              <SelectItem key={raid.value} value={raid.value}>
+                {raid.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Button className="w-72 m-1" asChild>
+          <a
+            href={
+              season.startsWith("3S")
+                ? "https://arona.ai/eraidreport"
+                : "https://arona.ai/raidreport"
+            }
+            target="_blank"
           >
-            <TabsTrigger value="search">파티 찾기</TabsTrigger>
-            <TabsTrigger value="summary">요약</TabsTrigger>
-            {seasonTopLevel === "L" && (
-              <TabsTrigger value="summary-lunatic">요약 (루나틱)</TabsTrigger>
-            )}
-          </TabsList>
-          <TabsContent value="search">
-            <RaidSearch
-              season={season}
-              studentsMap={studentsMap}
-              level="NOUSE"
-            />
-          </TabsContent>
-          <TabsContent value="summary">
+            총력전 리포트 (ARONA.AI)
+          </a>
+        </Button>
+      </div>
+      <br />
+      <Tabs defaultValue="search" className="w-full max-w-4xl">
+        <TabsList
+          className={`grid w-full ${
+            seasonTopLevel === "L" ? "grid-cols-3" : "grid-cols-2"
+          }`}
+        >
+          <TabsTrigger value="search">파티 찾기</TabsTrigger>
+          <TabsTrigger value="summary">요약</TabsTrigger>
+          {seasonTopLevel === "L" && (
+            <TabsTrigger value="summary-lunatic">요약 (루나틱)</TabsTrigger>
+          )}
+        </TabsList>
+        <TabsContent value="search">
+          <RaidSearch season={season} studentsMap={studentsMap} level="NOUSE" />
+        </TabsContent>
+        <TabsContent value="summary">
+          <RaidSummary
+            season={season}
+            seasonDescription={seasonDescription}
+            studentsMap={studentsMap}
+            level={seasonTopLevel === "L" ? "T" : seasonTopLevel}
+          />
+        </TabsContent>
+        {seasonTopLevel === "L" && (
+          <TabsContent value="summary-lunatic">
             <RaidSummary
               season={season}
               seasonDescription={seasonDescription}
               studentsMap={studentsMap}
-              level={seasonTopLevel === "L" ? "T" : seasonTopLevel}
+              level="L"
             />
           </TabsContent>
-          {seasonTopLevel === "L" && (
-            <TabsContent value="summary-lunatic">
-              <RaidSummary
-                season={season}
-                seasonDescription={seasonDescription}
-                studentsMap={studentsMap}
-                level="L"
-              />
-            </TabsContent>
-          )}
-        </Tabs>
-      </div>
+        )}
+      </Tabs>
+    </div>
   );
 }
 
