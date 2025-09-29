@@ -1,26 +1,10 @@
 import { categoryLabels } from "./constants";
-
-interface Option {
-  value: number;
-  label: string;
-  children?: Option[];
-}
-
-interface RaidData {
-  parties: PartyData[];
-}
-
-
-interface YoutubeLinkInfo {
-  userId: number;
-  youtubeUrl: string;
-  score: number;
-}
+import { RaidData, PartyData, YoutubeLinkInfo, FilterOption } from "@/types/raid";
 
 export const getFilters = (
   rawData: Record<string, Record<string, number>>,
   studentsMap: Record<string, string>
-): Option[] => {
+): FilterOption[] => {
   return Object.keys(rawData).map((key) => ({
     value: Number(key),
     label: studentsMap[key],

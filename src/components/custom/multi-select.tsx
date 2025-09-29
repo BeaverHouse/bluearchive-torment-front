@@ -7,20 +7,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { MultiSelectOption, BaseSelectProps } from "@/types/ui";
 
-export interface MultiSelectOption {
-  value: string | number;
-  label: string;
-}
-
-interface MultiSelectProps {
+interface MultiSelectProps extends BaseSelectProps {
   options: MultiSelectOption[];
   value?: (string | number)[];
   onChange?: (value: (string | number)[]) => void;
-  placeholder?: string;
-  className?: string;
-  allowClear?: boolean;
-  showSearch?: boolean;
 }
 
 export function MultiSelect({

@@ -2,6 +2,7 @@
 
 import React from "react";
 import { categoryLabels } from "../constants";
+import { PartyData, YoutubeLinkInfo } from "@/types/raid";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,11 +20,6 @@ import {
 } from "@/components/ui/accordion";
 import { Youtube, Trophy } from "lucide-react";
 
-interface YoutubeLinkInfo {
-  userId: number;
-  youtubeUrl: string;
-  score: number;
-}
 
 interface PartyCardProps {
   data: PartyData;

@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import useBAStore from "../../store/useBAStore";
 import { filteredPartys, getFilters } from "../function";
 import PartyCard from "./PartyCard";
+import { RaidData, PartyData, FilterData, FilterOption, YoutubeLinkInfo } from "@/types/raid";
 import { Button } from "../ui/button";
 import {
   Select,
@@ -30,28 +31,6 @@ interface RaidComponentProps {
   level: string;
 }
 
-interface FilterOption {
-  value: number;
-  label: string;
-  children?: FilterOption[];
-}
-
-interface RaidData {
-  parties: PartyData[];
-  minPartys: number;
-  maxPartys: number;
-}
-
-interface FilterData {
-  filters: Record<string, Record<string, number>>;
-  assistFilters: Record<string, Record<string, number>>;
-}
-
-interface YoutubeLinkInfo {
-  userId: number;
-  youtubeUrl: string;
-  score: number;
-}
 
 const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
   const [PartyCountRange, setPartyCountRange] = useState([0, 99]);

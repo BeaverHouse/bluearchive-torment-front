@@ -16,8 +16,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Link from "next/link";
-import { Play } from "lucide-react";
+import { RaidInfo } from "@/types/raid";
 
 function MainPage() {
   const { V3Season, setV3Season } = useBAStore();

@@ -17,14 +17,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { ImageSelectOption, BaseSelectProps } from "@/types/ui"
 
-interface SearchableSelectProps {
-  options: { code: number; name: string }[]
+interface SearchableSelectProps extends BaseSelectProps {
+  options: ImageSelectOption[]
   value: string
   onValueChange: (value: string) => void
-  placeholder?: string
-  className?: string
-  disabled?: boolean
 }
 
 export function SearchableSelect({
@@ -37,7 +35,7 @@ export function SearchableSelect({
 }: SearchableSelectProps) {
   const [open, setOpen] = React.useState(false)
 
-  const selectedOption = options.find(option => option.code.toString() === value)
+  const selectedOption = options.find(option => option.value.toString() === value)
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -52,15 +50,15 @@ export function SearchableSelect({
           {selectedOption ? (
             <div className="flex items-center gap-2 flex-1 min-w-0">
               <img 
-                src={`${process.env.NEXT_PUBLIC_CDN_URL || ""}/batorment/character/${selectedOption.code}.webp`}
-                alt={selectedOption.name}
+                src={`${process.env.NEXT_PUBLIC_CDN_URL || ""}/batorment/character/${selectedOption.value}.webp`}
+                alt={selectedOption.label}
                 className="w-4 h-4 rounded object-cover flex-shrink-0"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement
                   target.src = "/empty.webp"
                 }}
               />
-              <span className="truncate text-xs">{selectedOption.name}</span>
+              <span className="truncate text-xs">{selectedOption.label}</span>
             </div>
           ) : (
             <span className="text-muted-foreground text-xs">{placeholder}</span>
@@ -76,10 +74,10 @@ export function SearchableSelect({
             <CommandGroup className="max-h-48 overflow-y-auto">
               {options.map((option) => (
                 <CommandItem
-                  key={option.code}
-                  value={`${option.name}-${option.code}`}
+                  key={option.value}
+                  value={`${option.label}-${option.value}`}
                   onSelect={() => {
-                    onValueChange(option.code.toString())
+                    onValueChange(option.value.toString())
                     setOpen(false)
                   }}
                   className="text-xs"
@@ -87,20 +85,20 @@ export function SearchableSelect({
                   <Check
                     className={cn(
                       "mr-2 h-3 w-3",
-                      value === option.code.toString() ? "opacity-100" : "opacity-0"
+                      value === option.value.toString() ? "opacity-100" : "opacity-0"
                     )}
                   />
                   <div className="flex items-center gap-2 flex-1 min-w-0">
                     <img 
-                      src={`${process.env.NEXT_PUBLIC_CDN_URL || ""}/batorment/character/${option.code}.webp`}
-                      alt={option.name}
+                      src={`${process.env.NEXT_PUBLIC_CDN_URL || ""}/batorment/character/${option.value}.webp`}
+                      alt={option.label}
                       className="w-4 h-4 rounded object-cover flex-shrink-0"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement
                         target.src = "/empty.webp"
                       }}
                     />
-                    <span className="truncate">{option.name}</span>
+                    <span className="truncate">{option.label}</span>
                   </div>
                 </CommandItem>
               ))}

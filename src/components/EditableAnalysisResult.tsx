@@ -52,9 +52,9 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
 
   const getCharacterOptions = () => {
     return Object.entries(studentsMap).map(([code, name]) => ({
-      code: parseInt(code),
-      name
-    })).sort((a, b) => a.name.localeCompare(b.name, 'ko'))
+      value: parseInt(code),
+      label: name
+    })).sort((a, b) => a.label.localeCompare(b.label, 'ko'))
   }
 
   const handleSave = async () => {
