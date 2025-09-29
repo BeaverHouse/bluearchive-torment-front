@@ -60,10 +60,7 @@ interface YoutubeLinkInfo {
   score: number;
 }
 
-const RaidSearch = ({
-  season,
-  studentsMap,
-}: RaidComponentProps) => {
+const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
   const [PartyCountRange, setPartyCountRange] = useState([0, 99]);
   const [Page, setPage] = useState(1);
   const [PageSize, setPageSize] = useState(10);
@@ -515,39 +512,39 @@ const RaidSearch = ({
             onChange={(e) => {
               const value = e.target.value;
               setPageInputValue(value);
-              
+
               // 숫자가 아닌 문자 제거
-              const numericValue = value.replace(/[^0-9]/g, '');
-              
-              if (numericValue === '') {
+              const numericValue = value.replace(/[^0-9]/g, "");
+
+              if (numericValue === "") {
                 // 빈 값이면 아무것도 하지 않음 (입력 중일 수 있음)
                 return;
               }
-              
+
               const newPage = parseInt(numericValue);
               const maxPage = Math.ceil(parties.length / PageSize);
-              
+
               if (newPage >= 1 && newPage <= maxPage) {
                 setPage(newPage);
               }
             }}
             onFocus={() => {
               setIsPageInputActive(true);
-              setPageInputValue('');
+              setPageInputValue("");
             }}
             onBlur={() => {
               setIsPageInputActive(false);
-              
+
               // 빈 값이면 첫 페이지로 fallback
-              if (pageInputValue === '' || pageInputValue === '0') {
+              if (pageInputValue === "" || pageInputValue === "0") {
                 setPage(1);
-                setPageInputValue('1');
+                setPageInputValue("1");
               } else {
                 // 유효하지 않은 값이면 현재 페이지로 복원
-                const numericValue = pageInputValue.replace(/[^0-9]/g, '');
+                const numericValue = pageInputValue.replace(/[^0-9]/g, "");
                 const newPage = parseInt(numericValue);
                 const maxPage = Math.ceil(parties.length / PageSize);
-                
+
                 if (isNaN(newPage) || newPage < 1 || newPage > maxPage) {
                   setPageInputValue(Page.toString());
                 } else {
@@ -557,7 +554,7 @@ const RaidSearch = ({
               }
             }}
             onKeyDown={(e) => {
-              if (e.key === 'Enter') {
+              if (e.key === "Enter") {
                 (e.target as HTMLInputElement).blur();
               }
             }}
@@ -603,7 +600,7 @@ const RaidSearch = ({
                 data={party as PartyData}
                 studentsMap={studentsMap}
                 linkInfos={youtubeLinkInfos.filter(
-                  (link) => Math.abs(link.score - (party.score || 0)) < 1000
+                  (link) => link.score == party.score
                 )}
               />
             ))
