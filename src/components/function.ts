@@ -1,4 +1,4 @@
-import { categoryLabels } from "./constants";
+import { categoryLabels, lunaticMinScore, tormentMinScore } from "./constants";
 import { RaidData, PartyData, YoutubeLinkInfo, FilterOption } from "@/types/raid";
 
 export const getFilters = (
@@ -71,8 +71,8 @@ export const filteredPartys = (
 
 const getScoreLevel = (score: number): string => {
   // 점수 기반으로 난이도 판단 (임시 로직, 실제 기준에 맞게 조정 필요)
-  if (score >= 50000000) return "L"; // Lunatic
-  if (score >= 30000000) return "T"; // Torment
+  if (score >= lunaticMinScore) return "L"; // Lunatic
+  if (score >= tormentMinScore) return "T"; // Torment
   return "I"; // Insane
 };
 
