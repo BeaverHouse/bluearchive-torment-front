@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { Home, Video } from "lucide-react"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Home, Video } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -14,7 +14,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   useSidebar,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 const menuItems = [
   {
@@ -27,26 +27,28 @@ const menuItems = [
     url: "/video-analysis",
     icon: Video,
   },
-]
+];
 
 export function AppSidebar() {
-  const pathname = usePathname()
-  const { setOpen, setOpenMobile, isMobile } = useSidebar()
+  const pathname = usePathname();
+  const { setOpen, setOpenMobile, isMobile } = useSidebar();
 
   const handleMenuClick = () => {
     if (isMobile) {
-      setOpenMobile(false)
+      setOpenMobile(false);
     } else {
-      setOpen(false)
+      setOpen(false);
     }
-  }
+  };
 
   return (
     <Sidebar>
       <SidebarHeader>
         <div className="p-4">
-          <h2 className="text-lg font-semibold">Blue Archive</h2>
-          <p className="text-sm text-muted-foreground">토먼트 도우미</p>
+          <h2 className="text-lg font-semibold">BA Torment</h2>
+          <p className="text-sm text-muted-foreground">
+            블루 아카이브 파티 찾기
+          </p>
         </div>
       </SidebarHeader>
       <SidebarContent>
@@ -69,5 +71,5 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
-  )
+  );
 }
