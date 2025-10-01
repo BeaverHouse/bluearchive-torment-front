@@ -96,27 +96,27 @@
     "party_updated": false
   },
   {
-    "id": "S81-0",
-    "name": "총력전 S81 야외 페로로지라",
-    "top_level": "L",
-    "party_updated": true
-  },
-  {
     "id": "3S26-1",
     "name": "대결전 S26 야외 헤세드 (경장갑,인세인)",
     "top_level": "I",
-    "party_updated": false
+    "party_updated": true
   },
   {
     "id": "3S26-2",
     "name": "대결전 S26 야외 헤세드 (탄력장갑,토먼트)",
     "top_level": "T",
-    "party_updated": false
+    "party_updated": true
   },
   {
     "id": "3S26-3",
     "name": "대결전 S26 야외 헤세드 (중장갑,인세인)",
     "top_level": "I",
-    "party_updated": false
+    "party_updated": true
+  },
+  {
+    "id": "S81-0",
+    "name": "총력전 S81 야외 페로로지라",
+    "top_level": "L",
+    "party_updated": true
   }
 ]
