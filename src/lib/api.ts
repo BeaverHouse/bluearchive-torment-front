@@ -11,11 +11,12 @@ class APIError extends Error {
 
 async function fetchAPI<T>(endpoint: string): Promise<T> {
   const url = `${BASE_URL}${endpoint}`
-  
+
   try {
     const response = await fetch(url, {
       headers: {
         'Accept': 'application/json',
+        'X-Access-Token': process.env.NEXT_PUBLIC_SERVICE_TOKEN || '',
       },
     })
 
@@ -48,13 +49,14 @@ export async function getVideoDetail(videoId: string): Promise<VideoDetailRespon
 
 export async function updateVideoAnalysis(videoId: string, analysisResult: AnalysisResult): Promise<VideoDetailResponse> {
   const url = `${BASE_URL}/video/analysis/${videoId}`
-  
+
   try {
     const response = await fetch(url, {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
+        'X-Access-Token': process.env.NEXT_PUBLIC_SERVICE_TOKEN || '',
       },
       body: JSON.stringify({ analysis_result: analysisResult }),
     })
@@ -74,17 +76,18 @@ export async function updateVideoAnalysis(videoId: string, analysisResult: Analy
 
 export async function addVideoToQueue(raidId: string, youtubeUrl: string): Promise<void> {
   const url = `${BASE_URL}/video/analysis/queue`
-  
+
   try {
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
+        'X-Access-Token': process.env.NEXT_PUBLIC_SERVICE_TOKEN || '',
       },
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         raid_id: raidId,
-        youtube_url: youtubeUrl 
+        youtube_url: youtubeUrl
       }),
     })
 
