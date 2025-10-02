@@ -1,18 +1,34 @@
-"use client"
+"use client";
 
-import React, { useState, useCallback } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Trash2, Plus, Save, X, Clock, MoreHorizontal, Maximize2, Minimize2, GripVertical } from "lucide-react"
-import { AnalysisResult, VideoAnalysisData, SkillOrder } from "@/types/video"
-import { updateVideoAnalysis } from "@/lib/api"
-import { SearchableSelect } from "@/components/SearchableSelect"
-import { getStudentsMap, getCharacterName } from "@/utils/character"
+import React, { useState, useCallback } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Trash2,
+  Plus,
+  Save,
+  X,
+  Clock,
+  MoreHorizontal,
+  Maximize2,
+  Minimize2,
+  GripVertical,
+} from "lucide-react";
+import { AnalysisResult, VideoAnalysisData, SkillOrder } from "@/types/video";
+import { updateVideoAnalysis } from "@/lib/api";
+import { SearchableSelect } from "@/components/SearchableSelect";
+import { getStudentsMap, getCharacterName } from "@/utils/character";
 import {
   DndContext,
   closestCenter,
@@ -21,156 +37,170 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
-} from "@dnd-kit/core"
+} from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
   useSortable,
-} from "@dnd-kit/sortable"
-import {
-  CSS,
-} from "@dnd-kit/utilities"
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 interface EditableAnalysisResultProps {
-  videoData: VideoAnalysisData
-  onUpdate: (updatedData: VideoAnalysisData) => void
-  onCancel: () => void
+  videoData: VideoAnalysisData;
+  onUpdate: (updatedData: VideoAnalysisData) => void;
+  onCancel: () => void;
 }
 
-export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: EditableAnalysisResultProps) {
-  const [analysisResult, setAnalysisResult] = useState<AnalysisResult>(videoData.analysis_result)
-  const [saving, setSaving] = useState(false)
-  const [compactMode, setCompactMode] = useState(true) // 기본값을 컴팩트 모드로 설정
-  
-  const studentsMap = getStudentsMap()
+export function EditableAnalysisResult({
+  videoData,
+  onUpdate,
+  onCancel,
+}: EditableAnalysisResultProps) {
+  const [analysisResult, setAnalysisResult] = useState<AnalysisResult>(
+    videoData.analysis_result
+  );
+  const [saving, setSaving] = useState(false);
+  const [compactMode, setCompactMode] = useState(true); // 기본값을 컴팩트 모드로 설정
 
+  const studentsMap = getStudentsMap();
 
   const getCharacterOptions = () => {
-    return Object.entries(studentsMap).map(([code, name]) => ({
-      value: parseInt(code),
-      label: name
-    })).sort((a, b) => a.label.localeCompare(b.label, 'ko'))
-  }
+    return Object.entries(studentsMap)
+      .map(([code, name]) => ({
+        value: parseInt(code),
+        label: name,
+      }))
+      .sort((a, b) => a.label.localeCompare(b.label, "ko"));
+  };
 
   const handleSave = async () => {
-    setSaving(true)
+    setSaving(true);
     try {
-      await updateVideoAnalysis(videoData.video_id, analysisResult)
+      await updateVideoAnalysis(videoData.video_id, analysisResult);
       onUpdate({
         ...videoData,
-        analysis_result: analysisResult
-      })
+        analysis_result: analysisResult,
+      });
     } catch (error) {
-      console.error('저장 실패:', error)
-      alert('저장에 실패했습니다.')
+      console.error("저장 실패:", error);
+      alert("저장에 실패했습니다.");
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   // 파티 데이터 업데이트
-  const updatePartyData = useCallback((partyIndex: number, characterIndex: number, newCharacterCode: number) => {
-    setAnalysisResult(prev => {
-      const newPartyData = [...prev.partyData]
-      const newParty = [...newPartyData[partyIndex]]
-      
-      // 캐릭터 코드를 새로운 형식으로 변환 (코드*1000 + 성급*100 + 무기*10 + 조력자여부)
-      // 기본값으로 5성, 1무기, 비조력자로 설정
-      const existingChar = newParty[characterIndex]
-      let newCharValue = newCharacterCode * 1000 + 500 + 10 + 0 // 5성, 1무기, 비조력자
-      
-      // 기존에 값이 있다면 기존 설정을 유지
-      if (existingChar && existingChar > 0) {
-        const star = Math.floor((existingChar % 1000) / 100)
-        const weapon = Math.floor((existingChar % 100) / 10)
-        const assist = existingChar % 10
-        newCharValue = newCharacterCode * 1000 + star * 100 + weapon * 10 + assist
-      }
-      
-      newParty[characterIndex] = newCharValue
-      newPartyData[partyIndex] = newParty
-      
-      return {
-        ...prev,
-        partyData: newPartyData
-      }
-    })
-  }, [])
+  const updatePartyData = useCallback(
+    (partyIndex: number, characterIndex: number, newCharacterCode: number) => {
+      setAnalysisResult((prev) => {
+        const newPartyData = [...prev.partyData];
+        const newParty = [...newPartyData[partyIndex]];
+
+        // 캐릭터 코드를 새로운 형식으로 변환 (코드*1000 + 성급*100 + 무기*10 + 조력자여부)
+        // 기본값으로 5성, 1무기, 비조력자로 설정
+        const existingChar = newParty[characterIndex];
+        let newCharValue = newCharacterCode * 1000 + 500 + 10 + 0; // 5성, 1무기, 비조력자
+
+        // 기존에 값이 있다면 기존 설정을 유지
+        if (existingChar && existingChar > 0) {
+          const star = Math.floor((existingChar % 1000) / 100);
+          const weapon = Math.floor((existingChar % 100) / 10);
+          const assist = existingChar % 10;
+          newCharValue =
+            newCharacterCode * 1000 + star * 100 + weapon * 10 + assist;
+        }
+
+        newParty[characterIndex] = newCharValue;
+        newPartyData[partyIndex] = newParty;
+
+        return {
+          ...prev,
+          partyData: newPartyData,
+        };
+      });
+    },
+    []
+  );
 
   // 파티 추가
   const addParty = useCallback(() => {
-    setAnalysisResult(prev => ({
+    setAnalysisResult((prev) => ({
       ...prev,
-      partyData: [...prev.partyData, [0, 0, 0, 0, 0, 0]] // 6자리 빈 파티
-    }))
-  }, [])
+      partyData: [...prev.partyData, [0, 0, 0, 0, 0, 0]], // 6자리 빈 파티
+    }));
+  }, []);
 
   // 파티 삭제
-  const removeParty = useCallback((partyIndex: number) => {
-    if (analysisResult.partyData.length <= 1) {
-      alert('최소 1개의 파티는 있어야 합니다.')
-      return
-    }
+  const removeParty = useCallback(
+    (partyIndex: number) => {
+      if (analysisResult.partyData.length <= 1) {
+        alert("최소 1개의 파티는 있어야 합니다.");
+        return;
+      }
 
-    setAnalysisResult(prev => ({
-      ...prev,
-      partyData: prev.partyData.filter((_, index) => index !== partyIndex)
-    }))
-  }, [analysisResult.partyData.length])
+      setAnalysisResult((prev) => ({
+        ...prev,
+        partyData: prev.partyData.filter((_, index) => index !== partyIndex),
+      }));
+    },
+    [analysisResult.partyData.length]
+  );
 
   // 점수 업데이트
   const updateScore = useCallback((newScore: number) => {
-    setAnalysisResult(prev => ({
+    setAnalysisResult((prev) => ({
       ...prev,
-      score: newScore
-    }))
-  }, [])
-
+      score: newScore,
+    }));
+  }, []);
 
   // 설명 업데이트
   const updateDescription = useCallback((newDescription: string) => {
-    setAnalysisResult(prev => ({
+    setAnalysisResult((prev) => ({
       ...prev,
-      description: newDescription
-    }))
-  }, [])
+      description: newDescription,
+    }));
+  }, []);
 
   // 스킬 순서 추가
   const addSkillOrder = useCallback(() => {
     const newSkill: SkillOrder = {
-      party_number: 1,
+      partyNumber: 1,
       cost: 100, // 기본값 10.0 (100 = 10.0 * 10)
-      remaining_time: "03:00.000",
+      remainingTime: "03:00.000",
       type: "striker",
       order: 1,
-      description: ""
-    }
-    
-    setAnalysisResult(prev => ({
+      description: "",
+    };
+
+    setAnalysisResult((prev) => ({
       ...prev,
-      skillOrders: [...prev.skillOrders, newSkill]
-    }))
-  }, [])
+      skillOrders: [...prev.skillOrders, newSkill],
+    }));
+  }, []);
 
   // 스킬 순서 제거
   const removeSkillOrder = useCallback((index: number) => {
-    setAnalysisResult(prev => ({
+    setAnalysisResult((prev) => ({
       ...prev,
-      skillOrders: prev.skillOrders.filter((_, i) => i !== index)
-    }))
-  }, [])
+      skillOrders: prev.skillOrders.filter((_, i) => i !== index),
+    }));
+  }, []);
 
   // 스킬 순서 업데이트
-  const updateSkillOrder = useCallback((index: number, updates: Partial<SkillOrder>) => {
-    setAnalysisResult(prev => ({
-      ...prev,
-      skillOrders: prev.skillOrders.map((skill, i) => 
-        i === index ? { ...skill, ...updates } : skill
-      )
-    }))
-  }, [])
+  const updateSkillOrder = useCallback(
+    (index: number, updates: Partial<SkillOrder>) => {
+      setAnalysisResult((prev) => ({
+        ...prev,
+        skillOrders: prev.skillOrders.map((skill, i) =>
+          i === index ? { ...skill, ...updates } : skill
+        ),
+      }));
+    },
+    []
+  );
 
   // 드래그 앤 드롭 센서 설정
   const sensors = useSensors(
@@ -178,83 +208,102 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
-  )
+  );
 
   // 드래그 종료 핸들러
   const handleDragEnd = useCallback((event: DragEndEvent) => {
-    const { active, over } = event
+    const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      setAnalysisResult(prev => {
-        const oldIndex = prev.skillOrders.findIndex((_, i) => i.toString() === active.id)
-        const newIndex = prev.skillOrders.findIndex((_, i) => i.toString() === over.id)
+      setAnalysisResult((prev) => {
+        const oldIndex = prev.skillOrders.findIndex(
+          (_, i) => i.toString() === active.id
+        );
+        const newIndex = prev.skillOrders.findIndex(
+          (_, i) => i.toString() === over.id
+        );
 
         return {
           ...prev,
-          skillOrders: arrayMove(prev.skillOrders, oldIndex, newIndex)
-        }
-      })
+          skillOrders: arrayMove(prev.skillOrders, oldIndex, newIndex),
+        };
+      });
     }
-  }, [])
+  }, []);
 
   // 파티에서 사용 가능한 캐릭터 목록 가져오기
-  const getPartyCharacters = useCallback((partyIndex: number) => {
-    if (!analysisResult.partyData[partyIndex]) return []
-    
-    return analysisResult.partyData[partyIndex]
-      .map((charValue, slotIndex) => {
-        if (charValue === 0) return null
-        
-        const info = parseCharacterInfo(charValue)
-        if (!info) return null
-        
-        return {
-          code: info.code,
-          name: getCharacterName(info.code, studentsMap),
-          slotIndex,
-          type: slotIndex < 4 ? 'striker' : 'special', // 첫 4개는 스트라이커, 마지막 2개는 스페셜
-          order: (slotIndex < 4 ? slotIndex : slotIndex - 4) + 1
-        }
-      })
-      .filter(Boolean)
-  }, [analysisResult.partyData, studentsMap])
+  const getPartyCharacters = useCallback(
+    (partyIndex: number) => {
+      if (!analysisResult.partyData[partyIndex]) return [];
+
+      return analysisResult.partyData[partyIndex]
+        .map((charValue, slotIndex) => {
+          if (charValue === 0) return null;
+
+          const info = parseCharacterInfo(charValue);
+          if (!info) return null;
+
+          return {
+            code: info.code,
+            name: getCharacterName(info.code, studentsMap),
+            slotIndex,
+            type: slotIndex < 4 ? "striker" : "special", // 첫 4개는 스트라이커, 마지막 2개는 스페셜
+            order: (slotIndex < 4 ? slotIndex : slotIndex - 4) + 1,
+          };
+        })
+        .filter(Boolean);
+    },
+    [analysisResult.partyData, studentsMap]
+  );
 
   // 캐릭터 코드에서 정보 추출
   const parseCharacterInfo = (charValue: number) => {
-    if (charValue === 0) return null
-    
-    const code = Math.floor(charValue / 1000)
-    const star = Math.floor((charValue % 1000) / 100)
-    const weapon = Math.floor((charValue % 100) / 10)
-    const assist = charValue % 10
-    
-    return { code, star, weapon, assist }
-  }
+    if (charValue === 0) return null;
+
+    const code = Math.floor(charValue / 1000);
+    const star = Math.floor((charValue % 1000) / 100);
+    const weapon = Math.floor((charValue % 100) / 10);
+    const assist = charValue % 10;
+
+    return { code, star, weapon, assist };
+  };
 
   // 캐릭터 세부 정보 업데이트 (성급, 무기 등)
-  const updateCharacterDetails = useCallback((partyIndex: number, characterIndex: number, field: 'star' | 'weapon' | 'assist', value: number) => {
-    setAnalysisResult(prev => {
-      const newPartyData = [...prev.partyData]
-      const newParty = [...newPartyData[partyIndex]]
-      const currentChar = newParty[characterIndex]
-      
-      if (currentChar === 0) return prev
-      
-      const info = parseCharacterInfo(currentChar)
-      if (!info) return prev
-      
-      const updates = { ...info, [field]: value }
-      const newCharValue = updates.code * 1000 + updates.star * 100 + updates.weapon * 10 + updates.assist
-      
-      newParty[characterIndex] = newCharValue
-      newPartyData[partyIndex] = newParty
-      
-      return {
-        ...prev,
-        partyData: newPartyData
-      }
-    })
-  }, [])
+  const updateCharacterDetails = useCallback(
+    (
+      partyIndex: number,
+      characterIndex: number,
+      field: "star" | "weapon" | "assist",
+      value: number
+    ) => {
+      setAnalysisResult((prev) => {
+        const newPartyData = [...prev.partyData];
+        const newParty = [...newPartyData[partyIndex]];
+        const currentChar = newParty[characterIndex];
+
+        if (currentChar === 0) return prev;
+
+        const info = parseCharacterInfo(currentChar);
+        if (!info) return prev;
+
+        const updates = { ...info, [field]: value };
+        const newCharValue =
+          updates.code * 1000 +
+          updates.star * 100 +
+          updates.weapon * 10 +
+          updates.assist;
+
+        newParty[characterIndex] = newCharValue;
+        newPartyData[partyIndex] = newParty;
+
+        return {
+          ...prev,
+          partyData: newPartyData,
+        };
+      });
+    },
+    []
+  );
 
   return (
     <div className="space-y-6">
@@ -266,7 +315,7 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
         </Button>
         <Button onClick={handleSave} disabled={saving}>
           <Save className="h-4 w-4 mr-2" />
-          {saving ? '저장 중...' : '저장'}
+          {saving ? "저장 중..." : "저장"}
         </Button>
       </div>
 
@@ -278,7 +327,9 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
         <CardContent className="space-y-3">
           <div className="grid grid-cols-1 gap-3">
             <div>
-              <label className="text-xs font-medium mb-2 block text-muted-foreground">점수</label>
+              <label className="text-xs font-medium mb-2 block text-muted-foreground">
+                점수
+              </label>
               <Input
                 type="number"
                 value={analysisResult.score}
@@ -289,9 +340,11 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
             </div>
           </div>
           <div>
-            <label className="text-xs font-medium mb-2 block text-muted-foreground">설명</label>
+            <label className="text-xs font-medium mb-2 block text-muted-foreground">
+              설명
+            </label>
             <Textarea
-              value={analysisResult.description || ''}
+              value={analysisResult.description || ""}
               onChange={(e) => updateDescription(e.target.value)}
               placeholder="설명을 입력하세요"
               rows={3}
@@ -338,35 +391,56 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
                   {/* 캐릭터 슬롯 */}
                   <div className="grid grid-cols-6 gap-3">
                     {party.map((charValue, charIndex) => {
-                      const charInfo = parseCharacterInfo(charValue)
-                      
+                      const charInfo = parseCharacterInfo(charValue);
+
                       return (
-                        <div key={charIndex} className="border rounded-lg p-3 space-y-3 min-h-[200px] flex flex-col w-full">
+                        <div
+                          key={charIndex}
+                          className="border rounded-lg p-3 space-y-3 min-h-[200px] flex flex-col w-full"
+                        >
                           <div className="text-xs text-center font-medium text-muted-foreground">
                             슬롯 {charIndex + 1}
                           </div>
-                          
+
                           {/* 캐릭터 선택 */}
                           <div className="flex-1 w-full">
                             <SearchableSelect
                               options={getCharacterOptions()}
                               value={charInfo?.code?.toString() || ""}
-                              onValueChange={(value) => updatePartyData(partyIndex, charIndex, parseInt(value))}
+                              onValueChange={(value) =>
+                                updatePartyData(
+                                  partyIndex,
+                                  charIndex,
+                                  parseInt(value)
+                                )
+                              }
                               placeholder="캐릭터 선택"
                               className="w-full"
                             />
                           </div>
-                          
+
                           {charInfo && (
                             <>
                               {/* 성급 + 무기 통합 셀렉트 */}
                               <div className="w-full">
-                                <Select 
+                                <Select
                                   value={`${charInfo.star}-${charInfo.weapon}`}
                                   onValueChange={(value) => {
-                                    const [star, weapon] = value.split('-').map(Number)
-                                    updateCharacterDetails(partyIndex, charIndex, 'star', star)
-                                    updateCharacterDetails(partyIndex, charIndex, 'weapon', weapon)
+                                    const [star, weapon] = value
+                                      .split("-")
+                                      .map(Number);
+                                    updateCharacterDetails(
+                                      partyIndex,
+                                      charIndex,
+                                      "star",
+                                      star
+                                    );
+                                    updateCharacterDetails(
+                                      partyIndex,
+                                      charIndex,
+                                      "weapon",
+                                      weapon
+                                    );
                                   }}
                                 >
                                   <SelectTrigger className="h-9 w-full">
@@ -374,52 +448,67 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
                                   </SelectTrigger>
                                   <SelectContent>
                                     {/* 성급 옵션 */}
-                                    {[1, 2, 3, 4, 5].map(star => (
-                                      <SelectItem key={`star-${star}`} value={`${star}-0`}>
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                      <SelectItem
+                                        key={`star-${star}`}
+                                        value={`${star}-0`}
+                                      >
                                         {star}성
                                       </SelectItem>
                                     ))}
-                                    
+
                                     {/* 전용무기 옵션 */}
-                                    {[1, 2, 3, 4].map(weapon => (
-                                      <SelectItem key={`weapon-${weapon}`} value={`5-${weapon}`}>
+                                    {[1, 2, 3, 4].map((weapon) => (
+                                      <SelectItem
+                                        key={`weapon-${weapon}`}
+                                        value={`5-${weapon}`}
+                                      >
                                         전{weapon}
                                       </SelectItem>
                                     ))}
                                   </SelectContent>
                                 </Select>
                               </div>
-                              
+
                               {/* 조력자 체크박스 */}
                               <div className="flex items-center justify-center space-x-2 w-full">
                                 <input
                                   type="checkbox"
                                   id={`assist-${partyIndex}-${charIndex}`}
                                   checked={charInfo.assist === 1}
-                                  onChange={(e) => updateCharacterDetails(partyIndex, charIndex, 'assist', e.target.checked ? 1 : 0)}
+                                  onChange={(e) =>
+                                    updateCharacterDetails(
+                                      partyIndex,
+                                      charIndex,
+                                      "assist",
+                                      e.target.checked ? 1 : 0
+                                    )
+                                  }
                                   className="w-4 h-4 rounded border-gray-300"
                                 />
-                                <label 
+                                <label
                                   htmlFor={`assist-${partyIndex}-${charIndex}`}
                                   className="text-xs text-gray-700 select-none"
                                 >
                                   조력자
                                 </label>
                               </div>
-                              
+
                               {/* 슬롯 비우기 */}
                               <Button
                                 size="sm"
                                 variant="outline"
                                 className="w-full h-8 text-xs"
-                                onClick={() => updatePartyData(partyIndex, charIndex, 0)}
+                                onClick={() =>
+                                  updatePartyData(partyIndex, charIndex, 0)
+                                }
                               >
                                 비우기
                               </Button>
                             </>
                           )}
                         </div>
-                      )
+                      );
                     })}
                   </div>
                 </CardContent>
@@ -441,7 +530,11 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
                 onClick={() => setCompactMode(!compactMode)}
                 className="h-8"
               >
-                {compactMode ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
+                {compactMode ? (
+                  <Maximize2 className="h-4 w-4" />
+                ) : (
+                  <Minimize2 className="h-4 w-4" />
+                )}
               </Button>
             </div>
             <Badge variant="outline" className="text-xs">
@@ -454,7 +547,8 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
             <Alert>
               <Clock className="h-4 w-4" />
               <AlertDescription>
-                스킬 순서가 없습니다. 하단의 &quot;+&quot; 버튼을 클릭하여 스킬을 추가하세요.
+                스킬 순서가 없습니다. 하단의 &quot;+&quot; 버튼을 클릭하여
+                스킬을 추가하세요.
               </AlertDescription>
             </Alert>
           ) : (
@@ -464,7 +558,9 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
               onDragEnd={handleDragEnd}
             >
               <SortableContext
-                items={analysisResult.skillOrders.map((_, index) => index.toString())}
+                items={analysisResult.skillOrders.map((_, index) =>
+                  index.toString()
+                )}
                 strategy={verticalListSortingStrategy}
               >
                 <div className="space-y-2 max-h-[70vh] overflow-y-auto pr-2">
@@ -485,10 +581,10 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
               </SortableContext>
             </DndContext>
           )}
-          
+
           {/* Floating 스킬 추가 버튼 */}
           <div className="sticky bottom-0 mt-4 flex justify-center">
-            <Button 
+            <Button
               onClick={addSkillOrder}
               className="rounded-full h-12 w-12 shadow-lg"
               size="icon"
@@ -499,19 +595,25 @@ export function EditableAnalysisResult({ videoData, onUpdate, onCancel }: Editab
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
 
 // Sortable 스킬 순서 아이템 컴포넌트
 interface SortableSkillOrderItemProps {
-  id: string
-  skill: SkillOrder
-  index: number
-  compactMode: boolean
-  partyData: number[][]
-  getPartyCharacters: (partyIndex: number) => Array<{code: number, name: string, slotIndex: number, type: string, order: number} | null>
-  updateSkillOrder: (index: number, updates: Partial<SkillOrder>) => void
-  removeSkillOrder: (index: number) => void
+  id: string;
+  skill: SkillOrder;
+  index: number;
+  compactMode: boolean;
+  partyData: number[][];
+  getPartyCharacters: (partyIndex: number) => Array<{
+    code: number;
+    name: string;
+    slotIndex: number;
+    type: string;
+    order: number;
+  } | null>;
+  updateSkillOrder: (index: number, updates: Partial<SkillOrder>) => void;
+  removeSkillOrder: (index: number) => void;
 }
 
 function SortableSkillOrderItem(props: SortableSkillOrderItemProps) {
@@ -522,31 +624,40 @@ function SortableSkillOrderItem(props: SortableSkillOrderItemProps) {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: props.id })
+  } = useSortable({ id: props.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
-  }
+  };
 
   return (
     <div ref={setNodeRef} style={style}>
-      <SkillOrderItem {...props} dragHandleProps={{ ...attributes, ...listeners }} />
+      <SkillOrderItem
+        {...props}
+        dragHandleProps={{ ...attributes, ...listeners }}
+      />
     </div>
-  )
+  );
 }
 
 // 개별 스킬 순서 아이템 컴포넌트
 interface SkillOrderItemProps {
-  skill: SkillOrder
-  index: number
-  compactMode: boolean
-  partyData: number[][]
-  getPartyCharacters: (partyIndex: number) => Array<{code: number, name: string, slotIndex: number, type: string, order: number} | null>
-  updateSkillOrder: (index: number, updates: Partial<SkillOrder>) => void
-  removeSkillOrder: (index: number) => void
-  dragHandleProps?: Record<string, unknown>
+  skill: SkillOrder;
+  index: number;
+  compactMode: boolean;
+  partyData: number[][];
+  getPartyCharacters: (partyIndex: number) => Array<{
+    code: number;
+    name: string;
+    slotIndex: number;
+    type: string;
+    order: number;
+  } | null>;
+  updateSkillOrder: (index: number, updates: Partial<SkillOrder>) => void;
+  removeSkillOrder: (index: number) => void;
+  dragHandleProps?: Record<string, unknown>;
 }
 
 function SkillOrderItem({
@@ -557,16 +668,16 @@ function SkillOrderItem({
   getPartyCharacters,
   updateSkillOrder,
   removeSkillOrder,
-  dragHandleProps
+  dragHandleProps,
 }: SkillOrderItemProps) {
-  const partyCharacters = getPartyCharacters(skill.party_number - 1)
-  const [expanded, setExpanded] = useState(false)
+  const partyCharacters = getPartyCharacters(skill.partyNumber - 1);
+  const [expanded, setExpanded] = useState(false);
 
   if (compactMode && !expanded) {
     // 컴팩트 모드 - 한 줄로 표시
     const currentCharacter = partyCharacters.find(
-      char => char && char.type === skill.type && char.order === skill.order
-    )
+      (char) => char && char.type === skill.type && char.order === skill.order
+    );
 
     return (
       <Card className="border rounded-lg bg-muted/30">
@@ -581,28 +692,30 @@ function SkillOrderItem({
             <Badge variant="outline" className="text-xs font-medium min-w-fit">
               #{index + 1}
             </Badge>
-            
+
             <div className="flex items-center gap-2 min-w-0 flex-1">
               {currentCharacter && (
                 <img
-                  src={`${process.env.NEXT_PUBLIC_CDN_URL || ""}/batorment/character/${currentCharacter.code}.webp`}
+                  src={`${
+                    process.env.NEXT_PUBLIC_CDN_URL || ""
+                  }/batorment/character/${currentCharacter.code}.webp`}
                   alt={currentCharacter.name}
                   className="w-5 h-5 object-cover rounded flex-shrink-0"
                   onError={(e) => {
-                    const target = e.target as HTMLImageElement
-                    target.src = "/empty.webp"
+                    const target = e.target as HTMLImageElement;
+                    target.src = "/empty.webp";
                   }}
                 />
               )}
               <span className="text-sm font-medium truncate">
-                {currentCharacter?.name || '미선택'}
+                {currentCharacter?.name || "미선택"}
               </span>
             </div>
 
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <span>P{skill.party_number}</span>
+              <span>P{skill.partyNumber}</span>
               <span>{skill.cost / 10}</span>
-              <span className="font-mono">{skill.remaining_time}</span>
+              <span className="font-mono">{skill.remainingTime}</span>
             </div>
 
             <div className="flex items-center gap-1">
@@ -626,7 +739,7 @@ function SkillOrderItem({
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   // 확장 모드 또는 기본 모드
@@ -669,25 +782,27 @@ function SkillOrderItem({
         <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
           {/* 파티 선택 */}
           <div>
-            <label className="text-xs font-medium mb-2 block text-muted-foreground">파티</label>
+            <label className="text-xs font-medium mb-2 block text-muted-foreground">
+              파티
+            </label>
             <Select
-              value={skill.party_number.toString()}
+              value={skill.partyNumber.toString()}
               onValueChange={(value) => {
-                const newPartyNumber = parseInt(value)
+                const newPartyNumber = parseInt(value);
                 // 파티 변경시 첫 번째 캐릭터로 초기화
-                const newPartyChars = getPartyCharacters(newPartyNumber - 1)
+                const newPartyChars = getPartyCharacters(newPartyNumber - 1);
                 if (newPartyChars.length > 0 && newPartyChars[0]) {
-                  updateSkillOrder(index, { 
-                    party_number: newPartyNumber,
+                  updateSkillOrder(index, {
+                    partyNumber: newPartyNumber,
                     type: newPartyChars[0].type as "striker" | "special",
-                    order: newPartyChars[0].order
-                  })
+                    order: newPartyChars[0].order,
+                  });
                 } else {
-                  updateSkillOrder(index, { 
-                    party_number: newPartyNumber,
+                  updateSkillOrder(index, {
+                    partyNumber: newPartyNumber,
                     type: "striker",
-                    order: 1
-                  })
+                    order: 1,
+                  });
                 }
               }}
             >
@@ -696,7 +811,10 @@ function SkillOrderItem({
               </SelectTrigger>
               <SelectContent>
                 {partyData.map((_, partyIndex) => (
-                  <SelectItem key={partyIndex} value={(partyIndex + 1).toString()}>
+                  <SelectItem
+                    key={partyIndex}
+                    value={(partyIndex + 1).toString()}
+                  >
                     파티 {partyIndex + 1}
                   </SelectItem>
                 ))}
@@ -706,15 +824,17 @@ function SkillOrderItem({
 
           {/* 캐릭터 선택 (타입+순서 통합) */}
           <div className="md:col-span-2">
-            <label className="text-xs font-medium mb-2 block text-muted-foreground">캐릭터</label>
+            <label className="text-xs font-medium mb-2 block text-muted-foreground">
+              캐릭터
+            </label>
             <Select
               value={`${skill.type}-${skill.order}`}
               onValueChange={(value) => {
-                const [type, order] = value.split('-')
-                updateSkillOrder(index, { 
+                const [type, order] = value.split("-");
+                updateSkillOrder(index, {
                   type: type as "striker" | "special",
-                  order: parseInt(order)
-                })
+                  order: parseInt(order),
+                });
               }}
             >
               <SelectTrigger className="h-9 w-full">
@@ -722,26 +842,32 @@ function SkillOrderItem({
               </SelectTrigger>
               <SelectContent>
                 {partyCharacters.map((char, charIndex) => {
-                  if (!char) return null
+                  if (!char) return null;
                   return (
-                    <SelectItem key={charIndex} value={`${char.type}-${char.order}`}>
+                    <SelectItem
+                      key={charIndex}
+                      value={`${char.type}-${char.order}`}
+                    >
                       <div className="flex items-center gap-2">
                         <img
-                          src={`${process.env.NEXT_PUBLIC_CDN_URL || ""}/batorment/character/${char.code}.webp`}
+                          src={`${
+                            process.env.NEXT_PUBLIC_CDN_URL || ""
+                          }/batorment/character/${char.code}.webp`}
                           alt={char.name}
                           className="w-6 h-6 object-cover rounded"
                           onError={(e) => {
-                            const target = e.target as HTMLImageElement
-                            target.src = "/empty.webp"
+                            const target = e.target as HTMLImageElement;
+                            target.src = "/empty.webp";
                           }}
                         />
                         <span className="text-sm">{char.name}</span>
                         <span className="text-xs text-muted-foreground">
-                          ({char.type === 'striker' ? '스트라이커' : '스페셜'} {char.order})
+                          ({char.type === "striker" ? "스트라이커" : "스페셜"}{" "}
+                          {char.order})
                         </span>
                       </div>
                     </SelectItem>
-                  )
+                  );
                 })}
               </SelectContent>
             </Select>
@@ -749,14 +875,20 @@ function SkillOrderItem({
 
           {/* 코스트 */}
           <div>
-            <label className="text-xs font-medium mb-2 block text-muted-foreground">코스트</label>
+            <label className="text-xs font-medium mb-2 block text-muted-foreground">
+              코스트
+            </label>
             <Input
               type="number"
               step="0.1"
               min="0"
               max="100"
               value={skill.cost / 10}
-              onChange={(e) => updateSkillOrder(index, { cost: Math.round(parseFloat(e.target.value || "0") * 10) })}
+              onChange={(e) =>
+                updateSkillOrder(index, {
+                  cost: Math.round(parseFloat(e.target.value || "0") * 10),
+                })
+              }
               placeholder="0.0"
               className="h-9 w-full"
             />
@@ -764,10 +896,14 @@ function SkillOrderItem({
 
           {/* 남은 시간 */}
           <div>
-            <label className="text-xs font-medium mb-2 block text-muted-foreground">시간</label>
+            <label className="text-xs font-medium mb-2 block text-muted-foreground">
+              시간
+            </label>
             <Input
-              value={skill.remaining_time}
-              onChange={(e) => updateSkillOrder(index, { remaining_time: e.target.value })}
+              value={skill.remainingTime}
+              onChange={(e) =>
+                updateSkillOrder(index, { remainingTime: e.target.value })
+              }
               placeholder="03:00.000"
               className="h-9 w-full"
             />
@@ -776,15 +912,19 @@ function SkillOrderItem({
 
         {/* 설명 */}
         <div className="mt-3">
-          <label className="text-xs font-medium mb-2 block text-muted-foreground">설명 (선택사항)</label>
+          <label className="text-xs font-medium mb-2 block text-muted-foreground">
+            설명 (선택사항)
+          </label>
           <Input
             value={skill.description || ""}
-            onChange={(e) => updateSkillOrder(index, { description: e.target.value })}
+            onChange={(e) =>
+              updateSkillOrder(index, { description: e.target.value })
+            }
             placeholder="스킬 설명을 입력하세요"
             className="h-9 w-full"
           />
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

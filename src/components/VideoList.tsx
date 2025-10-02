@@ -93,8 +93,12 @@ export function VideoList({ videos, pagination, onPageChange }: VideoListProps) 
       )}
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-      {videos.map((video) => (
-        <Link key={video.video_id} href={`/video-analysis/${video.video_id}`}>
+      {videos.map((video) => {
+        // 각 비디오의 raid_id는 필수로 전달
+        const href = `/video-analysis/${video.video_id}?raid_id=${video.raid_id}`
+
+        return (
+        <Link key={video.video_id} href={href}>
           <Card className="cursor-pointer hover:shadow-lg transition-shadow bg-card border-border h-full flex flex-col overflow-hidden p-0">
             <div className="relative aspect-video">
               <img
@@ -141,7 +145,8 @@ export function VideoList({ videos, pagination, onPageChange }: VideoListProps) 
             </div>
           </Card>
         </Link>
-      ))}
+        )
+      })}
       </div>
     </div>
   )
