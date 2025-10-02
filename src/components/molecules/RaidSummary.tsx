@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { basePartyCounts, lunaticMinScore, translations } from "../constants";
+import { basePartyCounts, translations } from "../constants";
 import {
   Card,
   CardContent,
@@ -39,12 +39,6 @@ interface RaidSummaryData {
   assistFilters: Record<string, Record<string, number>>;
   partyCounts: Record<string, number[]>;
   top5Partys: Array<[string, number]>;
-}
-
-interface YoutubeLinkInfo {
-  userId: number;
-  youtubeUrl: string;
-  score: number;
 }
 
 interface CharTableType {
@@ -114,19 +108,6 @@ const RaidSummary = ({
     throwOnError: true,
   });
 
-  const getLinksQuery = useQuery({
-    queryKey: ["getLinks", season],
-    queryFn: async () => {
-      try {
-        const linksModule = await import(`../../../data/links/${season}.json`);
-        return linksModule.default;
-      } catch {
-        return [];
-      }
-    },
-    throwOnError: false,
-  });
-
   useEffect(() => {
     setCharacter(null);
   }, [season]);
@@ -158,8 +139,7 @@ const RaidSummary = ({
 
   if (
     getSummaryDataQuery.isLoading ||
-    getFilterDataQuery.isLoading ||
-    getLinksQuery.isLoading
+    getFilterDataQuery.isLoading
   )
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -211,14 +191,6 @@ const RaidSummary = ({
       </div>
     );
   }
-
-  const youtubeLinkInfos: YoutubeLinkInfo[] = (
-    (getLinksQuery.data || []) as YoutubeLinkInfo[]
-  ).filter((link) =>
-    level === "L"
-      ? link.score >= lunaticMinScore
-      : link.score > 0 && link.score < lunaticMinScore
-  );
 
   const parseParty = (partyString: string) => {
     return partyString.split("_").map((id) => ({
