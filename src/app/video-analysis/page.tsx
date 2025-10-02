@@ -27,7 +27,8 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Clock, RefreshCw, Copy, CheckCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import raidsData from "../../../data/raids.json";
 import ErrorPage from "@/components/ErrorPage";
 import { translations } from "@/components/constants";
@@ -35,7 +36,10 @@ import Swal from "sweetalert2";
 
 const raids: RaidInfo[] = raidsData as RaidInfo[];
 
-export default function VideoAnalysisPage() {
+function VideoAnalysisContent() {
+  const searchParams = useSearchParams();
+  const raidFromUrl = searchParams.get("raid");
+
   const [videos, setVideos] = useState<VideoListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -62,6 +66,13 @@ export default function VideoAnalysisPage() {
 
   // 검색어 복사
   const [copiedSearchTerm, setCopiedSearchTerm] = useState(false);
+
+  // URL에서 raid 파라미터를 읽어서 selectedRaid 설정
+  useEffect(() => {
+    if (raidFromUrl && raids.some((r) => r.id === raidFromUrl)) {
+      setSelectedRaid(raidFromUrl);
+    }
+  }, [raidFromUrl]);
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -414,5 +425,26 @@ export default function VideoAnalysisPage() {
         onPageChange={handlePageChange}
       />
     </div>
+  );
+}
+
+export default function VideoAnalysisPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
+          <div className="mb-8">
+            <p className="text-muted-foreground">
+              총력전 영상을 분석하여 파티 구성과 스킬 순서를 확인하세요.
+            </p>
+          </div>
+          <div className="flex justify-center items-center py-12">
+            <div className="text-muted-foreground">로딩 중...</div>
+          </div>
+        </div>
+      }
+    >
+      <VideoAnalysisContent />
+    </Suspense>
   );
 }
