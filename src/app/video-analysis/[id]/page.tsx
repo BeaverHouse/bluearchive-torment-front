@@ -5,7 +5,7 @@ import { getVideoDetail } from "@/lib/api"
 import { VideoAnalysisData, VideoDetailResponse } from "@/types/video"
 import { RaidInfo } from "@/types/raid"
 import { useEffect, useState } from "react"
-import { useParams } from "next/navigation"
+import { useParams, useSearchParams } from "next/navigation"
 import raidsData from "../../../../data/raids.json"
 import ErrorPage from "@/components/ErrorPage"
 
@@ -19,7 +19,9 @@ function getRaidName(raidId: string | null): string | null {
 
 export default function VideoDetailPage() {
   const params = useParams()
+  const searchParams = useSearchParams()
   const videoId = params.id as string
+  const raidId = searchParams.get("raid_id")
   const [videoDetail, setVideoDetail] = useState<VideoDetailResponse['data'] | null>(null)
   const [currentVideo, setCurrentVideo] = useState<VideoAnalysisData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -39,7 +41,7 @@ export default function VideoDetailPage() {
             
             // 기존 데이터가 없으면 먼저 API 호출해서 기본 정보 가져오기
             if (!videoDetail) {
-              const response = await getVideoDetail(videoId)
+              const response = await getVideoDetail(videoId, raidId || undefined)
               setVideoDetail({
                 video_id: videoId,
                 data: updatedVideos,
@@ -67,7 +69,7 @@ export default function VideoDetailPage() {
         }
         
         // 일반적인 API 호출
-        const response = await getVideoDetail(videoId)
+        const response = await getVideoDetail(videoId, raidId || undefined)
         if (response.data.data && response.data.data.length > 0) {
           setVideoDetail(response.data)
           // 사용자 분석이 있으면 우선 선택, 없으면 첫 번째 선택
