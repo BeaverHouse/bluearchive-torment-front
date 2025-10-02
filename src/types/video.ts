@@ -8,15 +8,15 @@ export interface Character {
 }
 
 export interface PartyComposition {
-  party_number: number
+  partyNumber: number
   strikers: Character[]
   specials: Character[]
 }
 
 export interface SkillOrder {
-  party_number: number
+  partyNumber: number
   cost: number
-  remaining_time: string
+  remainingTime: string
   type: string
   order: number
   description?: string

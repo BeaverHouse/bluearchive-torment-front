@@ -37,14 +37,13 @@ export function VideoDetail({
     const editData = {
       videos: videos,
       currentVideo: currentVideo,
-      activeTab: activeTab
+      activeTab: activeTab,
     };
-    
+
     // sessionStorage에 데이터 임시 저장
-    sessionStorage.setItem('editVideoData', JSON.stringify(editData));
+    sessionStorage.setItem("editVideoData", JSON.stringify(editData));
     window.location.href = `/video-analysis/${currentVideo.video_id}/edit`;
   };
-
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -53,7 +52,6 @@ export function VideoDetail({
       onVideoChange(selectedVideo);
     }
   };
-
 
   // 새로운 데이터 구조에서는 스킬 순서 관련 함수 제거 (skillOrders가 빈 배열)
 
@@ -144,7 +142,7 @@ export function VideoDetail({
       <tbody>`;
 
       analysis_result.skillOrders.forEach((skill, index) => {
-        const party = analysis_result.partyData[skill.party_number - 1];
+        const party = analysis_result.partyData[skill.partyNumber - 1];
         let characterName = "알 수 없음";
 
         if (party) {
@@ -161,12 +159,12 @@ export function VideoDetail({
         <tr style="border-bottom: 1px solid #e5e7eb;">
           <td style="padding: 8px; font-size: 11px;">#${index + 1}</td>
           <td style="padding: 8px; font-size: 11px;">파티 ${
-            skill.party_number
+            skill.partyNumber
           }</td>
           <td style="padding: 8px; font-size: 11px;">${characterName}</td>
           <td style="padding: 8px; font-size: 11px;">${skill.cost / 10}</td>
           <td style="padding: 8px; font-size: 11px; font-family: monospace;">${
-            skill.remaining_time
+            skill.remainingTime
           }</td>
           <td style="padding: 8px; font-size: 11px; color: #6b7280;">${
             skill.description || "-"
@@ -261,7 +259,7 @@ export function VideoDetail({
           {sortedVideos.map((video) => (
             <TabsContent key={video.id} value={video.id.toString()}>
               {/* AI 분석 결과 */}
-              {(
+              {
                 <div className="space-y-6 min-w-0">
                   <PartyCard
                     data={{
@@ -277,115 +275,123 @@ export function VideoDetail({
                   {/* 스킬 순서 표시 */}
                   {video.analysis_result.skillOrders &&
                     video.analysis_result.skillOrders.length > 0 && (
-                      <div className="bg-card border rounded-lg p-4" style={{width: '0', minWidth: '100%'}}>
+                      <div
+                        className="bg-card border rounded-lg p-4"
+                        style={{ width: "0", minWidth: "100%" }}
+                      >
                         <h4 className="text-lg font-semibold mb-4">
                           스킬 순서
                         </h4>
                         <div className="overflow-x-auto">
-                          <table className="border-collapse" style={{width: 'max-content', margin: '0 auto'}}>
-                              <thead>
-                                <tr className="border-b">
-                                  <th className="text-left py-2 px-3 font-medium text-sm whitespace-nowrap">
-                                    순서
-                                  </th>
-                                  <th className="text-left py-2 px-3 font-medium text-sm whitespace-nowrap">
-                                    파티
-                                  </th>
-                                  <th className="text-left py-2 px-3 font-medium text-sm whitespace-nowrap">
-                                    캐릭터
-                                  </th>
-                                  <th className="text-left py-2 px-3 font-medium text-sm whitespace-nowrap">
-                                    코스트
-                                  </th>
-                                  <th className="text-left py-2 px-3 font-medium text-sm whitespace-nowrap">
-                                    남은 시간
-                                  </th>
-                                  <th className="text-left py-2 px-3 font-medium text-sm whitespace-nowrap">
-                                    설명
-                                  </th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {video.analysis_result.skillOrders.map(
-                                  (skill, index) => {
-                                    // 해당 파티에서 캐릭터 찾기
-                                    const party =
-                                      video.analysis_result.partyData[
-                                        skill.party_number - 1
-                                      ];
-                                    let characterName = "알 수 없음";
-                                    let characterCode = 0;
+                          <table
+                            className="border-collapse"
+                            style={{ width: "max-content", margin: "0 auto" }}
+                          >
+                            <thead>
+                              <tr className="border-b">
+                                <th className="text-left py-2 px-3 font-medium text-sm whitespace-nowrap">
+                                  순서
+                                </th>
+                                <th className="text-left py-2 px-3 font-medium text-sm whitespace-nowrap">
+                                  파티
+                                </th>
+                                <th className="text-left py-2 px-3 font-medium text-sm whitespace-nowrap">
+                                  캐릭터
+                                </th>
+                                <th className="text-left py-2 px-3 font-medium text-sm whitespace-nowrap">
+                                  코스트
+                                </th>
+                                <th className="text-left py-2 px-3 font-medium text-sm whitespace-nowrap">
+                                  남은 시간
+                                </th>
+                                <th className="text-left py-2 px-3 font-medium text-sm whitespace-nowrap">
+                                  설명
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {video.analysis_result.skillOrders.map(
+                                (skill, index) => {
+                                  // 해당 파티에서 캐릭터 찾기
+                                  const party =
+                                    video.analysis_result.partyData[
+                                      skill.partyNumber - 1
+                                    ];
+                                  let characterName = "알 수 없음";
+                                  let characterCode = 0;
 
-                                    if (party) {
-                                      const characterIndex =
-                                        skill.type === "striker"
-                                          ? skill.order - 1
-                                          : skill.order - 1 + 4;
-                                      const charValue = party[characterIndex];
-                                      if (charValue && charValue > 0) {
-                                        characterCode = Math.floor(
-                                          charValue / 1000
-                                        );
-                                        characterName =
-                                          getCharacterName(characterCode, studentsMap);
-                                      }
+                                  if (party) {
+                                    const characterIndex =
+                                      skill.type === "striker"
+                                        ? skill.order - 1
+                                        : skill.order - 1 + 4;
+                                    const charValue = party[characterIndex];
+                                    if (charValue && charValue > 0) {
+                                      characterCode = Math.floor(
+                                        charValue / 1000
+                                      );
+                                      characterName = getCharacterName(
+                                        characterCode,
+                                        studentsMap
+                                      );
                                     }
-
-                                    return (
-                                      <tr
-                                        key={index}
-                                        className="border-b hover:bg-muted/50"
-                                      >
-                                        <td className="py-2 px-3 text-sm font-medium whitespace-nowrap">
-                                          #{index + 1}
-                                        </td>
-                                        <td className="py-2 px-3 text-sm whitespace-nowrap">
-                                          파티 {skill.party_number}
-                                        </td>
-                                        <td className="py-2 px-3 text-sm">
-                                          <div className="flex items-center gap-2 min-w-0">
-                                            {characterCode > 0 && (
-                                              <img
-                                                src={`${
-                                                  process.env
-                                                    .NEXT_PUBLIC_CDN_URL || ""
-                                                }/batorment/character/${characterCode}.webp`}
-                                                alt={characterName}
-                                                className="w-6 h-6 object-cover rounded flex-shrink-0"
-                                                onError={(e) => {
-                                                  const target =
-                                                    e.target as HTMLImageElement;
-                                                  target.src = "/empty.webp";
-                                                }}
-                                              />
-                                            )}
-                                            <span className="truncate">
-                                              {characterName}
-                                            </span>
-                                          </div>
-                                        </td>
-                                        <td className="py-2 px-3 text-sm whitespace-nowrap">
-                                          {skill.cost / 10}
-                                        </td>
-                                        <td className="py-2 px-3 text-sm font-mono whitespace-nowrap">
-                                          {skill.remaining_time}
-                                        </td>
-                                        <td className="py-2 px-3 text-sm text-muted-foreground">
-                                          <div className="max-w-[200px] truncate">
-                                            {skill.description || "-"}
-                                          </div>
-                                        </td>
-                                      </tr>
-                                    );
                                   }
-                                )}
-                              </tbody>
+
+                                  return (
+                                    <tr
+                                      key={index}
+                                      className="border-b hover:bg-muted/50"
+                                    >
+                                      <td className="py-2 px-3 text-sm font-medium whitespace-nowrap">
+                                        #{index + 1}
+                                      </td>
+                                      <td className="py-2 px-3 text-sm whitespace-nowrap">
+                                        파티 {skill.partyNumber}
+                                      </td>
+                                      <td className="py-2 px-3 text-sm">
+                                        <div className="flex items-center gap-2 min-w-0">
+                                          {characterCode > 0 && (
+                                            <img
+                                              src={`${
+                                                process.env
+                                                  .NEXT_PUBLIC_CDN_URL || ""
+                                              }/batorment/character/${characterCode}.webp`}
+                                              alt={characterName}
+                                              className="w-6 h-6 object-cover rounded flex-shrink-0"
+                                              onError={(e) => {
+                                                const target =
+                                                  e.target as HTMLImageElement;
+                                                target.src = "/empty.webp";
+                                              }}
+                                            />
+                                          )}
+                                          <span className="truncate">
+                                            {characterName}
+                                          </span>
+                                        </div>
+                                      </td>
+                                      <td className="py-2 px-3 text-sm whitespace-nowrap">
+                                        {skill.cost / 10}
+                                      </td>
+                                      <td className="py-2 px-3 text-sm font-mono whitespace-nowrap">
+                                        {skill.remainingTime}
+                                      </td>
+                                      <td className="py-2 px-3 text-sm text-muted-foreground">
+                                        <div className="max-w-[200px] truncate">
+                                          {skill.description || "-"}
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  );
+                                }
+                              )}
+                            </tbody>
                           </table>
                         </div>
                       </div>
                     )}
                 </div>
-              )}
+              }
             </TabsContent>
           ))}
         </Tabs>
@@ -412,7 +418,7 @@ export function VideoDetail({
           </div>
 
           {/* AI 분석 결과 */}
-          {(
+          {
             <div className="space-y-6 min-w-0">
               <PartyCard
                 data={{
@@ -428,113 +434,119 @@ export function VideoDetail({
               {/* 스킬 순서 표시 */}
               {currentVideo.analysis_result.skillOrders &&
                 currentVideo.analysis_result.skillOrders.length > 0 && (
-                  <div className="bg-card border rounded-lg p-4" style={{width: '0', minWidth: '100%'}}>
+                  <div
+                    className="bg-card border rounded-lg p-4"
+                    style={{ width: "0", minWidth: "100%" }}
+                  >
                     <h4 className="text-lg font-semibold mb-4">스킬 순서</h4>
                     <div className="overflow-x-auto">
-                      <table className="border-collapse" style={{width: 'max-content', margin: '0 auto'}}>
-                          <thead>
-                            <tr className="border-b">
-                              <th className="text-left py-2 px-3 font-medium text-sm whitespace-nowrap">
-                                순서
-                              </th>
-                              <th className="text-left py-2 px-3 font-medium text-sm whitespace-nowrap">
-                                파티
-                              </th>
-                              <th className="text-left py-2 px-3 font-medium text-sm whitespace-nowrap">
-                                캐릭터
-                              </th>
-                              <th className="text-left py-2 px-3 font-medium text-sm whitespace-nowrap">
-                                코스트
-                              </th>
-                              <th className="text-left py-2 px-3 font-medium text-sm whitespace-nowrap">
-                                남은 시간
-                              </th>
-                              <th className="text-left py-2 px-3 font-medium text-sm whitespace-nowrap">
-                                설명
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {currentVideo.analysis_result.skillOrders.map(
-                              (skill, index) => {
-                                // 해당 파티에서 캐릭터 찾기
-                                const party =
-                                  currentVideo.analysis_result.partyData[
-                                    skill.party_number - 1
-                                  ];
-                                let characterName = "알 수 없음";
-                                let characterCode = 0;
+                      <table
+                        className="border-collapse"
+                        style={{ width: "max-content", margin: "0 auto" }}
+                      >
+                        <thead>
+                          <tr className="border-b">
+                            <th className="text-left py-2 px-3 font-medium text-sm whitespace-nowrap">
+                              순서
+                            </th>
+                            <th className="text-left py-2 px-3 font-medium text-sm whitespace-nowrap">
+                              파티
+                            </th>
+                            <th className="text-left py-2 px-3 font-medium text-sm whitespace-nowrap">
+                              캐릭터
+                            </th>
+                            <th className="text-left py-2 px-3 font-medium text-sm whitespace-nowrap">
+                              코스트
+                            </th>
+                            <th className="text-left py-2 px-3 font-medium text-sm whitespace-nowrap">
+                              남은 시간
+                            </th>
+                            <th className="text-left py-2 px-3 font-medium text-sm whitespace-nowrap">
+                              설명
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {currentVideo.analysis_result.skillOrders.map(
+                            (skill, index) => {
+                              // 해당 파티에서 캐릭터 찾기
+                              const party =
+                                currentVideo.analysis_result.partyData[
+                                  skill.partyNumber - 1
+                                ];
+                              let characterName = "알 수 없음";
+                              let characterCode = 0;
 
-                                if (party) {
-                                  const characterIndex =
-                                    skill.type === "striker"
-                                      ? skill.order - 1
-                                      : skill.order - 1 + 4;
-                                  const charValue = party[characterIndex];
-                                  if (charValue && charValue > 0) {
-                                    characterCode = Math.floor(
-                                      charValue / 1000
-                                    );
-                                    characterName =
-                                      getCharacterName(characterCode, studentsMap);
-                                  }
+                              if (party) {
+                                const characterIndex =
+                                  skill.type === "striker"
+                                    ? skill.order - 1
+                                    : skill.order - 1 + 4;
+                                const charValue = party[characterIndex];
+                                if (charValue && charValue > 0) {
+                                  characterCode = Math.floor(charValue / 1000);
+                                  characterName = getCharacterName(
+                                    characterCode,
+                                    studentsMap
+                                  );
                                 }
-
-                                return (
-                                  <tr
-                                    key={index}
-                                    className="border-b hover:bg-muted/50"
-                                  >
-                                    <td className="py-2 px-3 text-sm font-medium whitespace-nowrap">
-                                      #{index + 1}
-                                    </td>
-                                    <td className="py-2 px-3 text-sm whitespace-nowrap">
-                                      파티 {skill.party_number}
-                                    </td>
-                                    <td className="py-2 px-3 text-sm">
-                                      <div className="flex items-center gap-2 min-w-0">
-                                        {characterCode > 0 && (
-                                          <img
-                                            src={`${
-                                              process.env.NEXT_PUBLIC_CDN_URL ||
-                                              ""
-                                            }/batorment/character/${characterCode}.webp`}
-                                            alt={characterName}
-                                            className="w-6 h-6 object-cover rounded flex-shrink-0"
-                                            onError={(e) => {
-                                              const target =
-                                                e.target as HTMLImageElement;
-                                              target.src = "/empty.webp";
-                                            }}
-                                          />
-                                        )}
-                                        <span className="truncate">
-                                          {characterName}
-                                        </span>
-                                      </div>
-                                    </td>
-                                    <td className="py-2 px-3 text-sm whitespace-nowrap">
-                                      {skill.cost / 10}
-                                    </td>
-                                    <td className="py-2 px-3 text-sm font-mono whitespace-nowrap">
-                                      {skill.remaining_time}
-                                    </td>
-                                    <td className="py-2 px-3 text-sm text-muted-foreground">
-                                      <div className="max-w-[200px] truncate">
-                                        {skill.description || "-"}
-                                      </div>
-                                    </td>
-                                  </tr>
-                                );
                               }
-                            )}
-                          </tbody>
+
+                              return (
+                                <tr
+                                  key={index}
+                                  className="border-b hover:bg-muted/50"
+                                >
+                                  <td className="py-2 px-3 text-sm font-medium whitespace-nowrap">
+                                    #{index + 1}
+                                  </td>
+                                  <td className="py-2 px-3 text-sm whitespace-nowrap">
+                                    파티 {skill.partyNumber}
+                                  </td>
+                                  <td className="py-2 px-3 text-sm">
+                                    <div className="flex items-center gap-2 min-w-0">
+                                      {characterCode > 0 && (
+                                        <img
+                                          src={`${
+                                            process.env.NEXT_PUBLIC_CDN_URL ||
+                                            ""
+                                          }/batorment/character/${characterCode}.webp`}
+                                          alt={characterName}
+                                          className="w-6 h-6 object-cover rounded flex-shrink-0"
+                                          onError={(e) => {
+                                            const target =
+                                              e.target as HTMLImageElement;
+                                            target.src = "/empty.webp";
+                                          }}
+                                        />
+                                      )}
+                                      <span className="truncate">
+                                        {characterName}
+                                      </span>
+                                    </div>
+                                  </td>
+                                  <td className="py-2 px-3 text-sm whitespace-nowrap">
+                                    {skill.cost / 10}
+                                  </td>
+                                  <td className="py-2 px-3 text-sm font-mono whitespace-nowrap">
+                                    {skill.remainingTime}
+                                  </td>
+                                  <td className="py-2 px-3 text-sm text-muted-foreground">
+                                    <div className="max-w-[200px] truncate">
+                                      {skill.description || "-"}
+                                    </div>
+                                  </td>
+                                </tr>
+                              );
+                            }
+                          )}
+                        </tbody>
                       </table>
                     </div>
                   </div>
                 )}
             </div>
-          )}
+          }
         </div>
       )}
     </div>
