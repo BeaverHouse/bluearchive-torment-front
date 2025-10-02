@@ -28,7 +28,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Plus, Clock, RefreshCw, Copy, CheckCircle } from "lucide-react";
 import { useEffect, useState, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import raidsData from "../../../data/raids.json";
 import ErrorPage from "@/components/ErrorPage";
 import { translations } from "@/components/constants";
@@ -38,6 +38,8 @@ const raids: RaidInfo[] = raidsData as RaidInfo[];
 
 function VideoAnalysisContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const raidFromUrl = searchParams.get("raid");
 
   const [videos, setVideos] = useState<VideoListItem[]>([]);
@@ -67,11 +69,9 @@ function VideoAnalysisContent() {
   // 검색어 복사
   const [copiedSearchTerm, setCopiedSearchTerm] = useState(false);
 
-  // URL에서 raid 파라미터를 읽어서 selectedRaid 설정
+  // URL에서 raid 파라미터를 항상 읽어서 selectedRaid 설정 (없으면 "all")
   useEffect(() => {
-    if (raidFromUrl && raids.some((r) => r.id === raidFromUrl)) {
-      setSelectedRaid(raidFromUrl);
-    }
+    setSelectedRaid(raidFromUrl || "all");
   }, [raidFromUrl]);
 
   useEffect(() => {
@@ -104,6 +104,17 @@ function VideoAnalysisContent() {
   const handleRaidChange = (value: string) => {
     setSelectedRaid(value);
     setPagination((prev) => ({ ...prev, page: 1 }));
+
+    // URL query param 업데이트
+    const params = new URLSearchParams(searchParams.toString());
+    if (value === "all") {
+      params.delete("raid");
+    } else {
+      params.set("raid", value);
+    }
+
+    const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+    router.replace(newUrl);
   };
 
   const handlePageChange = (newPage: number) => {
