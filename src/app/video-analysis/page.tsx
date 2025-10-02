@@ -28,6 +28,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Plus, Clock, RefreshCw, Copy, CheckCircle } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import raidsData from "../../../data/raids.json";
 import ErrorPage from "@/components/ErrorPage";
 import { translations } from "@/components/constants";
@@ -36,6 +37,9 @@ import Swal from "sweetalert2";
 const raids: RaidInfo[] = raidsData as RaidInfo[];
 
 export default function VideoAnalysisPage() {
+  const searchParams = useSearchParams();
+  const raidFromUrl = searchParams.get("raid");
+
   const [videos, setVideos] = useState<VideoListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -62,6 +66,13 @@ export default function VideoAnalysisPage() {
 
   // 검색어 복사
   const [copiedSearchTerm, setCopiedSearchTerm] = useState(false);
+
+  // URL에서 raid 파라미터를 읽어서 selectedRaid 설정
+  useEffect(() => {
+    if (raidFromUrl && raids.some((r) => r.id === raidFromUrl)) {
+      setSelectedRaid(raidFromUrl);
+    }
+  }, [raidFromUrl]);
 
   useEffect(() => {
     const fetchVideos = async () => {

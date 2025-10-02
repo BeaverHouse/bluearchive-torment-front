@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { basePartyCounts, lunaticMinScore, translations } from "../constants";
 import {
   Card,
@@ -25,6 +26,7 @@ import {
   Copy,
   CheckCircle,
   TrendingUp,
+  ArrowRight,
 } from "lucide-react";
 import Swal from "sweetalert2";
 import { VideoIcon } from "@radix-ui/react-icons";
@@ -65,6 +67,7 @@ const RaidSummary = ({
   studentsMap,
   level,
 }: RaidComponentProps) => {
+  const router = useRouter();
   const [Character, setCharacter] = useState<number | null>(null);
   const [copiedSearchTerm, setCopiedSearchTerm] = useState(false);
   const [showAllHighUsage, setShowAllHighUsage] = useState(false);
@@ -147,6 +150,10 @@ const RaidSummary = ({
     } catch (err) {
       console.error("Failed to copy search term:", err);
     }
+  };
+
+  const handleGoToVideos = () => {
+    router.push(`/video-analysis?raid=${season}`);
   };
 
   if (
@@ -864,33 +871,15 @@ const RaidSummary = ({
         </CardContent>
       </Card>
 
-      {/* Strategy Videos */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <VideoIcon className="h-5 w-5 text-blue-600" />
-            공략 영상
-          </CardTitle>
-          <CardDescription>※ 최대 10개까지 표시됩니다.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {youtubeLinkInfos.slice(0, 10).map((linkInfo, idx) => (
-              <div className="aspect-video w-full max-w-4xl mx-auto" key={idx}>
-                <iframe
-                  width="100%"
-                  height="100%"
-                  src={linkInfo.youtubeUrl}
-                  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  title="Embedded youtube"
-                  className="rounded border w-full h-full"
-                />
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      {/* Strategy Videos - 영상 분석 페이지로 이동 버튼 */}
+      <Button
+        onClick={handleGoToVideos}
+        className="w-full bg-blue-600 hover:bg-blue-700 h-12 text-base"
+      >
+        <VideoIcon className="h-5 w-5 mr-2" />
+        영상 분석 페이지로 이동
+        <ArrowRight className="h-5 w-5 ml-2" />
+      </Button>
     </div>
   );
 };
