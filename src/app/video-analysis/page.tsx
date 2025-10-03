@@ -86,7 +86,10 @@ function VideoAnalysisContent() {
   const studentsMap = studentsData as Record<string, string>;
 
   // 필터 데이터 상태
-  const [filterData, setFilterData] = useState<any>(null);
+  const [filterData, setFilterData] = useState<{
+    filters: Record<string, Record<string, number>>;
+    assistFilters: Record<string, Record<string, number>>;
+  } | null>(null);
 
   // 팝업 상태
   const [isDialogOpen, setIsDialogOpen] = useState(false);
