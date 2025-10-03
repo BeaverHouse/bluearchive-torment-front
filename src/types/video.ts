@@ -42,29 +42,14 @@ export interface VideoAnalysisData {
   updated_at: string
 }
 
-export interface VideoData {
-  id: string
-  video_title: string
-  video_description: string
-  total_score: number
-  youtube_id: string
-  thumbnail: string
-  party_compositions: PartyComposition[]
-  skill_orders: SkillOrder[]
-  party_composition_source: string
-  analysis_result?: AnalysisResult
-  analysis_type?: string
-  validation_errors?: string[]
-}
-
 // API 응답 타입
 export interface VideoListItem {
   video_id: string
   score: number
   title: string
   raid_id: string | null
-  updated_at: string
-  is_verified: boolean
+  created_at: string
+  verify_level: number
 }
 
 export interface VideoListResponse {
