@@ -34,7 +34,6 @@ import studentsData from "../../../data/students.json";
 import ErrorPage from "@/components/ErrorPage";
 import { translations } from "@/components/constants";
 import { filteredPartys, getFilters } from "@/components/function";
-import { lunaticMinScore, tormentMinScore } from "@/components/constants";
 import {
   Collapsible,
   CollapsibleContent,
@@ -74,23 +73,20 @@ function VideoAnalysisContent() {
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageInputValue, setPageInputValue] = useState("1");
-  const [isPageInputActive, setIsPageInputActive] = useState(false);
 
-  // 파티 필터 상태 (RaidSearch와 동일)
-  const [levelList, setLevelList] = useState<string[]>([]);
+  // 파티 필터 상태
+  const [scoreRange, setScoreRange] = useState([0, 100000000]);
   const [includeList, setIncludeList] = useState<Array<number[]>>([]);
   const [excludeList, setExcludeList] = useState<number[]>([]);
   const [assist, setAssist] = useState<number[] | undefined>(undefined);
   const [partyCountRange, setPartyCountRange] = useState([0, 99]);
   const [hardExclude, setHardExclude] = useState(false);
   const [allowDuplicate, setAllowDuplicate] = useState(false);
-  const [youtubeOnly, setYoutubeOnly] = useState(false);
 
   const studentsMap = studentsData as Record<string, string>;
 
   // 필터 데이터 상태
   const [filterData, setFilterData] = useState<any>(null);
-  const [loadingFilters, setLoadingFilters] = useState(false);
 
   // 팝업 상태
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -116,11 +112,11 @@ function VideoAnalysisContent() {
     if (raidValue === "all") {
       setPagination((prev) => ({ ...prev, page: 1, limit: 15 }));
       setCurrentPage(1);
-      setLevelList([]);
+      setScoreRange([0, 100000000]);
       setIncludeList([]);
       setExcludeList([]);
       setAssist(undefined);
-      setPartyCountRange([0, 99]);
+      setPartyCountRange([1, 99]);
     }
   }, [raidFromUrl]);
 
@@ -133,9 +129,8 @@ function VideoAnalysisContent() {
       }
 
       try {
-        setLoadingFilters(true);
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_CDN_URL}/batorment/v3/video-filter/${selectedRaid}.json`
+          `${process.env.NEXT_PUBLIC_CDN_URL}/batorment/v3/filter/${selectedRaid}.json`
         );
         if (response.ok) {
           const data = await response.json();
@@ -143,8 +138,6 @@ function VideoAnalysisContent() {
         }
       } catch (error) {
         console.error("Failed to load filter data:", error);
-      } finally {
-        setLoadingFilters(false);
       }
     };
 
@@ -211,13 +204,12 @@ function VideoAnalysisContent() {
 
   // 필터 초기화 함수
   const removeFilters = () => {
-    setLevelList([]);
+    setScoreRange([0, 100000000]);
     setIncludeList([]);
     setExcludeList([]);
     setAssist(undefined);
     setHardExclude(false);
     setAllowDuplicate(false);
-    setYoutubeOnly(false);
     setCurrentPage(1);
     setPageInputValue("1");
   };
@@ -247,18 +239,23 @@ function VideoAnalysisContent() {
     const filtered = filteredPartys(
       raidData,
       [],
-      levelList,
+      ["I", "T", "L"],
       includeList,
       excludeList,
       assist,
       partyCountRange,
       hardExclude,
       allowDuplicate,
-      youtubeOnly
+      false
     );
 
     const filteredScores = new Set(filtered.map((p) => p.score));
-    return allVideos.filter((video) => filteredScores.has(video.score));
+    return allVideos.filter(
+      (video) =>
+        filteredScores.has(video.score) &&
+        video.score >= scoreRange[0] &&
+        video.score <= scoreRange[1]
+    );
   };
 
   // 표시할 비디오 계산
@@ -473,41 +470,33 @@ function VideoAnalysisContent() {
                 필터 Reset
               </Button>
               <br />
-              {/* 난이도 & 파티 수 Filter */}
+              {/* 점수 & 파티 수 Filter */}
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-center gap-6 mb-6">
-                {/* 난이도 Filter */}
+                {/* 점수 Filter */}
                 <div className="flex flex-col items-center">
-                  <label className="text-sm font-medium mb-2">난이도</label>
-                  <div className="flex gap-2">
-                    {[
-                      { value: "I", label: "Insane" },
-                      { value: "T", label: "Torment" },
-                      { value: "L", label: "Lunatic" },
-                    ].map((option) => (
-                      <Button
-                        key={option.value}
-                        variant={
-                          levelList.includes(option.value)
-                            ? "default"
-                            : "outline"
-                        }
-                        size="sm"
-                        onClick={() => {
-                          if (levelList.includes(option.value)) {
-                            setLevelList(
-                              levelList.filter(
-                                (level) => level !== option.value
-                              )
-                            );
-                          } else {
-                            setLevelList([...levelList, option.value]);
-                          }
-                        }}
-                        className="min-w-20"
-                      >
-                        {option.label}
-                      </Button>
-                    ))}
+                  <label className="text-sm font-medium mb-2">점수 범위</label>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      value={scoreRange[0]}
+                      onChange={(e) => {
+                        const min = parseInt(e.target.value) || 0;
+                        setScoreRange([min, Math.max(min, scoreRange[1])]);
+                      }}
+                      placeholder="최소 점수"
+                      className="w-32 text-center"
+                    />
+                    <span className="text-sm text-muted-foreground">~</span>
+                    <Input
+                      type="number"
+                      value={scoreRange[1]}
+                      onChange={(e) => {
+                        const max = parseInt(e.target.value) || 100000000;
+                        setScoreRange([Math.min(scoreRange[0], max), max]);
+                      }}
+                      placeholder="최대 점수"
+                      className="w-32 text-center"
+                    />
                   </div>
                 </div>
 
@@ -627,7 +616,7 @@ function VideoAnalysisContent() {
                   showSearch
                 />
               </div>
-              <div className="flex items-center space-x-2 mb-2">
+              <div className="flex items-center space-x-2">
                 <Checkbox
                   id="allowDuplicate"
                   checked={allowDuplicate}
@@ -635,16 +624,6 @@ function VideoAnalysisContent() {
                 />
                 <label htmlFor="allowDuplicate" className="text-sm">
                   조력자 포함 중복 허용
-                </label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="youtubeOnly"
-                  checked={youtubeOnly}
-                  onCheckedChange={(checked) => setYoutubeOnly(!!checked)}
-                />
-                <label htmlFor="youtubeOnly" className="text-sm">
-                  Youtube 링크 (beta)
                 </label>
               </div>
             </CollapsibleContent>
@@ -689,11 +668,9 @@ function VideoAnalysisContent() {
                 }
               }}
               onFocus={() => {
-                setIsPageInputActive(true);
                 setPageInputValue("");
               }}
               onBlur={() => {
-                setIsPageInputActive(false);
                 if (pageInputValue === "" || pageInputValue === "0") {
                   setCurrentPage(1);
                   setPageInputValue("1");
