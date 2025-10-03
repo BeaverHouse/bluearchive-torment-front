@@ -6,12 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Play,
-  CheckCircle,
   Calendar,
   ChevronLeft,
   ChevronRight,
-  ShieldCheck,
-  Shield,
+  Star,
+  Award,
 } from "lucide-react";
 import {
   Tooltip,
@@ -134,38 +133,8 @@ export function VideoList({
                   <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                     <Play className="h-10 w-10 text-white" />
                   </div>
-                  <div className="absolute top-2 right-2 flex gap-1">
-                    {video.verify_level > 0 && (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div
-                              className={`rounded-full p-1 ${
-                                video.verify_level === 1
-                                  ? "bg-blue-500"
-                                  : "bg-purple-500"
-                              }`}
-                            >
-                              {video.verify_level === 1 ? (
-                                <Shield className="h-4 w-4 text-white" />
-                              ) : (
-                                <ShieldCheck className="h-4 w-4 text-white" />
-                              )}
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>
-                              {video.verify_level === 1
-                                ? "파티 정보가 정확합니다"
-                                : "모든 분석이 검증되었습니다"}
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    )}
-                  </div>
                 </div>
-                <div className="p-3 flex-1 flex flex-col justify-between">
+                <div className="p-3 flex-1 flex flex-col justify-between relative">
                   <div>
                     <h3 className="font-semibold text-card-foreground text-sm leading-tight line-clamp-1">
                       {video.title}
@@ -195,6 +164,36 @@ export function VideoList({
                       </div>
                     )}
                   </div>
+                  {video.verify_level > 0 && (
+                    <div className="absolute bottom-1 right-1">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div
+                              className={`rounded-full p-1 ${
+                                video.verify_level === 1
+                                  ? "bg-orange-500"
+                                  : "bg-yellow-500"
+                              }`}
+                            >
+                              {video.verify_level === 1 ? (
+                                <Star className="h-3 w-3 text-white" />
+                              ) : (
+                                <Award className="h-3 w-3 text-white" />
+                              )}
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>
+                              {video.verify_level === 1
+                                ? "파티 정보가 정확합니다"
+                                : "모든 분석이 검증되었습니다"}
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  )}
                 </div>
               </Card>
             </Link>
