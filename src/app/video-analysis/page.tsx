@@ -30,8 +30,20 @@ import { Plus, Clock, RefreshCw, Copy, CheckCircle } from "lucide-react";
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import raidsData from "../../../data/raids.json";
+import studentsData from "../../../data/students.json";
 import ErrorPage from "@/components/ErrorPage";
 import { translations } from "@/components/constants";
+import { filteredPartys, getFilters } from "@/components/function";
+import { lunaticMinScore, tormentMinScore } from "@/components/constants";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { ChevronDownIcon } from "@radix-ui/react-icons";
+import { Cascader } from "@/components/custom/cascader";
+import { MultiSelect } from "@/components/custom/multi-select";
+import { Checkbox } from "@/components/ui/checkbox";
 import Swal from "sweetalert2";
 
 const raids: RaidInfo[] = raidsData as RaidInfo[];
@@ -43,9 +55,12 @@ function VideoAnalysisContent() {
   const raidFromUrl = searchParams.get("raid");
 
   const [videos, setVideos] = useState<VideoListItem[]>([]);
+  const [allVideos, setAllVideos] = useState<VideoListItem[]>([]);
+  const [filteredVideos, setFilteredVideos] = useState<VideoListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedRaid, setSelectedRaid] = useState<string>("all");
+  const [isFilterMode, setIsFilterMode] = useState(false);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 15,
@@ -54,6 +69,28 @@ function VideoAnalysisContent() {
     has_next: false,
     has_prev: false,
   });
+
+  // 필터 상태
+  const [pageSize, setPageSize] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageInputValue, setPageInputValue] = useState("1");
+  const [isPageInputActive, setIsPageInputActive] = useState(false);
+
+  // 파티 필터 상태 (RaidSearch와 동일)
+  const [levelList, setLevelList] = useState<string[]>([]);
+  const [includeList, setIncludeList] = useState<Array<number[]>>([]);
+  const [excludeList, setExcludeList] = useState<number[]>([]);
+  const [assist, setAssist] = useState<number[] | undefined>(undefined);
+  const [partyCountRange, setPartyCountRange] = useState([0, 99]);
+  const [hardExclude, setHardExclude] = useState(false);
+  const [allowDuplicate, setAllowDuplicate] = useState(false);
+  const [youtubeOnly, setYoutubeOnly] = useState(false);
+
+  const studentsMap = studentsData as Record<string, string>;
+
+  // 필터 데이터 상태
+  const [filterData, setFilterData] = useState<any>(null);
+  const [loadingFilters, setLoadingFilters] = useState(false);
 
   // 팝업 상태
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -71,22 +108,67 @@ function VideoAnalysisContent() {
 
   // URL에서 raid 파라미터를 항상 읽어서 selectedRaid 설정 (없으면 "all")
   useEffect(() => {
-    setSelectedRaid(raidFromUrl || "all");
+    const raidValue = raidFromUrl || "all";
+    setSelectedRaid(raidValue);
+    setIsFilterMode(raidValue !== "all");
+
+    // 필터 모드가 아니면 상태 초기화
+    if (raidValue === "all") {
+      setPagination((prev) => ({ ...prev, page: 1, limit: 15 }));
+      setCurrentPage(1);
+      setLevelList([]);
+      setIncludeList([]);
+      setExcludeList([]);
+      setAssist(undefined);
+      setPartyCountRange([0, 99]);
+    }
   }, [raidFromUrl]);
 
+  // 필터 데이터 로드
+  useEffect(() => {
+    const loadFilterData = async () => {
+      if (!isFilterMode || !selectedRaid || selectedRaid === "all") {
+        setFilterData(null);
+        return;
+      }
+
+      try {
+        setLoadingFilters(true);
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_CDN_URL}/batorment/v3/video-filter/${selectedRaid}.json`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setFilterData(data);
+        }
+      } catch (error) {
+        console.error("Failed to load filter data:", error);
+      } finally {
+        setLoadingFilters(false);
+      }
+    };
+
+    loadFilterData();
+  }, [isFilterMode, selectedRaid]);
+
+  // 비디오 데이터 로드
   useEffect(() => {
     const fetchVideos = async () => {
       try {
         setLoading(true);
         setError(null);
-        const raidId = selectedRaid === "all" ? undefined : selectedRaid;
-        const response = await getVideoList(
-          raidId,
-          pagination.page,
-          pagination.limit
-        );
-        setVideos(response.data.data);
-        setPagination(response.data.pagination);
+
+        if (isFilterMode && selectedRaid !== "all") {
+          // 필터 모드: limit 1000으로 전체 데이터 가져오기
+          const response = await getVideoList(selectedRaid, 1, 1000);
+          setAllVideos(response.data.data);
+          setFilteredVideos(response.data.data);
+        } else {
+          // 일반 모드: 기존 페이지네이션 방식
+          const response = await getVideoList(undefined, pagination.page, 15);
+          setVideos(response.data.data);
+          setPagination(response.data.pagination);
+        }
       } catch (err) {
         setError(
           err instanceof Error
@@ -99,7 +181,7 @@ function VideoAnalysisContent() {
     };
 
     fetchVideos();
-  }, [selectedRaid, pagination.page]);
+  }, [selectedRaid, pagination.page, isFilterMode]);
 
   const handleRaidChange = (value: string) => {
     setSelectedRaid(value);
@@ -113,12 +195,100 @@ function VideoAnalysisContent() {
       params.set("raid", value);
     }
 
-    const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+    const newUrl = params.toString()
+      ? `${pathname}?${params.toString()}`
+      : pathname;
     router.replace(newUrl);
   };
 
   const handlePageChange = (newPage: number) => {
-    setPagination((prev) => ({ ...prev, page: newPage }));
+    if (isFilterMode) {
+      setCurrentPage(newPage);
+    } else {
+      setPagination((prev) => ({ ...prev, page: newPage }));
+    }
+  };
+
+  // 필터 초기화 함수
+  const removeFilters = () => {
+    setLevelList([]);
+    setIncludeList([]);
+    setExcludeList([]);
+    setAssist(undefined);
+    setHardExclude(false);
+    setAllowDuplicate(false);
+    setYoutubeOnly(false);
+    setCurrentPage(1);
+    setPageInputValue("1");
+  };
+
+  // 비디오 데이터를 파티 데이터로 변환
+  const convertVideosToPartyData = (videoList: VideoListItem[]) => {
+    return videoList.map((video) => ({
+      rank: 1,
+      score: video.score,
+      partyData: video.party_data || [],
+    }));
+  };
+
+  // 필터링된 파티 계산
+  const getFilteredParties = () => {
+    if (!isFilterMode || !filterData) {
+      return filteredVideos;
+    }
+
+    const partyData = convertVideosToPartyData(allVideos);
+    const raidData = {
+      parties: partyData,
+      minPartys: Math.min(...partyData.map((p) => p.partyData.length)) || 1,
+      maxPartys: Math.max(...partyData.map((p) => p.partyData.length)) || 10,
+    };
+
+    const filtered = filteredPartys(
+      raidData,
+      [],
+      levelList,
+      includeList,
+      excludeList,
+      assist,
+      partyCountRange,
+      hardExclude,
+      allowDuplicate,
+      youtubeOnly
+    );
+
+    const filteredScores = new Set(filtered.map((p) => p.score));
+    return allVideos.filter((video) => filteredScores.has(video.score));
+  };
+
+  // 표시할 비디오 계산
+  const getDisplayVideos = () => {
+    if (!isFilterMode) {
+      return videos;
+    }
+
+    const filtered = getFilteredParties();
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    return filtered.slice(startIndex, endIndex);
+  };
+
+  // 페이지네이션 정보 계산
+  const getFilterModePagination = () => {
+    if (!isFilterMode) {
+      return pagination;
+    }
+
+    const filtered = getFilteredParties();
+    const totalPages = Math.ceil(filtered.length / pageSize);
+    return {
+      page: currentPage,
+      limit: pageSize,
+      total: filtered.length,
+      total_pages: totalPages,
+      has_next: currentPage < totalPages,
+      has_prev: currentPage > 1,
+    };
   };
 
   const handleAddToQueue = async () => {
@@ -195,7 +365,8 @@ function VideoAnalysisContent() {
       .map((key) => translations[key]);
 
     const level = raid.top_level;
-    const levelText = level === "T" ? "TORMENT" : level === "L" ? "LUNATIC" : "";
+    const levelText =
+      level === "T" ? "TORMENT" : level === "L" ? "LUNATIC" : "";
 
     return (keywords.join(" ") + " " + levelText).trim();
   };
@@ -281,6 +452,306 @@ function VideoAnalysisContent() {
         </div>
       )}
 
+      {/* RaidSearch와 동일한 필터 UI */}
+      {isFilterMode && filterData && (
+        <div className="mx-auto mb-5 w-full">
+          <Collapsible defaultOpen>
+            <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg border border-gray-200 p-4 hover:bg-gray-50 dark:hover:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-800">
+              <span className="text-sm font-medium">파티 Filter</span>
+              <ChevronDownIcon className="h-4 w-4 transition-transform" />
+            </CollapsibleTrigger>
+            <CollapsibleContent className="border-l border-r border-b border-gray-200 p-4 dark:border-gray-700">
+              <Button
+                className="w-60 mb-5"
+                onClick={() => {
+                  const confirm =
+                    window.confirm("모든 캐릭터 필터가 리셋됩니다.");
+                  if (confirm) removeFilters();
+                }}
+                variant="destructive"
+              >
+                필터 Reset
+              </Button>
+              <br />
+              {/* 난이도 & 파티 수 Filter */}
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-center gap-6 mb-6">
+                {/* 난이도 Filter */}
+                <div className="flex flex-col items-center">
+                  <label className="text-sm font-medium mb-2">난이도</label>
+                  <div className="flex gap-2">
+                    {[
+                      { value: "I", label: "Insane" },
+                      { value: "T", label: "Torment" },
+                      { value: "L", label: "Lunatic" },
+                    ].map((option) => (
+                      <Button
+                        key={option.value}
+                        variant={
+                          levelList.includes(option.value)
+                            ? "default"
+                            : "outline"
+                        }
+                        size="sm"
+                        onClick={() => {
+                          if (levelList.includes(option.value)) {
+                            setLevelList(
+                              levelList.filter(
+                                (level) => level !== option.value
+                              )
+                            );
+                          } else {
+                            setLevelList([...levelList, option.value]);
+                          }
+                        }}
+                        className="min-w-20"
+                      >
+                        {option.label}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 파티 수 Filter */}
+                <div className="flex flex-col items-center">
+                  <label className="text-sm font-medium mb-2">파티 수</label>
+                  <div className="flex items-center gap-2">
+                    <Select
+                      value={partyCountRange[0].toString()}
+                      onValueChange={(value) => {
+                        const min = parseInt(value);
+                        setPartyCountRange([
+                          min,
+                          Math.max(min, partyCountRange[1]),
+                        ]);
+                      }}
+                    >
+                      <SelectTrigger className="w-20">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 10 }, (_, i) => {
+                          const value = i + 1;
+                          return (
+                            <SelectItem key={value} value={value.toString()}>
+                              {value}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
+                    <span className="text-sm text-muted-foreground">~</span>
+                    <Select
+                      value={partyCountRange[1].toString()}
+                      onValueChange={(value) => {
+                        const max = parseInt(value);
+                        setPartyCountRange([
+                          Math.min(partyCountRange[0], max),
+                          max,
+                        ]);
+                      }}
+                    >
+                      <SelectTrigger className="w-20">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 10 }, (_, i) => {
+                          const value = i + 1;
+                          return (
+                            <SelectItem key={value} value={value.toString()}>
+                              {value}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
+                    <span className="text-sm text-muted-foreground">파티</span>
+                  </div>
+                </div>
+              </div>
+              {/* 포함 캐릭터 Filter */}
+              <div className="mb-4">
+                <label className="text-sm font-medium mb-2 block">
+                  포함할 <strong>내 캐릭터</strong>
+                </label>
+                <Cascader
+                  multiple
+                  options={getFilters(filterData.filters, studentsMap)}
+                  value={includeList}
+                  onChange={setIncludeList}
+                  placeholder="캐릭터를 선택하세요"
+                  className="w-full"
+                  allowClear
+                  showSearch
+                />
+              </div>
+              {/* 제외 캐릭터 Filter */}
+              <div className="mb-4">
+                <label className="text-sm font-medium mb-2 block">
+                  제외할 <strong>내 캐릭터</strong>
+                </label>
+                <MultiSelect
+                  options={Object.keys(filterData.filters).map((key) => ({
+                    value: parseInt(key),
+                    label: studentsMap[key],
+                  }))}
+                  value={excludeList}
+                  onChange={(value) => setExcludeList(value as number[])}
+                  placeholder="제외할 캐릭터를 선택하세요"
+                  className="w-full"
+                  allowClear
+                  showSearch
+                />
+              </div>
+              <div className="flex items-center space-x-2 mb-4">
+                <Checkbox
+                  id="hardExclude"
+                  checked={hardExclude}
+                  onCheckedChange={(checked) => setHardExclude(!!checked)}
+                />
+                <label htmlFor="hardExclude" className="text-sm">
+                  조력자에서도 제외
+                </label>
+              </div>
+              {/* 조력자 Filter */}
+              <div className="mb-4">
+                <label className="text-sm font-medium mb-2 block">조력자</label>
+                <Cascader
+                  options={getFilters(filterData.assistFilters, studentsMap)}
+                  value={assist ? [assist] : []}
+                  onChange={(value) =>
+                    setAssist(value.length > 0 ? value[0] : undefined)
+                  }
+                  placeholder="조력자를 선택하세요"
+                  className="w-full"
+                  allowClear
+                  showSearch
+                />
+              </div>
+              <div className="flex items-center space-x-2 mb-2">
+                <Checkbox
+                  id="allowDuplicate"
+                  checked={allowDuplicate}
+                  onCheckedChange={(checked) => setAllowDuplicate(!!checked)}
+                />
+                <label htmlFor="allowDuplicate" className="text-sm">
+                  조력자 포함 중복 허용
+                </label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="youtubeOnly"
+                  checked={youtubeOnly}
+                  onCheckedChange={(checked) => setYoutubeOnly(!!checked)}
+                />
+                <label htmlFor="youtubeOnly" className="text-sm">
+                  Youtube 링크 (beta)
+                </label>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        </div>
+      )}
+
+      {/* 검색 결과 및 페이지네이션 (필터 모드) */}
+      {isFilterMode && (
+        <div className="mx-auto mb-5 w-full">
+          검색 결과: 총 {getFilterModePagination().total}개
+        </div>
+      )}
+
+      {/* 페이지네이션 (필터 모드) */}
+      {isFilterMode && (
+        <div className="flex items-center justify-center gap-4 mb-5">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+            disabled={currentPage === 1}
+          >
+            이전
+          </Button>
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              value={pageInputValue}
+              onChange={(e) => {
+                const value = e.target.value;
+                setPageInputValue(value);
+
+                const numericValue = value.replace(/[^0-9]/g, "");
+                if (numericValue === "") return;
+
+                const newPage = parseInt(numericValue);
+                const maxPage = getFilterModePagination().total_pages;
+
+                if (newPage >= 1 && newPage <= maxPage) {
+                  setCurrentPage(newPage);
+                }
+              }}
+              onFocus={() => {
+                setIsPageInputActive(true);
+                setPageInputValue("");
+              }}
+              onBlur={() => {
+                setIsPageInputActive(false);
+                if (pageInputValue === "" || pageInputValue === "0") {
+                  setCurrentPage(1);
+                  setPageInputValue("1");
+                } else {
+                  const numericValue = pageInputValue.replace(/[^0-9]/g, "");
+                  const newPage = parseInt(numericValue);
+                  const maxPage = getFilterModePagination().total_pages;
+
+                  if (isNaN(newPage) || newPage < 1 || newPage > maxPage) {
+                    setPageInputValue(currentPage.toString());
+                  } else {
+                    setCurrentPage(newPage);
+                    setPageInputValue(newPage.toString());
+                  }
+                }
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  (e.target as HTMLInputElement).blur();
+                }
+              }}
+              placeholder="페이지"
+              className="w-16 px-2 py-1 text-sm border rounded text-center"
+            />
+            <span className="text-sm">
+              / {getFilterModePagination().total_pages}
+            </span>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              setCurrentPage(
+                Math.min(getFilterModePagination().total_pages, currentPage + 1)
+              )
+            }
+            disabled={currentPage >= getFilterModePagination().total_pages}
+          >
+            다음
+          </Button>
+          <Select
+            value={pageSize.toString()}
+            onValueChange={(value) => {
+              setPageSize(parseInt(value));
+              setCurrentPage(1);
+            }}
+          >
+            <SelectTrigger className="w-23">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="10">10개씩</SelectItem>
+              <SelectItem value="20">20개씩</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
       <div className="mb-6 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
         <Select value={selectedRaid} onValueChange={handleRaidChange}>
           <SelectTrigger className="w-full sm:w-64">
@@ -300,7 +771,11 @@ function VideoAnalysisContent() {
           {/* 큐 상태 조회 버튼 */}
           <Dialog open={isQueueDialogOpen} onOpenChange={setIsQueueDialogOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline" onClick={handleFetchQueueStatus} className="w-full sm:w-auto">
+              <Button
+                variant="outline"
+                onClick={handleFetchQueueStatus}
+                className="w-full sm:w-auto"
+              >
                 <Clock className="h-4 w-4 mr-2" />
                 분석 큐 상태
               </Button>
@@ -431,8 +906,8 @@ function VideoAnalysisContent() {
         </div>
       </div>
       <VideoList
-        videos={videos}
-        pagination={pagination}
+        videos={getDisplayVideos()}
+        pagination={getFilterModePagination()}
         onPageChange={handlePageChange}
       />
     </div>

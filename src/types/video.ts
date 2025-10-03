@@ -49,6 +49,7 @@ export interface VideoListItem {
   title: string
   raid_id: string | null
   created_at: string
+  party_data: number[][]
   verify_level: number
 }
 
