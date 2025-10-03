@@ -120,10 +120,11 @@ export default function VideoDetailPage() {
           )}
         </div>
       )}
-      <VideoDetail 
-        videos={videoDetail?.data || []} 
-        currentVideo={currentVideo} 
+      <VideoDetail
+        videos={videoDetail?.data || []}
+        currentVideo={currentVideo}
         onVideoChange={setCurrentVideo}
+        raidId={raidId}
       />
     </div>
   )

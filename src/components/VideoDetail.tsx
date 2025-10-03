@@ -14,12 +14,14 @@ interface VideoDetailProps {
   videos: VideoAnalysisData[];
   currentVideo: VideoAnalysisData;
   onVideoChange: (video: VideoAnalysisData) => void;
+  raidId: string | null;
 }
 
 export function VideoDetail({
   videos,
   currentVideo,
   onVideoChange,
+  raidId,
 }: VideoDetailProps) {
   const [copiedId, setCopiedId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState(currentVideo.id.toString());
@@ -33,6 +35,12 @@ export function VideoDetail({
     return 0;
   });
   const handleStartEdit = () => {
+    // raid_id가 없으면 목록으로 이동
+    if (!raidId) {
+      window.location.href = "/video-analysis";
+      return;
+    }
+
     // 새로운 편집 페이지로 이동 (상태 전달)
     const editData = {
       videos: videos,
@@ -42,7 +50,9 @@ export function VideoDetail({
 
     // sessionStorage에 데이터 임시 저장
     sessionStorage.setItem("editVideoData", JSON.stringify(editData));
-    window.location.href = `/video-analysis/${currentVideo.video_id}/edit`;
+
+    // raid_id와 함께 편집 페이지로 이동
+    window.location.href = `/video-analysis/${currentVideo.video_id}/edit?raid_id=${raidId}`;
   };
 
   const handleTabChange = (value: string) => {
