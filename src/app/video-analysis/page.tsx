@@ -116,7 +116,7 @@ function VideoAnalysisContent() {
       setIncludeList([]);
       setExcludeList([]);
       setAssist(undefined);
-      setPartyCountRange([1, 99]);
+      setPartyCountRange([0, 99]);
     }
   }, [raidFromUrl]);
 
@@ -208,6 +208,7 @@ function VideoAnalysisContent() {
     setIncludeList([]);
     setExcludeList([]);
     setAssist(undefined);
+    setPartyCountRange([0, 99]);
     setHardExclude(false);
     setAllowDuplicate(false);
     setCurrentPage(1);
@@ -518,7 +519,8 @@ function VideoAnalysisContent() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {Array.from({ length: 10 }, (_, i) => {
+                        <SelectItem value="0">전체</SelectItem>
+                        {Array.from({ length: 20 }, (_, i) => {
                           const value = i + 1;
                           return (
                             <SelectItem key={value} value={value.toString()}>
@@ -543,7 +545,7 @@ function VideoAnalysisContent() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {Array.from({ length: 10 }, (_, i) => {
+                        {Array.from({ length: 20 }, (_, i) => {
                           const value = i + 1;
                           return (
                             <SelectItem key={value} value={value.toString()}>
@@ -551,6 +553,7 @@ function VideoAnalysisContent() {
                             </SelectItem>
                           );
                         })}
+                        <SelectItem value="99">전체</SelectItem>
                       </SelectContent>
                     </Select>
                     <span className="text-sm text-muted-foreground">파티</span>
