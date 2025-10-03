@@ -1,13 +1,12 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { YouTubeEmbed, YouTubePlayerRef } from "@/components/YouTubeEmbed";
 import { EditableAnalysisResult } from "@/components/EditableAnalysisResult";
 import { VideoAnalysisData } from "@/types/video";
-import studentsData from "../../../../../data/students.json";
 
 interface EditVideoData {
   videos: VideoAnalysisData[];
@@ -18,24 +17,31 @@ interface EditVideoData {
 export default function VideoEditPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const videoId = params.id as string;
+  const raidId = searchParams.get("raid_id");
   
   // 상태 관리
-  const [videos, setVideos] = useState<VideoAnalysisData[]>([]);
   const [currentVideo, setCurrentVideo] = useState<VideoAnalysisData | null>(null);
-  const [activeTab, setActiveTab] = useState("");
   const [isVideoExpanded, setIsVideoExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   // 편집 데이터 로드
   useEffect(() => {
+    // raid_id가 없으면 무조건 목록으로 이동
+    if (!raidId) {
+      console.warn('raid_id가 없습니다. 목록 페이지로 이동합니다.');
+      router.replace('/video-analysis');
+      return;
+    }
+
     const loadEditData = () => {
       try {
         const savedData = sessionStorage.getItem('editVideoData');
         if (!savedData) {
-          // 직접 접근시 상세 페이지로 리다이렉트
-          console.warn('편집 데이터가 없습니다. 상세 페이지로 이동합니다.');
-          router.replace(`/video-analysis/${videoId}`);
+          // 직접 접근시 목록 페이지로 리다이렉트
+          console.warn('편집 데이터가 없습니다. 목록 페이지로 이동합니다.');
+          router.replace('/video-analysis');
           return;
         }
 
@@ -43,15 +49,13 @@ export default function VideoEditPage() {
         
         // 데이터 유효성 검사
         if (!editData.videos || !editData.currentVideo || editData.currentVideo.video_id !== videoId) {
-          console.warn('유효하지 않은 편집 데이터입니다. 상세 페이지로 이동합니다.');
-          router.replace(`/video-analysis/${videoId}`);
+          console.warn('유효하지 않은 편집 데이터입니다. 목록 페이지로 이동합니다.');
+          router.replace('/video-analysis');
           return;
         }
 
         // 데이터 설정
-        setVideos(editData.videos);
         setCurrentVideo(editData.currentVideo);
-        setActiveTab(editData.activeTab);
         
         // 로딩 완료
         setIsLoading(false);
@@ -61,16 +65,15 @@ export default function VideoEditPage() {
         
       } catch (error) {
         console.error('편집 데이터 로드 실패:', error);
-        router.replace(`/video-analysis/${videoId}`);
+        router.replace('/video-analysis');
       }
     };
 
     loadEditData();
-  }, [videoId, router]);
+  }, [videoId, router, raidId]);
   
   const youtubePlayerRef = useRef<YouTubePlayerRef>(null);
   const videoRef = useRef<HTMLDivElement>(null);
-  const studentsMap = studentsData as Record<string, string>;
 
   // 비디오 상태 변화 처리
   const handleVideoPlayStateChange = useCallback((playing: boolean) => {
@@ -121,22 +124,16 @@ export default function VideoEditPage() {
 
 
   // 비디오 업데이트 처리
-  const handleUpdateVideo = (updatedVideo: VideoAnalysisData) => {
-    // 업데이트된 비디오 데이터를 상세 페이지로 전달
-    const updatedVideos = videos.map(video => 
-      video.id === updatedVideo.id ? updatedVideo : video
-    );
-    
-    const updateData = {
-      updatedVideos,
-      updatedCurrentVideo: updatedVideo,
-      activeTab: activeTab
-    };
-    
-    // 업데이트된 데이터를 sessionStorage에 저장
-    sessionStorage.setItem('updatedVideoData', JSON.stringify(updateData));
-    
-    router.back(); // 편집 완료 후 뒤로가기
+  const handleUpdateVideo = () => {
+    // 저장 완료 후 이동
+    if (!raidId) {
+      // raid_id가 없으면 비디오 목록 페이지로 이동
+      window.location.href = '/video-analysis';
+      return;
+    }
+
+    // raid_id가 있으면 상세 페이지로 이동하면서 새로고침
+    window.location.href = `/video-analysis/${videoId}?raid_id=${raidId}`;
   };
 
   // 편집 취소 처리
