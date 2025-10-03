@@ -740,7 +740,7 @@ function VideoAnalysisContent() {
           <SelectTrigger className="w-full sm:w-64">
             <SelectValue placeholder="레이드 선택" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="max-h-[300px] overflow-y-auto">
             <SelectItem value="all">전체</SelectItem>
             {raids.map((raid) => (
               <SelectItem key={raid.id} value={raid.id}>
@@ -849,7 +849,7 @@ function VideoAnalysisContent() {
                     <SelectTrigger>
                       <SelectValue placeholder="레이드를 선택하세요" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="max-h-[300px] overflow-y-auto">
                       {raids.map((raid) => (
                         <SelectItem key={raid.id} value={raid.id}>
                           {raid.name}

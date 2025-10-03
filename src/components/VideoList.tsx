@@ -124,11 +124,15 @@ export function VideoList({
           return (
             <Link key={video.video_id} href={href}>
               <Card className="cursor-pointer hover:shadow-lg transition-shadow bg-card border-border h-full flex flex-col overflow-hidden p-0">
-                <div className="relative aspect-video">
+                <div className="relative aspect-video bg-gray-200 overflow-hidden">
                   <img
                     src={`https://img.youtube.com/vi/${video.video_id}/maxresdefault.jpg`}
                     alt={video.title}
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                    }}
                   />
                   <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                     <Play className="h-10 w-10 text-white" />
