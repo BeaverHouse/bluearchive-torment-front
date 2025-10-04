@@ -51,8 +51,6 @@ export function VideoList({
 }: VideoListProps) {
   return (
     <div className="space-y-4">
-      <NormalAnnounce />
-
       {/* 페이지네이션 */}
       {pagination.total_pages > 1 && (
         <div className="flex items-center justify-center space-x-2">
@@ -131,7 +129,7 @@ export function VideoList({
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
+                      target.style.display = "none";
                     }}
                   />
                   <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
