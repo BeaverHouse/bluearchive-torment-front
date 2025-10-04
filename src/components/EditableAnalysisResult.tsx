@@ -288,6 +288,24 @@ export function EditableAnalysisResult({
         const info = parseCharacterInfo(currentChar);
         if (!info) return prev;
 
+        // 조력자를 체크하는 경우, 같은 파티의 다른 조력자들을 해제
+        if (field === "assist" && value === 1) {
+          for (let i = 0; i < newParty.length; i++) {
+            if (i !== characterIndex && newParty[i] !== 0) {
+              const otherCharInfo = parseCharacterInfo(newParty[i]);
+              if (otherCharInfo && otherCharInfo.assist === 1) {
+                // 다른 캐릭터의 조력자 해제
+                const updatedOtherChar =
+                  otherCharInfo.code * 1000 +
+                  otherCharInfo.star * 100 +
+                  otherCharInfo.weapon * 10 +
+                  0; // assist = 0
+                newParty[i] = updatedOtherChar;
+              }
+            }
+          }
+        }
+
         const updates = { ...info, [field]: value };
         const newCharValue =
           updates.code * 1000 +

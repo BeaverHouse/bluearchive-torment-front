@@ -210,6 +210,7 @@ export default function VideoEditPage() {
         {currentVideo && (
           <EditableAnalysisResult
             videoData={currentVideo}
+            raidId={raidId || undefined}
             onUpdate={handleUpdateVideo}
             onCancel={handleCancelEdit}
           />
