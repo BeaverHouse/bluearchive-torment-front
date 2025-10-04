@@ -290,11 +290,14 @@ export function EditableAnalysisResult({
 
         // 조력자를 체크하는 경우, 같은 파티의 다른 조력자들을 해제
         if (field === "assist" && value === 1) {
+          console.log('조력자 체크 - 파티 정리 시작:', partyIndex, characterIndex);
           for (let i = 0; i < newParty.length; i++) {
             if (i !== characterIndex && newParty[i] !== 0) {
               const otherCharInfo = parseCharacterInfo(newParty[i]);
+              console.log(`슬롯 ${i} 캐릭터 정보:`, otherCharInfo);
               if (otherCharInfo && otherCharInfo.assist === 1) {
                 // 다른 캐릭터의 조력자 해제
+                console.log(`슬롯 ${i}의 조력자 해제`);
                 const updatedOtherChar =
                   otherCharInfo.code * 1000 +
                   otherCharInfo.star * 100 +
@@ -415,7 +418,7 @@ export function EditableAnalysisResult({
 
                       return (
                         <div
-                          key={charIndex}
+                          key={`${partyIndex}-${charIndex}-${charValue}`}
                           className="border rounded-lg p-3 space-y-3 min-h-[200px] flex flex-col w-full"
                         >
                           <div className="text-xs text-center font-medium text-muted-foreground">
