@@ -49,12 +49,14 @@ import { CSS } from "@dnd-kit/utilities";
 
 interface EditableAnalysisResultProps {
   videoData: VideoAnalysisData;
+  raidId?: string;
   onUpdate: (updatedData: VideoAnalysisData) => void;
   onCancel: () => void;
 }
 
 export function EditableAnalysisResult({
   videoData,
+  raidId,
   onUpdate,
   onCancel,
 }: EditableAnalysisResultProps) {
@@ -78,7 +80,7 @@ export function EditableAnalysisResult({
   const handleSave = async () => {
     setSaving(true);
     try {
-      await updateVideoAnalysis(videoData.video_id, analysisResult);
+      await updateVideoAnalysis(videoData.video_id, analysisResult, raidId);
       onUpdate({
         ...videoData,
         analysis_result: analysisResult,
