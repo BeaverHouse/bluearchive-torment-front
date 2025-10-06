@@ -52,8 +52,11 @@ export async function getVideoDetail(videoId: string, raidId?: string): Promise<
   return fetchAPI<VideoDetailResponse>(endpoint)
 }
 
-export async function updateVideoAnalysis(videoId: string, analysisResult: AnalysisResult): Promise<VideoDetailResponse> {
-  const url = `${BASE_URL}/video/analysis/${videoId}`
+export async function updateVideoAnalysis(videoId: string, analysisResult: AnalysisResult, raidId?: string): Promise<VideoDetailResponse> {
+  const params = new URLSearchParams()
+
+  const queryString = params.toString()
+  const url = queryString ? `${BASE_URL}/video/analysis/${videoId}?${queryString}` : `${BASE_URL}/video/analysis/${videoId}`
 
   try {
     const response = await fetch(url, {
@@ -63,7 +66,7 @@ export async function updateVideoAnalysis(videoId: string, analysisResult: Analy
         'Content-Type': 'application/json',
         'X-Access-Token': process.env.NEXT_PUBLIC_SERVICE_TOKEN || '',
       },
-      body: JSON.stringify({ analysis_result: analysisResult }),
+      body: JSON.stringify({ analysis_result: analysisResult, raid_id: raidId }),
     })
 
     if (!response.ok) {
