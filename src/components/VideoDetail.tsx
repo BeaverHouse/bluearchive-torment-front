@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ArrowLeft, Edit3, Copy, Check } from "lucide-react";
 import { YouTubeEmbed } from "@/components/YouTubeEmbed";
-import PartyCard from "@/components/molecules/PartyCard";
+import PartyCard from "@/components/common/PartyCard";
 import { VideoAnalysisData } from "@/types/video";
 import Link from "next/link";
 import { getStudentsMap, getCharacterName } from "@/utils/character";
@@ -272,14 +272,10 @@ export function VideoDetail({
               {
                 <div className="space-y-6 min-w-0">
                   <PartyCard
-                    data={{
-                      rank: 1,
-                      score: video.analysis_result.score,
-                      partyData: video.analysis_result.partyData,
-                    }}
-                    studentsMap={studentsMap}
-                    linkInfos={[]}
-                    hideRank={true}
+                    rank={-1}
+                    value={video.analysis_result.score}
+                    valueSuffix="점"
+                    parties={video.analysis_result.partyData}
                   />
 
                   {/* 스킬 순서 표시 */}
@@ -431,14 +427,10 @@ export function VideoDetail({
           {
             <div className="space-y-6 min-w-0">
               <PartyCard
-                data={{
-                  rank: 1,
-                  score: currentVideo.analysis_result.score,
-                  partyData: currentVideo.analysis_result.partyData,
-                }}
-                studentsMap={studentsMap}
-                linkInfos={[]}
-                hideRank={true}
+                rank={-1}
+                value={currentVideo.analysis_result.score}
+                valueSuffix="점"
+                parties={currentVideo.analysis_result.partyData}
               />
 
               {/* 스킬 순서 표시 */}
@@ -495,10 +487,8 @@ export function VideoDetail({
                                 const charValue = party[characterIndex];
                                 if (charValue && charValue > 0) {
                                   characterCode = Math.floor(charValue / 1000);
-                                  characterName = getCharacterName(
-                                    characterCode,
-                                    studentsMap
-                                  );
+                                  characterName =
+                                    getCharacterName(characterCode);
                                 }
                               }
 
