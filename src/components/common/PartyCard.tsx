@@ -28,7 +28,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
 }) => {
   return (
     <Card className="relative w-full mx-auto mb-4 max-w-none">
-      <CardContent className="px-4">
+      <CardContent className="px-2">
         <div className="flex items-center justify-between mb-3">
           {rank > 0 && (
             <Badge variant="outline" className="font-medium">

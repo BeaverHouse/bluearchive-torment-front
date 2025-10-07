@@ -8,10 +8,10 @@ import {
   HybridTooltipContent,
 } from "@/components/custom/hybridtooltip";
 import { categoryMap } from "../constants";
+import { getCharacterName } from "@/utils/character";
 
 interface StudentImageProps {
   code: number;
-  name: string;
 }
 
 /**
@@ -19,8 +19,9 @@ interface StudentImageProps {
  * @param code Student code (5-digit or 8-digit)
  * @param name Student name (to use in tooltip)
  */
-export function StudentImage({ code, name }: StudentImageProps) {
+export function StudentImage({ code }: StudentImageProps) {
   const studentID = code < 100000 ? code : Math.floor(code / 1000);
+  const studentName = getCharacterName(studentID);
   const gradeKey = code < 100000 ? -1 : Math.floor((code % 1000) / 10);
   const isAssist = code < 100000 ? 0 : code % 10 === 1;
 
@@ -38,7 +39,7 @@ export function StudentImage({ code, name }: StudentImageProps) {
                 src={`${
                   process.env.NEXT_PUBLIC_CDN_URL || ""
                 }/batorment/character/${studentID}.webp`}
-                alt={name}
+                alt={studentName}
                 className={`w-full h-full object-cover rounded ${borderClass}`}
                 draggable={false}
               />
@@ -57,7 +58,7 @@ export function StudentImage({ code, name }: StudentImageProps) {
           </div>
         </HybridTooltipTrigger>
         <HybridTooltipContent side="top" sideOffset={5}>
-          <p>{isAssist ? `${name} (A)` : name}</p>
+          <p>{isAssist ? `${studentName} (A)` : studentName}</p>
         </HybridTooltipContent>
       </HybridTooltip>
     </TooltipProvider>

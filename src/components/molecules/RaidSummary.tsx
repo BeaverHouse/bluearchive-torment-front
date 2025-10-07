@@ -184,13 +184,6 @@ const RaidSummary = ({
     );
   }
 
-  const parseParty = (partyString: string) => {
-    return partyString.split("_").map((id) => ({
-      id,
-      name: studentsMap[id] || `캐릭터 ${id}`,
-    }));
-  };
-
   const strikerData: CharTableType[] = Object.entries(data?.filters || {})
     .filter(([key]) => key.startsWith("1"))
     .sort(
