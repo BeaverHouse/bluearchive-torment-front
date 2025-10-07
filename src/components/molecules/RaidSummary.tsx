@@ -286,9 +286,9 @@ const RaidSummary = ({
   });
 
   const tormentClearPercent =
-    Number(tormentSummaryData.clearCount / 20000) * 100;
+    Number(Math.min(tormentSummaryData.clearCount, 20000) / 20000) * 100;
   const lunaticClearPercent =
-    Number(lunaticSummaryData.clearCount / 20000) * 100;
+    Number(Math.min(lunaticSummaryData.clearCount, 20000) / 20000) * 100;
   const clearPercent =
     level === "T"
       ? tormentClearPercent + lunaticClearPercent
