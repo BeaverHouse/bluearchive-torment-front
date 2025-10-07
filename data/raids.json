@@ -81,19 +81,19 @@
     "id": "3S25-1",
     "name": "대결전 S25 시가지 비나 (경장갑,인세인)",
     "top_level": "I",
-    "party_updated": false
-  },
-  {
-    "id": "3S25-2",
-    "name": "대결전 S25 시가지 비나 (특수장갑,인세인)",
-    "top_level": "I",
-    "party_updated": false
+    "party_updated": true
   },
   {
     "id": "3S25-3",
+    "name": "대결전 S25 시가지 비나 (특수장갑,인세인)",
+    "top_level": "I",
+    "party_updated": true
+  },
+  {
+    "id": "3S25-4",
     "name": "대결전 S25 시가지 비나 (탄력장갑,토먼트)",
     "top_level": "T",
-    "party_updated": false
+    "party_updated": true
   },
   {
     "id": "S81-0",
