@@ -31,6 +31,7 @@ import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { Cascader } from "../custom/cascader";
 import { MultiSelect } from "../custom/multi-select";
 import { lunaticMinScore, tormentMinScore } from "../constants";
+import Loading from "../common/Loading";
 
 const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
   const [PartyCountRange, setPartyCountRange] = useState([0, 99]);
@@ -199,14 +200,7 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
     getFilterDataQuery.isLoading ||
     getLinksQuery.isLoading
   )
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p>로딩 중...</p>
-        </div>
-      </div>
-    );
+    return <Loading />;
 
   const partyData = getPartyDataQuery.data;
   const filterData = getFilterDataQuery.data;

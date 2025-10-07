@@ -25,8 +25,8 @@ import {
 import Swal from "sweetalert2";
 import { VideoIcon } from "@radix-ui/react-icons";
 import { RaidComponentProps } from "@/types/raid";
-import { useTouchDevice } from "@/hooks/useTouchDevice";
 import PartyCard from "../common/PartyCard";
+import Loading from "../common/Loading";
 
 interface RaidSummaryData {
   clearCount: number;
@@ -60,8 +60,6 @@ const RaidSummary = ({
   const [Character, setCharacter] = useState<number | null>(null);
   const [copiedSearchTerm, setCopiedSearchTerm] = useState(false);
   const [showAllHighUsage, setShowAllHighUsage] = useState(false);
-  const [openTooltips, setOpenTooltips] = useState<Set<string>>(new Set());
-  const { isTouchDevice } = useTouchDevice();
 
   const getSummaryDataQuery = useQuery({
     queryKey: ["getSummaryData", season],
@@ -133,11 +131,7 @@ const RaidSummary = ({
   };
 
   if (getSummaryDataQuery.isLoading || getFilterDataQuery.isLoading)
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
-      </div>
-    );
+    return <Loading />;
 
   if (!getSummaryDataQuery.data || !getFilterDataQuery.data) {
     return (
