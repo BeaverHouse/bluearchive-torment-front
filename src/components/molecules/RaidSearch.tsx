@@ -143,9 +143,9 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
           return false;
         }
         if (item.length > 1) {
-          // item[1]은 이미 levelKey 값 (예: 52)
-          const levelKey = item[1].toString();
-          return filterData.filters[key][levelKey] > 0;
+          // item[1]은 이미 gradeKey 값 (예: 52)
+          const gradeKey = item[1].toString();
+          return filterData.filters[key][gradeKey] > 0;
         }
         return true;
       })
@@ -163,9 +163,9 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
             true
           : // 자식 항목 선택: 특정 성급이 존재하는지 확인
             (() => {
-              // Assist[1]은 이미 levelKey 값 (예: 52)
-              const levelKey = Assist[1].toString();
-              return filterData.assistFilters[Assist[0]][levelKey] > 0;
+              // Assist[1]은 이미 gradeKey 값 (예: 52)
+              const gradeKey = Assist[1].toString();
+              return filterData.assistFilters[Assist[0]][gradeKey] > 0;
             })()));
 
     if (validIncludeList.length !== IncludeList.length) {

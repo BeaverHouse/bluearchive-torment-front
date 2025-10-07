@@ -9,13 +9,13 @@ export const getFilters = (
     value: Number(key),
     label: studentsMap[key],
     children: Object.entries(rawData[key])
-      .map(([levelKey, val]) => {
+      .map(([gradeKey, val]) => {
         if (val > 0) {
-          const value = parseInt(levelKey);
+          const value = parseInt(gradeKey);
           
           return {
             value,
-            label: `${studentsMap[key]} ${categoryMap[levelKey]} (${val})`,
+            label: `${studentsMap[key]} ${categoryMap[gradeKey]} (${val})`,
           };
         }
         return null;
@@ -91,13 +91,13 @@ const isInFilter = (arr: number[], num: number) => {
   const weapon = Math.floor((num % 100) / 10);
   
   if (arr.length === 2) {
-    // 부모-자식 선택: [charId, levelKey]
-    const [selectedCharId, levelKey] = arr;
+    // 부모-자식 선택: [charId, gradeKey]
+    const [selectedCharId, gradeKey] = arr;
     if (charId !== selectedCharId) return false;
     
-    // levelKey는 두 자리 숫자: 첫 번째 자리는 star, 두 번째 자리는 weapon
-    const expectedStar = Math.floor(levelKey / 10);
-    const expectedWeapon = levelKey % 10;
+    // gradeKey는 두 자리 숫자: 첫 번째 자리는 star, 두 번째 자리는 weapon
+    const expectedStar = Math.floor(gradeKey / 10);
+    const expectedWeapon = gradeKey % 10;
     
     return star === expectedStar && weapon === expectedWeapon;
   } else if (arr.length === 1) {

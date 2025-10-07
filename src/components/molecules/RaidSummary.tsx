@@ -792,7 +792,7 @@ const RaidSummary = ({
           {Character !== null && data?.filters?.[Character] && (
             <div className="space-y-4">
               {Object.entries(data?.filters?.[Character] || {}).map(
-                ([levelKey, count], idx) => {
+                ([gradeKey, count], idx) => {
                   const sum = Object.values(
                     data?.filters?.[Character] || {}
                   ).reduce((sum, cur) => sum + cur, 0);
@@ -802,8 +802,8 @@ const RaidSummary = ({
                       (c) => (c / sum) * 100
                     )
                   );
-                  const starLevel = parseInt(levelKey[0]);
-                  const weaponLevel = parseInt(levelKey[1]);
+                  const starLevel = parseInt(gradeKey[0]);
+                  const weaponLevel = parseInt(gradeKey[1]);
                   return (
                     <div key={idx} className="space-y-1">
                       <div className="flex justify-between items-center">
