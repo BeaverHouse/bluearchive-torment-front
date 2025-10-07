@@ -15,15 +15,20 @@ interface SinglePartyProps {
 export function SingleParty({ party }: SinglePartyProps) {
   return (
     <div className="grid grid-cols-6 gap-2 sm:gap-4 p-2 rounded border bg-muted/30 justify-items-center">
-      {party.map((char, charIdx) => {
-        if (char === 0)
-          return (
-            <div key={charIdx} className="w-10 h-10 sm:w-12 sm:h-12"></div>
-          );
+      {party.map((student, idx) => {
+        const key = "student" + idx;
+        if (student === 0)
+          return <div key={key} className="w-10 h-10 sm:w-12 sm:h-12"></div>;
 
-        const code = Math.floor(char / 1000);
+        const code = Math.floor(student / 1000);
 
-        return <StudentImage code={char} name={getCharacterName(code)} />;
+        return (
+          <StudentImage
+            code={student}
+            name={getCharacterName(code)}
+            key={key}
+          />
+        );
       })}
     </div>
   );

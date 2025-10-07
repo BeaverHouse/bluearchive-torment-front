@@ -2,7 +2,6 @@
 
 import React from "react";
 import { PartyData, YoutubeLinkInfo } from "@/types/raid";
-import { useTouchDevice } from "@/hooks/useTouchDevice";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,9 +12,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Youtube, Trophy } from "lucide-react";
-import CharacterImage from "../common/StudentImage";
-import { getCharacterName } from "@/utils/character";
-
+import SingleParty from "../common/SingleParty";
 
 interface PartyCardProps {
   data: PartyData;
@@ -30,12 +27,6 @@ const PartyCard: React.FC<PartyCardProps> = ({
   linkInfos,
   hideRank = false,
 }) => {
-  const [openTooltips, setOpenTooltips] = React.useState<Set<string>>(
-    new Set()
-  );
-
-  const { isTouchDevice } = useTouchDevice();
-
   const partys = data.partyData;
 
   return (
@@ -82,27 +73,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
         {/* Party Display */}
         <div className="space-y-3">
           {partys.slice(0, 4).map((party, partyIdx) => (
-            <div
-              key={partyIdx}
-              className="grid grid-cols-6 gap-2 sm:gap-4 p-2 rounded border bg-muted/30 justify-items-center"
-            >
-              {party.map((char, charIdx) => {
-                if (char === 0)
-                  return (
-                    <div
-                      key={charIdx}
-                      className="w-10 h-10 sm:w-12 sm:h-12"
-                    ></div>
-                  );
-
-                const code = Math.floor(char / 1000);
-                const tooltipId = `party-${partyIdx}-${charIdx}`;
-
-                return (
-                  <CharacterImage code={char} name={getCharacterName(code)} key={tooltipId}/>
-                );
-              })}
-            </div>
+            <SingleParty party={party} key={"party" + partyIdx} />
           ))}
         </div>
 
@@ -117,29 +88,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
                 <AccordionContent>
                   <div className="space-y-3">
                     {partys.slice(4).map((party, partyIdx) => (
-                      <div
-                        key={partyIdx + 4}
-                        className="grid grid-cols-6 gap-2 sm:gap-4 p-2 rounded border bg-muted/30 justify-items-center"
-                      >
-                        {party.map((char, charIdx) => {
-                          if (char === 0)
-                            return (
-                              <div
-                                key={charIdx}
-                                className="w-10 h-10 sm:w-12 sm:h-12"
-                              ></div>
-                            );
-
-                          const code = Math.floor(char / 1000);
-                          const tooltipId = `party-accordion-${
-                            partyIdx + 4
-                          }-${charIdx}`;
-
-                          return (
-                            <CharacterImage code={char} name={getCharacterName(code)} key={tooltipId}/>
-                          );
-                        })}
-                      </div>
+                      <SingleParty party={party} key={"party" + partyIdx} />
                     ))}
                   </div>
                 </AccordionContent>
