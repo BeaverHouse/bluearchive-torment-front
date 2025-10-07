@@ -1,10 +1,8 @@
 "use client";
 
 import React from "react";
-import { PartyData, YoutubeLinkInfo } from "@/types/raid";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Accordion,
   AccordionContent,
