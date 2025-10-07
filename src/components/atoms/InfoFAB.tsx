@@ -45,7 +45,7 @@ const InfoFAB: React.FC = () => {
               </div>
 
               <div className="text-sm text-muted-foreground">
-                <p>This site's in-game data is provided by the sites below.</p>
+                <p>This site&apos;s in-game data is provided by the sites below.</p>
               </div>
 
               <div className="space-y-2">
