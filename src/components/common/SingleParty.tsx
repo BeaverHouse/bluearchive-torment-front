@@ -38,7 +38,7 @@ export function SingleParty({ party }: SinglePartyProps) {
   }
 
   return (
-    <div className="grid grid-cols-6 gap-2 sm:gap-4 p-2 rounded border bg-muted/30 justify-items-center">
+    <div className="grid grid-cols-6 gap-2 p-2 mb-1 rounded border bg-muted/20">
       {finalParty.map((student, idx) => {
         const key = "student" + idx;
         if (student === 0)

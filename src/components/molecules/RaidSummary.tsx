@@ -14,12 +14,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
   Users,
   Trophy,
   Target,
@@ -32,7 +26,7 @@ import Swal from "sweetalert2";
 import { VideoIcon } from "@radix-ui/react-icons";
 import { RaidComponentProps } from "@/types/raid";
 import { useTouchDevice } from "@/hooks/useTouchDevice";
-import StudentImage from "../common/StudentImage";
+import PartyCard from "../common/PartyCard";
 
 interface RaidSummaryData {
   clearCount: number;
@@ -138,10 +132,7 @@ const RaidSummary = ({
     router.push(`/video-analysis?raid=${season}`);
   };
 
-  if (
-    getSummaryDataQuery.isLoading ||
-    getFilterDataQuery.isLoading
-  )
+  if (getSummaryDataQuery.isLoading || getFilterDataQuery.isLoading)
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
@@ -413,62 +404,20 @@ const RaidSummary = ({
         <CardContent className="p-2">
           <div className="space-y-3">
             {(data?.top5Partys || []).map(([party_string, count], idx) => {
-              const characters = parseParty(party_string);
+              const students = party_string.split("_").map(Number);
+              // Split into parties (6 students per party)
+              const parties = [];
+              for (let i = 0; i < students.length; i += 6) {
+                parties.push(students.slice(i, i + 6));
+              }
               return (
-                <Card key={idx} className="relative">
-                  <CardContent className="px-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <Badge variant="outline" className="font-medium">
-                        #{idx + 1}위
-                      </Badge>
-                      <div className="text-right flex items-center gap-1">
-                        <div className="text-lg font-bold text-blue-600">
-                          {count.toLocaleString()}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          명 사용
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      {Array.from(
-                        { length: Math.ceil(characters.length / 6) },
-                        (_, partyIndex) => {
-                          const partyCharacters = characters.slice(
-                            partyIndex * 6,
-                            (partyIndex + 1) * 6
-                          );
-                          return (
-                            <div
-                              key={partyIndex}
-                              className="grid grid-cols-6 gap-4 p-2 rounded border bg-muted/30 justify-items-center"
-                            >
-                              {partyCharacters.map((char, charIndex) => {
-                                const tooltipId = `summary-${idx}-${partyIndex}-${charIndex}`;
-                                const isOpen = openTooltips.has(tooltipId);
-
-                                return (
-                                  <StudentImage code={Number(char.id)} name={char.name} />
-                                );
-                              })}
-                              {/* 빈 슬롯 채우기 */}
-                              {Array.from(
-                                { length: 6 - partyCharacters.length },
-                                (_, emptyIndex) => (
-                                  <div
-                                    key={`empty-${emptyIndex}`}
-                                    className="w-12 h-12"
-                                  ></div>
-                                )
-                              )}
-                            </div>
-                          );
-                        }
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
+                <PartyCard
+                  key={idx}
+                  rank={idx + 1}
+                  value={count}
+                  valueSuffix="명 사용"
+                  parties={parties}
+                />
               );
             })}
           </div>
