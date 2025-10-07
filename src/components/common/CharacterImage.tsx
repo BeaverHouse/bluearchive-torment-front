@@ -19,7 +19,7 @@ export function CharacterImage({
   name,
 }: CharacterImageProps) {
   const studentID = code < 100000 ? code : Math.floor(code / 1000)
-  const gradeKey = Math.floor((code % 1000) / 10)
+  const gradeKey = code < 100000 ? -1 : Math.floor((code % 1000) / 10)
   const isAssist = code % 10 === 1
 
   const borderClass = isAssist
@@ -31,7 +31,7 @@ export function CharacterImage({
       <HybridTooltip delayDuration={0}>
         <HybridTooltipTrigger asChild>
           <div className="flex flex-col items-center cursor-pointer select-none">
-            <div className="w-9 h-9 mb-1 relative">
+            <div className="w-10 h-10 mb-1 relative">
               <img
                 src={`${
                   process.env.NEXT_PUBLIC_CDN_URL || ""
@@ -41,19 +41,21 @@ export function CharacterImage({
                 draggable={false}
               />
             </div>
-            <div
-              className={`text-xs text-center truncate w-full ${
-                isAssist
-                  ? "text-green-600 font-bold"
-                  : "text-muted-foreground"
-              }`}
-            >
-              {categoryMap[gradeKey]}
-            </div>
+            {gradeKey >= 10 && (
+              <div
+                className={`text-xs text-center w-full ${
+                  isAssist
+                    ? "text-green-600 font-bold"
+                    : "text-muted-foreground"
+                }`}
+              >
+                {categoryMap[gradeKey]}
+              </div>
+            )}
           </div>
         </HybridTooltipTrigger>
         <HybridTooltipContent side="top" sideOffset={5}>
-          <p>{isAssist ? `${name} (조력자)` : name}</p>
+          <p>{isAssist ? `${name} (A)` : name}</p>
         </HybridTooltipContent>
       </HybridTooltip>
     </TooltipProvider>
