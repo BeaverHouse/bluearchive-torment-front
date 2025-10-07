@@ -1,11 +1,14 @@
+"use client";
+
 import React from "react";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+  HybridTooltip,
+  HybridTooltipTrigger,
+  HybridTooltipContent,
+} from "@/components/custom/hybridtooltip";
 import { categoryMap } from "../constants";
+import { useTouchDevice } from "@/hooks/useTouchDevice";
 
 interface CharacterImageProps {
   code: number; // Student code (5-digit or 8-digit)
@@ -16,24 +19,26 @@ export function CharacterImage({
   code,
   name,
 }: CharacterImageProps) {
-  
+  const [isOpen, setIsOpen] = React.useState(false);
+  const { isTouchDevice } = useTouchDevice();
+
   const studentID = code < 100000 ? code : Math.floor(code / 1000)
   const gradeKey = Math.floor((code % 1000) / 10)
   const isAssist = code % 10 === 1
 
   const imageUrl = `${process.env.NEXT_PUBLIC_CDN_URL || ""}/batorment/character/${code}.webp`
-  
-  const borderClass = isAssist 
-    ? "border-2 border-green-500" 
+
+  const borderClass = isAssist
+    ? "border-2 border-green-500"
     : "border-2 border-transparent";
 
   return (
     <TooltipProvider>
-      <Tooltip
+      <HybridTooltip
         delayDuration={0}
         open={isTouchDevice ? isOpen : undefined}
       >
-        <TooltipTrigger asChild>
+        <HybridTooltipTrigger asChild>
           <button
             type="button"
             className="flex flex-col items-center cursor-pointer bg-transparent border-none p-0 m-0 select-none"
@@ -79,15 +84,7 @@ export function CharacterImage({
                 deltaTime < 300
               ) {
                 e.preventDefault();
-                const newTooltips = new Set(
-                  openTooltips
-                );
-                if (isOpen) {
-                  newTooltips.delete(tooltipId);
-                } else {
-                  newTooltips.add(tooltipId);
-                }
-                setOpenTooltips(newTooltips);
+                setIsOpen(!isOpen);
               }
             }}
             onContextMenu={(e) => e.preventDefault()}
@@ -99,7 +96,7 @@ export function CharacterImage({
                 }/batorment/character/${code}.webp`}
                 alt={name}
                 className={`w-full h-full object-cover rounded ${
-                  assist
+                  isAssist
                     ? "border-2 border-green-500"
                     : "border-2 border-transparent"
                 }`}
@@ -108,19 +105,19 @@ export function CharacterImage({
             </div>
             <div
               className={`text-xs sm:text-xs text-center truncate w-full ${
-                assist
+                isAssist
                   ? "text-green-600 font-bold"
                   : "text-muted-foreground"
               }`}
             >
-              {categoryMap[starWeapon]}
+              {categoryMap[gradeKey]}
             </div>
           </button>
-        </TooltipTrigger>
-        <TooltipContent side="top" sideOffset={5}>
-          <p>{assist ? `${name} (조력자)` : name}</p>
-        </TooltipContent>
-      </Tooltip>
+        </HybridTooltipTrigger>
+        <HybridTooltipContent side="top" sideOffset={5}>
+          <p>{isAssist ? `${name} (조력자)` : name}</p>
+        </HybridTooltipContent>
+      </HybridTooltip>
     </TooltipProvider>
   );
 }
