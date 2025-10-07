@@ -1,15 +1,14 @@
-export const categoryLabels: string[] = [
-  "-",
-  "1성",
-  "2성",
-  "3성",
-  "4성",
-  "5성",
-  "전1",
-  "전2",
-  "전3",
-  "전4",
-];
+export const categoryMap: Record<string, string> = {
+  "10": "1성",
+  "20": "2성",
+  "30": "3성",
+  "40": "4성",
+  "50": "5성",
+  "51": "전1",
+  "52": "전2",
+  "53": "전3",
+  "54": "전4",
+};
 
 export const translations: Record<string, string> = {
   총력전: "総力戦",

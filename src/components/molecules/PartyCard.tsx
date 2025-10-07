@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { categoryLabels } from "../constants";
+import { categoryMap } from "../constants";
 import { PartyData, YoutubeLinkInfo } from "@/types/raid";
 import { useTouchDevice } from "@/hooks/useTouchDevice";
 import { Card, CardContent } from "@/components/ui/card";
@@ -101,8 +101,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
                   );
 
                 const code = Math.floor(char / 1000);
-                const star = Math.floor((char % 1000) / 100);
-                const weapon = Math.floor((char % 100) / 10);
+                const starWeapon = String(Math.floor((char % 1000) / 10));
                 const assist = char % 10;
                 const name = studentsMap[code];
                 const tooltipId = `party-${partyIdx}-${charIdx}`;
@@ -185,7 +184,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
                                 : "text-muted-foreground"
                             }`}
                           >
-                            {categoryLabels[weapon + star]}
+                            {categoryMap[starWeapon]}
                           </div>
                         </button>
                       </TooltipTrigger>
@@ -225,8 +224,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
                             );
 
                           const code = Math.floor(char / 1000);
-                          const star = Math.floor((char % 1000) / 100);
-                          const weapon = Math.floor((char % 100) / 10);
+                          const starWeapon = Math.floor((char % 1000) / 10);
                           const assist = char % 10;
                           const name = studentsMap[code];
                           const tooltipId = `party-accordion-${
@@ -320,7 +318,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
                                           : "text-muted-foreground"
                                       }`}
                                     >
-                                      {categoryLabels[weapon + star]}
+                                      {categoryMap[starWeapon]}
                                     </div>
                                   </button>
                                 </TooltipTrigger>

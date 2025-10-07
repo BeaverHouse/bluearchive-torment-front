@@ -1,4 +1,4 @@
-import { categoryLabels, lunaticMinScore, tormentMinScore } from "./constants";
+import { categoryMap, lunaticMinScore, tormentMinScore } from "./constants";
 import { RaidData, PartyData, YoutubeLinkInfo, FilterOption } from "@/types/raid";
 
 export const getFilters = (
@@ -11,19 +11,11 @@ export const getFilters = (
     children: Object.entries(rawData[key])
       .map(([levelKey, val]) => {
         if (val > 0) {
-          const starLevel = parseInt(levelKey[0]);
-          const weaponLevel = parseInt(levelKey[1]);
-          // levelKey를 그대로 숫자로 사용 (예: "40" -> 40)
           const value = parseInt(levelKey);
-          const categoryIdx = starLevel * 9 + weaponLevel;
-          
-          // 4성 이하이고 무기레벨이 0일 때는 무기0 표시 안함
-          const weaponText = (starLevel <= 4 && weaponLevel === 0) ? "" : ` 무기${weaponLevel}`;
-          const starText = `${starLevel}★${weaponText}`;
           
           return {
             value,
-            label: `${studentsMap[key]} ${categoryLabels[categoryIdx] || starText} (${val})`,
+            label: `${studentsMap[key]} ${categoryMap[levelKey]} (${val})`,
           };
         }
         return null;
