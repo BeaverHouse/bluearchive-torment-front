@@ -9,15 +9,20 @@ import {
 } from "@/components/custom/hybridtooltip";
 import { categoryMap } from "../constants";
 
-interface CharacterImageProps {
-  code: number; // Student code (5-digit or 8-digit)
-  name: string; // Student name (to use in tooltip)
+interface StudentImageProps {
+  code: number;
+  name: string;
 }
 
-export function CharacterImage({
+/**
+ * Single student image with tooltip
+ * @param code Student code (5-digit or 8-digit)
+ * @param name Student name (to use in tooltip)
+ */
+export function StudentImage({
   code,
   name,
-}: CharacterImageProps) {
+}: StudentImageProps) {
   const studentID = code < 100000 ? code : Math.floor(code / 1000)
   const gradeKey = code < 100000 ? -1 : Math.floor((code % 1000) / 10)
   const isAssist = code % 10 === 1
@@ -62,4 +67,4 @@ export function CharacterImage({
   );
 }
 
-export default CharacterImage;
+export default StudentImage;
