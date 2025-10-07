@@ -13,7 +13,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Youtube, Trophy } from "lucide-react";
-import CharacterImage from "../common/CharacterImage";
+import CharacterImage from "../common/StudentImage";
 import { getCharacterName } from "@/utils/character";
 
 
