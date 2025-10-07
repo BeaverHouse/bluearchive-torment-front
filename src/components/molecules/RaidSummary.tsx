@@ -32,6 +32,7 @@ import Swal from "sweetalert2";
 import { VideoIcon } from "@radix-ui/react-icons";
 import { RaidComponentProps } from "@/types/raid";
 import { useTouchDevice } from "@/hooks/useTouchDevice";
+import StudentImage from "../common/StudentImage";
 
 interface RaidSummaryData {
   clearCount: number;
@@ -448,94 +449,7 @@ const RaidSummary = ({
                                 const isOpen = openTooltips.has(tooltipId);
 
                                 return (
-                                  <TooltipProvider key={charIndex}>
-                                    <Tooltip
-                                      delayDuration={0}
-                                      open={isTouchDevice ? isOpen : undefined}
-                                    >
-                                      <TooltipTrigger asChild>
-                                        <button
-                                          type="button"
-                                          className="flex flex-col items-center cursor-pointer bg-transparent border-none p-0 m-0 select-none"
-                                          style={{
-                                            userSelect: "none",
-                                            WebkitUserSelect: "none",
-                                            WebkitTouchCallout: "none",
-                                          }}
-                                          onTouchStart={(e) => {
-                                            const touch = e.touches[0];
-                                            const target =
-                                              e.target as HTMLElement & {
-                                                touchStartX?: number;
-                                                touchStartY?: number;
-                                                touchStartTime?: number;
-                                              };
-                                            target.touchStartX = touch.clientX;
-                                            target.touchStartY = touch.clientY;
-                                            target.touchStartTime = Date.now();
-                                          }}
-                                          onTouchEnd={(e) => {
-                                            const touch = e.changedTouches[0];
-                                            const target =
-                                              e.target as HTMLElement & {
-                                                touchStartX?: number;
-                                                touchStartY?: number;
-                                                touchStartTime?: number;
-                                              };
-                                            const deltaX = Math.abs(
-                                              touch.clientX -
-                                                (target.touchStartX || 0)
-                                            );
-                                            const deltaY = Math.abs(
-                                              touch.clientY -
-                                                (target.touchStartY || 0)
-                                            );
-                                            const deltaTime =
-                                              Date.now() -
-                                              (target.touchStartTime || 0);
-
-                                            // 터치 이동이 10px 미만이고 300ms 이내일 때만 탭으로 인식
-                                            if (
-                                              deltaX < 10 &&
-                                              deltaY < 10 &&
-                                              deltaTime < 300
-                                            ) {
-                                              e.preventDefault();
-                                              const newTooltips = new Set(
-                                                openTooltips
-                                              );
-                                              if (isOpen) {
-                                                newTooltips.delete(tooltipId);
-                                              } else {
-                                                newTooltips.add(tooltipId);
-                                              }
-                                              setOpenTooltips(newTooltips);
-                                            }
-                                          }}
-                                          onContextMenu={(e) =>
-                                            e.preventDefault()
-                                          }
-                                        >
-                                          <div className="w-12 h-12 relative">
-                                            <img
-                                              src={`${
-                                                process.env
-                                                  .NEXT_PUBLIC_CDN_URL || ""
-                                              }/batorment/character/${
-                                                char.id
-                                              }.webp`}
-                                              alt={char.name}
-                                              className="w-full h-full object-cover rounded border-2 border-transparent"
-                                              draggable={false}
-                                            />
-                                          </div>
-                                        </button>
-                                      </TooltipTrigger>
-                                      <TooltipContent side="top" sideOffset={5}>
-                                        <p>{char.name}</p>
-                                      </TooltipContent>
-                                    </Tooltip>
-                                  </TooltipProvider>
+                                  <StudentImage code={Number(char.id)} name={char.name} />
                                 );
                               })}
                               {/* 빈 슬롯 채우기 */}

@@ -25,7 +25,7 @@ export function StudentImage({
 }: StudentImageProps) {
   const studentID = code < 100000 ? code : Math.floor(code / 1000)
   const gradeKey = code < 100000 ? -1 : Math.floor((code % 1000) / 10)
-  const isAssist = code % 10 === 1
+  const isAssist = code < 100000 ? 0 : code % 10 === 1
 
   const borderClass = isAssist
     ? "border-2 border-green-500"
