@@ -13,6 +13,10 @@ interface SinglePartyProps {
  * @param party Student codes of the party. 0 is empty slot
  */
 export function SingleParty({ party }: SinglePartyProps) {
+  const finalParty = party;
+
+  // If party member is lower than 6, insert zero between the last 1xxxx(1xxxxxxx) and 2xxxx(2xxxxxxx)
+
   return (
     <div className="grid grid-cols-6 gap-2 sm:gap-4 p-2 rounded border bg-muted/30 justify-items-center">
       {party.map((student, idx) => {
