@@ -19,13 +19,10 @@ interface StudentImageProps {
  * @param code Student code (5-digit or 8-digit)
  * @param name Student name (to use in tooltip)
  */
-export function StudentImage({
-  code,
-  name,
-}: StudentImageProps) {
-  const studentID = code < 100000 ? code : Math.floor(code / 1000)
-  const gradeKey = code < 100000 ? -1 : Math.floor((code % 1000) / 10)
-  const isAssist = code < 100000 ? 0 : code % 10 === 1
+export function StudentImage({ code, name }: StudentImageProps) {
+  const studentID = code < 100000 ? code : Math.floor(code / 1000);
+  const gradeKey = code < 100000 ? -1 : Math.floor((code % 1000) / 10);
+  const isAssist = code < 100000 ? 0 : code % 10 === 1;
 
   const borderClass = isAssist
     ? "border-2 border-green-500"
