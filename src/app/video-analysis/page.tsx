@@ -44,6 +44,7 @@ import { Cascader } from "@/components/custom/cascader";
 import { MultiSelect } from "@/components/custom/multi-select";
 import { Checkbox } from "@/components/ui/checkbox";
 import Swal from "sweetalert2";
+import Loading from "@/components/common/Loading";
 
 const raids: RaidInfo[] = raidsData as RaidInfo[];
 
@@ -403,9 +404,7 @@ function VideoAnalysisContent() {
             총력전 영상을 분석하여 파티 구성과 스킬 순서를 확인하세요.
           </p>
         </div>
-        <div className="flex justify-center items-center py-12">
-          <div className="text-muted-foreground">로딩 중...</div>
-        </div>
+        <Loading />
       </div>
     );
   }
@@ -907,9 +906,7 @@ export default function VideoAnalysisPage() {
               총력전 영상을 분석하여 파티 구성과 스킬 순서를 확인하세요.
             </p>
           </div>
-          <div className="flex justify-center items-center py-12">
-            <div className="text-muted-foreground">로딩 중...</div>
-          </div>
+          <Loading />
         </div>
       }
     >

@@ -4,8 +4,15 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import useBAStore from "../../store/useBAStore";
 import { filteredPartys, getFilters } from "../function";
-import PartyCard from "./PartyCard";
-import { RaidData, PartyData, FilterData, FilterOption, YoutubeLinkInfo, RaidComponentProps } from "@/types/raid";
+import PartyCard from "../common/PartyCard";
+import {
+  RaidData,
+  PartyData,
+  FilterData,
+  FilterOption,
+  YoutubeLinkInfo,
+  RaidComponentProps,
+} from "@/types/raid";
 import { Button } from "../ui/button";
 import {
   Select,
@@ -24,8 +31,7 @@ import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { Cascader } from "../custom/cascader";
 import { MultiSelect } from "../custom/multi-select";
 import { lunaticMinScore, tormentMinScore } from "../constants";
-
-
+import Loading from "../common/Loading";
 
 const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
   const [PartyCountRange, setPartyCountRange] = useState([0, 99]);
@@ -143,9 +149,9 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
           return false;
         }
         if (item.length > 1) {
-          // item[1]은 이미 levelKey 값 (예: 52)
-          const levelKey = item[1].toString();
-          return filterData.filters[key][levelKey] > 0;
+          // item[1]은 이미 gradeKey 값 (예: 52)
+          const gradeKey = item[1].toString();
+          return filterData.filters[key][gradeKey] > 0;
         }
         return true;
       })
@@ -163,9 +169,9 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
             true
           : // 자식 항목 선택: 특정 성급이 존재하는지 확인
             (() => {
-              // Assist[1]은 이미 levelKey 값 (예: 52)
-              const levelKey = Assist[1].toString();
-              return filterData.assistFilters[Assist[0]][levelKey] > 0;
+              // Assist[1]은 이미 gradeKey 값 (예: 52)
+              const gradeKey = Assist[1].toString();
+              return filterData.assistFilters[Assist[0]][gradeKey] > 0;
             })()));
 
     if (validIncludeList.length !== IncludeList.length) {
@@ -194,14 +200,7 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
     getFilterDataQuery.isLoading ||
     getLinksQuery.isLoading
   )
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p>로딩 중...</p>
-        </div>
-      </div>
-    );
+    return <Loading />;
 
   const partyData = getPartyDataQuery.data;
   const filterData = getFilterDataQuery.data;
@@ -564,11 +563,10 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
             .map((party, idx) => (
               <PartyCard
                 key={idx}
-                data={party as PartyData}
-                studentsMap={studentsMap}
-                linkInfos={youtubeLinkInfos.filter(
-                  (link) => link.score == party.score
-                )}
+                rank={party.rank}
+                value={party.score}
+                valueSuffix="점"
+                parties={party.partyData}
               />
             ))
         ) : (

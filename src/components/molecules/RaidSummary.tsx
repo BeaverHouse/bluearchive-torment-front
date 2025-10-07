@@ -14,12 +14,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
   Users,
   Trophy,
   Target,
@@ -31,7 +25,8 @@ import {
 import Swal from "sweetalert2";
 import { VideoIcon } from "@radix-ui/react-icons";
 import { RaidComponentProps } from "@/types/raid";
-import { useTouchDevice } from "@/hooks/useTouchDevice";
+import PartyCard from "../common/PartyCard";
+import Loading from "../common/Loading";
 
 interface RaidSummaryData {
   clearCount: number;
@@ -65,8 +60,6 @@ const RaidSummary = ({
   const [Character, setCharacter] = useState<number | null>(null);
   const [copiedSearchTerm, setCopiedSearchTerm] = useState(false);
   const [showAllHighUsage, setShowAllHighUsage] = useState(false);
-  const [openTooltips, setOpenTooltips] = useState<Set<string>>(new Set());
-  const { isTouchDevice } = useTouchDevice();
 
   const getSummaryDataQuery = useQuery({
     queryKey: ["getSummaryData", season],
@@ -137,15 +130,8 @@ const RaidSummary = ({
     router.push(`/video-analysis?raid=${season}`);
   };
 
-  if (
-    getSummaryDataQuery.isLoading ||
-    getFilterDataQuery.isLoading
-  )
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
-      </div>
-    );
+  if (getSummaryDataQuery.isLoading || getFilterDataQuery.isLoading)
+    return <Loading />;
 
   if (!getSummaryDataQuery.data || !getFilterDataQuery.data) {
     return (
@@ -191,13 +177,6 @@ const RaidSummary = ({
       </div>
     );
   }
-
-  const parseParty = (partyString: string) => {
-    return partyString.split("_").map((id) => ({
-      id,
-      name: studentsMap[id] || `캐릭터 ${id}`,
-    }));
-  };
 
   const strikerData: CharTableType[] = Object.entries(data?.filters || {})
     .filter(([key]) => key.startsWith("1"))
@@ -412,149 +391,20 @@ const RaidSummary = ({
         <CardContent className="p-2">
           <div className="space-y-3">
             {(data?.top5Partys || []).map(([party_string, count], idx) => {
-              const characters = parseParty(party_string);
+              const students = party_string.split("_").map(Number);
+              // Split into parties (6 students per party)
+              const parties = [];
+              for (let i = 0; i < students.length; i += 6) {
+                parties.push(students.slice(i, i + 6));
+              }
               return (
-                <Card key={idx} className="relative">
-                  <CardContent className="px-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <Badge variant="outline" className="font-medium">
-                        #{idx + 1}위
-                      </Badge>
-                      <div className="text-right flex items-center gap-1">
-                        <div className="text-lg font-bold text-blue-600">
-                          {count.toLocaleString()}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          명 사용
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      {Array.from(
-                        { length: Math.ceil(characters.length / 6) },
-                        (_, partyIndex) => {
-                          const partyCharacters = characters.slice(
-                            partyIndex * 6,
-                            (partyIndex + 1) * 6
-                          );
-                          return (
-                            <div
-                              key={partyIndex}
-                              className="grid grid-cols-6 gap-4 p-2 rounded border bg-muted/30 justify-items-center"
-                            >
-                              {partyCharacters.map((char, charIndex) => {
-                                const tooltipId = `summary-${idx}-${partyIndex}-${charIndex}`;
-                                const isOpen = openTooltips.has(tooltipId);
-
-                                return (
-                                  <TooltipProvider key={charIndex}>
-                                    <Tooltip
-                                      delayDuration={0}
-                                      open={isTouchDevice ? isOpen : undefined}
-                                    >
-                                      <TooltipTrigger asChild>
-                                        <button
-                                          type="button"
-                                          className="flex flex-col items-center cursor-pointer bg-transparent border-none p-0 m-0 select-none"
-                                          style={{
-                                            userSelect: "none",
-                                            WebkitUserSelect: "none",
-                                            WebkitTouchCallout: "none",
-                                          }}
-                                          onTouchStart={(e) => {
-                                            const touch = e.touches[0];
-                                            const target =
-                                              e.target as HTMLElement & {
-                                                touchStartX?: number;
-                                                touchStartY?: number;
-                                                touchStartTime?: number;
-                                              };
-                                            target.touchStartX = touch.clientX;
-                                            target.touchStartY = touch.clientY;
-                                            target.touchStartTime = Date.now();
-                                          }}
-                                          onTouchEnd={(e) => {
-                                            const touch = e.changedTouches[0];
-                                            const target =
-                                              e.target as HTMLElement & {
-                                                touchStartX?: number;
-                                                touchStartY?: number;
-                                                touchStartTime?: number;
-                                              };
-                                            const deltaX = Math.abs(
-                                              touch.clientX -
-                                                (target.touchStartX || 0)
-                                            );
-                                            const deltaY = Math.abs(
-                                              touch.clientY -
-                                                (target.touchStartY || 0)
-                                            );
-                                            const deltaTime =
-                                              Date.now() -
-                                              (target.touchStartTime || 0);
-
-                                            // 터치 이동이 10px 미만이고 300ms 이내일 때만 탭으로 인식
-                                            if (
-                                              deltaX < 10 &&
-                                              deltaY < 10 &&
-                                              deltaTime < 300
-                                            ) {
-                                              e.preventDefault();
-                                              const newTooltips = new Set(
-                                                openTooltips
-                                              );
-                                              if (isOpen) {
-                                                newTooltips.delete(tooltipId);
-                                              } else {
-                                                newTooltips.add(tooltipId);
-                                              }
-                                              setOpenTooltips(newTooltips);
-                                            }
-                                          }}
-                                          onContextMenu={(e) =>
-                                            e.preventDefault()
-                                          }
-                                        >
-                                          <div className="w-12 h-12 relative">
-                                            <img
-                                              src={`${
-                                                process.env
-                                                  .NEXT_PUBLIC_CDN_URL || ""
-                                              }/batorment/character/${
-                                                char.id
-                                              }.webp`}
-                                              alt={char.name}
-                                              className="w-full h-full object-cover rounded border-2 border-transparent"
-                                              draggable={false}
-                                            />
-                                          </div>
-                                        </button>
-                                      </TooltipTrigger>
-                                      <TooltipContent side="top" sideOffset={5}>
-                                        <p>{char.name}</p>
-                                      </TooltipContent>
-                                    </Tooltip>
-                                  </TooltipProvider>
-                                );
-                              })}
-                              {/* 빈 슬롯 채우기 */}
-                              {Array.from(
-                                { length: 6 - partyCharacters.length },
-                                (_, emptyIndex) => (
-                                  <div
-                                    key={`empty-${emptyIndex}`}
-                                    className="w-12 h-12"
-                                  ></div>
-                                )
-                              )}
-                            </div>
-                          );
-                        }
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
+                <PartyCard
+                  key={idx}
+                  rank={idx + 1}
+                  value={count}
+                  valueSuffix="명 사용"
+                  parties={parties}
+                />
               );
             })}
           </div>
@@ -792,7 +642,7 @@ const RaidSummary = ({
           {Character !== null && data?.filters?.[Character] && (
             <div className="space-y-4">
               {Object.entries(data?.filters?.[Character] || {}).map(
-                ([levelKey, count], idx) => {
+                ([gradeKey, count], idx) => {
                   const sum = Object.values(
                     data?.filters?.[Character] || {}
                   ).reduce((sum, cur) => sum + cur, 0);
@@ -802,8 +652,8 @@ const RaidSummary = ({
                       (c) => (c / sum) * 100
                     )
                   );
-                  const starLevel = parseInt(levelKey[0]);
-                  const weaponLevel = parseInt(levelKey[1]);
+                  const starLevel = parseInt(gradeKey[0]);
+                  const weaponLevel = parseInt(gradeKey[1]);
                   return (
                     <div key={idx} className="space-y-1">
                       <div className="flex justify-between items-center">

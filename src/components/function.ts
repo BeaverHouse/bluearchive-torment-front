@@ -1,4 +1,4 @@
-import { categoryLabels, lunaticMinScore, tormentMinScore } from "./constants";
+import { categoryMap, lunaticMinScore, tormentMinScore } from "./constants";
 import { RaidData, PartyData, YoutubeLinkInfo, FilterOption } from "@/types/raid";
 
 export const getFilters = (
@@ -9,21 +9,13 @@ export const getFilters = (
     value: Number(key),
     label: studentsMap[key],
     children: Object.entries(rawData[key])
-      .map(([levelKey, val]) => {
+      .map(([gradeKey, val]) => {
         if (val > 0) {
-          const starLevel = parseInt(levelKey[0]);
-          const weaponLevel = parseInt(levelKey[1]);
-          // levelKey를 그대로 숫자로 사용 (예: "40" -> 40)
-          const value = parseInt(levelKey);
-          const categoryIdx = starLevel * 9 + weaponLevel;
-          
-          // 4성 이하이고 무기레벨이 0일 때는 무기0 표시 안함
-          const weaponText = (starLevel <= 4 && weaponLevel === 0) ? "" : ` 무기${weaponLevel}`;
-          const starText = `${starLevel}★${weaponText}`;
+          const value = parseInt(gradeKey);
           
           return {
             value,
-            label: `${studentsMap[key]} ${categoryLabels[categoryIdx] || starText} (${val})`,
+            label: `${studentsMap[key]} ${categoryMap[gradeKey]} (${val})`,
           };
         }
         return null;
@@ -99,13 +91,13 @@ const isInFilter = (arr: number[], num: number) => {
   const weapon = Math.floor((num % 100) / 10);
   
   if (arr.length === 2) {
-    // 부모-자식 선택: [charId, levelKey]
-    const [selectedCharId, levelKey] = arr;
+    // 부모-자식 선택: [charId, gradeKey]
+    const [selectedCharId, gradeKey] = arr;
     if (charId !== selectedCharId) return false;
     
-    // levelKey는 두 자리 숫자: 첫 번째 자리는 star, 두 번째 자리는 weapon
-    const expectedStar = Math.floor(levelKey / 10);
-    const expectedWeapon = levelKey % 10;
+    // gradeKey는 두 자리 숫자: 첫 번째 자리는 star, 두 번째 자리는 weapon
+    const expectedStar = Math.floor(gradeKey / 10);
+    const expectedWeapon = gradeKey % 10;
     
     return star === expectedStar && weapon === expectedWeapon;
   } else if (arr.length === 1) {
