@@ -6,6 +6,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun, Menu } from "lucide-react";
 import { useState, useEffect } from "react";
+import { TouchProvider } from "@/components/custom/hybridtooltip";
 import "./globals.css";
 
 function DarkModeToggleComponent() {
@@ -70,23 +71,25 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
       </head>
       <body>
-        <QueryClientProvider client={queryClient}>
-          <SidebarProvider>
-            <AppSidebar />
-            <div className="flex-1">
-              <header className="sticky top-0 z-40 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-                <div className="flex h-14 items-center gap-2 px-4">
-                  <CustomSidebarTrigger />
-                  <div className="flex-1" />
-                  <DarkModeToggleComponent />
+        <TouchProvider>
+          <QueryClientProvider client={queryClient}>
+            <SidebarProvider>
+              <AppSidebar />
+              <div className="flex-1">
+                <header className="sticky top-0 z-40 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                  <div className="flex h-14 items-center gap-2 px-4">
+                    <CustomSidebarTrigger />
+                    <div className="flex-1" />
+                    <DarkModeToggleComponent />
+                  </div>
+                </header>
+                <div className="flex-1 space-y-4 p-4 pt-6">
+                  {children}
                 </div>
-              </header>
-              <div className="flex-1 space-y-4 p-4 pt-6">
-                {children}
               </div>
-            </div>
-          </SidebarProvider>
-        </QueryClientProvider>
+            </SidebarProvider>
+          </QueryClientProvider>
+        </TouchProvider>
       </body>
     </html>
   );
