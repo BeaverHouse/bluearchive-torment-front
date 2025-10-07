@@ -4,8 +4,15 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import useBAStore from "../../store/useBAStore";
 import { filteredPartys, getFilters } from "../function";
-import PartyCard from "./PartyCard";
-import { RaidData, PartyData, FilterData, FilterOption, YoutubeLinkInfo, RaidComponentProps } from "@/types/raid";
+import PartyCard from "../common/PartyCard";
+import {
+  RaidData,
+  PartyData,
+  FilterData,
+  FilterOption,
+  YoutubeLinkInfo,
+  RaidComponentProps,
+} from "@/types/raid";
 import { Button } from "../ui/button";
 import {
   Select,
@@ -24,8 +31,6 @@ import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { Cascader } from "../custom/cascader";
 import { MultiSelect } from "../custom/multi-select";
 import { lunaticMinScore, tormentMinScore } from "../constants";
-
-
 
 const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
   const [PartyCountRange, setPartyCountRange] = useState([0, 99]);
@@ -564,11 +569,10 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
             .map((party, idx) => (
               <PartyCard
                 key={idx}
-                data={party as PartyData}
-                studentsMap={studentsMap}
-                linkInfos={youtubeLinkInfos.filter(
-                  (link) => link.score == party.score
-                )}
+                rank={party.rank}
+                value={party.score}
+                valueSuffix="점"
+                parties={party.partyData}
               />
             ))
         ) : (
