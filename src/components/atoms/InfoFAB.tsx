@@ -41,7 +41,11 @@ const InfoFAB: React.FC = () => {
             <div className="space-y-4">
               <div className="text-sm text-muted-foreground">
                 <p>Blue Archive copyrighted by NEXON GAMES & YOSTAR</p>
-                <p>2023-2024, powered by Austin</p>
+                <p>2023-2025, powered by Austin</p>
+              </div>
+
+              <div className="text-sm text-muted-foreground">
+                <p>This site&apos;s in-game data is provided by the sites below.</p>
               </div>
 
               <div className="space-y-2">
@@ -51,8 +55,8 @@ const InfoFAB: React.FC = () => {
                   </a>
                 </Button>
                 <Button variant="outline" className="w-full mb-6" asChild>
-                  <a href="https://arona.ai" target="_blank">
-                    ARONA.AI
+                  <a href="https://plana-stats.vercel.app/" target="_blank">
+                    Plana Stats
                   </a>
                 </Button>
 

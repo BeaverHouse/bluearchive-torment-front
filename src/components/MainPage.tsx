@@ -81,18 +81,6 @@ function MainPage() {
             ))}
           </SelectContent>
         </Select>
-        <Button className="w-72 m-1" asChild>
-          <a
-            href={
-              season.startsWith("3S")
-                ? "https://arona.ai/eraidreport"
-                : "https://arona.ai/raidreport"
-            }
-            target="_blank"
-          >
-            총력전 리포트 (ARONA.AI)
-          </a>
-        </Button>
       </div>
       <br />
       <Tabs defaultValue="search" className="w-full max-w-4xl">

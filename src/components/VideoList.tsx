@@ -21,7 +21,6 @@ import {
 import { VideoListItem } from "@/types/video";
 import { RaidInfo } from "@/types/raid";
 import raidsData from "../../data/raids.json";
-import NormalAnnounce from "@/components/atoms/NormalAnnounce";
 
 interface VideoListProps {
   videos: VideoListItem[];

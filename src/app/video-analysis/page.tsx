@@ -133,7 +133,7 @@ function VideoAnalysisContent() {
 
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_CDN_URL}/batorment/v3/filter/${selectedRaid}.json`
+          `${process.env.NEXT_PUBLIC_CDN_URL}/batorment/v3/video-filter/${selectedRaid}.json`
         );
         if (response.ok) {
           const data = await response.json();
