@@ -16,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SingleSelect } from "@/components/custom/single-select";
+import { SingleSelect } from "@/components/ui/custom/single-select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {

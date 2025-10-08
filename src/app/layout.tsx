@@ -6,7 +6,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun, Menu } from "lucide-react";
 import { useState, useEffect } from "react";
-import { TouchProvider } from "@/components/custom/hybridtooltip";
+import { TouchProvider } from "@/components/ui/custom/hybridtooltip";
 import "./globals.css";
 
 function DarkModeToggleComponent() {
@@ -14,7 +14,9 @@ function DarkModeToggleComponent() {
 
   useEffect(() => {
     const saved = localStorage.getItem("darkMode");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
     const shouldBeDark = saved ? saved === "true" : prefersDark;
     setIsDark(shouldBeDark);
     document.documentElement.classList.toggle("dark", shouldBeDark);
@@ -67,7 +69,10 @@ export default function RootLayout({
       <head>
         <title>BA Torment</title>
         <meta name="description" content="Blue Archive Party Finder" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
         <link rel="icon" href="/favicon.ico" />
       </head>
       <body>
@@ -83,9 +88,7 @@ export default function RootLayout({
                     <DarkModeToggleComponent />
                   </div>
                 </header>
-                <div className="flex-1 space-y-4 p-4 pt-6">
-                  {children}
-                </div>
+                <div className="flex-1 space-y-4 p-4 pt-6">{children}</div>
               </div>
             </SidebarProvider>
           </QueryClientProvider>

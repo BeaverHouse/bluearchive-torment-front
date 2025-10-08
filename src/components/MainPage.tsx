@@ -9,7 +9,7 @@ import raidsData from "../../data/raids.json";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RaidInfo } from "@/types/raid";
 import { getStudentsMap } from "@/utils/character";
-import { SingleSelect } from "./custom/single-select";
+import { SingleSelect } from "./ui/custom/single-select";
 
 function MainPage() {
   const { V3Season, setV3Season } = useBAStore();

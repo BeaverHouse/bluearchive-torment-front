@@ -6,7 +6,7 @@ import {
   HybridTooltip,
   HybridTooltipTrigger,
   HybridTooltipContent,
-} from "@/components/custom/hybridtooltip";
+} from "@/components/ui/custom/hybridtooltip";
 import { categoryMap } from "../constants";
 import { getCharacterName } from "@/utils/character";
 
