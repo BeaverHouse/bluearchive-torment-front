@@ -30,6 +30,7 @@ import {
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { Cascader } from "../custom/cascader";
 import { MultiSelect } from "../custom/multi-select";
+import { Pagination } from "../custom/pagination";
 import { lunaticMinScore, tormentMinScore } from "../constants";
 import Loading from "../common/Loading";
 
@@ -37,8 +38,6 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
   const [PartyCountRange, setPartyCountRange] = useState([0, 99]);
   const [Page, setPage] = useState(1);
   const [PageSize, setPageSize] = useState(10);
-  const [pageInputValue, setPageInputValue] = useState("1");
-  const [isPageInputActive, setIsPageInputActive] = useState(false);
 
   const {
     LevelList,
@@ -60,7 +59,6 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
 
   useEffect(() => {
     setPage(1);
-    setPageInputValue("1");
   }, [
     LevelList,
     IncludeList,
@@ -73,13 +71,6 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
     YoutubeOnly,
     season,
   ]);
-
-  // Page가 변경될 때 pageInputValue 동기화 (사용자 입력 중이 아닐 때만)
-  useEffect(() => {
-    if (!isPageInputActive) {
-      setPageInputValue(Page.toString());
-    }
-  }, [Page, isPageInputActive]);
 
   const getPartyDataQuery = useQuery({
     queryKey: ["getPartyData", season],
@@ -462,97 +453,15 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
       <div className="mx-auto mb-5 w-full">
         검색 결과: 총 {parties.length}개
       </div>
-      <div className="flex items-center justify-center gap-4 mb-5">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setPage(Math.max(1, Page - 1))}
-          disabled={Page === 1}
-        >
-          이전
-        </Button>
-        <div className="flex items-center gap-2">
-          <input
-            type="text"
-            value={pageInputValue}
-            onChange={(e) => {
-              const value = e.target.value;
-              setPageInputValue(value);
-
-              // 숫자가 아닌 문자 제거
-              const numericValue = value.replace(/[^0-9]/g, "");
-
-              if (numericValue === "") {
-                // 빈 값이면 아무것도 하지 않음 (입력 중일 수 있음)
-                return;
-              }
-
-              const newPage = parseInt(numericValue);
-              const maxPage = Math.ceil(parties.length / PageSize);
-
-              if (newPage >= 1 && newPage <= maxPage) {
-                setPage(newPage);
-              }
-            }}
-            onFocus={() => {
-              setIsPageInputActive(true);
-              setPageInputValue("");
-            }}
-            onBlur={() => {
-              setIsPageInputActive(false);
-
-              // 빈 값이면 첫 페이지로 fallback
-              if (pageInputValue === "" || pageInputValue === "0") {
-                setPage(1);
-                setPageInputValue("1");
-              } else {
-                // 유효하지 않은 값이면 현재 페이지로 복원
-                const numericValue = pageInputValue.replace(/[^0-9]/g, "");
-                const newPage = parseInt(numericValue);
-                const maxPage = Math.ceil(parties.length / PageSize);
-
-                if (isNaN(newPage) || newPage < 1 || newPage > maxPage) {
-                  setPageInputValue(Page.toString());
-                } else {
-                  setPage(newPage);
-                  setPageInputValue(newPage.toString());
-                }
-              }
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                (e.target as HTMLInputElement).blur();
-              }
-            }}
-            placeholder="페이지"
-            className="w-16 px-2 py-1 text-sm border rounded text-center"
-          />
-          <span className="text-sm">
-            / {Math.ceil(parties.length / PageSize)}
-          </span>
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() =>
-            setPage(Math.min(Math.ceil(parties.length / PageSize), Page + 1))
-          }
-          disabled={Page >= Math.ceil(parties.length / PageSize)}
-        >
-          다음
-        </Button>
-        <Select
-          value={PageSize.toString()}
-          onValueChange={(value) => setPageSize(parseInt(value))}
-        >
-          <SelectTrigger className="w-23">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="10">10개씩</SelectItem>
-            <SelectItem value="20">20개씩</SelectItem>
-          </SelectContent>
-        </Select>
+      <div className="mb-5">
+        <Pagination
+          currentPage={Page}
+          totalItems={parties.length}
+          pageSize={PageSize}
+          onPageChange={setPage}
+          onPageSizeChange={setPageSize}
+          pageSizeOptions={[10, 20]}
+        />
       </div>
       <div className="w-full mx-auto mt-5">
         {parties.length > 0 ? (

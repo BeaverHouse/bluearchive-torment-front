@@ -6,16 +6,10 @@ import RaidSummary from "./molecules/RaidSummary";
 import InfoFAB from "./atoms/InfoFAB";
 import NormalAnnounce from "./atoms/NormalAnnounce";
 import raidsData from "../../data/raids.json";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RaidInfo } from "@/types/raid";
 import { getStudentsMap } from "@/utils/character";
+import { SingleSelect } from "./ui/custom/single-select";
 
 function MainPage() {
   const { V3Season, setV3Season } = useBAStore();
@@ -68,18 +62,15 @@ function MainPage() {
           width: "90%",
         }}
       >
-        <Select value={season} onValueChange={setV3Season}>
-          <SelectTrigger className="w-72 m-1">
-            <SelectValue placeholder="시즌 선택" />
-          </SelectTrigger>
-          <SelectContent>
-            {raidInfos.map((raid) => (
-              <SelectItem key={raid.value} value={raid.value}>
-                {raid.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <SingleSelect
+          options={raidInfos.map((raid) => ({
+            value: raid.value,
+            label: raid.label,
+          }))}
+          value={season}
+          onChange={setV3Season}
+          placeholder="총력전/대결전 선택"
+        />
       </div>
       <br />
       <Tabs defaultValue="search" className="w-full max-w-4xl">

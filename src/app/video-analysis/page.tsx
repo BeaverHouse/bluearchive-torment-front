@@ -16,6 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SingleSelect } from "@/components/ui/custom/single-select";
+import { Pagination } from "@/components/custom/pagination";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -71,9 +73,8 @@ function VideoAnalysisContent() {
   });
 
   // 필터 상태
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(15);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageInputValue, setPageInputValue] = useState("1");
 
   // 파티 필터 상태
   const [scoreRange, setScoreRange] = useState([0, 100000000]);
@@ -216,7 +217,6 @@ function VideoAnalysisContent() {
     setHardExclude(false);
     setAllowDuplicate(false);
     setCurrentPage(1);
-    setPageInputValue("1");
   };
 
   // 비디오 데이터를 파티 데이터로 변환
@@ -636,118 +636,44 @@ function VideoAnalysisContent() {
         </div>
       )}
 
-      {/* 검색 결과 및 페이지네이션 (필터 모드) */}
-      {isFilterMode && (
-        <div className="mx-auto mb-5 w-full">
-          검색 결과: 총 {getFilterModePagination().total}개
-        </div>
-      )}
+      <div className="mx-auto mb-5 w-full">
+        검색 결과: 총 {getFilterModePagination().total}개
+      </div>
 
-      {/* 페이지네이션 (필터 모드) */}
-      {isFilterMode && (
-        <div className="flex items-center justify-center gap-4 mb-5">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-            disabled={currentPage === 1}
-          >
-            이전
-          </Button>
-          <div className="flex items-center gap-2">
-            <input
-              type="text"
-              value={pageInputValue}
-              onChange={(e) => {
-                const value = e.target.value;
-                setPageInputValue(value);
-
-                const numericValue = value.replace(/[^0-9]/g, "");
-                if (numericValue === "") return;
-
-                const newPage = parseInt(numericValue);
-                const maxPage = getFilterModePagination().total_pages;
-
-                if (newPage >= 1 && newPage <= maxPage) {
-                  setCurrentPage(newPage);
-                }
-              }}
-              onFocus={() => {
-                setPageInputValue("");
-              }}
-              onBlur={() => {
-                if (pageInputValue === "" || pageInputValue === "0") {
-                  setCurrentPage(1);
-                  setPageInputValue("1");
-                } else {
-                  const numericValue = pageInputValue.replace(/[^0-9]/g, "");
-                  const newPage = parseInt(numericValue);
-                  const maxPage = getFilterModePagination().total_pages;
-
-                  if (isNaN(newPage) || newPage < 1 || newPage > maxPage) {
-                    setPageInputValue(currentPage.toString());
-                  } else {
-                    setCurrentPage(newPage);
-                    setPageInputValue(newPage.toString());
-                  }
-                }
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  (e.target as HTMLInputElement).blur();
-                }
-              }}
-              placeholder="페이지"
-              className="w-16 px-2 py-1 text-sm border rounded text-center"
-            />
-            <span className="text-sm">
-              / {getFilterModePagination().total_pages}
-            </span>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              setCurrentPage(
-                Math.min(getFilterModePagination().total_pages, currentPage + 1)
-              )
+      {/* 페이지네이션 */}
+      {(isFilterMode
+        ? getFilterModePagination().total_pages > 1
+        : pagination.total_pages > 1) && (
+        <div className="mb-5">
+          <Pagination
+            currentPage={isFilterMode ? currentPage : pagination.page}
+            totalItems={
+              isFilterMode ? getFilterModePagination().total : pagination.total
             }
-            disabled={currentPage >= getFilterModePagination().total_pages}
-          >
-            다음
-          </Button>
-          <Select
-            value={pageSize.toString()}
-            onValueChange={(value) => {
-              setPageSize(parseInt(value));
+            pageSize={isFilterMode ? pageSize : pagination.limit}
+            onPageChange={handlePageChange}
+            onPageSizeChange={(newPageSize) => {
+              setPageSize(newPageSize);
               setCurrentPage(1);
             }}
-          >
-            <SelectTrigger className="w-23">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="10">10개씩</SelectItem>
-              <SelectItem value="20">20개씩</SelectItem>
-            </SelectContent>
-          </Select>
+            pageSizeOptions={[15, 30]}
+          />
         </div>
       )}
 
       <div className="mb-6 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
-        <Select value={selectedRaid} onValueChange={handleRaidChange}>
-          <SelectTrigger className="w-full sm:w-64">
-            <SelectValue placeholder="레이드 선택" />
-          </SelectTrigger>
-          <SelectContent className="max-h-[300px] overflow-y-auto">
-            <SelectItem value="all">전체</SelectItem>
-            {raids.map((raid) => (
-              <SelectItem key={raid.id} value={raid.id}>
-                {raid.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <SingleSelect
+          options={[
+            { value: "all", label: "전체" },
+            ...raids.map((raid) => ({
+              value: raid.id,
+              label: raid.name,
+            })),
+          ]}
+          value={selectedRaid}
+          onChange={handleRaidChange}
+          placeholder="총력전/대결전 선택"
+        />
 
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
           {/* 큐 상태 조회 버튼 */}
@@ -887,11 +813,7 @@ function VideoAnalysisContent() {
           </Dialog>
         </div>
       </div>
-      <VideoList
-        videos={getDisplayVideos()}
-        pagination={getFilterModePagination()}
-        onPageChange={handlePageChange}
-      />
+      <VideoList videos={getDisplayVideos()} />
     </div>
   );
 }
