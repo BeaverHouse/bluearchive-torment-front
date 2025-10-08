@@ -4,14 +4,8 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Play,
-  Calendar,
-  ChevronLeft,
-  ChevronRight,
-  Star,
-  Award,
-} from "lucide-react";
+import { Play, Calendar, Star, Award } from "lucide-react";
+import { Pagination } from "@/components/custom/pagination";
 import {
   Tooltip,
   TooltipContent,
@@ -52,65 +46,14 @@ export function VideoList({
     <div className="space-y-4">
       {/* 페이지네이션 */}
       {pagination.total_pages > 1 && (
-        <div className="flex items-center justify-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange(pagination.page - 1)}
-            disabled={!pagination.has_prev}
-            className="h-8 w-8 p-0"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-
-          <div className="flex items-center space-x-1">
-            {Array.from(
-              { length: Math.min(5, pagination.total_pages) },
-              (_, i) => {
-                let pageNum;
-                if (pagination.total_pages <= 5) {
-                  pageNum = i + 1;
-                } else if (pagination.page <= 3) {
-                  pageNum = i + 1;
-                } else if (pagination.page >= pagination.total_pages - 2) {
-                  pageNum = pagination.total_pages - 4 + i;
-                } else {
-                  pageNum = pagination.page - 2 + i;
-                }
-
-                return (
-                  <Button
-                    key={pageNum}
-                    variant={
-                      pagination.page === pageNum ? "default" : "outline"
-                    }
-                    size="sm"
-                    onClick={() => onPageChange(pageNum)}
-                    className="h-8 w-8 p-0"
-                  >
-                    {pageNum}
-                  </Button>
-                );
-              }
-            )}
-          </div>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange(pagination.page + 1)}
-            disabled={!pagination.has_next}
-            className="h-8 w-8 p-0"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-
-          <div className="text-sm text-muted-foreground ml-4">
-            {pagination.total}개 중{" "}
-            {(pagination.page - 1) * pagination.limit + 1}-
-            {Math.min(pagination.page * pagination.limit, pagination.total)}
-          </div>
-        </div>
+        <Pagination
+          currentPage={pagination.page}
+          totalItems={pagination.total}
+          pageSize={pagination.limit}
+          onPageChange={onPageChange}
+          onPageSizeChange={() => {}}
+          pageSizeOptions={[]}
+        />
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
