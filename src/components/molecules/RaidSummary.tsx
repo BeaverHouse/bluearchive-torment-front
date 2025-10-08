@@ -380,13 +380,15 @@ const RaidSummary = ({
       {/* Top 5 Parties */}
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-blue-600" />
-            Top 5 파티
-          </CardTitle>
-          <CardDescription>
-            ※ 전용무기와 배치는 고려하지 않았습니다.
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <Users className="h-5 w-5 text-blue-600" />
+              Top 5 파티
+            </CardTitle>
+            <CardDescription className="mt-0">
+              ※ 전용무기와 배치는 고려하지 않았습니다.
+            </CardDescription>
+          </div>
         </CardHeader>
         <CardContent className="p-2">
           <div className="space-y-3">
