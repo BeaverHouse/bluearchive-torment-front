@@ -20,21 +20,3 @@ export function getCharacterName(
   const map = studentsMap || getStudentsMap();
   return map[code.toString()] || `캐릭터 ${code}`;
 }
-
-/**
- * 캐릭터 이미지 URL 생성
- * @param code 캐릭터 코드
- * @returns CDN 이미지 URL
- */
-export function getCharacterImageUrl(code: number): string {
-  return `${process.env.NEXT_PUBLIC_CDN_URL || ""}/batorment/character/${code}.webp`;
-}
-
-/**
- * 이미지 로드 실패 시 fallback 이미지로 교체하는 핸들러
- * @param event 이미지 에러 이벤트
- */
-export function handleImageError(event: React.SyntheticEvent<HTMLImageElement>): void {
-  const target = event.target as HTMLImageElement;
-  target.src = "/empty.webp";
-}
