@@ -636,26 +636,26 @@ function VideoAnalysisContent() {
         </div>
       )}
 
-      {/* 검색 결과 및 페이지네이션 (필터 모드) */}
+      {/* 검색 결과 */}
       {isFilterMode && (
         <div className="mx-auto mb-5 w-full">
           검색 결과: 총 {getFilterModePagination().total}개
         </div>
       )}
 
-      {/* 페이지네이션 (필터 모드) */}
-      {isFilterMode && (
+      {/* 페이지네이션 */}
+      {(isFilterMode ? getFilterModePagination().total_pages > 1 : pagination.total_pages > 1) && (
         <div className="mb-5">
           <Pagination
-            currentPage={currentPage}
-            totalItems={getFilterModePagination().total}
-            pageSize={pageSize}
-            onPageChange={setCurrentPage}
+            currentPage={isFilterMode ? currentPage : pagination.page}
+            totalItems={isFilterMode ? getFilterModePagination().total : pagination.total}
+            pageSize={isFilterMode ? pageSize : pagination.limit}
+            onPageChange={handlePageChange}
             onPageSizeChange={(newPageSize) => {
               setPageSize(newPageSize);
               setCurrentPage(1);
             }}
-            pageSizeOptions={[15, 30]}
+            pageSizeOptions={isFilterMode ? [15, 30] : []}
           />
         </div>
       )}
@@ -812,11 +812,7 @@ function VideoAnalysisContent() {
           </Dialog>
         </div>
       </div>
-      <VideoList
-        videos={getDisplayVideos()}
-        pagination={getFilterModePagination()}
-        onPageChange={handlePageChange}
-      />
+      <VideoList videos={getDisplayVideos()} />
     </div>
   );
 }

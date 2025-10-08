@@ -3,9 +3,7 @@
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Play, Calendar, Star, Award } from "lucide-react";
-import { Pagination } from "@/components/custom/pagination";
 import {
   Tooltip,
   TooltipContent,
@@ -18,15 +16,6 @@ import raidsData from "../../data/raids.json";
 
 interface VideoListProps {
   videos: VideoListItem[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    total_pages: number;
-    has_next: boolean;
-    has_prev: boolean;
-  };
-  onPageChange: (page: number) => void;
 }
 
 const raids: RaidInfo[] = raidsData as RaidInfo[];
@@ -37,25 +26,9 @@ function getRaidName(raidId: string | null): string | null {
   return raid?.name || null;
 }
 
-export function VideoList({
-  videos,
-  pagination,
-  onPageChange,
-}: VideoListProps) {
+export function VideoList({ videos }: VideoListProps) {
   return (
     <div className="space-y-4">
-      {/* 페이지네이션 */}
-      {pagination.total_pages > 1 && (
-        <Pagination
-          currentPage={pagination.page}
-          totalItems={pagination.total}
-          pageSize={pagination.limit}
-          onPageChange={onPageChange}
-          onPageSizeChange={() => {}}
-          pageSizeOptions={[]}
-        />
-      )}
-
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         {videos.map((video) => {
           // 각 비디오의 raid_id는 필수로 전달
