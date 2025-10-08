@@ -73,7 +73,7 @@ function VideoAnalysisContent() {
   });
 
   // 필터 상태
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(15);
   const [currentPage, setCurrentPage] = useState(1);
 
   // 파티 필터 상태
@@ -655,7 +655,7 @@ function VideoAnalysisContent() {
               setPageSize(newPageSize);
               setCurrentPage(1);
             }}
-            pageSizeOptions={[10, 20]}
+            pageSizeOptions={[15, 30]}
           />
         </div>
       )}
