@@ -4,13 +4,6 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { basePartyCounts, categoryMap, translations } from "../constants";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,7 +13,6 @@ import {
   Copy,
   CheckCircle,
   TrendingUp,
-  ArrowRight,
 } from "lucide-react";
 import Swal from "sweetalert2";
 import { VideoIcon } from "@radix-ui/react-icons";
@@ -196,8 +188,7 @@ const RaidSummary = ({
           100
         ).toFixed(2)
       ),
-    }))
-    .filter((item) => item.percent >= 1);
+    }));
 
   const specialData: CharTableType[] = Object.entries(data?.filters || {})
     .filter(([key]) => key.startsWith("2"))
@@ -216,8 +207,7 @@ const RaidSummary = ({
           100
         ).toFixed(2)
       ),
-    }))
-    .filter((item) => item.percent >= 1);
+    }));
 
   const assistData: CharTableType[] = Object.entries(data?.assistFilters || {})
     .sort(
@@ -307,82 +297,72 @@ const RaidSummary = ({
 
         {/* Clear Rate Stats */}
         {level !== "I" && (
-          <Card
-            className={`border-l-4 ${
+          <CardWrapper
+            className={`border-l-4 mx-0 ${
               clearPercent > 50 ? "border-l-red-500" : "border-l-blue-500"
             }`}
+            icon={<Trophy className="h-5 w-5 text-blue-600" />}
+            title="Platinum 클리어 비율"
           >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Platinum 클리어 비율
-              </CardTitle>
-              <Trophy className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div
-                className={`text-2xl font-bold ${
-                  clearPercent > 50 ? "text-red-600" : ""
-                }`}
-              >
-                {(data?.clearCount || 0).toLocaleString()} (
-                {(level === "T"
-                  ? tormentClearPercent
-                  : lunaticClearPercent
-                ).toFixed(2)}
-                %)
-              </div>
-              {level === "T" && lunaticSummaryData.clearCount > 0 && (
-                <p className="text-xs text-muted-foreground">
-                  루나틱: {lunaticClearPercent.toFixed(2)}%, 총합{" "}
-                  {clearPercent.toFixed(2)}%
-                </p>
-              )}
-            </CardContent>
-          </Card>
+            <div
+              className={`text-2xl font-bold ${
+                clearPercent > 50 ? "text-red-600" : ""
+              }`}
+            >
+              {(data?.clearCount || 0).toLocaleString()} (
+              {(level === "T"
+                ? tormentClearPercent
+                : lunaticClearPercent
+              ).toFixed(2)}
+              %)
+            </div>
+            {level === "T" && lunaticSummaryData.clearCount > 0 && (
+              <p className="text-xs text-muted-foreground">
+                루나틱: {lunaticClearPercent.toFixed(2)}%, 총합{" "}
+                {clearPercent.toFixed(2)}%
+              </p>
+            )}
+          </CardWrapper>
         )}
       </div>
 
       {highUsageCharacters.length > 0 && (
-        <Card className="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20 border-blue-200 dark:border-blue-800 mb-6">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-blue-600" />
-              많이 쓰인 학생들 (10%+)
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2">
-              {(showAllHighUsage
-                ? highUsageCharacters
-                : highUsageCharacters.slice(0, 8)
-              ).map((char) => (
-                <Badge
-                  key={char.id}
-                  variant="secondary"
-                  className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 font-medium"
-                >
-                  {char.name} ({char.usageRate.toFixed(1)}%)
-                </Badge>
-              ))}
-              {!showAllHighUsage && highUsageCharacters.length > 8 && (
-                <Badge
-                  variant="outline"
-                  className="cursor-pointer hover:bg-blue-50 hover:border-blue-300 dark:hover:bg-blue-950/20"
-                  onClick={() => setShowAllHighUsage(true)}
-                >
-                  +{highUsageCharacters.length - 8} more
-                </Badge>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+        <CardWrapper
+          icon={<TrendingUp className="h-5 w-5 text-blue-600" />}
+          title="많이 쓰인 학생들"
+          description="10% 이상 사용된 학생들이에요."
+        >
+          <div className="flex flex-wrap gap-2">
+            {(showAllHighUsage
+              ? highUsageCharacters
+              : highUsageCharacters.slice(0, 8)
+            ).map((char) => (
+              <Badge
+                key={char.id}
+                variant="secondary"
+                className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 font-medium"
+              >
+                {char.name} ({char.usageRate.toFixed(1)}%)
+              </Badge>
+            ))}
+            {!showAllHighUsage && highUsageCharacters.length > 8 && (
+              <Badge
+                variant="outline"
+                className="cursor-pointer hover:bg-blue-50 hover:border-blue-300 dark:hover:bg-blue-950/20"
+                onClick={() => setShowAllHighUsage(true)}
+              >
+                +{highUsageCharacters.length - 8} more
+              </Badge>
+            )}
+          </div>
+        </CardWrapper>
       )}
 
       {/* Top 5 Parties */}
       <CardWrapper
         icon={<Users className="h-5 w-5 text-blue-600" />}
         title="Top 5 Party"
-        description="※ 전용무기와 배치는 고려하지 않았습니다."
+        description="전용무기와 배치는 표시되지 않아요."
       >
         <div className="space-y-3">
           {(data?.top5Partys || []).map(([party_string, count], idx) => {
@@ -405,284 +385,258 @@ const RaidSummary = ({
         </div>
       </CardWrapper>
       {/* Party Composition Chart */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Target className="h-5 w-5 text-blue-600" />
-            파티 비율
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {partyCountData.map((row) => (
-              <div key={row.key} className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="font-medium text-sm">
-                    {row.key.split("-")[0]}
+
+      <CardWrapper
+        icon={<Target className="h-5 w-5 text-blue-600" />}
+        title="파티 비율"
+      >
+        <div className="space-y-4 mx-1">
+          {partyCountData.map((row) => (
+            <div key={row.key} className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="font-medium text-sm">
+                  {row.key.split("-")[0]}
+                </span>
+                <div className="flex gap-4 text-xs">
+                  <span className="flex items-center gap-1">
+                    <div className="w-3 h-3 bg-blue-500 rounded"></div>
+                    1PT
                   </span>
-                  <div className="flex gap-4 text-xs">
-                    <span className="flex items-center gap-1">
-                      <div className="w-3 h-3 bg-blue-500 rounded"></div>
-                      1파티
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <div className="w-3 h-3 bg-green-500 rounded"></div>
-                      2파티
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <div className="w-3 h-3 bg-yellow-500 rounded"></div>
-                      3파티
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <div className="w-3 h-3 bg-red-500 rounded"></div>
-                      4파티+
-                    </span>
-                  </div>
-                </div>
-                <div className="relative h-6 bg-gray-200 rounded overflow-hidden">
-                  <div
-                    className="absolute top-0 left-0 h-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium"
-                    style={{ width: `${row.one}%` }}
-                  >
-                    {row.one > 5 ? `${row.one}%` : ""}
-                  </div>
-                  <div
-                    className="absolute top-0 h-full bg-green-500 flex items-center justify-center text-white text-xs font-medium"
-                    style={{ left: `${row.one}%`, width: `${row.two}%` }}
-                  >
-                    {row.two > 5 ? `${row.two}%` : ""}
-                  </div>
-                  <div
-                    className="absolute top-0 h-full bg-yellow-500 flex items-center justify-center text-white text-xs font-medium"
-                    style={{
-                      left: `${row.one + row.two}%`,
-                      width: `${row.three}%`,
-                    }}
-                  >
-                    {row.three > 5 ? `${row.three}%` : ""}
-                  </div>
-                  <div
-                    className="absolute top-0 h-full bg-red-500 flex items-center justify-center text-white text-xs font-medium"
-                    style={{
-                      left: `${row.one + row.two + row.three}%`,
-                      width: `${row.fourOrMore}%`,
-                    }}
-                  >
-                    {row.fourOrMore > 5 ? `${row.fourOrMore}%` : ""}
-                  </div>
+                  <span className="flex items-center gap-1">
+                    <div className="w-3 h-3 bg-green-500 rounded"></div>
+                    2PT
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <div className="w-3 h-3 bg-yellow-500 rounded"></div>
+                    3PT
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <div className="w-3 h-3 bg-red-500 rounded"></div>
+                    4PT+
+                  </span>
                 </div>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Character Usage Tables */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-blue-600" />
-            캐릭터 사용률
-          </CardTitle>
-          <CardDescription>※ 1% 이상만 표시됩니다.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-6">
-            {/* Mobile: Stack tables vertically, Desktop: 3 columns */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              {/* Striker Table */}
-              <div className="min-w-0">
-                <h4 className="font-bold mb-2 text-center text-sm sm:text-base">
-                  STRIKER
-                </h4>
-                <div className="max-h-80 overflow-y-auto border rounded">
-                  <table className="w-full text-sm">
-                    <thead className="sticky top-0 bg-background">
-                      <tr className="border-b">
-                        <th className="text-left p-1 sm:p-2">이름</th>
-                        <th className="text-right p-1 sm:p-2">사용률 (%)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {strikerData.map((char) => (
-                        <tr
-                          key={char.key}
-                          className="border-b hover:bg-muted/50"
-                        >
-                          <td className="p-1 sm:p-2 truncate">{char.name}</td>
-                          <td
-                            className={`p-1 sm:p-2 text-right ${
-                              char.percent > 90
-                                ? "text-red-600 font-bold"
-                                : char.percent > 20
-                                ? "text-purple-600 font-bold"
-                                : ""
-                            }`}
-                          >
-                            {char.percent}%
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+              <div className="relative h-6 bg-gray-200 rounded overflow-hidden">
+                <div
+                  className="absolute top-0 left-0 h-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium"
+                  style={{ width: `${row.one}%` }}
+                >
+                  {row.one > 5 ? `${row.one}%` : ""}
                 </div>
-              </div>
-
-              {/* Special Table */}
-              <div className="min-w-0">
-                <h4 className="font-bold mb-2 text-center text-sm sm:text-base">
-                  SPECIAL
-                </h4>
-                <div className="max-h-80 overflow-y-auto border rounded">
-                  <table className="w-full text-sm">
-                    <thead className="sticky top-0 bg-background">
-                      <tr className="border-b">
-                        <th className="text-left p-1 sm:p-2">이름</th>
-                        <th className="text-right p-1 sm:p-2">사용률 (%)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {specialData.map((char) => (
-                        <tr
-                          key={char.key}
-                          className="border-b hover:bg-muted/50"
-                        >
-                          <td className="p-1 sm:p-2 truncate">{char.name}</td>
-                          <td
-                            className={`p-1 sm:p-2 text-right ${
-                              char.percent > 90
-                                ? "text-red-600 font-bold"
-                                : char.percent > 20
-                                ? "text-purple-600 font-bold"
-                                : ""
-                            }`}
-                          >
-                            {char.percent}%
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div
+                  className="absolute top-0 h-full bg-green-500 flex items-center justify-center text-white text-xs font-medium"
+                  style={{ left: `${row.one}%`, width: `${row.two}%` }}
+                >
+                  {row.two > 5 ? `${row.two}%` : ""}
                 </div>
-              </div>
-
-              {/* Assist Table */}
-              <div className="min-w-0">
-                <h4 className="font-bold mb-2 text-center text-sm sm:text-base">
-                  조력자
-                </h4>
-                <div className="max-h-80 overflow-y-auto border rounded">
-                  <table className="w-full text-sm">
-                    <thead className="sticky top-0 bg-background">
-                      <tr className="border-b">
-                        <th className="text-left p-1 sm:p-2">이름</th>
-                        <th className="text-right p-1 sm:p-2">사용률 (%)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {assistData.map((char) => (
-                        <tr
-                          key={char.key}
-                          className="border-b hover:bg-muted/50"
-                        >
-                          <td className="p-1 sm:p-2 truncate">{char.name}</td>
-                          <td
-                            className={`p-1 sm:p-2 text-right ${
-                              char.percent > 90
-                                ? "text-red-600 font-bold"
-                                : char.percent > 20
-                                ? "text-purple-600 font-bold"
-                                : ""
-                            }`}
-                          >
-                            {char.percent}%
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div
+                  className="absolute top-0 h-full bg-yellow-500 flex items-center justify-center text-white text-xs font-medium"
+                  style={{
+                    left: `${row.one + row.two}%`,
+                    width: `${row.three}%`,
+                  }}
+                >
+                  {row.three > 5 ? `${row.three}%` : ""}
+                </div>
+                <div
+                  className="absolute top-0 h-full bg-red-500 flex items-center justify-center text-white text-xs font-medium"
+                  style={{
+                    left: `${row.one + row.two + row.three}%`,
+                    width: `${row.fourOrMore}%`,
+                  }}
+                >
+                  {row.fourOrMore > 5 ? `${row.fourOrMore}%` : ""}
                 </div>
               </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          ))}
+        </div>
+      </CardWrapper>
 
-      {/* Character Growth Stats */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Target className="h-5 w-5 text-blue-600" />
-            캐릭터 성장 통계
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <select
-            className="w-full max-w-sm p-2 border rounded mb-4 text-sm"
-            value={Character || ""}
-            onChange={(e) =>
-              setCharacter(e.target.value ? Number(e.target.value) : null)
-            }
-          >
-            <option value="">캐릭터를 선택하세요</option>
-            {Object.keys(data?.filters || {}).map((key) => (
-              <option key={key} value={key}>
-                {studentsMap[key]}
-              </option>
-            ))}
-          </select>
-
-          {Character !== null && data?.filters?.[Character] && (
-            <div className="space-y-4">
-              {Object.entries(data?.filters?.[Character] || {}).map(
-                ([gradeKey, count], idx) => {
-                  const sum = Object.values(
-                    data?.filters?.[Character] || {}
-                  ).reduce((sum, cur) => sum + cur, 0);
-                  const percent = (count / sum) * 100;
-                  const maxPercent = Math.max(
-                    ...Object.values(data?.filters?.[Character] || {}).map(
-                      (c) => (c / sum) * 100
-                    )
-                  );
-                  return (
-                    <div key={idx} className="space-y-1">
-                      <div className="flex justify-between items-center">
-                        <span
-                          className={`font-medium text-sm ${
-                            percent > 20 ? "text-red-600" : ""
-                          }`}
-                        >
-                          {categoryMap[gradeKey]}
-                        </span>
-                        <span
-                          className={`text-xs ${
-                            percent > 20
+      <CardWrapper
+        icon={<TrendingUp className="h-5 w-5 text-blue-600" />}
+        title="캐릭터 사용률"
+      >
+        <div className="space-y-6">
+          {/* Mobile: Stack tables vertically, Desktop: 3 columns */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            {/* Striker Table */}
+            <div className="min-w-0">
+              <h4 className="font-bold mb-2 text-center text-sm sm:text-base">
+                STRIKER
+              </h4>
+              <div className="max-h-80 overflow-y-auto border rounded">
+                <table className="w-full text-sm">
+                  <thead className="sticky top-0 bg-background">
+                    <tr className="border-b">
+                      <th className="text-left p-1 sm:p-2">이름</th>
+                      <th className="text-right p-1 sm:p-2">사용률 (%)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {strikerData.map((char) => (
+                      <tr key={char.key} className="border-b hover:bg-muted/50">
+                        <td className="p-1 sm:p-2 truncate">{char.name}</td>
+                        <td
+                          className={`p-1 sm:p-2 text-right ${
+                            char.percent > 90
                               ? "text-red-600 font-bold"
-                              : "text-muted-foreground"
+                              : char.percent > 20
+                              ? "text-purple-600 font-bold"
+                              : ""
                           }`}
                         >
-                          {count} ({percent.toFixed(2)}%)
-                        </span>
-                      </div>
-                      <div className="relative h-4 bg-gray-200 rounded overflow-hidden">
-                        <div
-                          className={`absolute top-0 left-0 h-full flex items-center justify-center text-white text-xs font-medium transition-all ${
-                            percent > 20 ? "bg-red-500" : "bg-blue-500"
+                          {char.percent}%
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Special Table */}
+            <div className="min-w-0">
+              <h4 className="font-bold mb-2 text-center text-sm sm:text-base">
+                SPECIAL
+              </h4>
+              <div className="max-h-80 overflow-y-auto border rounded">
+                <table className="w-full text-sm">
+                  <thead className="sticky top-0 bg-background">
+                    <tr className="border-b">
+                      <th className="text-left p-1 sm:p-2">이름</th>
+                      <th className="text-right p-1 sm:p-2">사용률 (%)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {specialData.map((char) => (
+                      <tr key={char.key} className="border-b hover:bg-muted/50">
+                        <td className="p-1 sm:p-2 truncate">{char.name}</td>
+                        <td
+                          className={`p-1 sm:p-2 text-right ${
+                            char.percent > 90
+                              ? "text-red-600 font-bold"
+                              : char.percent > 20
+                              ? "text-purple-600 font-bold"
+                              : ""
                           }`}
-                          style={{ width: `${(percent / maxPercent) * 100}%` }}
                         >
-                          {percent > 5 ? `${percent.toFixed(1)}%` : ""}
-                        </div>
+                          {char.percent}%
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Assist Table */}
+            <div className="min-w-0">
+              <h4 className="font-bold mb-2 text-center text-sm sm:text-base">
+                조력자
+              </h4>
+              <div className="max-h-80 overflow-y-auto border rounded">
+                <table className="w-full text-sm">
+                  <thead className="sticky top-0 bg-background">
+                    <tr className="border-b">
+                      <th className="text-left p-1 sm:p-2">이름</th>
+                      <th className="text-right p-1 sm:p-2">사용률 (%)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {assistData.map((char) => (
+                      <tr key={char.key} className="border-b hover:bg-muted/50">
+                        <td className="p-1 sm:p-2 truncate">{char.name}</td>
+                        <td
+                          className={`p-1 sm:p-2 text-right ${
+                            char.percent > 90
+                              ? "text-red-600 font-bold"
+                              : char.percent > 20
+                              ? "text-purple-600 font-bold"
+                              : ""
+                          }`}
+                        >
+                          {char.percent}%
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </CardWrapper>
+
+      <CardWrapper
+        icon={<Target className="h-5 w-5 text-blue-600" />}
+        title="캐릭터 성장 통계"
+      >
+        <select
+          className="w-full max-w-sm p-2 border rounded mb-4 text-sm"
+          value={Character || ""}
+          onChange={(e) =>
+            setCharacter(e.target.value ? Number(e.target.value) : null)
+          }
+        >
+          <option value="">캐릭터를 선택하세요</option>
+          {Object.keys(data?.filters || {}).map((key) => (
+            <option key={key} value={key}>
+              {studentsMap[key]}
+            </option>
+          ))}
+        </select>
+
+        {Character !== null && data?.filters?.[Character] && (
+          <div className="space-y-4">
+            {Object.entries(data?.filters?.[Character] || {}).map(
+              ([gradeKey, count], idx) => {
+                const sum = Object.values(
+                  data?.filters?.[Character] || {}
+                ).reduce((sum, cur) => sum + cur, 0);
+                const percent = (count / sum) * 100;
+                const maxPercent = Math.max(
+                  ...Object.values(data?.filters?.[Character] || {}).map(
+                    (c) => (c / sum) * 100
+                  )
+                );
+                return (
+                  <div key={idx} className="space-y-1">
+                    <div className="flex justify-between items-center">
+                      <span
+                        className={`font-medium text-sm ${
+                          percent > 20 ? "text-red-600" : ""
+                        }`}
+                      >
+                        {categoryMap[gradeKey]}
+                      </span>
+                      <span
+                        className={`text-xs ${
+                          percent > 20
+                            ? "text-red-600 font-bold"
+                            : "text-muted-foreground"
+                        }`}
+                      >
+                        {count} ({percent.toFixed(2)}%)
+                      </span>
+                    </div>
+                    <div className="relative h-4 bg-gray-200 rounded overflow-hidden">
+                      <div
+                        className={`absolute top-0 left-0 h-full flex items-center justify-center text-white text-xs font-medium transition-all ${
+                          percent > 20 ? "bg-red-500" : "bg-blue-500"
+                        }`}
+                        style={{ width: `${(percent / maxPercent) * 100}%` }}
+                      >
+                        {percent > 5 ? `${percent.toFixed(1)}%` : ""}
                       </div>
                     </div>
-                  );
-                }
-              )}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                  </div>
+                );
+              }
+            )}
+          </div>
+        )}
+      </CardWrapper>
 
       {/* Strategy Videos - 영상 분석 페이지로 이동 버튼 */}
       <Button
