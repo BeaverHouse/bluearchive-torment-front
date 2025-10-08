@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { basePartyCounts, translations } from "../constants";
+import { basePartyCounts, categoryMap, translations } from "../constants";
 import {
   Card,
   CardContent,
@@ -652,8 +652,6 @@ const RaidSummary = ({
                       (c) => (c / sum) * 100
                     )
                   );
-                  const starLevel = parseInt(gradeKey[0]);
-                  const weaponLevel = parseInt(gradeKey[1]);
                   return (
                     <div key={idx} className="space-y-1">
                       <div className="flex justify-between items-center">
@@ -662,7 +660,7 @@ const RaidSummary = ({
                             percent > 20 ? "text-red-600" : ""
                           }`}
                         >
-                          {starLevel}★ 무기{weaponLevel}
+                          {categoryMap[gradeKey]}
                         </span>
                         <span
                           className={`text-xs ${
@@ -700,7 +698,6 @@ const RaidSummary = ({
       >
         <VideoIcon className="h-5 w-5 mr-2" />
         영상 분석 페이지로 이동
-        <ArrowRight className="h-5 w-5 ml-2" />
       </Button>
     </div>
   );
