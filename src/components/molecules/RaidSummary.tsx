@@ -385,7 +385,7 @@ const RaidSummary = ({
               <Users className="h-5 w-5 text-blue-600" />
               Top 5 파티
             </CardTitle>
-            <CardDescription className="mt-0">
+            <CardDescription className="mt-0 text-xs">
               ※ 전용무기와 배치는 고려하지 않았습니다.
             </CardDescription>
           </div>
