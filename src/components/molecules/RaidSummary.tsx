@@ -27,6 +27,7 @@ import { VideoIcon } from "@radix-ui/react-icons";
 import { RaidComponentProps } from "@/types/raid";
 import PartyCard from "../common/PartyCard";
 import Loading from "../common/Loading";
+import CardWrapper from "../common/CardWrapper";
 
 interface RaidSummaryData {
   clearCount: number;
@@ -378,41 +379,31 @@ const RaidSummary = ({
       )}
 
       {/* Top 5 Parties */}
-      <Card className="mb-6">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-blue-600" />
-              Top 5 파티
-            </CardTitle>
-            <CardDescription className="mt-0 text-xs">
-              ※ 전용무기와 배치는 고려하지 않았습니다.
-            </CardDescription>
-          </div>
-        </CardHeader>
-        <CardContent className="p-2">
-          <div className="space-y-3">
-            {(data?.top5Partys || []).map(([party_string, count], idx) => {
-              const students = party_string.split("_").map(Number);
-              // Split into parties (6 students per party)
-              const parties = [];
-              for (let i = 0; i < students.length; i += 6) {
-                parties.push(students.slice(i, i + 6));
-              }
-              return (
-                <PartyCard
-                  key={idx}
-                  rank={idx + 1}
-                  value={count}
-                  valueSuffix="명 사용"
-                  parties={parties}
-                />
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
-
+      <CardWrapper
+        icon={<Users className="h-5 w-5 text-blue-600" />}
+        title="Top 5 Party"
+        description="※ 전용무기와 배치는 고려하지 않았습니다."
+      >
+        <div className="space-y-3">
+          {(data?.top5Partys || []).map(([party_string, count], idx) => {
+            const students = party_string.split("_").map(Number);
+            // Split into parties (6 students per party)
+            const parties = [];
+            for (let i = 0; i < students.length; i += 6) {
+              parties.push(students.slice(i, i + 6));
+            }
+            return (
+              <PartyCard
+                key={idx}
+                rank={idx + 1}
+                value={count}
+                valueSuffix="명 사용"
+                parties={parties}
+              />
+            );
+          })}
+        </div>
+      </CardWrapper>
       {/* Party Composition Chart */}
       <Card className="mb-6">
         <CardHeader>
