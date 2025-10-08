@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SingleSelect } from "@/components/custom/single-select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -735,19 +736,18 @@ function VideoAnalysisContent() {
       )}
 
       <div className="mb-6 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
-        <Select value={selectedRaid} onValueChange={handleRaidChange}>
-          <SelectTrigger className="w-full sm:w-64">
-            <SelectValue placeholder="레이드 선택" />
-          </SelectTrigger>
-          <SelectContent className="max-h-[300px] overflow-y-auto">
-            <SelectItem value="all">전체</SelectItem>
-            {raids.map((raid) => (
-              <SelectItem key={raid.id} value={raid.id}>
-                {raid.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <SingleSelect
+          options={[
+            { value: "all", label: "전체" },
+            ...raids.map((raid) => ({
+              value: raid.id,
+              label: raid.name,
+            })),
+          ]}
+          value={selectedRaid}
+          onChange={handleRaidChange}
+          placeholder="총력전/대결전 선택"
+        />
 
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
           {/* 큐 상태 조회 버튼 */}
