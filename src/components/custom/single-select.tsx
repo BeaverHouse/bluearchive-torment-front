@@ -28,7 +28,7 @@ export function SingleSelect({
 }: SingleSelectProps) {
   return (
     <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className="w-full sm:w-64">
+      <SelectTrigger className="w-full sm:w-72">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent className="max-h-[300px] overflow-y-auto">
