@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SingleSelect } from "@/components/ui/custom/single-select";
+import { Pagination } from "@/components/custom/pagination";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -74,7 +75,6 @@ function VideoAnalysisContent() {
   // 필터 상태
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageInputValue, setPageInputValue] = useState("1");
 
   // 파티 필터 상태
   const [scoreRange, setScoreRange] = useState([0, 100000000]);
@@ -217,7 +217,6 @@ function VideoAnalysisContent() {
     setHardExclude(false);
     setAllowDuplicate(false);
     setCurrentPage(1);
-    setPageInputValue("1");
   };
 
   // 비디오 데이터를 파티 데이터로 변환
@@ -646,92 +645,18 @@ function VideoAnalysisContent() {
 
       {/* 페이지네이션 (필터 모드) */}
       {isFilterMode && (
-        <div className="flex items-center justify-center gap-4 mb-5">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-            disabled={currentPage === 1}
-          >
-            이전
-          </Button>
-          <div className="flex items-center gap-2">
-            <input
-              type="text"
-              value={pageInputValue}
-              onChange={(e) => {
-                const value = e.target.value;
-                setPageInputValue(value);
-
-                const numericValue = value.replace(/[^0-9]/g, "");
-                if (numericValue === "") return;
-
-                const newPage = parseInt(numericValue);
-                const maxPage = getFilterModePagination().total_pages;
-
-                if (newPage >= 1 && newPage <= maxPage) {
-                  setCurrentPage(newPage);
-                }
-              }}
-              onFocus={() => {
-                setPageInputValue("");
-              }}
-              onBlur={() => {
-                if (pageInputValue === "" || pageInputValue === "0") {
-                  setCurrentPage(1);
-                  setPageInputValue("1");
-                } else {
-                  const numericValue = pageInputValue.replace(/[^0-9]/g, "");
-                  const newPage = parseInt(numericValue);
-                  const maxPage = getFilterModePagination().total_pages;
-
-                  if (isNaN(newPage) || newPage < 1 || newPage > maxPage) {
-                    setPageInputValue(currentPage.toString());
-                  } else {
-                    setCurrentPage(newPage);
-                    setPageInputValue(newPage.toString());
-                  }
-                }
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  (e.target as HTMLInputElement).blur();
-                }
-              }}
-              placeholder="페이지"
-              className="w-16 px-2 py-1 text-sm border rounded text-center"
-            />
-            <span className="text-sm">
-              / {getFilterModePagination().total_pages}
-            </span>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              setCurrentPage(
-                Math.min(getFilterModePagination().total_pages, currentPage + 1)
-              )
-            }
-            disabled={currentPage >= getFilterModePagination().total_pages}
-          >
-            다음
-          </Button>
-          <Select
-            value={pageSize.toString()}
-            onValueChange={(value) => {
-              setPageSize(parseInt(value));
+        <div className="mb-5">
+          <Pagination
+            currentPage={currentPage}
+            totalItems={getFilterModePagination().total}
+            pageSize={pageSize}
+            onPageChange={setCurrentPage}
+            onPageSizeChange={(newPageSize) => {
+              setPageSize(newPageSize);
               setCurrentPage(1);
             }}
-          >
-            <SelectTrigger className="w-23">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="10">10개씩</SelectItem>
-              <SelectItem value="20">20개씩</SelectItem>
-            </SelectContent>
-          </Select>
+            pageSizeOptions={[10, 20]}
+          />
         </div>
       )}
 
