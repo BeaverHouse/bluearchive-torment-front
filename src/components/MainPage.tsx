@@ -67,7 +67,7 @@ function MainPage() {
             value: raid.value,
             label: raid.label,
           }))}
-          value={V3Season}
+          value={season}
           onChange={setV3Season}
           placeholder="총력전/대결전 선택"
         />
