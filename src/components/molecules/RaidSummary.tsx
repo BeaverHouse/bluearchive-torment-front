@@ -13,6 +13,8 @@ import {
   Copy,
   CheckCircle,
   TrendingUp,
+  ThumbsUp,
+  ChartNoAxesColumn,
 } from "lucide-react";
 import Swal from "sweetalert2";
 import { VideoIcon } from "@radix-ui/react-icons";
@@ -328,7 +330,7 @@ const RaidSummary = ({
 
       {highUsageCharacters.length > 0 && (
         <CardWrapper
-          icon={<TrendingUp className="h-5 w-5 text-blue-600" />}
+          icon={<ThumbsUp className="h-5 w-5 text-blue-600" />}
           title="많이 쓰인 학생들"
           description="10% 이상 사용된 학생들이에요."
         >
@@ -569,7 +571,7 @@ const RaidSummary = ({
       </CardWrapper>
 
       <CardWrapper
-        icon={<Target className="h-5 w-5 text-blue-600" />}
+        icon={<ChartNoAxesColumn className="h-5 w-5 text-blue-600" />}
         title="캐릭터 성장 통계"
       >
         <select
