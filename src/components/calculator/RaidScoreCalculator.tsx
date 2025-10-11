@@ -40,16 +40,26 @@ interface CalculatorItem {
   calculatedScore: string;
 }
 
-// 시간 문자열(mm:ss.SSS)을 초로 변환
+// 시간 문자열(mm:ss.SSS 또는 mm:ss)을 초로 변환
 function parseTimeToSeconds(timeStr: string): number | null {
-  const match = timeStr.match(/^(\d+):(\d{2})\.(\d{3})$/);
-  if (!match) return null;
+  // mm:ss.SSS 형식
+  let match = timeStr.match(/^(\d+):(\d{2})\.(\d{3})$/);
+  if (match) {
+    const minutes = parseInt(match[1]);
+    const seconds = parseInt(match[2]);
+    const milliseconds = parseInt(match[3]);
+    return minutes * 60 + seconds + milliseconds / 1000;
+  }
 
-  const minutes = parseInt(match[1]);
-  const seconds = parseInt(match[2]);
-  const milliseconds = parseInt(match[3]);
+  // mm:ss 형식 (소수점 없음)
+  match = timeStr.match(/^(\d+):(\d{2})$/);
+  if (match) {
+    const minutes = parseInt(match[1]);
+    const seconds = parseInt(match[2]);
+    return minutes * 60 + seconds;
+  }
 
-  return minutes * 60 + seconds + milliseconds / 1000;
+  return null;
 }
 
 // 초를 시간 문자열(mm:ss.SSS)로 변환
@@ -218,15 +228,15 @@ export function RaidScoreCalculator() {
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <CardTitle>총력전/대결전 점수 계산기</CardTitle>
             <CardDescription>
-              시간 또는 점수를 입력하면 나머지 값을 계산합니다. (최대 3개)
+              시간 또는 점수를 입력하면 나머지를 계산합니다. (최대 3개)
             </CardDescription>
           </div>
           {totalScore > 0 && (
-            <div className="text-right">
+            <div className="text-left sm:text-right">
               <div className="text-sm text-muted-foreground">총 점수</div>
               <div className="text-2xl font-bold text-primary">
                 {totalScore.toLocaleString()}
@@ -254,14 +264,14 @@ export function RaidScoreCalculator() {
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium mb-2 block">난이도</label>
                   <Select
                     value={item.difficulty}
                     onValueChange={(value) => updateDifficulty(item.id, value as Difficulty)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="w-full">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -280,7 +290,7 @@ export function RaidScoreCalculator() {
                     value={item.timeLimit}
                     onValueChange={(value) => updateTimeLimit(item.id, value as TimeLimit)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="w-full">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -295,9 +305,10 @@ export function RaidScoreCalculator() {
                 <div>
                   <label className="text-sm font-medium mb-2 block">시간 입력</label>
                   <Input
-                    placeholder="mm:ss.SSS (예: 01:23.456)"
+                    placeholder="01:23 또는 01:23.456"
                     value={item.timeInput}
                     onChange={(e) => updateTime(item.id, e.target.value)}
+                    inputMode="text"
                   />
                 </div>
 
@@ -305,9 +316,10 @@ export function RaidScoreCalculator() {
                   <label className="text-sm font-medium mb-2 block">점수</label>
                   <Input
                     type="number"
-                    placeholder="점수 (예: 8640000)"
+                    placeholder="8640000"
                     value={item.scoreInput}
                     onChange={(e) => updateScore(item.id, e.target.value)}
+                    inputMode="numeric"
                   />
                 </div>
               </div>
