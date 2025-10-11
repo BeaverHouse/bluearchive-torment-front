@@ -242,7 +242,7 @@ export function RaidScoreCalculator() {
           <Card key={item.id} className="relative">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">계산기 #{index + 1}</CardTitle>
+                <CardTitle className="text-lg">점수 #{index + 1}</CardTitle>
                 {items.length > 1 && (
                   <Button
                     variant="ghost"
