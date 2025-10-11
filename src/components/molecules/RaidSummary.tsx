@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { basePartyCounts, categoryMap, translations } from "../constants";
+import { basePartyCounts, categoryMap, translations } from "@/constants/assault";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {

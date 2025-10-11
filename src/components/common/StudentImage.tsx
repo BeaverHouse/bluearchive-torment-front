@@ -7,7 +7,7 @@ import {
   HybridTooltipTrigger,
   HybridTooltipContent,
 } from "@/components/ui/custom/hybridtooltip";
-import { categoryMap } from "../constants";
+import { categoryMap } from "@/constants/assault";
 import { getCharacterName } from "@/utils/character";
 
 interface StudentImageProps {

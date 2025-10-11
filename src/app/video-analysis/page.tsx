@@ -34,7 +34,7 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import raidsData from "../../../data/raids.json";
 import studentsData from "../../../data/students.json";
 import ErrorPage from "@/components/ErrorPage";
-import { translations } from "@/components/constants";
+import { translations } from "@/constants/assault";
 import { filteredPartys, getFilters } from "@/components/function";
 import {
   Collapsible,
