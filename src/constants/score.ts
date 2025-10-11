@@ -1,50 +1,43 @@
-const scoreInfo = {
+// https://bluearchive.wikiru.jp/?%E7%B7%8F%E5%8A%9B%E6%88%A6
+export const scoreInfo = {
     normal: {
-        base: 250000,
-        fourMinuteHP: 325000,
-        threeMinuteHP: 373000,
+        fourMinuteBase: 527000,
+        threeMinuteBase: 479000,
         timeBonus: 120
     },
     hard: {
-        base: 500000,
-        fourMinuteHP: 650000,
-        threeMinuteHP: 746000,
+        fourMinuteBase: 1054000,
+        threeMinuteBase: 958000,    
         timeBonus: 240
     },
     veryHard: {
-        base: 1000000,
-        fourMinuteHP: 1300000,
-        threeMinuteHP: 1492000,
+        fourMinuteBase: 2108000,
+        threeMinuteBase: 1916000,
         timeBonus: 480
     },
     hardcore: {
-        base: 2000000,
-        fourMinuteHP: 2600000,
-        threeMinuteHP: 2984000,
+        fourMinuteBase: 4216000,
+        threeMinuteBase: 3832000,
         timeBonus: 960
     },
     extreme: {
-        base: 4000000,
-        fourMinuteHP: 5200000,
-        threeMinuteHP: 5968000,
+        fourMinuteBase: 10160000,
+        threeMinuteBase: 9392000,
         timeBonus: 1440
     },
     insane: {
-        base: 6800000,
-        fourMinuteHP: 8840000,
-        threeMinuteHP: 10145600,
+        fourMinuteBase: 21016000,
+        threeMinuteBase: 19249600,
         timeBonus: 1920
     },
     torment: {
-        base: 12200000,
-        fourMinuteHP: 15860000,
-        threeMinuteHP: 18202400,
+        fourMinuteBase: 31708000,
+        threeMinuteBase: 31076000,
         timeBonus: 2400
     },
     lunatic: {
-        base: 17710000,
-        fourMinuteHP: 26315000,
-        threeMinuteHP: 30262200, // Not confirmed
+        fourMinuteBase: 44025000,
+        threeMinuteBase: 44025000, // Not confirmed
         timeBonus: 2880
     }
 }
