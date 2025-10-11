@@ -295,9 +295,11 @@ export function RaidScoreCalculator() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium mb-2 block">시간 입력</label>
+                  <label className="text-sm font-medium mb-2 block">
+                    시간 입력 <span className="text-muted-foreground font-normal">(또는 점수 입력)</span>
+                  </label>
                   <Input
-                    placeholder="mm:ss.SSS (예: 01:23.456)"
+                    placeholder={item.scoreInput ? "점수가 입력되어 비활성화됨" : "mm:ss.SSS (예: 01:23.456)"}
                     value={item.timeInput}
                     onChange={(e) => updateTime(item.id, e.target.value)}
                     disabled={!!item.scoreInput}
@@ -310,10 +312,12 @@ export function RaidScoreCalculator() {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium mb-2 block">점수 입력</label>
+                  <label className="text-sm font-medium mb-2 block">
+                    점수 입력 <span className="text-muted-foreground font-normal">(또는 시간 입력)</span>
+                  </label>
                   <Input
                     type="number"
-                    placeholder="점수 (예: 8640000)"
+                    placeholder={item.timeInput ? "시간이 입력되어 비활성화됨" : "점수 (예: 8640000)"}
                     value={item.scoreInput}
                     onChange={(e) => updateScore(item.id, e.target.value)}
                     disabled={!!item.timeInput}

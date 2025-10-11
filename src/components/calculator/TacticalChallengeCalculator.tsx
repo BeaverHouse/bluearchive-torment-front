@@ -317,9 +317,17 @@ export function TacticalChallengeCalculator() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium mb-2 block">실제 플레이 시간</label>
+                  <label className="text-sm font-medium mb-2 block">
+                    실제 플레이 시간 <span className="text-muted-foreground font-normal">(또는 점수 입력)</span>
+                  </label>
                   <Input
-                    placeholder="mm:ss.SSS (예: 01:23.456)"
+                    placeholder={
+                      !item.limitSeconds || parseInt(item.limitSeconds) < 60
+                        ? "먼저 제한 시간을 입력하세요"
+                        : item.scoreInput
+                        ? "점수가 입력되어 비활성화됨"
+                        : "mm:ss.SSS (예: 01:23.456)"
+                    }
                     value={item.playTimeInput}
                     onChange={(e) => updatePlayTime(item.id, e.target.value)}
                     disabled={!!item.scoreInput || !item.limitSeconds || parseInt(item.limitSeconds) < 60}
@@ -332,10 +340,18 @@ export function TacticalChallengeCalculator() {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium mb-2 block">점수 입력</label>
+                  <label className="text-sm font-medium mb-2 block">
+                    점수 입력 <span className="text-muted-foreground font-normal">(또는 플레이 시간 입력)</span>
+                  </label>
                   <Input
                     type="number"
-                    placeholder="점수 (예: 56000)"
+                    placeholder={
+                      !item.limitSeconds || parseInt(item.limitSeconds) < 60
+                        ? "먼저 제한 시간을 입력하세요"
+                        : item.playTimeInput
+                        ? "플레이 시간이 입력되어 비활성화됨"
+                        : "점수 (예: 56000)"
+                    }
                     value={item.scoreInput}
                     onChange={(e) => updateScore(item.id, e.target.value)}
                     disabled={!!item.playTimeInput || !item.limitSeconds || parseInt(item.limitSeconds) < 60}
