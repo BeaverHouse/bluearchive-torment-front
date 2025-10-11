@@ -7,7 +7,6 @@ import { filteredPartys, getFilters } from "../function";
 import PartyCard from "../common/PartyCard";
 import {
   RaidData,
-  PartyData,
   FilterData,
   FilterOption,
   YoutubeLinkInfo,
