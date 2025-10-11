@@ -125,25 +125,15 @@ export function RaidScoreCalculator() {
   const updateDifficulty = (id: number, difficulty: Difficulty) => {
     setItems(items.map(item => {
       if (item.id === id) {
-        // 난이도가 변경되면 기존 입력값으로 재계산
-        let calculatedTime = "";
-        let calculatedScore = "";
-
-        if (item.timeInput) {
-          const seconds = parseTimeToSeconds(item.timeInput);
-          if (seconds !== null) {
-            const score = calculateScoreFromTime(seconds, difficulty, item.timeLimit);
-            calculatedScore = score.toString();
-          }
-        } else if (item.scoreInput) {
-          const score = parseInt(item.scoreInput);
-          if (!isNaN(score)) {
-            const seconds = calculateTimeFromScore(score, difficulty, item.timeLimit);
-            calculatedTime = formatSecondsToTime(seconds);
-          }
-        }
-
-        return { ...item, difficulty, calculatedTime, calculatedScore };
+        // 난이도가 변경되면 입력값 초기화
+        return {
+          ...item,
+          difficulty,
+          timeInput: "",
+          scoreInput: "",
+          calculatedTime: "",
+          calculatedScore: "",
+        };
       }
       return item;
     }));
@@ -152,25 +142,15 @@ export function RaidScoreCalculator() {
   const updateTimeLimit = (id: number, timeLimit: TimeLimit) => {
     setItems(items.map(item => {
       if (item.id === id) {
-        // 시간 제한이 변경되면 기존 입력값으로 재계산
-        let calculatedTime = "";
-        let calculatedScore = "";
-
-        if (item.timeInput) {
-          const seconds = parseTimeToSeconds(item.timeInput);
-          if (seconds !== null) {
-            const score = calculateScoreFromTime(seconds, item.difficulty, timeLimit);
-            calculatedScore = score.toString();
-          }
-        } else if (item.scoreInput) {
-          const score = parseInt(item.scoreInput);
-          if (!isNaN(score)) {
-            const seconds = calculateTimeFromScore(score, item.difficulty, timeLimit);
-            calculatedTime = formatSecondsToTime(seconds);
-          }
-        }
-
-        return { ...item, timeLimit, calculatedTime, calculatedScore };
+        // 시간 제한이 변경되면 입력값 초기화
+        return {
+          ...item,
+          timeLimit,
+          timeInput: "",
+          scoreInput: "",
+          calculatedTime: "",
+          calculatedScore: "",
+        };
       }
       return item;
     }));
@@ -222,13 +202,40 @@ export function RaidScoreCalculator() {
     }));
   };
 
+  // 총 점수 계산 (계산된 점수 또는 입력한 점수)
+  const getTotalScore = () => {
+    return items.reduce((total, item) => {
+      if (item.calculatedScore) {
+        return total + parseInt(item.calculatedScore);
+      } else if (item.scoreInput) {
+        const score = parseInt(item.scoreInput);
+        return total + (isNaN(score) ? 0 : score);
+      }
+      return total;
+    }, 0);
+  };
+
+  const totalScore = getTotalScore();
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>총력전/대결전 점수 계산기</CardTitle>
-        <CardDescription>
-          시간 또는 점수를 입력하면 나머지 값을 계산합니다. (최대 3개)
-        </CardDescription>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle>총력전/대결전 점수 계산기</CardTitle>
+            <CardDescription>
+              시간 또는 점수를 입력하면 나머지 값을 계산합니다. (최대 3개)
+            </CardDescription>
+          </div>
+          {totalScore > 0 && (
+            <div className="text-right">
+              <div className="text-sm text-muted-foreground">총 점수</div>
+              <div className="text-2xl font-bold text-primary">
+                {totalScore.toLocaleString()}
+              </div>
+            </div>
+          )}
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         {items.map((item, index) => (
@@ -293,6 +300,7 @@ export function RaidScoreCalculator() {
                     placeholder="mm:ss.SSS (예: 01:23.456)"
                     value={item.timeInput}
                     onChange={(e) => updateTime(item.id, e.target.value)}
+                    disabled={!!item.scoreInput}
                   />
                   {item.calculatedScore && (
                     <p className="mt-2 text-sm text-muted-foreground">
@@ -308,6 +316,7 @@ export function RaidScoreCalculator() {
                     placeholder="점수 (예: 8640000)"
                     value={item.scoreInput}
                     onChange={(e) => updateScore(item.id, e.target.value)}
+                    disabled={!!item.timeInput}
                   />
                   {item.calculatedTime && (
                     <p className="mt-2 text-sm text-muted-foreground">
