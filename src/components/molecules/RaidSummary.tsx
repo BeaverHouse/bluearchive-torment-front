@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { basePartyCounts, categoryMap, translations } from "../constants";
+import { basePartyCounts, categoryMap, translations } from "@/constants/assault";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,6 +22,7 @@ import { RaidComponentProps } from "@/types/raid";
 import PartyCard from "../common/PartyCard";
 import Loading from "../common/Loading";
 import CardWrapper from "../common/CardWrapper";
+import { SearchableSelect } from "@/components/SearchableSelect";
 
 interface RaidSummaryData {
   clearCount: number;
@@ -574,20 +575,18 @@ const RaidSummary = ({
         icon={<ChartNoAxesColumn className="h-5 w-5 text-blue-600" />}
         title="캐릭터 성장 통계"
       >
-        <select
-          className="w-full max-w-sm p-2 border rounded mb-4 text-sm"
-          value={Character || ""}
-          onChange={(e) =>
-            setCharacter(e.target.value ? Number(e.target.value) : null)
-          }
-        >
-          <option value="">캐릭터를 선택하세요</option>
-          {Object.keys(data?.filters || {}).map((key) => (
-            <option key={key} value={key}>
-              {studentsMap[key]}
-            </option>
-          ))}
-        </select>
+        <div className="mb-4">
+          <SearchableSelect
+            options={Object.keys(data?.filters || {}).map((key) => ({
+              value: Number(key),
+              label: studentsMap[key] || `Character ${key}`,
+            }))}
+            value={Character?.toString() || ""}
+            onValueChange={(value) => setCharacter(value ? Number(value) : null)}
+            placeholder="캐릭터를 선택하세요"
+            className="w-full max-w-sm"
+          />
+        </div>
 
         {Character !== null && data?.filters?.[Character] && (
           <div className="space-y-4">

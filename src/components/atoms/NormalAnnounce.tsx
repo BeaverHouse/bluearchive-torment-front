@@ -6,17 +6,19 @@ function NormalAnnounce() {
   return (
     <Alert className="mb-3 w-full text-left">
       <Info className="h-4 w-4" />
-      <AlertTitle>영상 기능 추가 (beta)</AlertTitle>
+      <AlertTitle>S82 게부라 업데이트 + 점수 계산기</AlertTitle>
       <AlertDescription className="mt-2">
         <div className="mb-2">
-          테스트 + 기능 보완 중이에요. 문제가 있다면 이메일로 알려주세요.
+          문제가 있다면 이메일로 알려주세요.
+          <br />
+          PS. 연휴가 지나면 기능 업데이트가 느려질 수 있어요.
         </div>
         <Link 
-          href="/video-analysis" 
+          href="/calculator/score" 
           className="inline-flex items-center text-blue-600 hover:text-blue-800 underline font-medium"
         >
           <Play className="h-3 w-3 mr-1" />
-          영상 분석 페이지 바로가기
+          점수 계산기 바로가기
         </Link>
       </AlertDescription>
     </Alert>

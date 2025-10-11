@@ -7,7 +7,6 @@ import { filteredPartys, getFilters } from "../function";
 import PartyCard from "../common/PartyCard";
 import {
   RaidData,
-  PartyData,
   FilterData,
   FilterOption,
   YoutubeLinkInfo,
@@ -31,7 +30,7 @@ import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { Cascader } from "../custom/cascader";
 import { MultiSelect } from "../custom/multi-select";
 import { Pagination } from "../custom/pagination";
-import { lunaticMinScore, tormentMinScore } from "../constants";
+import { lunaticMinScore, tormentMinScore } from "@/constants/assault";
 import Loading from "../common/Loading";
 
 const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {

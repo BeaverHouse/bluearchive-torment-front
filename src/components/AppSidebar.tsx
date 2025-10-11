@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Video } from "lucide-react";
+import { Home, Video, Calculator, ChevronDown } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -15,6 +15,11 @@ import {
   SidebarMenuButton,
   useSidebar,
 } from "@/components/ui/sidebar";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 const menuItems = [
   {
@@ -26,6 +31,16 @@ const menuItems = [
     title: "영상 분석",
     url: "/video-analysis",
     icon: Video,
+  },
+  {
+    title: "계산기",
+    icon: Calculator,
+    subItems: [
+      {
+        title: "점수 계산기",
+        url: "/calculator/score",
+      },
+    ],
   },
 ];
 
@@ -56,16 +71,56 @@ export function AppSidebar() {
           <SidebarGroupLabel>메뉴</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={pathname === item.url}>
-                    <Link href={item.url} onClick={handleMenuClick}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {menuItems.map((item) => {
+                if (item.subItems) {
+                  return (
+                    <Collapsible
+                      key={item.title}
+                      defaultOpen
+                      className="group/collapsible"
+                    >
+                      <SidebarMenuItem>
+                        <CollapsibleTrigger asChild>
+                          <SidebarMenuButton>
+                            <item.icon />
+                            <span>{item.title}</span>
+                            <ChevronDown className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
+                          </SidebarMenuButton>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          <div className="ml-4 mt-1">
+                            {item.subItems.map((subItem) => (
+                              <SidebarMenuButton
+                                key={subItem.title}
+                                asChild
+                                isActive={pathname === subItem.url}
+                                className="pl-8"
+                              >
+                                <Link
+                                  href={subItem.url}
+                                  onClick={handleMenuClick}
+                                >
+                                  <span>{subItem.title}</span>
+                                </Link>
+                              </SidebarMenuButton>
+                            ))}
+                          </div>
+                        </CollapsibleContent>
+                      </SidebarMenuItem>
+                    </Collapsible>
+                  );
+                }
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild isActive={pathname === item.url}>
+                      <Link href={item.url} onClick={handleMenuClick}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

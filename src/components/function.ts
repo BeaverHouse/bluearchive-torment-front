@@ -1,4 +1,4 @@
-import { categoryMap, lunaticMinScore, tormentMinScore } from "./constants";
+import { categoryMap, lunaticMinScore, tormentMinScore } from "@/constants/assault";
 import { RaidData, PartyData, YoutubeLinkInfo, FilterOption } from "@/types/raid";
 
 export const getFilters = (

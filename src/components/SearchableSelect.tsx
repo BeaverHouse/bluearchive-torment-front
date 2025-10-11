@@ -25,6 +25,24 @@ interface SearchableSelectProps extends BaseSelectProps {
   onValueChange: (value: string) => void
 }
 
+const OptionImage = ({ value, label }: { value: string | number; label: string }) => (
+  <img
+    src={`${process.env.NEXT_PUBLIC_CDN_URL || ""}/batorment/character/${value}.webp`}
+    alt={label}
+    className="w-4 h-4 rounded object-cover flex-shrink-0"
+    onError={(e) => {
+      (e.target as HTMLImageElement).src = "/empty.webp"
+    }}
+  />
+)
+
+const OptionContent = ({ option, textClassName }: { option: ImageSelectOption; textClassName?: string }) => (
+  <div className="flex items-center gap-2 flex-1 min-w-0">
+    <OptionImage value={option.value} label={option.label} />
+    <span className={cn("truncate", textClassName)}>{option.label}</span>
+  </div>
+)
+
 export function SearchableSelect({
   options,
   value,
@@ -34,7 +52,6 @@ export function SearchableSelect({
   disabled = false
 }: SearchableSelectProps) {
   const [open, setOpen] = React.useState(false)
-
   const selectedOption = options.find(option => option.value.toString() === value)
 
   return (
@@ -48,18 +65,7 @@ export function SearchableSelect({
           disabled={disabled}
         >
           {selectedOption ? (
-            <div className="flex items-center gap-2 flex-1 min-w-0">
-              <img 
-                src={`${process.env.NEXT_PUBLIC_CDN_URL || ""}/batorment/character/${selectedOption.value}.webp`}
-                alt={selectedOption.label}
-                className="w-4 h-4 rounded object-cover flex-shrink-0"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement
-                  target.src = "/empty.webp"
-                }}
-              />
-              <span className="truncate text-xs">{selectedOption.label}</span>
-            </div>
+            <OptionContent option={selectedOption} textClassName="text-xs" />
           ) : (
             <span className="text-muted-foreground text-xs">{placeholder}</span>
           )}
@@ -88,18 +94,7 @@ export function SearchableSelect({
                       value === option.value.toString() ? "opacity-100" : "opacity-0"
                     )}
                   />
-                  <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <img 
-                      src={`${process.env.NEXT_PUBLIC_CDN_URL || ""}/batorment/character/${option.value}.webp`}
-                      alt={option.label}
-                      className="w-4 h-4 rounded object-cover flex-shrink-0"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement
-                        target.src = "/empty.webp"
-                      }}
-                    />
-                    <span className="truncate">{option.label}</span>
-                  </div>
+                  <OptionContent option={option} />
                 </CommandItem>
               ))}
             </CommandGroup>
