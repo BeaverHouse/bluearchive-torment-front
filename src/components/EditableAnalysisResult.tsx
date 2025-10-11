@@ -29,6 +29,7 @@ import { AnalysisResult, VideoAnalysisData, SkillOrder } from "@/types/video";
 import { updateVideoAnalysis } from "@/lib/api";
 import { SearchableSelect } from "@/components/SearchableSelect";
 import { getStudentsMap, getCharacterName } from "@/utils/character";
+import { StarRating } from "@/components/StarRating";
 import {
   DndContext,
   closestCenter,
@@ -68,8 +69,23 @@ export function EditableAnalysisResult({
 
   const studentsMap = getStudentsMap();
 
-  const getCharacterOptions = () => {
+  const getCharacterOptions = (slotIndex?: number) => {
     return Object.entries(studentsMap)
+      .filter(([code]) => {
+        // slotIndex가 제공되면 필터링 적용
+        if (slotIndex !== undefined) {
+          const codeNum = parseInt(code);
+          // 슬롯 0-3: 스트라이커만 (1xxxx)
+          if (slotIndex < 4) {
+            return codeNum >= 10000 && codeNum < 20000;
+          }
+          // 슬롯 4-5: 스페셜만 (2xxxx)
+          else {
+            return codeNum >= 20000 && codeNum < 30000;
+          }
+        }
+        return true;
+      })
       .map(([code, name]) => ({
         value: parseInt(code),
         label: name,
@@ -428,7 +444,7 @@ export function EditableAnalysisResult({
                           {/* 캐릭터 선택 */}
                           <div className="flex-1 w-full">
                             <SearchableSelect
-                              options={getCharacterOptions()}
+                              options={getCharacterOptions(charIndex)}
                               value={charInfo?.code?.toString() || ""}
                               onValueChange={(value) =>
                                 updatePartyData(
@@ -437,21 +453,21 @@ export function EditableAnalysisResult({
                                   parseInt(value)
                                 )
                               }
-                              placeholder="캐릭터 선택"
+                              placeholder={charIndex < 4 ? "스트라이커 선택" : "스페셜 선택"}
                               className="w-full"
                             />
                           </div>
 
                           {charInfo && (
                             <>
-                              {/* 성급 + 무기 통합 셀렉트 */}
-                              <div className="w-full">
-                                <Select
-                                  value={`${charInfo.star}-${charInfo.weapon}`}
-                                  onValueChange={(value) => {
-                                    const [star, weapon] = value
-                                      .split("-")
-                                      .map(Number);
+                              {/* 성급 별 UI */}
+                              <div className="w-full flex justify-center">
+                                <StarRating
+                                  value={charInfo.star * 10 + charInfo.weapon}
+                                  onChange={(gradeKey) => {
+                                    // gradeKey: 10,20,30,40,50,51,52,53,54
+                                    const star = Math.floor(gradeKey / 10);
+                                    const weapon = gradeKey % 10;
                                     updateCharacterDetails(
                                       partyIndex,
                                       charIndex,
@@ -465,32 +481,7 @@ export function EditableAnalysisResult({
                                       weapon
                                     );
                                   }}
-                                >
-                                  <SelectTrigger className="h-9 w-full">
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {/* 성급 옵션 */}
-                                    {[1, 2, 3, 4, 5].map((star) => (
-                                      <SelectItem
-                                        key={`star-${star}`}
-                                        value={`${star}-0`}
-                                      >
-                                        {star}성
-                                      </SelectItem>
-                                    ))}
-
-                                    {/* 전용무기 옵션 */}
-                                    {[1, 2, 3, 4].map((weapon) => (
-                                      <SelectItem
-                                        key={`weapon-${weapon}`}
-                                        value={`5-${weapon}`}
-                                      >
-                                        전{weapon}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
+                                />
                               </div>
 
                               {/* 조력자 체크박스 */}
