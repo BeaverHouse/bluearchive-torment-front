@@ -182,18 +182,18 @@ export function TacticalChallengeCalculator() {
       if (item.id === id) {
         const limit = parseInt(item.limitSeconds);
         const playTime = parseTimeToSeconds(value);
-        let calculatedScore = "";
+        let scoreInput = "";
 
         if (!isNaN(limit) && limit >= 60 && playTime !== null) {
           const score = calculateScore(item.stage, limit, playTime);
-          calculatedScore = score.toString();
+          scoreInput = score.toString();
         }
 
         return {
           ...item,
           playTimeInput: value,
-          scoreInput: "",
-          calculatedScore,
+          scoreInput,
+          calculatedScore: "",
           calculatedPlayTime: "",
         };
       }
@@ -206,21 +206,21 @@ export function TacticalChallengeCalculator() {
       if (item.id === id) {
         const limit = parseInt(item.limitSeconds);
         const score = parseInt(value);
-        let calculatedPlayTime = "";
+        let playTimeInput = "";
 
         if (!isNaN(limit) && limit >= 60 && !isNaN(score)) {
           const playTime = calculatePlayTimeFromScore(item.stage, limit, score);
           if (playTime !== null) {
-            calculatedPlayTime = formatSecondsToTime(playTime);
+            playTimeInput = formatSecondsToTime(playTime);
           }
         }
 
         return {
           ...item,
           scoreInput: value,
-          playTimeInput: "",
+          playTimeInput,
           calculatedScore: "",
-          calculatedPlayTime,
+          calculatedPlayTime: "",
         };
       }
       return item;
@@ -230,9 +230,7 @@ export function TacticalChallengeCalculator() {
   // 총 점수 계산
   const getTotalScore = () => {
     return items.reduce((total, item) => {
-      if (item.calculatedScore) {
-        return total + parseInt(item.calculatedScore);
-      } else if (item.scoreInput) {
+      if (item.scoreInput) {
         const score = parseInt(item.scoreInput);
         return total + (isNaN(score) ? 0 : score);
       }
@@ -317,50 +315,24 @@ export function TacticalChallengeCalculator() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    실제 플레이 시간 <span className="text-muted-foreground font-normal">(또는 점수 입력)</span>
-                  </label>
+                  <label className="text-sm font-medium mb-2 block">실제 플레이 시간</label>
                   <Input
-                    placeholder={
-                      !item.limitSeconds || parseInt(item.limitSeconds) < 60
-                        ? "먼저 제한 시간을 입력하세요"
-                        : item.scoreInput
-                        ? "점수가 입력되어 비활성화됨"
-                        : "mm:ss.SSS (예: 01:23.456)"
-                    }
+                    placeholder="mm:ss.SSS (예: 01:23.456)"
                     value={item.playTimeInput}
                     onChange={(e) => updatePlayTime(item.id, e.target.value)}
-                    disabled={!!item.scoreInput || !item.limitSeconds || parseInt(item.limitSeconds) < 60}
+                    disabled={!item.limitSeconds || parseInt(item.limitSeconds) < 60}
                   />
-                  {item.calculatedScore && (
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      계산된 점수: <span className="font-semibold text-foreground">{parseInt(item.calculatedScore).toLocaleString()}</span>
-                    </p>
-                  )}
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    점수 입력 <span className="text-muted-foreground font-normal">(또는 플레이 시간 입력)</span>
-                  </label>
+                  <label className="text-sm font-medium mb-2 block">점수</label>
                   <Input
                     type="number"
-                    placeholder={
-                      !item.limitSeconds || parseInt(item.limitSeconds) < 60
-                        ? "먼저 제한 시간을 입력하세요"
-                        : item.playTimeInput
-                        ? "플레이 시간이 입력되어 비활성화됨"
-                        : "점수 (예: 56000)"
-                    }
+                    placeholder="점수 (예: 56000)"
                     value={item.scoreInput}
                     onChange={(e) => updateScore(item.id, e.target.value)}
-                    disabled={!!item.playTimeInput || !item.limitSeconds || parseInt(item.limitSeconds) < 60}
+                    disabled={!item.limitSeconds || parseInt(item.limitSeconds) < 60}
                   />
-                  {item.calculatedPlayTime && (
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      계산된 플레이 시간: <span className="font-semibold text-foreground">{item.calculatedPlayTime}</span>
-                    </p>
-                  )}
                 </div>
               </div>
             </CardContent>

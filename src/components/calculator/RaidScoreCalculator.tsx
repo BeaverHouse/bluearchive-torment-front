@@ -160,18 +160,18 @@ export function RaidScoreCalculator() {
     setItems(items.map(item => {
       if (item.id === id) {
         const seconds = parseTimeToSeconds(timeInput);
-        let calculatedScore = "";
+        let scoreInput = "";
 
         if (seconds !== null) {
           const score = calculateScoreFromTime(seconds, item.difficulty, item.timeLimit);
-          calculatedScore = score.toString();
+          scoreInput = score.toString();
         }
 
         return {
           ...item,
           timeInput,
-          scoreInput: "",
-          calculatedScore,
+          scoreInput,
+          calculatedScore: "",
           calculatedTime: "",
         };
       }
@@ -183,18 +183,18 @@ export function RaidScoreCalculator() {
     setItems(items.map(item => {
       if (item.id === id) {
         const score = parseInt(scoreInput);
-        let calculatedTime = "";
+        let timeInput = "";
 
         if (!isNaN(score)) {
           const seconds = calculateTimeFromScore(score, item.difficulty, item.timeLimit);
-          calculatedTime = formatSecondsToTime(seconds);
+          timeInput = formatSecondsToTime(seconds);
         }
 
         return {
           ...item,
           scoreInput,
-          timeInput: "",
-          calculatedTime,
+          timeInput,
+          calculatedTime: "",
           calculatedScore: "",
         };
       }
@@ -202,12 +202,10 @@ export function RaidScoreCalculator() {
     }));
   };
 
-  // 총 점수 계산 (계산된 점수 또는 입력한 점수)
+  // 총 점수 계산
   const getTotalScore = () => {
     return items.reduce((total, item) => {
-      if (item.calculatedScore) {
-        return total + parseInt(item.calculatedScore);
-      } else if (item.scoreInput) {
+      if (item.scoreInput) {
         const score = parseInt(item.scoreInput);
         return total + (isNaN(score) ? 0 : score);
       }
@@ -295,38 +293,22 @@ export function RaidScoreCalculator() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    시간 입력 <span className="text-muted-foreground font-normal">(또는 점수 입력)</span>
-                  </label>
+                  <label className="text-sm font-medium mb-2 block">시간 입력</label>
                   <Input
-                    placeholder={item.scoreInput ? "점수가 입력되어 비활성화됨" : "mm:ss.SSS (예: 01:23.456)"}
+                    placeholder="mm:ss.SSS (예: 01:23.456)"
                     value={item.timeInput}
                     onChange={(e) => updateTime(item.id, e.target.value)}
-                    disabled={!!item.scoreInput}
                   />
-                  {item.calculatedScore && (
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      계산된 점수: <span className="font-semibold text-foreground">{item.calculatedScore}</span>
-                    </p>
-                  )}
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    점수 입력 <span className="text-muted-foreground font-normal">(또는 시간 입력)</span>
-                  </label>
+                  <label className="text-sm font-medium mb-2 block">점수</label>
                   <Input
                     type="number"
-                    placeholder={item.timeInput ? "시간이 입력되어 비활성화됨" : "점수 (예: 8640000)"}
+                    placeholder="점수 (예: 8640000)"
                     value={item.scoreInput}
                     onChange={(e) => updateScore(item.id, e.target.value)}
-                    disabled={!!item.timeInput}
                   />
-                  {item.calculatedTime && (
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      계산된 시간: <span className="font-semibold text-foreground">{item.calculatedTime}</span>
-                    </p>
-                  )}
                 </div>
               </div>
 
@@ -335,7 +317,7 @@ export function RaidScoreCalculator() {
                   기본 점수: {getBaseScore(item.difficulty, item.timeLimit).toLocaleString()}점
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  1초당 감점: {scoreInfo[item.difficulty].timeBonus.toLocaleString()}점
+                  1초당 점수: {scoreInfo[item.difficulty].timeBonus.toLocaleString()}점
                 </p>
               </div>
             </CardContent>
