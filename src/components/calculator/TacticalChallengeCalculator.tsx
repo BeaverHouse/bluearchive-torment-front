@@ -42,6 +42,7 @@ function formatSecondsToTime(seconds: number): string {
 // 3단계: 33750000 x n / (F + 900 x n) + 38000
 // 4단계: 2000000 x n / (F + 600 x n) + 67166.666
 // n: 제한 시간(분), F: 실제 플레이 시간의 프레임 수 (30프레임 기준)
+// Unofficial, but verified via several in-game videos
 function calculateScore(stage: Stage, limitSeconds: number, playTimeSeconds: number): number {
   const F = playTimeSeconds * FPS; // 30프레임 기준 프레임 수
   const n = limitSeconds / 60; // 제한 시간(분)
