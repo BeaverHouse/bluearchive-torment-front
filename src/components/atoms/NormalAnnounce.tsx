@@ -6,12 +6,12 @@ function NormalAnnounce() {
   return (
     <Alert className="mb-3 w-full text-left">
       <Info className="h-4 w-4" />
-      <AlertTitle>S82 게부라 업데이트 + 점수 계산기</AlertTitle>
+      <AlertTitle>사이트 관련 안내</AlertTitle>
       <AlertDescription className="mt-2">
         <div className="mb-2">
-          문제가 있다면 이메일로 알려주세요.
+          AWS 서버 장애로 인해 페이지 응답이 느리거나 깨질 수 있어요.
           <br />
-          PS. 연휴가 지나면 기능 업데이트가 느려질 수 있어요.
+          작업을 통해 최대한 서버 부하를 낮추어 놓은 상태에요.
         </div>
         <Link 
           href="/calculator/score" 
