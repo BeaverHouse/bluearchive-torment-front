@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Moon, Sun, Menu } from "lucide-react";
 import { useState, useEffect } from "react";
 import { TouchProvider } from "@/components/ui/custom/hybridtooltip";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 
 function DarkModeToggleComponent() {
@@ -64,6 +65,8 @@ export default function RootLayout({
     },
   });
 
+  const gaId = process.env.NEXT_PUBLIC_GA_ID || "G-XXXXXXXXXX";
+
   return (
     <html lang="ko">
       <head>
@@ -76,6 +79,7 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
       </head>
       <body>
+        <GoogleAnalytics gaId={gaId} />
         <TouchProvider>
           <QueryClientProvider client={queryClient}>
             <SidebarProvider>

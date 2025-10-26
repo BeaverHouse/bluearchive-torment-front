@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RaidInfo } from "@/types/raid";
 import { getStudentsMap } from "@/utils/character";
 import { SingleSelect } from "./ui/custom/single-select";
+import { trackSummaryTabClick } from "@/utils/analytics";
 
 function MainPage() {
   const { V3Season, setV3Season } = useBAStore();
@@ -80,9 +81,19 @@ function MainPage() {
           }`}
         >
           <TabsTrigger value="search">파티 찾기</TabsTrigger>
-          <TabsTrigger value="summary">요약</TabsTrigger>
+          <TabsTrigger
+            value="summary"
+            onClick={() => trackSummaryTabClick("summary")}
+          >
+            요약
+          </TabsTrigger>
           {seasonTopLevel === "L" && (
-            <TabsTrigger value="summary-lunatic">요약 (루나틱)</TabsTrigger>
+            <TabsTrigger
+              value="summary-lunatic"
+              onClick={() => trackSummaryTabClick("summary-lunatic")}
+            >
+              요약 (루나틱)
+            </TabsTrigger>
           )}
         </TabsList>
         <TabsContent value="search">
