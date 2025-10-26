@@ -116,6 +116,16 @@ export function EditableAnalysisResult({
         const newPartyData = [...prev.partyData];
         const newParty = [...newPartyData[partyIndex]];
 
+        // newCharacterCode가 0이면 슬롯을 비움
+        if (newCharacterCode === 0) {
+          newParty[characterIndex] = 0;
+          newPartyData[partyIndex] = newParty;
+          return {
+            ...prev,
+            partyData: newPartyData,
+          };
+        }
+
         // 캐릭터 코드를 새로운 형식으로 변환 (코드*1000 + 성급*100 + 무기*10 + 조력자여부)
         // 기본값으로 5성, 1무기, 비조력자로 설정
         const existingChar = newParty[characterIndex];

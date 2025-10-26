@@ -9,19 +9,19 @@
     "id": "3S22-1",
     "name": "대결전 S22 실내 시로쿠로 (중장갑,인세인)",
     "top_level": "I",
-    "party_updated": true
+    "party_updated": false
   },
   {
     "id": "3S22-2",
     "name": "대결전 S22 실내 시로쿠로 (탄력장갑,토먼트)",
     "top_level": "T",
-    "party_updated": true
+    "party_updated": false
   },
   {
     "id": "3S22-3",
     "name": "대결전 S22 실내 시로쿠로 (특수장갑,인세인)",
     "top_level": "I",
-    "party_updated": true
+    "party_updated": false
   },
   {
     "id": "S78-0",
@@ -123,6 +123,24 @@
     "id": "S82-0",
     "name": "총력전 S82 야외 게부라",
     "top_level": "L",
+    "party_updated": true
+  },
+  {
+    "id": "3S27-1",
+    "name": "대결전 S27 실내 시로쿠로 (경장갑,토먼트)",
+    "top_level": "T",
+    "party_updated": true
+  },
+  {
+    "id": "3S27-3",
+    "name": "대결전 S27 실내 시로쿠로 (특수장갑,인세인)",
+    "top_level": "I",
+    "party_updated": true
+  },
+  {
+    "id": "3S27-4",
+    "name": "대결전 S27 실내 시로쿠로 (탄력장갑,토먼트)",
+    "top_level": "T",
     "party_updated": true
   }
 ]

@@ -312,7 +312,7 @@ const RaidSummary = ({
                 clearPercent > 50 ? "text-red-600" : ""
               }`}
             >
-              {(data?.clearCount || 0).toLocaleString()} (
+              {(Math.min(data?.clearCount || 0, 20000)).toLocaleString()} (
               {(level === "T"
                 ? tormentClearPercent
                 : lunaticClearPercent
