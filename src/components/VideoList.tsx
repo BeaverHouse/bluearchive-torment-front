@@ -13,6 +13,7 @@ import {
 import { VideoListItem } from "@/types/video";
 import { RaidInfo } from "@/types/raid";
 import raidsData from "../../data/raids.json";
+import { trackVideoCardClick } from "@/utils/analytics";
 
 interface VideoListProps {
   videos: VideoListItem[];
@@ -35,7 +36,17 @@ export function VideoList({ videos }: VideoListProps) {
           const href = `/video-analysis/${video.video_id}?raid_id=${video.raid_id}`;
 
           return (
-            <Link key={video.video_id} href={href}>
+            <Link
+              key={video.video_id}
+              href={href}
+              onClick={() =>
+                trackVideoCardClick(
+                  video.video_id,
+                  video.raid_id || "unknown",
+                  video.score
+                )
+              }
+            >
               <Card className="cursor-pointer hover:shadow-lg transition-shadow bg-card border-border h-full flex flex-col overflow-hidden p-0">
                 <div className="relative aspect-video bg-gray-200 overflow-hidden">
                   <img
