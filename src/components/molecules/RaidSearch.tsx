@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import useBAStore from "../../store/useBAStore";
-import { filteredPartys, getFilters } from "../function";
+import { filteredPartys, getFilters } from "@/lib/partyFilters";
 import PartyCard from "../common/PartyCard";
 import {
   RaidData,
