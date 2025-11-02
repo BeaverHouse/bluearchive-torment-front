@@ -9,6 +9,8 @@ export interface PartyData {
   rank: number;
   score: number;
   partyData: number[][];
+  video_id?: string;
+  raid_id: string;
 }
 
 export interface RaidData {
