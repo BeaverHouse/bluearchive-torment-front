@@ -56,7 +56,7 @@ export const filteredPartys = (
       party.partyData.length >= partyCountRange[0] &&
       party.partyData.length <= partyCountRange[1] &&
       (allowDuplicate || Array.from(new Set(codes)).length === codes.length) &&
-      (!youtubeOnly || youtubeLinkInfos.some(link => link.score == party.score))
+      (!youtubeOnly || !!party.video_id)
     );
   });
 };

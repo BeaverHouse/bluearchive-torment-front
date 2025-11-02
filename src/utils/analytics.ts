@@ -23,12 +23,17 @@ export function trackSummaryTabClick(tabType: 'summary' | 'summary-lunatic') {
 }
 
 /**
- * YouTube 영상 카드 클릭 이벤트
+ * YouTube 영상 클릭 이벤트
  */
-export function trackVideoCardClick(videoId: string, raidId: string, score: number) {
-  trackEvent('video_card_click', {
+export function trackVideoClick(videoId: string, raidId: string, score?: number) {
+  const params: Record<string, string | number> = {
     video_id: videoId,
     raid_id: raidId,
-    score: score,
-  });
+  };
+
+  if (score !== undefined) {
+    params.score = score;
+  }
+
+  trackEvent('video_click', params);
 }

@@ -188,6 +188,15 @@ export function VideoDetail({
   </div>`;
     }
 
+    // 설명 추가
+    if (analysis_result.description) {
+      html += `
+  <h3 style="color: #374151; margin: 30px 0 15px 0;">설명</h3>
+  <div style="border: 1px solid #d1d5db; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+    <p style="color: #6b7280; font-size: 14px; white-space: pre-wrap; margin: 0;">${analysis_result.description}</p>
+  </div>`;
+    }
+
     html += `
 </div>`;
 
@@ -396,6 +405,16 @@ export function VideoDetail({
                         </div>
                       </div>
                     )}
+
+                  {/* 설명 표시 */}
+                  {video.analysis_result.description && (
+                    <div className="bg-card border rounded-lg p-4">
+                      <h4 className="text-lg font-semibold mb-3">설명</h4>
+                      <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                        {video.analysis_result.description}
+                      </p>
+                    </div>
+                  )}
                 </div>
               }
             </TabsContent>
@@ -545,6 +564,16 @@ export function VideoDetail({
                     </div>
                   </div>
                 )}
+
+              {/* 설명 표시 */}
+              {currentVideo.analysis_result.description && (
+                <div className="bg-card border rounded-lg p-4">
+                  <h4 className="text-lg font-semibold mb-3">설명</h4>
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                    {currentVideo.analysis_result.description}
+                  </p>
+                </div>
+              )}
             </div>
           }
         </div>

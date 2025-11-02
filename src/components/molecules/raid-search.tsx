@@ -416,7 +416,7 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
             onCheckedChange={(checked) => setYoutubeOnly(!!checked)}
           />
           <label htmlFor="youtubeOnly" className="text-sm">
-            Youtube 링크 (beta)
+            Youtube 영상
           </label>
         </div>
       </>
@@ -475,6 +475,8 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
                 value={party.score}
                 valueSuffix="점"
                 parties={party.partyData}
+                video_id={party.video_id}
+                raid_id={party.video_id ? (party.raid_id || season) : undefined}
               />
             ))
         ) : (

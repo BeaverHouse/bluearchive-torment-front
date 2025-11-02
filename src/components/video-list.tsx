@@ -13,7 +13,7 @@ import {
 import { VideoListItem } from "@/types/video";
 import { RaidInfo } from "@/types/raid";
 import raidsData from "../../data/raids.json";
-import { trackVideoCardClick } from "@/utils/analytics";
+import { trackVideoClick } from "@/utils/analytics";
 
 interface VideoListProps {
   videos: VideoListItem[];
@@ -40,7 +40,7 @@ export function VideoList({ videos }: VideoListProps) {
               key={video.video_id}
               href={href}
               onClick={() =>
-                trackVideoCardClick(
+                trackVideoClick(
                   video.video_id,
                   video.raid_id || "unknown",
                   video.score
