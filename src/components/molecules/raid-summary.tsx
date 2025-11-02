@@ -391,7 +391,6 @@ const RaidSummary = ({
                 value={count}
                 valueSuffix="명 사용"
                 parties={parties}
-                raid_id={season}
               />
             );
           })}

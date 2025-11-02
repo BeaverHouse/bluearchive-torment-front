@@ -476,7 +476,7 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
                 valueSuffix="점"
                 parties={party.partyData}
                 video_id={party.video_id}
-                raid_id={party.raid_id || season}
+                raid_id={party.video_id ? (party.raid_id || season) : undefined}
               />
             ))
         ) : (

@@ -20,7 +20,7 @@ interface PartyCardProps {
   valueSuffix: string;
   parties: number[][];
   video_id?: string;
-  raid_id: string;
+  raid_id?: string;
 }
 
 const PartyCard: React.FC<PartyCardProps> = ({
@@ -32,7 +32,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
   raid_id,
 }) => {
   const handleVideoClick = () => {
-    if (video_id) {
+    if (video_id && raid_id) {
       trackVideoClick(video_id, raid_id, value);
       window.open(`/video-analysis/${video_id}?raid_id=${raid_id}`, "_blank");
     }
@@ -52,7 +52,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
               <div className="text-lg font-bold text-blue-600">{value}</div>
               <div className="text-xs text-muted-foreground">{valueSuffix}</div>
             </div>
-            {video_id && (
+            {video_id && raid_id && (
               <Button
                 variant="outline"
                 size="sm"

@@ -10,7 +10,7 @@ export interface PartyData {
   score: number;
   partyData: number[][];
   video_id?: string;
-  raid_id: string;
+  raid_id?: string;
 }
 
 export interface RaidData {
