@@ -416,7 +416,7 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
             onCheckedChange={(checked) => setYoutubeOnly(!!checked)}
           />
           <label htmlFor="youtubeOnly" className="text-sm">
-            Youtube 영상 있음
+            Youtube 영상
           </label>
         </div>
       </>

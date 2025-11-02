@@ -6,10 +6,10 @@ function NormalAnnounce() {
   return (
     <Alert className="mb-3 w-full text-left">
       <Info className="h-4 w-4" />
-      <AlertTitle>25.10.26 Update</AlertTitle>
+      <AlertTitle>25.11.02 Update</AlertTitle>
       <AlertDescription className="mt-2">
         <div className="mb-2">
-          대결전 S27 실내 시로쿠로
+          이제 영상이 있으면 파티 정보에 같이 표시돼요.
         </div>
       </AlertDescription>
     </Alert>
