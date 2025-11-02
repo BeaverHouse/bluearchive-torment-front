@@ -1,14 +1,14 @@
 "use client";
 
-import { VideoDetail } from "@/components/VideoDetail";
+import { VideoDetail } from "@/components/video-detail";
 import { getVideoDetail } from "@/lib/api";
 import { VideoAnalysisData, VideoDetailResponse } from "@/types/video";
 import { RaidInfo } from "@/types/raid";
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import raidsData from "../../../../data/raids.json";
-import ErrorPage from "@/components/ErrorPage";
-import Loading from "@/components/common/Loading";
+import ErrorPage from "@/components/error-page";
+import Loading from "@/components/common/loading";
 
 const raids: RaidInfo[] = raidsData as RaidInfo[];
 

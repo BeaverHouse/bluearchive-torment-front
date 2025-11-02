@@ -9,7 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import SingleParty from "../common/SingleParty";
+import SingleParty from "../common/single-party";
 
 interface PartyCardProps {
   rank: number;

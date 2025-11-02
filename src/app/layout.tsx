@@ -2,11 +2,11 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
+import { AppSidebar } from "@/components/app-sidebar";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun, Menu } from "lucide-react";
 import { useState, useEffect } from "react";
-import { TouchProvider } from "@/components/ui/custom/hybridtooltip";
+import { TouchProvider } from "@/components/ui/custom/hybrid-tooltip";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 

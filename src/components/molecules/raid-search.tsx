@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import useBAStore from "../../store/useBAStore";
-import { filteredPartys, getFilters } from "../function";
-import PartyCard from "../common/PartyCard";
+import { filteredPartys, getFilters } from "@/lib/party-filters";
+import PartyCard from "../common/party-card";
 import {
   RaidData,
   FilterData,
@@ -31,7 +31,7 @@ import { Cascader } from "../custom/cascader";
 import { MultiSelect } from "../custom/multi-select";
 import { Pagination } from "../custom/pagination";
 import { lunaticMinScore, tormentMinScore } from "@/constants/assault";
-import Loading from "../common/Loading";
+import Loading from "../common/loading";
 
 const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
   const [PartyCountRange, setPartyCountRange] = useState([0, 99]);
