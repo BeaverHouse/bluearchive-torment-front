@@ -298,6 +298,15 @@ const RaidSummary = ({
           </Button>
         </div>
 
+        {/* Strategy Videos - 영상 분석 페이지로 이동 버튼 */}
+        <Button
+          onClick={handleGoToVideos}
+          className="w-full bg-blue-600 hover:bg-blue-700 h-12 text-base mb-6"
+        >
+          <VideoIcon className="h-5 w-5 mr-2" />
+          영상 분석 페이지로 이동
+        </Button>
+
         {/* Clear Rate Stats */}
         {level !== "I" && (
           <CardWrapper
@@ -382,6 +391,7 @@ const RaidSummary = ({
                 value={count}
                 valueSuffix="명 사용"
                 parties={parties}
+                raid_id={season}
               />
             );
           })}
@@ -638,15 +648,6 @@ const RaidSummary = ({
           </div>
         )}
       </CardWrapper>
-
-      {/* Strategy Videos - 영상 분석 페이지로 이동 버튼 */}
-      <Button
-        onClick={handleGoToVideos}
-        className="w-full bg-blue-600 hover:bg-blue-700 h-12 text-base"
-      >
-        <VideoIcon className="h-5 w-5 mr-2" />
-        영상 분석 페이지로 이동
-      </Button>
     </div>
   );
 };
