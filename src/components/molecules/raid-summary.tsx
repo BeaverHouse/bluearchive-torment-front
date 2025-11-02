@@ -19,10 +19,10 @@ import {
 import Swal from "sweetalert2";
 import { VideoIcon } from "@radix-ui/react-icons";
 import { RaidComponentProps } from "@/types/raid";
-import PartyCard from "../common/PartyCard";
-import Loading from "../common/Loading";
-import CardWrapper from "../common/CardWrapper";
-import { SearchableSelect } from "@/components/SearchableSelect";
+import PartyCard from "../common/party-card";
+import Loading from "../common/loading";
+import CardWrapper from "../common/card-wrapper";
+import { SearchableSelect } from "@/components/searchable-select";
 
 interface RaidSummaryData {
   clearCount: number;

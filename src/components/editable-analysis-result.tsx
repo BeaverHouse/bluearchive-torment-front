@@ -27,9 +27,9 @@ import {
 } from "lucide-react";
 import { AnalysisResult, VideoAnalysisData, SkillOrder } from "@/types/video";
 import { updateVideoAnalysis } from "@/lib/api";
-import { SearchableSelect } from "@/components/SearchableSelect";
+import { SearchableSelect } from "@/components/searchable-select";
 import { getStudentsMap, getCharacterName } from "@/utils/character";
-import { StarRating } from "@/components/StarRating";
+import { StarRating } from "@/components/star-rating";
 import {
   DndContext,
   closestCenter,

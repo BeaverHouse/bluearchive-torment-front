@@ -1,6 +1,6 @@
 "use client";
 
-import { VideoList } from "@/components/VideoList";
+import { VideoList } from "@/components/video-list";
 import {
   getVideoList,
   addVideoToQueue,
@@ -33,9 +33,9 @@ import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import raidsData from "../../../data/raids.json";
 import studentsData from "../../../data/students.json";
-import ErrorPage from "@/components/ErrorPage";
+import ErrorPage from "@/components/error-page";
 import { translations } from "@/constants/assault";
-import { filteredPartys, getFilters } from "@/lib/partyFilters";
+import { filteredPartys, getFilters } from "@/lib/party-filters";
 import {
   Collapsible,
   CollapsibleContent,
@@ -46,7 +46,7 @@ import { Cascader } from "@/components/custom/cascader";
 import { MultiSelect } from "@/components/custom/multi-select";
 import { Checkbox } from "@/components/ui/checkbox";
 import Swal from "sweetalert2";
-import Loading from "@/components/common/Loading";
+import Loading from "@/components/common/loading";
 
 const raids: RaidInfo[] = raidsData as RaidInfo[];
 

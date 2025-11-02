@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Info, ArrowUp } from "lucide-react";
-import BuyMeACoffeeButton from "./Coffee";
+import BuyMeACoffeeButton from "./coffee";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

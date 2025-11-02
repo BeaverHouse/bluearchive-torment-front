@@ -1,10 +1,10 @@
 "use client";
 
 import useBAStore from "../store/useBAStore";
-import RaidSearch from "./molecules/RaidSearch";
-import RaidSummary from "./molecules/RaidSummary";
-import InfoFAB from "./atoms/InfoFAB";
-import NormalAnnounce from "./atoms/NormalAnnounce";
+import RaidSearch from "./molecules/raid-search";
+import RaidSummary from "./molecules/raid-summary";
+import InfoFAB from "./atoms/info-fab";
+import NormalAnnounce from "./atoms/normal-announce";
 import raidsData from "../../data/raids.json";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RaidInfo } from "@/types/raid";
