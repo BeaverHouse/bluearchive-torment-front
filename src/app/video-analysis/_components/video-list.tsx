@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/tooltip";
 import { VideoListItem } from "@/types/video";
 import { RaidInfo } from "@/types/raid";
-import raidsData from "../../data/raids.json";
+import raidsData from "../../../../data/raids.json";
 import { trackVideoClick } from "@/utils/analytics";
 
 interface VideoListProps {

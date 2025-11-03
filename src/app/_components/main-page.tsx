@@ -1,15 +1,15 @@
 "use client";
 
-import useBAStore from "../store/useBAStore";
-import RaidSearch from "./molecules/raid-search";
-import RaidSummary from "./molecules/raid-summary";
-import InfoFAB from "./atoms/info-fab";
-import NormalAnnounce from "./atoms/normal-announce";
-import raidsData from "../../data/raids.json";
+import useBAStore from "@/store/useBAStore";
+import RaidSearch from "@/components/molecules/raid-search";
+import RaidSummary from "@/components/molecules/raid-summary";
+import InfoFAB from "@/components/atoms/info-fab";
+import NormalAnnounce from "@/components/atoms/normal-announce";
+import raidsData from "../../../data/raids.json";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RaidInfo } from "@/types/raid";
 import { getStudentsMap } from "@/utils/character";
-import { SingleSelect } from "./ui/custom/single-select";
+import { SingleSelect } from "@/components/ui/custom/single-select";
 import { trackSummaryTabClick } from "@/utils/analytics";
 
 function MainPage() {

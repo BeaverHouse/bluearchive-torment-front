@@ -1,6 +1,6 @@
 "use client";
 
-import { VideoDetail } from "@/components/video-detail";
+import { VideoDetail } from "../_components/video-detail";
 import { getVideoDetail } from "@/lib/api";
 import { VideoAnalysisData, VideoDetailResponse } from "@/types/video";
 import { RaidInfo } from "@/types/raid";

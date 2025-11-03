@@ -1,6 +1,6 @@
 "use client";
 
-import { VideoList } from "@/components/video-list";
+import { VideoList } from "./_components/video-list";
 import {
   getVideoList,
   addVideoToQueue,
