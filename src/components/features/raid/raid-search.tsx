@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import useBAStore from "@/store/useBAStore";
@@ -462,7 +463,7 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
             ))
         ) : (
           <div className="flex flex-col items-center justify-center py-12">
-            <img src="/empty.webp" alt="Empty" className="h-48 mb-4" />
+            <Image src="/empty.webp" alt="Empty" width={192} height={192} className="mb-4" />
             <p className="text-gray-500 dark:text-gray-400">
               검색 결과가 없어요.
             </p>

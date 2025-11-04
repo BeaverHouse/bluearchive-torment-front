@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import InfoFAB from "./info-fab";
 import { Button } from "@/components/ui/button";
 import NormalAnnounce from "./normal-announce";
@@ -20,7 +21,7 @@ function ErrorPage() {
       <h1 className="text-3xl font-bold">BA Torment</h1>
       <NormalAnnounce />
       <div className="text-center py-8">
-        <img src="/error.png" alt="Error" className="h-48 mx-auto mb-4" />
+        <Image src="/error.png" alt="Error" width={192} height={192} className="mx-auto mb-4" />
         <p className="text-muted-foreground">에러가 발생했어요..</p>
       </div>
       <div className="space-y-2 w-96">

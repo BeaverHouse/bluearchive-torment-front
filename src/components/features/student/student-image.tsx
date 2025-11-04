@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import React from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import {
@@ -35,12 +36,14 @@ export function StudentImage({ code }: StudentImageProps) {
         <HybridTooltipTrigger asChild>
           <div className="flex flex-col items-center cursor-pointer select-none">
             <div className="w-10 h-10 mb-1 relative">
-              <img
+              <Image
                 src={`${
                   process.env.NEXT_PUBLIC_CDN_URL || ""
                 }/batorment/character/${studentID}.webp`}
                 alt={studentName}
-                className={`w-full h-full object-cover rounded ${borderClass}`}
+                width={40}
+                height={40}
+                className={`object-cover rounded ${borderClass}`}
                 draggable={false}
               />
             </div>

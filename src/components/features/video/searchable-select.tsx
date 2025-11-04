@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import * as React from "react"
 import { Check, ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -25,16 +26,20 @@ interface SearchableSelectProps extends BaseSelectProps {
   onValueChange: (value: string) => void
 }
 
-const OptionImage = ({ value, label }: { value: string | number; label: string }) => (
-  <img
-    src={`${process.env.NEXT_PUBLIC_CDN_URL || ""}/batorment/character/${value}.webp`}
-    alt={label}
-    className="w-4 h-4 rounded object-cover flex-shrink-0"
-    onError={(e) => {
-      (e.target as HTMLImageElement).src = "/empty.webp"
-    }}
-  />
-)
+const OptionImage = ({ value, label }: { value: string | number; label: string }) => {
+  const [error, setError] = React.useState(false);
+
+  return (
+    <Image
+      src={error ? "/empty.webp" : `${process.env.NEXT_PUBLIC_CDN_URL || ""}/batorment/character/${value}.webp`}
+      alt={label}
+      width={16}
+      height={16}
+      className="rounded object-cover flex-shrink-0"
+      onError={() => setError(true)}
+    />
+  );
+}
 
 const OptionContent = ({ option, textClassName }: { option: ImageSelectOption; textClassName?: string }) => (
   <div className="flex items-center gap-2 flex-1 min-w-0">

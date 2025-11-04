@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -168,7 +169,7 @@ const RaidSummary = ({
   if (!data || data.clearCount === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-24">
-        <img src="/empty.webp" alt="Empty" className="h-48 w-48 mb-4" />
+        <Image src="/empty.webp" alt="Empty" width={192} height={192} className="mb-4" />
         <p className="text-muted-foreground text-lg">클리어 데이터가 없어요.</p>
       </div>
     );

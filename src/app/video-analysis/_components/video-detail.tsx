@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -366,13 +367,15 @@ export function VideoDetail({
                                       <td className="py-2 px-3 text-sm">
                                         <div className="flex items-center gap-2 min-w-0">
                                           {characterCode > 0 && (
-                                            <img
+                                            <Image
                                               src={`${
                                                 process.env
                                                   .NEXT_PUBLIC_CDN_URL || ""
                                               }/batorment/character/${characterCode}.webp`}
                                               alt={characterName}
-                                              className="w-6 h-6 object-cover rounded flex-shrink-0"
+                                              width={24}
+                                              height={24}
+                                              className="object-cover rounded flex-shrink-0"
                                               onError={(e) => {
                                                 const target =
                                                   e.target as HTMLImageElement;
@@ -525,13 +528,15 @@ export function VideoDetail({
                                   <td className="py-2 px-3 text-sm">
                                     <div className="flex items-center gap-2 min-w-0">
                                       {characterCode > 0 && (
-                                        <img
+                                        <Image
                                           src={`${
                                             process.env.NEXT_PUBLIC_CDN_URL ||
                                             ""
                                           }/batorment/character/${characterCode}.webp`}
                                           alt={characterName}
-                                          className="w-6 h-6 object-cover rounded flex-shrink-0"
+                                          width={24}
+                                          height={24}
+                                          className="object-cover rounded flex-shrink-0"
                                           onError={(e) => {
                                             const target =
                                               e.target as HTMLImageElement;

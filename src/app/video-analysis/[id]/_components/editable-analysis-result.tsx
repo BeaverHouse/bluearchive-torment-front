@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import React, { useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -719,12 +720,14 @@ function SkillOrderItem({
 
             <div className="flex items-center gap-2 min-w-0 flex-1">
               {currentCharacter && (
-                <img
+                <Image
                   src={`${
                     process.env.NEXT_PUBLIC_CDN_URL || ""
                   }/batorment/character/${currentCharacter.code}.webp`}
                   alt={currentCharacter.name}
-                  className="w-5 h-5 object-cover rounded flex-shrink-0"
+                  width={20}
+                  height={20}
+                  className="object-cover rounded flex-shrink-0"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.src = "/empty.webp";
@@ -873,12 +876,14 @@ function SkillOrderItem({
                       value={`${char.type}-${char.order}`}
                     >
                       <div className="flex items-center gap-2">
-                        <img
+                        <Image
                           src={`${
                             process.env.NEXT_PUBLIC_CDN_URL || ""
                           }/batorment/character/${char.code}.webp`}
                           alt={char.name}
-                          className="w-6 h-6 object-cover rounded"
+                          width={24}
+                          height={24}
+                          className="object-cover rounded"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.src = "/empty.webp";

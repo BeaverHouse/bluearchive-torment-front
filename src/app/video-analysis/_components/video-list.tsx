@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -49,10 +50,11 @@ export function VideoList({ videos }: VideoListProps) {
             >
               <Card className="cursor-pointer hover:shadow-lg transition-shadow bg-card border-border h-full flex flex-col overflow-hidden p-0">
                 <div className="relative aspect-video bg-gray-200 overflow-hidden">
-                  <img
+                  <Image
                     src={`https://img.youtube.com/vi/${video.video_id}/maxresdefault.jpg`}
                     alt={video.title}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       target.style.display = "none";
