@@ -693,8 +693,7 @@ function VideoAnalysisContent() {
               </DialogHeader>
               <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                 <p className="text-sm text-blue-800">
-                  ℹ️ 현재 영상 분석은 수동으로 처리되고 있습니다. 추후 자동화
-                  시스템으로 업데이트할 예정입니다.
+                  영상 분석은 AI로 1차 처리된 다음 수동으로 2차 확인을 하고 있어요.
                 </p>
               </div>
               <div className="flex justify-end mb-4">
@@ -755,7 +754,7 @@ function VideoAnalysisContent() {
           {/* 영상 분석 추가 버튼 */}
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
+              <Button className="bg-sky-500 hover:bg-sky-600 w-full sm:w-auto">
                 <Plus className="h-4 w-4 mr-2" />
                 영상 분석 추가
               </Button>

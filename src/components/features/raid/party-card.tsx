@@ -49,7 +49,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
           )}
           <div className="text-right flex items-center gap-2">
             <div className="flex items-center gap-1">
-              <div className="text-lg font-bold text-blue-600">{value}</div>
+              <div className="text-lg font-bold text-sky-500">{value}</div>
               <div className="text-xs text-muted-foreground">{valueSuffix}</div>
             </div>
             {video_id && raid_id && (

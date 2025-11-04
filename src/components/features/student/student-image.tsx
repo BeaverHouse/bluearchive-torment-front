@@ -27,7 +27,7 @@ export function StudentImage({ code }: StudentImageProps) {
   const isAssist = code < 100000 ? 0 : code % 10 === 1;
 
   const borderClass = isAssist
-    ? "border-2 border-green-500"
+    ? "border-2 border-sky-500"
     : "border-2 border-transparent";
 
   return (
@@ -51,7 +51,7 @@ export function StudentImage({ code }: StudentImageProps) {
               <div
                 className={`text-xs text-center w-full ${
                   isAssist
-                    ? "text-green-600 font-bold"
+                    ? "text-sky-500 font-bold"
                     : "text-muted-foreground"
                 }`}
               >
