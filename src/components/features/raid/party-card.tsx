@@ -11,7 +11,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import SingleParty from "../common/single-party";
+import SingleParty from "./single-party";
 import { trackVideoClick } from "@/utils/analytics";
 
 interface PartyCardProps {

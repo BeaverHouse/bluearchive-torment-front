@@ -2,7 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar } from "@/components/layout/app-sidebar";
 import { TouchProvider } from "@/components/ui/custom/hybrid-tooltip";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { DarkModeToggle } from "@/components/layout/dark-mode-toggle";

@@ -1,8 +1,8 @@
 "use client";
 
-import InfoFAB from "./atoms/info-fab";
+import InfoFAB from "./info-fab";
 import { Button } from "@/components/ui/button";
-import NormalAnnounce from "./atoms/normal-announce";
+import NormalAnnounce from "./normal-announce";
 
 function ErrorPage() {
   return (

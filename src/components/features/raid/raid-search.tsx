@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import useBAStore from "../../store/useBAStore";
+import useBAStore from "@/store/useBAStore";
 import { filteredPartys, getFilters } from "@/lib/party-filters";
-import PartyCard from "../common/party-card";
+import PartyCard from "./party-card";
 import {
   RaidData,
   FilterData,
@@ -12,26 +12,26 @@ import {
   YoutubeLinkInfo,
   RaidComponentProps,
 } from "@/types/raid";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
-import { Checkbox } from "../ui/checkbox";
+} from "../../ui/select";
+import { Checkbox } from "../../ui/checkbox";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "../ui/collapsible";
+} from "../../ui/collapsible";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
-import { Cascader } from "../custom/cascader";
-import { MultiSelect } from "../custom/multi-select";
-import { Pagination } from "../custom/pagination";
+import { Cascader } from "../../shared/cascader";
+import { MultiSelect } from "../../shared/multi-select";
+import { Pagination } from "../../shared/pagination";
 import { lunaticMinScore, tormentMinScore } from "@/constants/assault";
-import Loading from "../common/loading";
+import Loading from "../../common/loading";
 
 const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
   const [PartyCountRange, setPartyCountRange] = useState([0, 99]);

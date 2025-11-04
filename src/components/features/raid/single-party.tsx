@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import StudentImage from "./student-image";
+import StudentImage from "../student/student-image";
 
 interface SinglePartyProps {
   party: number[];

@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SingleSelect } from "@/components/ui/custom/single-select";
-import { Pagination } from "@/components/custom/pagination";
+import { Pagination } from "@/components/shared/pagination";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -33,7 +33,7 @@ import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import raidsData from "../../../data/raids.json";
 import studentsData from "../../../data/students.json";
-import ErrorPage from "@/components/error-page";
+import ErrorPage from "@/components/common/error-page";
 import { translations } from "@/constants/assault";
 import { filteredPartys, getFilters } from "@/lib/party-filters";
 import {
@@ -42,8 +42,8 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
-import { Cascader } from "@/components/custom/cascader";
-import { MultiSelect } from "@/components/custom/multi-select";
+import { Cascader } from "@/components/shared/cascader";
+import { MultiSelect } from "@/components/shared/multi-select";
 import { Checkbox } from "@/components/ui/checkbox";
 import Swal from "sweetalert2";
 import Loading from "@/components/common/loading";

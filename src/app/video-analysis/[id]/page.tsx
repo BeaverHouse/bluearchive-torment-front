@@ -7,7 +7,7 @@ import { RaidInfo } from "@/types/raid";
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import raidsData from "../../../../data/raids.json";
-import ErrorPage from "@/components/error-page";
+import ErrorPage from "@/components/common/error-page";
 import Loading from "@/components/common/loading";
 
 const raids: RaidInfo[] = raidsData as RaidInfo[];
