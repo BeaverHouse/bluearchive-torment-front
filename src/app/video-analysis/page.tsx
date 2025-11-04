@@ -243,7 +243,6 @@ function VideoAnalysisContent() {
 
     const filtered = filteredPartys(
       raidData,
-      [],
       ["I", "T", "L"],
       includeList,
       excludeList,

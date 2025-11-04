@@ -1,5 +1,5 @@
 import { categoryMap, lunaticMinScore, tormentMinScore } from "@/constants/assault";
-import { RaidData, PartyData, YoutubeLinkInfo, FilterOption } from "@/types/raid";
+import { RaidData, PartyData, FilterOption } from "@/types/raid";
 
 export const getFilters = (
   rawData: Record<string, Record<string, number>>,
@@ -12,7 +12,7 @@ export const getFilters = (
       .map(([gradeKey, val]) => {
         if (val > 0) {
           const value = parseInt(gradeKey);
-          
+
           return {
             value,
             label: `${studentsMap[key]} ${categoryMap[gradeKey]} (${val})`,
@@ -26,7 +26,6 @@ export const getFilters = (
 
 export const filteredPartys = (
   data: RaidData,
-  youtubeLinkInfos: YoutubeLinkInfo[],
   levelList: string[],
   includeArray: Array<number[]>,
   excludeArray: Array<number>,
