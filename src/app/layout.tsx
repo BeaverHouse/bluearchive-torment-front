@@ -1,56 +1,13 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
-import { Button } from "@/components/ui/button";
-import { Moon, Sun, Menu } from "lucide-react";
-import { useState, useEffect } from "react";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/layout/app-sidebar";
 import { TouchProvider } from "@/components/ui/custom/hybrid-tooltip";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { DarkModeToggle } from "@/components/layout/dark-mode-toggle";
+import { CustomSidebarTrigger } from "@/components/layout/sidebar-trigger";
 import "./globals.css";
-
-function DarkModeToggleComponent() {
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("darkMode");
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-    const shouldBeDark = saved ? saved === "true" : prefersDark;
-    setIsDark(shouldBeDark);
-    document.documentElement.classList.toggle("dark", shouldBeDark);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("darkMode", isDark.toString());
-    document.documentElement.classList.toggle("dark", isDark);
-  }, [isDark]);
-
-  const toggleDarkMode = () => {
-    setIsDark(!isDark);
-  };
-
-  return (
-    <Button
-      variant="outline"
-      size="icon"
-      onClick={toggleDarkMode}
-      className="h-8 w-8"
-    >
-      {isDark ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-    </Button>
-  );
-}
-
-function CustomSidebarTrigger() {
-  return (
-    <SidebarTrigger className="h-8 w-8 inline-flex items-center justify-center rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground">
-      <Menu className="h-4 w-4" />
-    </SidebarTrigger>
-  );
-}
 
 export default function RootLayout({
   children,
@@ -89,7 +46,7 @@ export default function RootLayout({
                   <div className="flex h-14 items-center gap-2 px-4">
                     <CustomSidebarTrigger />
                     <div className="flex-1" />
-                    <DarkModeToggleComponent />
+                    <DarkModeToggle />
                   </div>
                 </header>
                 <div className="flex-1 space-y-4 p-4 pt-6">{children}</div>

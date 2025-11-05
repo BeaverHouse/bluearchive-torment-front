@@ -1,6 +1,6 @@
 "use client";
 
-import { VideoList } from "@/components/video-list";
+import { VideoList } from "./_components/video-list";
 import {
   getVideoList,
   addVideoToQueue,
@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SingleSelect } from "@/components/ui/custom/single-select";
-import { Pagination } from "@/components/custom/pagination";
+import { Pagination } from "@/components/shared/pagination";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -33,7 +33,7 @@ import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import raidsData from "../../../data/raids.json";
 import studentsData from "../../../data/students.json";
-import ErrorPage from "@/components/error-page";
+import ErrorPage from "@/components/common/error-page";
 import { translations } from "@/constants/assault";
 import { filteredPartys, getFilters } from "@/lib/party-filters";
 import {
@@ -42,8 +42,8 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
-import { Cascader } from "@/components/custom/cascader";
-import { MultiSelect } from "@/components/custom/multi-select";
+import { Cascader } from "@/components/shared/cascader";
+import { MultiSelect } from "@/components/shared/multi-select";
 import { Checkbox } from "@/components/ui/checkbox";
 import Swal from "sweetalert2";
 import Loading from "@/components/common/loading";
@@ -243,7 +243,6 @@ function VideoAnalysisContent() {
 
     const filtered = filteredPartys(
       raidData,
-      [],
       ["I", "T", "L"],
       includeList,
       excludeList,
@@ -694,8 +693,7 @@ function VideoAnalysisContent() {
               </DialogHeader>
               <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                 <p className="text-sm text-blue-800">
-                  ℹ️ 현재 영상 분석은 수동으로 처리되고 있습니다. 추후 자동화
-                  시스템으로 업데이트할 예정입니다.
+                  영상 분석은 AI로 1차 처리된 다음 수동으로 2차 확인을 하고 있어요.
                 </p>
               </div>
               <div className="flex justify-end mb-4">
@@ -756,7 +754,7 @@ function VideoAnalysisContent() {
           {/* 영상 분석 추가 버튼 */}
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
+              <Button className="bg-sky-500 hover:bg-sky-600 w-full sm:w-auto">
                 <Plus className="h-4 w-4 mr-2" />
                 영상 분석 추가
               </Button>

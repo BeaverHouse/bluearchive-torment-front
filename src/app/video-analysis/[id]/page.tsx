@@ -1,13 +1,13 @@
 "use client";
 
-import { VideoDetail } from "@/components/video-detail";
+import { VideoDetail } from "../_components/video-detail";
 import { getVideoDetail } from "@/lib/api";
 import { VideoAnalysisData, VideoDetailResponse } from "@/types/video";
 import { RaidInfo } from "@/types/raid";
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import raidsData from "../../../../data/raids.json";
-import ErrorPage from "@/components/error-page";
+import ErrorPage from "@/components/common/error-page";
 import Loading from "@/components/common/loading";
 
 const raids: RaidInfo[] = raidsData as RaidInfo[];
@@ -45,26 +45,17 @@ export default function VideoDetailPage() {
             const { updatedVideos, updatedCurrentVideo } =
               JSON.parse(updatedData);
 
-            // 기존 데이터가 없으면 먼저 API 호출해서 기본 정보 가져오기
-            if (!videoDetail) {
-              const response = await getVideoDetail(
-                videoId,
-                raidId || undefined
-              );
-              setVideoDetail({
-                video_id: videoId,
-                data: updatedVideos,
-                title: response.data.title,
-                raid_id: response.data.raid_id,
-              });
-            } else {
-              // 기존 데이터가 있으면 업데이트된 데이터만 교체
-              setVideoDetail({
-                ...videoDetail,
-                data: updatedVideos,
-              });
-            }
-
+            // API 호출해서 최신 title, raid_id 가져오기
+            const response = await getVideoDetail(
+              videoId,
+              raidId || undefined
+            );
+            setVideoDetail({
+              video_id: videoId,
+              data: updatedVideos, // 편집된 데이터 사용
+              title: response.data.title,
+              raid_id: response.data.raid_id,
+            });
             setCurrentVideo(updatedCurrentVideo);
 
             // 사용한 데이터 제거
@@ -103,7 +94,7 @@ export default function VideoDetailPage() {
     if (videoId) {
       fetchVideo();
     }
-  }, [videoId]);
+  }, [videoId, raidId]);
 
   if (loading) {
     return <Loading />;

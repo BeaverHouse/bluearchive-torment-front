@@ -4,8 +4,8 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { YouTubeEmbed, YouTubePlayerRef } from "@/components/youtube-embed";
-import { EditableAnalysisResult } from "@/components/editable-analysis-result";
+import { YouTubeEmbed, YouTubePlayerRef } from "@/components/features/video/youtube-embed";
+import { EditableAnalysisResult } from "../_components/editable-analysis-result";
 import { VideoAnalysisData } from "@/types/video";
 
 interface EditVideoData {

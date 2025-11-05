@@ -1,8 +1,8 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RaidScoreCalculator } from "@/components/calculator/raid-score-calculator";
-import { TacticalChallengeCalculator } from "@/components/calculator/tactical-challenge-calculator";
+import { RaidScoreCalculator } from "@/components/features/calculator/raid-score-calculator";
+import { TacticalChallengeCalculator } from "@/components/features/calculator/tactical-challenge-calculator";
 
 export default function ScoreCalculatorPage() {
   return (

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -19,10 +20,10 @@ import {
 import Swal from "sweetalert2";
 import { VideoIcon } from "@radix-ui/react-icons";
 import { RaidComponentProps } from "@/types/raid";
-import PartyCard from "../common/party-card";
-import Loading from "../common/loading";
-import CardWrapper from "../common/card-wrapper";
-import { SearchableSelect } from "@/components/searchable-select";
+import PartyCard from "./party-card";
+import Loading from "../../common/loading";
+import CardWrapper from "../../common/card-wrapper";
+import { SearchableSelect } from "../video/searchable-select";
 
 interface RaidSummaryData {
   clearCount: number;
@@ -168,7 +169,7 @@ const RaidSummary = ({
   if (!data || data.clearCount === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-24">
-        <img src="/empty.webp" alt="Empty" className="h-48 w-48 mb-4" />
+        <Image src="/empty.webp" alt="Empty" width={192} height={192} className="mb-4" />
         <p className="text-muted-foreground text-lg">클리어 데이터가 없어요.</p>
       </div>
     );
@@ -301,7 +302,7 @@ const RaidSummary = ({
         {/* Strategy Videos - 영상 분석 페이지로 이동 버튼 */}
         <Button
           onClick={handleGoToVideos}
-          className="w-full bg-blue-600 hover:bg-blue-700 h-12 text-base mb-6"
+          className="w-full bg-sky-500 hover:bg-sky-600 h-12 text-base mb-6"
         >
           <VideoIcon className="h-5 w-5 mr-2" />
           영상 분석 페이지로 이동
@@ -313,7 +314,7 @@ const RaidSummary = ({
             className={`border-l-4 mx-0 ${
               clearPercent > 50 ? "border-l-red-500" : "border-l-blue-500"
             }`}
-            icon={<Trophy className="h-5 w-5 text-blue-600" />}
+            icon={<Trophy className="h-5 w-5 text-sky-500" />}
             title="Platinum 클리어 비율"
           >
             <div
@@ -340,7 +341,7 @@ const RaidSummary = ({
 
       {highUsageCharacters.length > 0 && (
         <CardWrapper
-          icon={<ThumbsUp className="h-5 w-5 text-blue-600" />}
+          icon={<ThumbsUp className="h-5 w-5 text-sky-500" />}
           title="많이 쓰인 학생들"
           description="10% 이상 사용된 학생들이에요."
         >
@@ -372,7 +373,7 @@ const RaidSummary = ({
 
       {/* Top 5 Parties */}
       <CardWrapper
-        icon={<Users className="h-5 w-5 text-blue-600" />}
+        icon={<Users className="h-5 w-5 text-sky-500" />}
         title="Top 5 Party"
         description="전용무기와 배치는 표시되지 않아요."
       >
@@ -399,7 +400,7 @@ const RaidSummary = ({
       {/* Party Composition Chart */}
 
       <CardWrapper
-        icon={<Target className="h-5 w-5 text-blue-600" />}
+        icon={<Target className="h-5 w-5 text-sky-500" />}
         title="파티 비율"
       >
         <div className="space-y-4 mx-1">
@@ -411,7 +412,7 @@ const RaidSummary = ({
                 </span>
                 <div className="flex gap-4 text-xs">
                   <span className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-blue-500 rounded"></div>
+                    <div className="w-3 h-3 bg-sky-500 rounded"></div>
                     1PT
                   </span>
                   <span className="flex items-center gap-1">
@@ -430,7 +431,7 @@ const RaidSummary = ({
               </div>
               <div className="relative h-6 bg-gray-200 rounded overflow-hidden">
                 <div
-                  className="absolute top-0 left-0 h-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium"
+                  className="absolute top-0 left-0 h-full bg-sky-500 flex items-center justify-center text-white text-xs font-medium"
                   style={{ width: `${row.one}%` }}
                 >
                   {row.one > 5 ? `${row.one}%` : ""}
@@ -466,7 +467,7 @@ const RaidSummary = ({
       </CardWrapper>
 
       <CardWrapper
-        icon={<TrendingUp className="h-5 w-5 text-blue-600" />}
+        icon={<TrendingUp className="h-5 w-5 text-sky-500" />}
         title="캐릭터 사용률"
       >
         <div className="space-y-6">
@@ -581,7 +582,7 @@ const RaidSummary = ({
       </CardWrapper>
 
       <CardWrapper
-        icon={<ChartNoAxesColumn className="h-5 w-5 text-blue-600" />}
+        icon={<ChartNoAxesColumn className="h-5 w-5 text-sky-500" />}
         title="캐릭터 성장 통계"
       >
         <div className="mb-4">
@@ -633,7 +634,7 @@ const RaidSummary = ({
                     <div className="relative h-4 bg-gray-200 rounded overflow-hidden">
                       <div
                         className={`absolute top-0 left-0 h-full flex items-center justify-center text-white text-xs font-medium transition-all ${
-                          percent > 20 ? "bg-red-500" : "bg-blue-500"
+                          percent > 20 ? "bg-red-500" : "bg-sky-500"
                         }`}
                         style={{ width: `${(percent / maxPercent) * 100}%` }}
                       >

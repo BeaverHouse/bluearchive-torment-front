@@ -1,14 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun } from "lucide-react";
+import { useState, useEffect } from "react";
 
-interface DarkModeToggleProps {
-  children: React.ReactNode;
-}
-
-export default function DarkModeToggle({ children }: DarkModeToggleProps) {
+export function DarkModeToggle() {
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
@@ -31,23 +27,13 @@ export default function DarkModeToggle({ children }: DarkModeToggleProps) {
   };
 
   return (
-    <div className={isDark ? "dark" : ""}>
-      <div style={{ position: "relative" }}>
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={toggleDarkMode}
-          style={{
-            position: "fixed",
-            top: 20,
-            right: 20,
-            zIndex: 1000,
-          }}
-        >
-          {isDark ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-        </Button>
-        {children}
-      </div>
-    </div>
+    <Button
+      variant="outline"
+      size="icon"
+      onClick={toggleDarkMode}
+      className="h-8 w-8"
+    >
+      {isDark ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+    </Button>
   );
 }

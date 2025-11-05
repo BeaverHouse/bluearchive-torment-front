@@ -1,6 +1,5 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Info, Play } from "lucide-react";
-import Link from "next/link";
+import { Info } from "lucide-react";
 
 function NormalAnnounce() {
   return (

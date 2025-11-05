@@ -1,37 +1,37 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import useBAStore from "../../store/useBAStore";
+import useBAStore from "@/store/useBAStore";
 import { filteredPartys, getFilters } from "@/lib/party-filters";
-import PartyCard from "../common/party-card";
+import PartyCard from "./party-card";
 import {
   RaidData,
   FilterData,
   FilterOption,
-  YoutubeLinkInfo,
   RaidComponentProps,
 } from "@/types/raid";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
-import { Checkbox } from "../ui/checkbox";
+} from "../../ui/select";
+import { Checkbox } from "../../ui/checkbox";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "../ui/collapsible";
+} from "../../ui/collapsible";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
-import { Cascader } from "../custom/cascader";
-import { MultiSelect } from "../custom/multi-select";
-import { Pagination } from "../custom/pagination";
+import { Cascader } from "../../shared/cascader";
+import { MultiSelect } from "../../shared/multi-select";
+import { Pagination } from "../../shared/pagination";
 import { lunaticMinScore, tormentMinScore } from "@/constants/assault";
-import Loading from "../common/loading";
+import Loading from "../../common/loading";
 
 const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
   const [PartyCountRange, setPartyCountRange] = useState([0, 99]);
@@ -109,18 +109,6 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
     throwOnError: true,
   });
 
-  const getLinksQuery = useQuery({
-    queryKey: ["getLinks", season],
-    queryFn: async () => {
-      try {
-        const linksModule = await import(`../../../data/links/${season}.json`);
-        return linksModule.default;
-      } catch {
-        return [];
-      }
-    },
-    throwOnError: false,
-  });
 
   // data가 변경될 때마다 필터 값을 업데이트
   useEffect(() => {
@@ -185,16 +173,11 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
     setAssist,
   ]);
 
-  if (
-    getPartyDataQuery.isLoading ||
-    getFilterDataQuery.isLoading ||
-    getLinksQuery.isLoading
-  )
+  if (getPartyDataQuery.isLoading || getFilterDataQuery.isLoading)
     return <Loading />;
 
   const partyData = getPartyDataQuery.data;
   const filterData = getFilterDataQuery.data;
-  const youtubeLinkInfos: YoutubeLinkInfo[] = getLinksQuery.data || [];
 
   // 파티 데이터와 필터 데이터 분리
   const data: RaidData = {
@@ -425,7 +408,6 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
 
   const parties = filteredPartys(
     data,
-    youtubeLinkInfos,
     LevelList,
     IncludeList,
     ExcludeList,
@@ -481,7 +463,7 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
             ))
         ) : (
           <div className="flex flex-col items-center justify-center py-12">
-            <img src="/empty.webp" alt="Empty" className="h-48 mb-4" />
+            <Image src="/empty.webp" alt="Empty" width={192} height={192} className="mb-4" />
             <p className="text-gray-500 dark:text-gray-400">
               검색 결과가 없어요.
             </p>

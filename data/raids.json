@@ -27,13 +27,7 @@
     "id": "S78-0",
     "name": "총력전 S78 야외 게부라",
     "top_level": "L",
-    "party_updated": true
-  },
-  {
-    "id": "3S23-3",
-    "name": "대결전 S23 시가지 예로니무스 (탄력장갑,인세인)",
-    "top_level": "I",
-    "party_updated": true
+    "party_updated": false
   },
   {
     "id": "3S23-1",
@@ -45,6 +39,12 @@
     "id": "3S23-2",
     "name": "대결전 S23 시가지 예로니무스 (중장갑,토먼트)",
     "top_level": "T",
+    "party_updated": true
+  },
+  {
+    "id": "3S23-3",
+    "name": "대결전 S23 시가지 예로니무스 (탄력장갑,인세인)",
+    "top_level": "I",
     "party_updated": true
   },
   {
@@ -142,5 +142,11 @@
     "name": "대결전 S27 실내 시로쿠로 (탄력장갑,토먼트)",
     "top_level": "T",
     "party_updated": true
+  },
+  {
+    "id": "S83-0",
+    "name": "총력전 S83 시가지 예소드",
+    "top_level": "L",
+    "party_updated": false
   }
 ]

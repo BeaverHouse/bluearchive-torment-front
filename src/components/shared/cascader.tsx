@@ -164,7 +164,7 @@ export function Cascader({
                             e.stopPropagation();
                             removeValue(index);
                           }}
-                          className="ml-1 hover:text-blue-600 cursor-pointer flex-shrink-0"
+                          className="ml-1 hover:text-sky-500 cursor-pointer flex-shrink-0"
                         >
                           <X className="h-3 w-3" />
                         </div>

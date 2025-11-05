@@ -1,6 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Play, Calendar, Star, Award } from "lucide-react";
@@ -12,7 +14,7 @@ import {
 } from "@/components/ui/tooltip";
 import { VideoListItem } from "@/types/video";
 import { RaidInfo } from "@/types/raid";
-import raidsData from "../../data/raids.json";
+import raidsData from "../../../../data/raids.json";
 import { trackVideoClick } from "@/utils/analytics";
 
 interface VideoListProps {
@@ -25,6 +27,47 @@ function getRaidName(raidId: string | null): string | null {
   if (!raidId) return null;
   const raid = raids.find((r) => r.id === raidId);
   return raid?.name || null;
+}
+
+// YouTube 썸네일 품질 fallback
+const YOUTUBE_THUMBNAIL_QUALITIES = [
+  'sddefault',     // 640x480 - 대부분 존재
+  'hqdefault',     // 480x360 - 거의 항상 존재
+] as const;
+
+function YouTubeThumbnail({ videoId, title }: { videoId: string; title: string }) {
+  const [qualityIndex, setQualityIndex] = useState(0);
+  const [error, setError] = useState(false);
+
+  const currentQuality = YOUTUBE_THUMBNAIL_QUALITIES[qualityIndex];
+
+  const handleError = () => {
+    if (qualityIndex < YOUTUBE_THUMBNAIL_QUALITIES.length - 1) {
+      // 다음 품질로 fallback
+      setQualityIndex(qualityIndex + 1);
+    } else {
+      // 모든 품질 실패 시
+      setError(true);
+    }
+  };
+
+  if (error) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-gray-300 dark:bg-gray-700">
+        <Play className="h-16 w-16 text-gray-400" />
+      </div>
+    );
+  }
+
+  return (
+    <Image
+      src={`https://img.youtube.com/vi/${videoId}/${currentQuality}.jpg`}
+      alt={title}
+      fill
+      className="object-cover"
+      onError={handleError}
+    />
+  );
 }
 
 export function VideoList({ videos }: VideoListProps) {
@@ -49,15 +92,7 @@ export function VideoList({ videos }: VideoListProps) {
             >
               <Card className="cursor-pointer hover:shadow-lg transition-shadow bg-card border-border h-full flex flex-col overflow-hidden p-0">
                 <div className="relative aspect-video bg-gray-200 overflow-hidden">
-                  <img
-                    src={`https://img.youtube.com/vi/${video.video_id}/maxresdefault.jpg`}
-                    alt={video.title}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = "none";
-                    }}
-                  />
+                  <YouTubeThumbnail videoId={video.video_id} title={video.title} />
                   <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                     <Play className="h-10 w-10 text-white" />
                   </div>

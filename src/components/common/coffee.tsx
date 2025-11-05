@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 function BuyMeACoffeeButton() {
   return (
     <a
@@ -6,7 +8,7 @@ function BuyMeACoffeeButton() {
       rel="noreferrer"
       style={{ marginTop: "40px", marginBottom: "10px" }}
     >
-      <img src="/bmc-button.png" alt="buy me a coffee" width={200} />
+      <Image src="/bmc-button.png" alt="buy me a coffee" width={200} height={56} />
     </a>
   );
 }
