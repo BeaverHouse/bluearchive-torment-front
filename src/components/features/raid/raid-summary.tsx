@@ -312,7 +312,7 @@ const RaidSummary = ({
         {level !== "I" && (
           <CardWrapper
             className={`border-l-4 mx-0 ${
-              clearPercent > 50 ? "border-l-red-500" : "border-l-blue-500"
+              clearPercent > 50 ? "border-l-red-500" : "border-l-sky-500"
             }`}
             icon={<Trophy className="h-5 w-5 text-sky-500" />}
             title="Platinum 클리어 비율"
