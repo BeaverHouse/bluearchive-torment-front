@@ -1,0 +1,54 @@
+import React from "react";
+
+interface CharTableType {
+  key: string;
+  name: string;
+  percent: number;
+}
+
+interface CharacterUsageTableProps {
+  title: string;
+  data: CharTableType[];
+}
+
+export const CharacterUsageTable = React.memo(
+  ({ title, data }: CharacterUsageTableProps) => {
+    return (
+      <div className="min-w-0">
+        <h4 className="font-bold mb-2 text-center text-sm sm:text-base">
+          {title}
+        </h4>
+        <div className="max-h-80 overflow-y-auto border rounded">
+          <table className="w-full text-sm">
+            <thead className="sticky top-0 bg-background">
+              <tr className="border-b">
+                <th className="text-left p-1 sm:p-2">이름</th>
+                <th className="text-right p-1 sm:p-2">사용률 (%)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((char) => (
+                <tr key={char.key} className="border-b hover:bg-muted/50">
+                  <td className="p-1 sm:p-2 truncate">{char.name}</td>
+                  <td
+                    className={`p-1 sm:p-2 text-right ${
+                      char.percent > 90
+                        ? "text-red-600 font-bold"
+                        : char.percent > 20
+                        ? "text-purple-600 font-bold"
+                        : ""
+                    }`}
+                  >
+                    {char.percent}%
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  }
+);
+
+CharacterUsageTable.displayName = "CharacterUsageTable";

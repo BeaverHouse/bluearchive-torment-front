@@ -25,6 +25,7 @@ import PartyCard from "./party-card";
 import Loading from "../../common/loading";
 import CardWrapper from "../../common/card-wrapper";
 import { SearchableSelect } from "../video/searchable-select";
+import { CharacterUsageTable } from "./character-usage-table";
 
 interface RaidSummaryData {
   clearCount: number;
@@ -466,110 +467,9 @@ const RaidSummary = ({
         <div className="space-y-6">
           {/* Mobile: Stack tables vertically, Desktop: 3 columns */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            {/* Striker Table */}
-            <div className="min-w-0">
-              <h4 className="font-bold mb-2 text-center text-sm sm:text-base">
-                STRIKER
-              </h4>
-              <div className="max-h-80 overflow-y-auto border rounded">
-                <table className="w-full text-sm">
-                  <thead className="sticky top-0 bg-background">
-                    <tr className="border-b">
-                      <th className="text-left p-1 sm:p-2">이름</th>
-                      <th className="text-right p-1 sm:p-2">사용률 (%)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {strikerData.map((char) => (
-                      <tr key={char.key} className="border-b hover:bg-muted/50">
-                        <td className="p-1 sm:p-2 truncate">{char.name}</td>
-                        <td
-                          className={`p-1 sm:p-2 text-right ${
-                            char.percent > 90
-                              ? "text-red-600 font-bold"
-                              : char.percent > 20
-                              ? "text-purple-600 font-bold"
-                              : ""
-                          }`}
-                        >
-                          {char.percent}%
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Special Table */}
-            <div className="min-w-0">
-              <h4 className="font-bold mb-2 text-center text-sm sm:text-base">
-                SPECIAL
-              </h4>
-              <div className="max-h-80 overflow-y-auto border rounded">
-                <table className="w-full text-sm">
-                  <thead className="sticky top-0 bg-background">
-                    <tr className="border-b">
-                      <th className="text-left p-1 sm:p-2">이름</th>
-                      <th className="text-right p-1 sm:p-2">사용률 (%)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {specialData.map((char) => (
-                      <tr key={char.key} className="border-b hover:bg-muted/50">
-                        <td className="p-1 sm:p-2 truncate">{char.name}</td>
-                        <td
-                          className={`p-1 sm:p-2 text-right ${
-                            char.percent > 90
-                              ? "text-red-600 font-bold"
-                              : char.percent > 20
-                              ? "text-purple-600 font-bold"
-                              : ""
-                          }`}
-                        >
-                          {char.percent}%
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Assist Table */}
-            <div className="min-w-0">
-              <h4 className="font-bold mb-2 text-center text-sm sm:text-base">
-                조력자
-              </h4>
-              <div className="max-h-80 overflow-y-auto border rounded">
-                <table className="w-full text-sm">
-                  <thead className="sticky top-0 bg-background">
-                    <tr className="border-b">
-                      <th className="text-left p-1 sm:p-2">이름</th>
-                      <th className="text-right p-1 sm:p-2">사용률 (%)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {assistData.map((char) => (
-                      <tr key={char.key} className="border-b hover:bg-muted/50">
-                        <td className="p-1 sm:p-2 truncate">{char.name}</td>
-                        <td
-                          className={`p-1 sm:p-2 text-right ${
-                            char.percent > 90
-                              ? "text-red-600 font-bold"
-                              : char.percent > 20
-                              ? "text-purple-600 font-bold"
-                              : ""
-                          }`}
-                        >
-                          {char.percent}%
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <CharacterUsageTable title="STRIKER" data={strikerData} />
+            <CharacterUsageTable title="SPECIAL" data={specialData} />
+            <CharacterUsageTable title="조력자" data={assistData} />
           </div>
         </div>
       </CardWrapper>
