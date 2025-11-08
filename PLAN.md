@@ -4,26 +4,21 @@
 1. 시간 유틸리티 함수 통합 (`/src/utils/time.ts`)
 2. 레이드 유틸리티 함수 통합 (`/src/utils/raid.ts`)
 3. 공통 필터 컴포넌트 생성 및 교체 (`party-filter.tsx`)
+4. 핵심 컴포넌트 메모이제이션
+   - `PartyCard` - React.memo + useCallback
+   - `SingleParty` - React.memo + useMemo
+   - `StudentImage` - React.memo + useMemo
+   - `MultiSelect`, `Cascader` - React.memo + useCallback
+5. 필터 옵션 최적화
+   - raid-search.tsx: filterOptions, excludeOptions, assistOptions useMemo
+   - video-analysis/page.tsx: 옵션 배열 useMemo + getFilteredParties useCallback
+6. 데이터 계산 메모이제이션
+   - React Query staleTime/gcTime 설정 (5분/10분)
+7. 이미지 최적화
+   - StudentImage에 loading="lazy", quality={75} 속성
+   - placeholder="empty" 추가
 
 ## 🔲 남은 작업
-
-### 4. 핵심 컴포넌트 메모이제이션
-- `PartyCard` - React.memo + useCallback
-- `SingleParty` - React.memo + useMemo
-- `StudentImage` - React.memo + useMemo
-- `MultiSelect`, `Cascader` - React.memo
-
-### 5. 필터 옵션 최적화
-- raid-search.tsx: filterOptions useMemo
-- video-analysis/page.tsx: 옵션 배열 useMemo
-
-### 6. 데이터 계산 메모이제이션
-- studentsMap, raidInfos useMemo
-- React Query staleTime/cacheTime 설정
-
-### 7. 이미지 최적화
-- StudentImage에 loading="lazy", quality 속성
-- blur placeholder 추가
 
 ### 8. 필터 상태 리팩토링
 - useReducer로 필터 상태 통합

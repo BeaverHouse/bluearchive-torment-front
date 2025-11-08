@@ -31,12 +31,12 @@ const PartyCard: React.FC<PartyCardProps> = ({
   video_id,
   raid_id,
 }) => {
-  const handleVideoClick = () => {
+  const handleVideoClick = React.useCallback(() => {
     if (video_id && raid_id) {
       trackVideoClick(video_id, raid_id, value);
       window.open(`/video-analysis/${video_id}?raid_id=${raid_id}`, "_blank");
     }
-  };
+  }, [video_id, raid_id, value]);
 
   return (
     <Card className="relative w-full mx-auto mb-4 max-w-none">
@@ -91,4 +91,4 @@ const PartyCard: React.FC<PartyCardProps> = ({
   );
 };
 
-export default PartyCard;
+export default React.memo(PartyCard);

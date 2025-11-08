@@ -15,7 +15,7 @@ interface MultiSelectProps extends BaseSelectProps {
   onChange?: (value: (string | number)[]) => void;
 }
 
-export function MultiSelect({
+export const MultiSelect = React.memo(function MultiSelect({
   options,
   value = [],
   onChange,
@@ -27,33 +27,45 @@ export function MultiSelect({
   const [open, setOpen] = React.useState(false);
   const [searchValue, setSearchValue] = React.useState("");
 
-  const handleSelect = (selectedValue: string | number) => {
-    const newValue = [...value];
-    const existingIndex = newValue.findIndex((item) => item === selectedValue);
+  const handleSelect = React.useCallback(
+    (selectedValue: string | number) => {
+      const newValue = [...value];
+      const existingIndex = newValue.findIndex((item) => item === selectedValue);
 
-    if (existingIndex >= 0) {
-      newValue.splice(existingIndex, 1);
-    } else {
-      newValue.push(selectedValue);
-    }
+      if (existingIndex >= 0) {
+        newValue.splice(existingIndex, 1);
+      } else {
+        newValue.push(selectedValue);
+      }
 
-    onChange?.(newValue);
-  };
+      onChange?.(newValue);
+    },
+    [value, onChange]
+  );
 
-  const isSelected = (selectedValue: string | number) => {
-    return value.includes(selectedValue);
-  };
+  const isSelected = React.useCallback(
+    (selectedValue: string | number) => {
+      return value.includes(selectedValue);
+    },
+    [value]
+  );
 
-  const removeValue = (valueToRemove: string | number, e: React.MouseEvent) => {
-    e.stopPropagation();
-    const newValue = value.filter((item) => item !== valueToRemove);
-    onChange?.(newValue);
-  };
+  const removeValue = React.useCallback(
+    (valueToRemove: string | number, e: React.MouseEvent) => {
+      e.stopPropagation();
+      const newValue = value.filter((item) => item !== valueToRemove);
+      onChange?.(newValue);
+    },
+    [value, onChange]
+  );
 
-  const clearAll = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onChange?.([]);
-  };
+  const clearAll = React.useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onChange?.([]);
+    },
+    [onChange]
+  );
 
   const filteredOptions = React.useMemo(() => {
     if (!showSearch || !searchValue) return options;
@@ -161,4 +173,4 @@ export function MultiSelect({
       </PopoverContent>
     </Popover>
   );
-}
+});

@@ -13,9 +13,9 @@ interface SinglePartyProps {
  */
 export function SingleParty({ party }: SinglePartyProps) {
   // If party member is lower than 6, insert zero between the last 1xxxx(1xxxxxxx) and 2xxxx(2xxxxxxx)
-  let finalParty = party;
+  const finalParty = React.useMemo(() => {
+    if (party.length >= 6) return party;
 
-  if (party.length < 6) {
     const strikers = party.filter((code) => {
       if (code === 0) return false;
       const firstDigit = Math.floor(
@@ -33,8 +33,8 @@ export function SingleParty({ party }: SinglePartyProps) {
 
     const emptySlots = 6 - party.length;
     const zeros = Array(emptySlots).fill(0);
-    finalParty = [...strikers, ...zeros, ...specials];
-  }
+    return [...strikers, ...zeros, ...specials];
+  }, [party]);
 
   return (
     <div className="grid grid-cols-6 gap-2 p-2 mb-1 rounded border bg-muted/20">
@@ -49,4 +49,4 @@ export function SingleParty({ party }: SinglePartyProps) {
   );
 }
 
-export default SingleParty;
+export default React.memo(SingleParty);

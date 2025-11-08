@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Clock, RefreshCw, Copy, CheckCircle } from "lucide-react";
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, useMemo, useCallback } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import raidsData from "../../../data/raids.json";
 import studentsData from "../../../data/students.json";
@@ -227,7 +227,7 @@ function VideoAnalysisContent() {
   };
 
   // 필터링된 파티 계산
-  const getFilteredParties = () => {
+  const getFilteredParties = useCallback(() => {
     if (!isFilterMode || !filterData) {
       return filteredVideos;
     }
@@ -253,10 +253,56 @@ function VideoAnalysisContent() {
 
     const filteredScores = new Set(filtered.map((p) => p.score));
     return allVideos.filter((video) => filteredScores.has(video.score));
-  };
+  }, [
+    isFilterMode,
+    filterData,
+    filteredVideos,
+    allVideos,
+    scoreRange,
+    includeList,
+    excludeList,
+    assist,
+    partyCountRange,
+    hardExclude,
+    allowDuplicate,
+  ]);
+
+  // 필터 옵션 메모이제이션
+  const filterOptions = useMemo(
+    () => (filterData ? getFilters(filterData.filters, studentsMap) : []),
+    [filterData, studentsMap]
+  );
+
+  const excludeOptions = useMemo(
+    () =>
+      filterData
+        ? Object.keys(filterData.filters).map((key) => ({
+            value: parseInt(key),
+            label: studentsMap[key],
+          }))
+        : [],
+    [filterData, studentsMap]
+  );
+
+  const assistOptions = useMemo(
+    () => (filterData ? getFilters(filterData.assistFilters, studentsMap) : []),
+    [filterData, studentsMap]
+  );
+
+  // raids 옵션 배열 메모이제이션
+  const raidsSelectOptions = useMemo(
+    () => [
+      { value: "all", label: "전체" },
+      ...raids.map((raid) => ({
+        value: raid.id,
+        label: raid.name,
+      })),
+    ],
+    []
+  );
 
   // 표시할 비디오 계산
-  const getDisplayVideos = () => {
+  const getDisplayVideos = useCallback(() => {
     if (!isFilterMode) {
       return videos;
     }
@@ -265,10 +311,10 @@ function VideoAnalysisContent() {
     const startIndex = (currentPage - 1) * pageSize;
     const endIndex = startIndex + pageSize;
     return filtered.slice(startIndex, endIndex);
-  };
+  }, [isFilterMode, videos, currentPage, pageSize, getFilteredParties]);
 
   // 페이지네이션 정보 계산
-  const getFilterModePagination = () => {
+  const getFilterModePagination = useCallback(() => {
     if (!isFilterMode) {
       return pagination;
     }
@@ -283,7 +329,7 @@ function VideoAnalysisContent() {
       has_next: currentPage < totalPages,
       has_prev: currentPage > 1,
     };
-  };
+  }, [isFilterMode, pagination, currentPage, pageSize, getFilteredParties]);
 
   const handleAddToQueue = async () => {
     if (!queueRaidId || !youtubeUrl) {
@@ -462,12 +508,9 @@ function VideoAnalysisContent() {
                   if (updates.hardExclude !== undefined) setHardExclude(updates.hardExclude);
                   if (updates.allowDuplicate !== undefined) setAllowDuplicate(updates.allowDuplicate);
                 }}
-                filterOptions={getFilters(filterData.filters, studentsMap)}
-                excludeOptions={Object.keys(filterData.filters).map((key) => ({
-                  value: parseInt(key),
-                  label: studentsMap[key],
-                }))}
-                assistOptions={getFilters(filterData.assistFilters, studentsMap)}
+                filterOptions={filterOptions}
+                excludeOptions={excludeOptions}
+                assistOptions={assistOptions}
                 minPartys={0}
                 maxPartys={20}
                 showYoutubeOnly={false}
@@ -508,13 +551,7 @@ function VideoAnalysisContent() {
 
       <div className="mb-6 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
         <SingleSelect
-          options={[
-            { value: "all", label: "전체" },
-            ...raids.map((raid) => ({
-              value: raid.id,
-              label: raid.name,
-            })),
-          ]}
+          options={raidsSelectOptions}
           value={selectedRaid}
           onChange={handleRaidChange}
           placeholder="총력전/대결전 선택"

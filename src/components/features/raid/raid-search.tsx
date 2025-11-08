@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import useBAStore from "@/store/useBAStore";
 import { filteredPartys, getFilters } from "@/lib/party-filters";
@@ -77,6 +77,8 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
       }
     },
     throwOnError: true,
+    staleTime: 1000 * 60 * 5, // 5분 동안 데이터를 fresh 상태로 유지
+    gcTime: 1000 * 60 * 10, // 10분 동안 캐시 유지 (구 cacheTime)
   });
 
   const getFilterDataQuery = useQuery({
@@ -96,6 +98,8 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
       }
     },
     throwOnError: true,
+    staleTime: 1000 * 60 * 5, // 5분 동안 데이터를 fresh 상태로 유지
+    gcTime: 1000 * 60 * 10, // 10분 동안 캐시 유지 (구 cacheTime)
   });
 
 
@@ -162,9 +166,6 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
     setAssist,
   ]);
 
-  if (getPartyDataQuery.isLoading || getFilterDataQuery.isLoading)
-    return <Loading />;
-
   const partyData = getPartyDataQuery.data;
   const filterData = getFilterDataQuery.data;
 
@@ -179,6 +180,25 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
     filters: filterData?.filters || {},
     assistFilters: filterData?.assistFilters || {},
   };
+
+  const filterOptions = useMemo(
+    () => getFilters(combinedFilterData.filters, studentsMap) as FilterOption[],
+    [combinedFilterData.filters, studentsMap]
+  );
+
+  const excludeOptions = useMemo(
+    () =>
+      Object.keys(combinedFilterData.filters).map((key) => ({
+        value: parseInt(key),
+        label: studentsMap[key],
+      })),
+    [combinedFilterData.filters, studentsMap]
+  );
+
+  const assistOptions = useMemo(
+    () => getFilters(combinedFilterData.assistFilters, studentsMap) as FilterOption[],
+    [combinedFilterData.assistFilters, studentsMap]
+  );
 
   const handleFilterChange = (updates: Partial<PartyFilterState>) => {
     if ('scoreRange' in updates) setScoreRange(updates.scoreRange);
@@ -208,6 +228,9 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
     YoutubeOnly
   );
 
+  if (getPartyDataQuery.isLoading || getFilterDataQuery.isLoading)
+    return <Loading />;
+
   return (
     <>
       <div className="mx-auto mb-5 w-full">
@@ -229,12 +252,9 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
                 youtubeOnly: YoutubeOnly,
               }}
               onFilterChange={handleFilterChange}
-              filterOptions={getFilters(combinedFilterData.filters, studentsMap) as FilterOption[]}
-              excludeOptions={Object.keys(combinedFilterData.filters).map((key) => ({
-                value: parseInt(key),
-                label: studentsMap[key],
-              }))}
-              assistOptions={getFilters(combinedFilterData.assistFilters, studentsMap) as FilterOption[]}
+              filterOptions={filterOptions}
+              excludeOptions={excludeOptions}
+              assistOptions={assistOptions}
               minPartys={data.minPartys}
               maxPartys={data.maxPartys}
               showYoutubeOnly={true}
