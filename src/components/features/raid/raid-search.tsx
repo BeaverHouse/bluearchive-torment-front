@@ -20,7 +20,8 @@ import {
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { Pagination } from "../../shared/pagination";
 import Loading from "../../common/loading";
-import { PartyFilter, PartyFilterState } from "./party-filter";
+import { PartyFilter } from "./party-filter";
+import { PartyFilterState } from "@/types/filter";
 
 const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
   const [PartyCountRange, setPartyCountRange] = useState([0, 99]);
@@ -201,14 +202,17 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
   );
 
   const handleFilterChange = (updates: Partial<PartyFilterState>) => {
-    if ('scoreRange' in updates) setScoreRange(updates.scoreRange);
+    // Zustand store 업데이트
+    if (updates.scoreRange !== undefined) setScoreRange(updates.scoreRange);
     if (updates.includeList !== undefined) setIncludeList(updates.includeList);
     if (updates.excludeList !== undefined) setExcludeList(updates.excludeList);
     if (updates.assist !== undefined) setAssist(updates.assist);
-    if (updates.partyCountRange !== undefined) setPartyCountRange(updates.partyCountRange as [number, number]);
     if (updates.hardExclude !== undefined) setHardExclude(updates.hardExclude);
     if (updates.allowDuplicate !== undefined) setAllowDuplicate(updates.allowDuplicate);
     if (updates.youtubeOnly !== undefined) setYoutubeOnly(updates.youtubeOnly);
+
+    // Local state 업데이트
+    if (updates.partyCountRange !== undefined) setPartyCountRange(updates.partyCountRange);
   };
 
   const confirmReset = () => {

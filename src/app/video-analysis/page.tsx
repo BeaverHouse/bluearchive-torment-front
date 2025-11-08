@@ -37,6 +37,7 @@ import ErrorPage from "@/components/common/error-page";
 import { filteredPartys, getFilters } from "@/lib/party-filters";
 import { generateSearchKeyword } from "@/utils/raid";
 import { PartyFilter } from "@/components/features/raid/party-filter";
+import { usePartyFilter } from "@/hooks/use-party-filter";
 import {
   Collapsible,
   CollapsibleContent,
@@ -70,18 +71,21 @@ function VideoAnalysisContent() {
     has_prev: false,
   });
 
-  // 필터 상태
+  // 페이지네이션 상태
   const [pageSize, setPageSize] = useState(15);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // 파티 필터 상태
-  const [scoreRange, setScoreRange] = useState<[number, number] | undefined>(undefined);
-  const [includeList, setIncludeList] = useState<Array<number[]>>([]);
-  const [excludeList, setExcludeList] = useState<number[]>([]);
-  const [assist, setAssist] = useState<number[] | undefined>(undefined);
-  const [partyCountRange, setPartyCountRange] = useState<[number, number]>([0, 99]);
-  const [hardExclude, setHardExclude] = useState(false);
-  const [allowDuplicate, setAllowDuplicate] = useState(false);
+  // 파티 필터 상태 (usePartyFilter 훅 사용)
+  const { filters, updateFilters, resetFilters } = usePartyFilter({
+    scoreRange: undefined,
+    includeList: [],
+    excludeList: [],
+    assist: undefined,
+    partyCountRange: [0, 99],
+    hardExclude: false,
+    allowDuplicate: false,
+    youtubeOnly: false,
+  });
 
   const studentsMap = studentsData as Record<string, string>;
 
@@ -115,13 +119,12 @@ function VideoAnalysisContent() {
     if (raidValue === "all") {
       setPagination((prev) => ({ ...prev, page: 1, limit: 15 }));
       setCurrentPage(1);
-      setScoreRange([0, 100000000]);
-      setIncludeList([]);
-      setExcludeList([]);
-      setAssist(undefined);
-      setPartyCountRange([0, 99]);
+      resetFilters({
+        scoreRange: [0, 100000000],
+        partyCountRange: [0, 99],
+      });
     }
-  }, [raidFromUrl]);
+  }, [raidFromUrl, resetFilters]);
 
   // 필터 데이터 로드
   useEffect(() => {
@@ -206,16 +209,13 @@ function VideoAnalysisContent() {
   };
 
   // 필터 초기화 함수
-  const removeFilters = () => {
-    setScoreRange([0, 100000000]);
-    setIncludeList([]);
-    setExcludeList([]);
-    setAssist(undefined);
-    setPartyCountRange([0, 99]);
-    setHardExclude(false);
-    setAllowDuplicate(false);
+  const handleResetFilters = useCallback(() => {
+    resetFilters({
+      scoreRange: [0, 100000000],
+      partyCountRange: [0, 99],
+    });
     setCurrentPage(1);
-  };
+  }, [resetFilters]);
 
   // 비디오 데이터를 파티 데이터로 변환
   const convertVideosToPartyData = (videoList: VideoListItem[]) => {
@@ -241,31 +241,19 @@ function VideoAnalysisContent() {
 
     const filtered = filteredPartys(
       raidData,
-      scoreRange,
-      includeList,
-      excludeList,
-      assist,
-      partyCountRange,
-      hardExclude,
-      allowDuplicate,
+      filters.scoreRange,
+      filters.includeList,
+      filters.excludeList,
+      filters.assist,
+      filters.partyCountRange,
+      filters.hardExclude,
+      filters.allowDuplicate,
       false
     );
 
     const filteredScores = new Set(filtered.map((p) => p.score));
     return allVideos.filter((video) => filteredScores.has(video.score));
-  }, [
-    isFilterMode,
-    filterData,
-    filteredVideos,
-    allVideos,
-    scoreRange,
-    includeList,
-    excludeList,
-    assist,
-    partyCountRange,
-    hardExclude,
-    allowDuplicate,
-  ]);
+  }, [isFilterMode, filterData, filteredVideos, allVideos, filters]);
 
   // 필터 옵션 메모이제이션
   const filterOptions = useMemo(
@@ -490,24 +478,8 @@ function VideoAnalysisContent() {
             </CollapsibleTrigger>
             <CollapsibleContent className="border-l border-r border-b border-gray-200 p-4 dark:border-gray-700">
               <PartyFilter
-                filters={{
-                  scoreRange,
-                  includeList,
-                  excludeList,
-                  assist,
-                  partyCountRange,
-                  hardExclude,
-                  allowDuplicate,
-                }}
-                onFilterChange={(updates) => {
-                  if ('scoreRange' in updates) setScoreRange(updates.scoreRange);
-                  if (updates.includeList !== undefined) setIncludeList(updates.includeList);
-                  if (updates.excludeList !== undefined) setExcludeList(updates.excludeList);
-                  if (updates.assist !== undefined) setAssist(updates.assist);
-                  if (updates.partyCountRange !== undefined) setPartyCountRange(updates.partyCountRange);
-                  if (updates.hardExclude !== undefined) setHardExclude(updates.hardExclude);
-                  if (updates.allowDuplicate !== undefined) setAllowDuplicate(updates.allowDuplicate);
-                }}
+                filters={filters}
+                onFilterChange={updateFilters}
                 filterOptions={filterOptions}
                 excludeOptions={excludeOptions}
                 assistOptions={assistOptions}
@@ -516,7 +488,7 @@ function VideoAnalysisContent() {
                 showYoutubeOnly={false}
                 onReset={() => {
                   const confirm = window.confirm("모든 캐릭터 필터가 리셋됩니다.");
-                  if (confirm) removeFilters();
+                  if (confirm) handleResetFilters();
                 }}
               />
             </CollapsibleContent>
