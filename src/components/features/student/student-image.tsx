@@ -21,10 +21,25 @@ interface StudentImageProps {
  * @param name Student name (to use in tooltip)
  */
 export function StudentImage({ code }: StudentImageProps) {
-  const studentID = code < 100000 ? code : Math.floor(code / 1000);
-  const studentName = getCharacterName(studentID);
-  const gradeKey = code < 100000 ? -1 : Math.floor((code % 1000) / 10);
-  const isAssist = code < 100000 ? 0 : code % 10 === 1;
+  const studentID = React.useMemo(
+    () => (code < 100000 ? code : Math.floor(code / 1000)),
+    [code]
+  );
+
+  const studentName = React.useMemo(
+    () => getCharacterName(studentID),
+    [studentID]
+  );
+
+  const gradeKey = React.useMemo(
+    () => (code < 100000 ? -1 : Math.floor((code % 1000) / 10)),
+    [code]
+  );
+
+  const isAssist = React.useMemo(
+    () => (code < 100000 ? 0 : code % 10 === 1),
+    [code]
+  );
 
   const borderClass = isAssist
     ? "border-2 border-sky-500"
@@ -45,6 +60,9 @@ export function StudentImage({ code }: StudentImageProps) {
                 height={40}
                 className={`object-cover rounded ${borderClass}`}
                 draggable={false}
+                loading="lazy"
+                quality={75}
+                placeholder="empty"
               />
             </div>
             {gradeKey >= 10 && (
@@ -68,4 +86,4 @@ export function StudentImage({ code }: StudentImageProps) {
   );
 }
 
-export default StudentImage;
+export default React.memo(StudentImage);

@@ -13,18 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Cascader } from "@/components/shared/cascader";
 import { MultiSelect } from "@/components/shared/multi-select";
 import { FilterOption } from "@/types/raid";
+import { PartyFilterState } from "@/types/filter";
 import { scoreInfo } from "@/constants/score";
-
-export interface PartyFilterState {
-  includeList: number[][];
-  excludeList: number[];
-  assist: number[] | undefined;
-  partyCountRange: [number, number];
-  hardExclude: boolean;
-  allowDuplicate: boolean;
-  scoreRange?: [number, number]; // [minScore, maxScore]
-  youtubeOnly?: boolean;
-}
 
 interface PartyFilterProps {
   // 필터 상태

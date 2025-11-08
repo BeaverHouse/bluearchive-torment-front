@@ -16,7 +16,7 @@ interface CascaderProps extends BaseSelectProps {
   multiple?: boolean;
 }
 
-export function Cascader({
+export const Cascader = React.memo(function Cascader({
   options,
   value = [],
   onChange,
@@ -29,7 +29,7 @@ export function Cascader({
   const [open, setOpen] = React.useState(false);
   const [searchValue, setSearchValue] = React.useState("");
 
-  const handleSelect = (selectedValue: number[]) => {
+  const handleSelect = React.useCallback((selectedValue: number[]) => {
     if (!multiple) {
       onChange?.([selectedValue]);
       setOpen(false);
@@ -86,25 +86,31 @@ export function Cascader({
     }
 
     onChange?.(newValue);
-  };
+  }, [multiple, value, onChange, options, setOpen]);
 
-  const isSelected = (selectedValue: number[]) => {
-    return value.some(
-      (item) =>
-        item.length === selectedValue.length &&
-        item.every((val, idx) => val === selectedValue[idx])
-    );
-  };
+  const isSelected = React.useCallback(
+    (selectedValue: number[]) => {
+      return value.some(
+        (item) =>
+          item.length === selectedValue.length &&
+          item.every((val, idx) => val === selectedValue[idx])
+      );
+    },
+    [value]
+  );
 
-  const removeValue = (indexToRemove: number) => {
-    const newValue = [...value];
-    newValue.splice(indexToRemove, 1);
-    onChange?.(newValue);
-  };
+  const removeValue = React.useCallback(
+    (indexToRemove: number) => {
+      const newValue = [...value];
+      newValue.splice(indexToRemove, 1);
+      onChange?.(newValue);
+    },
+    [value, onChange]
+  );
 
-  const clearAll = () => {
+  const clearAll = React.useCallback(() => {
     onChange?.([]);
-  };
+  }, [onChange]);
 
   const filteredOptions = React.useMemo(() => {
     if (!showSearch || !searchValue) return options;
@@ -305,4 +311,4 @@ export function Cascader({
       </PopoverContent>
     </Popover>
   );
-}
+});

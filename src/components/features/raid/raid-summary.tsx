@@ -5,26 +5,23 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { basePartyCounts, categoryMap } from "@/constants/assault";
-import { generateSearchKeyword } from "@/utils/raid";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Users,
   Trophy,
   Target,
-  Copy,
-  CheckCircle,
   TrendingUp,
   ThumbsUp,
   ChartNoAxesColumn,
 } from "lucide-react";
-import Swal from "sweetalert2";
 import { VideoIcon } from "@radix-ui/react-icons";
 import { RaidComponentProps } from "@/types/raid";
 import PartyCard from "./party-card";
 import Loading from "../../common/loading";
 import CardWrapper from "../../common/card-wrapper";
 import { SearchableSelect } from "../video/searchable-select";
+import { CharacterUsageTable } from "./character-usage-table";
 
 interface RaidSummaryData {
   clearCount: number;
@@ -36,6 +33,7 @@ interface RaidSummaryData {
 
 interface CharTableType {
   key: string;
+  studentId: string;
   name: string;
   percent: number;
 }
@@ -50,13 +48,12 @@ interface PartyTableType {
 
 const RaidSummary = ({
   season,
-  seasonDescription = "",
+  seasonDescription: _seasonDescription = "",
   studentsMap,
   level,
 }: RaidComponentProps) => {
   const router = useRouter();
   const [Character, setCharacter] = useState<number | null>(null);
-  const [copiedSearchTerm, setCopiedSearchTerm] = useState(false);
   const [showAllHighUsage, setShowAllHighUsage] = useState(false);
 
   const getSummaryDataQuery = useQuery({
@@ -102,19 +99,6 @@ const RaidSummary = ({
   useEffect(() => {
     setCharacter(null);
   }, [season]);
-
-  const searchKeyword = generateSearchKeyword(seasonDescription, level);
-
-  const copySearchTerm = async () => {
-    try {
-      await navigator.clipboard.writeText(searchKeyword);
-      setCopiedSearchTerm(true);
-      setTimeout(() => setCopiedSearchTerm(false), 2000);
-      Swal.fire("복사되었습니다!");
-    } catch (err) {
-      console.error("Failed to copy search term:", err);
-    }
-  };
 
   const handleGoToVideos = () => {
     router.push(`/video-analysis?raid=${season}`);
@@ -177,6 +161,7 @@ const RaidSummary = ({
     )
     .map(([key, value], idx) => ({
       key: (idx + 1).toString(),
+      studentId: key,
       name: studentsMap[key],
       percent: Number(
         (
@@ -196,6 +181,7 @@ const RaidSummary = ({
     )
     .map(([key, value], idx) => ({
       key: (idx + 1).toString(),
+      studentId: key,
       name: studentsMap[key],
       percent: Number(
         (
@@ -214,6 +200,7 @@ const RaidSummary = ({
     )
     .map(([key, value], idx) => ({
       key: (idx + 1).toString(),
+      studentId: key,
       name: studentsMap[key],
       percent: Number(
         (
@@ -263,35 +250,8 @@ const RaidSummary = ({
 
   return (
     <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8 max-w-7xl">
-      {/* Header with Search Term */}
+      {/* Header */}
       <div className="mb-6 sm:mb-8">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 mb-4">
-          <span className="text-sm text-muted-foreground shrink-0">
-            검색어:
-          </span>
-          <code className="px-2 py-1 bg-muted rounded text-xs sm:text-sm break-all">
-            {searchKeyword}
-          </code>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={copySearchTerm}
-            className="flex items-center gap-1 shrink-0"
-          >
-            {copiedSearchTerm ? (
-              <>
-                <CheckCircle className="h-3 w-3" />
-                <span className="hidden sm:inline">Copied!</span>
-              </>
-            ) : (
-              <>
-                <Copy className="h-3 w-3" />
-                <span className="hidden sm:inline">Copy</span>
-              </>
-            )}
-          </Button>
-        </div>
-
         {/* Strategy Videos - 영상 분석 페이지로 이동 버튼 */}
         <Button
           onClick={handleGoToVideos}
@@ -466,110 +426,9 @@ const RaidSummary = ({
         <div className="space-y-6">
           {/* Mobile: Stack tables vertically, Desktop: 3 columns */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            {/* Striker Table */}
-            <div className="min-w-0">
-              <h4 className="font-bold mb-2 text-center text-sm sm:text-base">
-                STRIKER
-              </h4>
-              <div className="max-h-80 overflow-y-auto border rounded">
-                <table className="w-full text-sm">
-                  <thead className="sticky top-0 bg-background">
-                    <tr className="border-b">
-                      <th className="text-left p-1 sm:p-2">이름</th>
-                      <th className="text-right p-1 sm:p-2">사용률 (%)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {strikerData.map((char) => (
-                      <tr key={char.key} className="border-b hover:bg-muted/50">
-                        <td className="p-1 sm:p-2 truncate">{char.name}</td>
-                        <td
-                          className={`p-1 sm:p-2 text-right ${
-                            char.percent > 90
-                              ? "text-red-600 font-bold"
-                              : char.percent > 20
-                              ? "text-purple-600 font-bold"
-                              : ""
-                          }`}
-                        >
-                          {char.percent}%
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Special Table */}
-            <div className="min-w-0">
-              <h4 className="font-bold mb-2 text-center text-sm sm:text-base">
-                SPECIAL
-              </h4>
-              <div className="max-h-80 overflow-y-auto border rounded">
-                <table className="w-full text-sm">
-                  <thead className="sticky top-0 bg-background">
-                    <tr className="border-b">
-                      <th className="text-left p-1 sm:p-2">이름</th>
-                      <th className="text-right p-1 sm:p-2">사용률 (%)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {specialData.map((char) => (
-                      <tr key={char.key} className="border-b hover:bg-muted/50">
-                        <td className="p-1 sm:p-2 truncate">{char.name}</td>
-                        <td
-                          className={`p-1 sm:p-2 text-right ${
-                            char.percent > 90
-                              ? "text-red-600 font-bold"
-                              : char.percent > 20
-                              ? "text-purple-600 font-bold"
-                              : ""
-                          }`}
-                        >
-                          {char.percent}%
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Assist Table */}
-            <div className="min-w-0">
-              <h4 className="font-bold mb-2 text-center text-sm sm:text-base">
-                조력자
-              </h4>
-              <div className="max-h-80 overflow-y-auto border rounded">
-                <table className="w-full text-sm">
-                  <thead className="sticky top-0 bg-background">
-                    <tr className="border-b">
-                      <th className="text-left p-1 sm:p-2">이름</th>
-                      <th className="text-right p-1 sm:p-2">사용률 (%)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {assistData.map((char) => (
-                      <tr key={char.key} className="border-b hover:bg-muted/50">
-                        <td className="p-1 sm:p-2 truncate">{char.name}</td>
-                        <td
-                          className={`p-1 sm:p-2 text-right ${
-                            char.percent > 90
-                              ? "text-red-600 font-bold"
-                              : char.percent > 20
-                              ? "text-purple-600 font-bold"
-                              : ""
-                          }`}
-                        >
-                          {char.percent}%
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <CharacterUsageTable title="STRIKER" data={strikerData} />
+            <CharacterUsageTable title="SPECIAL" data={specialData} />
+            <CharacterUsageTable title="조력자" data={assistData} />
           </div>
         </div>
       </CardWrapper>
