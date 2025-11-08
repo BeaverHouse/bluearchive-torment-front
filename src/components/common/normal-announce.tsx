@@ -5,10 +5,12 @@ function NormalAnnounce() {
   return (
     <Alert className="mb-3 w-full text-left">
       <Info className="h-4 w-4" />
-      <AlertTitle>25.11.02 Update</AlertTitle>
+      <AlertTitle>25.11.09 Update</AlertTitle>
       <AlertDescription className="mt-2">
         <div className="mb-2">
-          이제 영상이 있으면 파티 정보에 같이 표시돼요.
+          1. 예소드 정보를 추가했어요.
+          <br />
+          2. 총력전 점수 계산기가 이제 4분 30초 옵션을 지원해요.
         </div>
       </AlertDescription>
     </Alert>
