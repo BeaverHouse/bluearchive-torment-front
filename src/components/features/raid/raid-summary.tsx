@@ -37,6 +37,7 @@ interface RaidSummaryData {
 
 interface CharTableType {
   key: string;
+  studentId: string;
   name: string;
   percent: number;
 }
@@ -178,6 +179,7 @@ const RaidSummary = ({
     )
     .map(([key, value], idx) => ({
       key: (idx + 1).toString(),
+      studentId: key,
       name: studentsMap[key],
       percent: Number(
         (
@@ -197,6 +199,7 @@ const RaidSummary = ({
     )
     .map(([key, value], idx) => ({
       key: (idx + 1).toString(),
+      studentId: key,
       name: studentsMap[key],
       percent: Number(
         (
@@ -215,6 +218,7 @@ const RaidSummary = ({
     )
     .map(([key, value], idx) => ({
       key: (idx + 1).toString(),
+      studentId: key,
       name: studentsMap[key],
       percent: Number(
         (
