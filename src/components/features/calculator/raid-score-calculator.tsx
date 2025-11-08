@@ -16,7 +16,7 @@ import { scoreInfo } from "@/constants/score";
 import { parseTimeToSeconds, formatSecondsToTime } from "@/utils/time";
 
 type Difficulty = "normal" | "hard" | "veryHard" | "hardcore" | "extreme" | "insane" | "torment" | "lunatic";
-type TimeLimit = "3min" | "4min";
+type TimeLimit = "3min" | "4min" | "4min30s";
 
 const DIFFICULTY_LABELS: Record<Difficulty, string> = {
   normal: "Normal",
@@ -44,7 +44,9 @@ interface CalculatorItem {
 // 기본 점수 계산 (base + HP 점수)
 function getBaseScore(difficulty: Difficulty, timeLimit: TimeLimit): number {
   const info = scoreInfo[difficulty];
-  return timeLimit === "3min" ? info.threeMinuteBase : info.fourMinuteBase;
+  if (timeLimit === "3min") return info.threeMinuteBase;
+  if (timeLimit === "4min30s") return info.fourAndHalfMinuteBase;
+  return info.fourMinuteBase;
 }
 
 // 시간으로 점수 계산
@@ -266,6 +268,7 @@ export function RaidScoreCalculator() {
                     <SelectContent>
                       <SelectItem value="3min">3분</SelectItem>
                       <SelectItem value="4min">4분</SelectItem>
+                      <SelectItem value="4min30s">4분 30초</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
