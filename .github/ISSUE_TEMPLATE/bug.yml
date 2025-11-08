@@ -1,0 +1,47 @@
+name: Bug Report
+description: Report about something malfunctioning or not working. DO NOT USE THIS TEMPLATE TO REPORT OTHER ISSUES.
+title: "bug: "
+labels: ["Bug"]
+assignees:
+  - HU-Lee
+body:
+  - type: checkboxes
+    attributes:
+      label: WARNING
+      description: |
+        This template is about something malfunctioning or not working. (ex. website crash, code is not working) 
+        DO NOT USE THIS TEMPLATE TO REPORT CONTENT OR REQUEST THE FEATURE. Use the discussion instead.
+      options:
+        - label: I understand this and I want to report the bug
+          required: true
+  - type: textarea
+    id: current-behavior
+    attributes:
+      label: Current behavior
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: If you don't know, just leave it blank.
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: textarea
+    id: other-information
+    attributes:
+      label: Other information
+      description: |
+        Add any related information.
+        - OS
+        - Device info
+        - Browser
+        - Reference..

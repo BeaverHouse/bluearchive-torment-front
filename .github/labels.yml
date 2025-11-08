@@ -1,0 +1,24 @@
+- name: "Dependency"
+  color: EAEABC
+- name: "CI/CD"
+  color: FFFFFF
+- name: "Docs"
+  color: 96EFFF
+- name: "Feature"
+  color: FFD0EC
+
+- name: "Bug"
+  color: D04848
+- name: "Fix"
+  color: D04848
+- name: "Security"
+  color: D04848
+
+- name: "Modify"
+  color: 5319E7
+- name: "Refactor"
+  color: 000000
+- name: "Chore"
+  color: FFFDDC
+- name: "Test"
+  color: F6B26B
