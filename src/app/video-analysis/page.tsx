@@ -407,7 +407,7 @@ function VideoAnalysisContent() {
       {/* RaidSearch와 동일한 필터 UI */}
       {isFilterMode && filterData && (
         <div className="mx-auto mb-5 w-full">
-          <Collapsible defaultOpen>
+          <Collapsible>
             <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg border border-gray-200 p-4 hover:bg-gray-50 dark:hover:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-800">
               <span className="text-sm font-medium">파티 Filter</span>
               <ChevronDownIcon className="h-4 w-4 transition-transform" />
