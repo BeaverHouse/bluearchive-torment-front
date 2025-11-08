@@ -1,4 +1,4 @@
-import { categoryMap, lunaticMinScore, tormentMinScore } from "@/constants/assault";
+import { categoryMap } from "@/constants/assault";
 import { RaidData, PartyData, FilterOption } from "@/types/raid";
 
 export const getFilters = (
@@ -26,7 +26,7 @@ export const getFilters = (
 
 export const filteredPartys = (
   data: RaidData,
-  levelList: string[],
+  scoreRange: [number, number] | undefined,
   includeArray: Array<number[]>,
   excludeArray: Array<number>,
   assist: Array<number> | undefined,
@@ -41,12 +41,9 @@ export const filteredPartys = (
     const codes = students.map((num) => Math.floor(num / 1000));
     const pureStudents = students.filter((num) => num % 10 !== 1);
     const partyAssist = students.find((num) => num % 10 === 1) || null;
-    
-    // v3에서는 LEVEL이 없으므로 점수로 난이도 판단
-    const level = getScoreLevel(party.score);
 
     return (
-      levelList.includes(level) &&
+      (!scoreRange || (party.score >= scoreRange[0] && party.score <= scoreRange[1])) &&
       includeAll(pureStudents, includeArray) &&
       // 포함 캐릭터에 대해서는 본인 캐릭터 목록에 모두 있어야 함
       !excludeArray.some((exclude) => (hardExclude ? students : pureStudents).some((num) => isInFilter([exclude], num))) &&
@@ -58,13 +55,6 @@ export const filteredPartys = (
       (!youtubeOnly || !!party.video_id)
     );
   });
-};
-
-const getScoreLevel = (score: number): string => {
-  // 점수 기반으로 난이도 판단 (임시 로직, 실제 기준에 맞게 조정 필요)
-  if (score >= lunaticMinScore) return "L"; // Lunatic
-  if (score >= tormentMinScore) return "T"; // Torment
-  return "I"; // Insane
 };
 
 const getNumber = (arr: number[]) => arr[0] * 100 + arr[1];

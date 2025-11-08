@@ -12,26 +12,15 @@ import {
   FilterOption,
   RaidComponentProps,
 } from "@/types/raid";
-import { Button } from "../../ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../ui/select";
-import { Checkbox } from "../../ui/checkbox";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "../../ui/collapsible";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
-import { Cascader } from "../../shared/cascader";
-import { MultiSelect } from "../../shared/multi-select";
 import { Pagination } from "../../shared/pagination";
-import { lunaticMinScore, tormentMinScore } from "@/constants/assault";
 import Loading from "../../common/loading";
+import { PartyFilter, PartyFilterState } from "./party-filter";
 
 const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
   const [PartyCountRange, setPartyCountRange] = useState([0, 99]);
@@ -39,14 +28,14 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
   const [PageSize, setPageSize] = useState(10);
 
   const {
-    LevelList,
+    ScoreRange,
     IncludeList,
     ExcludeList,
     Assist,
     HardExclude,
     AllowDuplicate,
     YoutubeOnly,
-    setLevelList,
+    setScoreRange,
     setIncludeList,
     setExcludeList,
     setAssist,
@@ -59,7 +48,7 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
   useEffect(() => {
     setPage(1);
   }, [
-    LevelList,
+    ScoreRange,
     IncludeList,
     ExcludeList,
     Assist,
@@ -191,224 +180,25 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
     assistFilters: filterData?.assistFilters || {},
   };
 
-  const topScore = data.parties[0]?.score || 0;
-  const levelCategoryCount =
-    topScore > lunaticMinScore ? 3 : topScore > tormentMinScore ? 2 : 1;
-
-  const levelOptions = [
-    {
-      value: "I",
-      label: "Insane",
-    },
-    {
-      value: "T",
-      label: "Torment",
-    },
-    {
-      value: "L",
-      label: "Lunatic",
-    },
-  ].slice(0, levelCategoryCount);
+  const handleFilterChange = (updates: Partial<PartyFilterState>) => {
+    if ('scoreRange' in updates) setScoreRange(updates.scoreRange);
+    if (updates.includeList !== undefined) setIncludeList(updates.includeList);
+    if (updates.excludeList !== undefined) setExcludeList(updates.excludeList);
+    if (updates.assist !== undefined) setAssist(updates.assist);
+    if (updates.partyCountRange !== undefined) setPartyCountRange(updates.partyCountRange as [number, number]);
+    if (updates.hardExclude !== undefined) setHardExclude(updates.hardExclude);
+    if (updates.allowDuplicate !== undefined) setAllowDuplicate(updates.allowDuplicate);
+    if (updates.youtubeOnly !== undefined) setYoutubeOnly(updates.youtubeOnly);
+  };
 
   const confirmReset = () => {
     const confirm = window.confirm("모든 캐릭터 필터가 리셋됩니다.");
     if (confirm) removeFilters();
   };
 
-  const FilterComponent = () => {
-    return (
-      <>
-        <Button
-          className="w-60 mb-5"
-          onClick={confirmReset}
-          variant="destructive"
-        >
-          필터 Reset
-        </Button>
-        <br />
-        {/* 난이도 & 파티 수 Filter */}
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-center gap-6 mb-6">
-          {/* 난이도 Filter */}
-          <div className="flex flex-col items-center">
-            <label className="text-sm font-medium mb-2">난이도</label>
-            <div className="flex gap-2">
-              {levelOptions.map((option) => (
-                <Button
-                  key={option.value}
-                  variant={
-                    LevelList.includes(option.value) ? "default" : "outline"
-                  }
-                  size="sm"
-                  onClick={() => {
-                    if (LevelList.includes(option.value)) {
-                      setLevelList(
-                        LevelList.filter((level) => level !== option.value)
-                      );
-                    } else {
-                      setLevelList([...LevelList, option.value]);
-                    }
-                  }}
-                  className="min-w-20"
-                >
-                  {option.label}
-                </Button>
-              ))}
-            </div>
-          </div>
-
-          {/* 파티 수 Filter */}
-          <div className="flex flex-col items-center">
-            <label className="text-sm font-medium mb-2">파티 수</label>
-            <div className="flex items-center gap-2">
-              <Select
-                value={PartyCountRange[0].toString()}
-                onValueChange={(value) => {
-                  const min = parseInt(value);
-                  setPartyCountRange([min, Math.max(min, PartyCountRange[1])]);
-                }}
-              >
-                <SelectTrigger className="w-20">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {Array.from(
-                    { length: data.maxPartys - data.minPartys + 1 },
-                    (_, i) => {
-                      const value = data.minPartys + i;
-                      return (
-                        <SelectItem key={value} value={value.toString()}>
-                          {value}
-                        </SelectItem>
-                      );
-                    }
-                  )}
-                </SelectContent>
-              </Select>
-              <span className="text-sm text-muted-foreground">~</span>
-              <Select
-                value={PartyCountRange[1].toString()}
-                onValueChange={(value) => {
-                  const max = parseInt(value);
-                  setPartyCountRange([Math.min(PartyCountRange[0], max), max]);
-                }}
-              >
-                <SelectTrigger className="w-20">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {Array.from(
-                    { length: data.maxPartys - data.minPartys + 1 },
-                    (_, i) => {
-                      const value = data.minPartys + i;
-                      return (
-                        <SelectItem key={value} value={value.toString()}>
-                          {value}
-                        </SelectItem>
-                      );
-                    }
-                  )}
-                </SelectContent>
-              </Select>
-              <span className="text-sm text-muted-foreground">파티</span>
-            </div>
-          </div>
-        </div>
-        {/* 포함 캐릭터 Filter */}
-        <div className="mb-4">
-          <label className="text-sm font-medium mb-2 block">
-            포함할 <strong>내 캐릭터</strong>
-          </label>
-          <Cascader
-            multiple
-            options={
-              getFilters(
-                combinedFilterData.filters,
-                studentsMap
-              ) as FilterOption[]
-            }
-            value={IncludeList}
-            onChange={setIncludeList}
-            placeholder="캐릭터를 선택하세요"
-            className="w-full"
-            allowClear
-            showSearch
-          />
-        </div>
-        {/* 제외 캐릭터 Filter */}
-        <div className="mb-4">
-          <label className="text-sm font-medium mb-2 block">
-            제외할 <strong>내 캐릭터</strong>
-          </label>
-          <MultiSelect
-            options={Object.keys(combinedFilterData.filters).map((key) => ({
-              value: parseInt(key),
-              label: studentsMap[key],
-            }))}
-            value={ExcludeList}
-            onChange={(value) => setExcludeList(value as number[])}
-            placeholder="제외할 캐릭터를 선택하세요"
-            className="w-full"
-            allowClear
-            showSearch
-          />
-        </div>
-        <div className="flex items-center space-x-2 mb-4">
-          <Checkbox
-            id="hardExclude"
-            checked={HardExclude}
-            onCheckedChange={(checked) => setHardExclude(!!checked)}
-          />
-          <label htmlFor="hardExclude" className="text-sm">
-            조력자에서도 제외
-          </label>
-        </div>
-        {/* 조력자 Filter */}
-        <div className="mb-4">
-          <label className="text-sm font-medium mb-2 block">조력자</label>
-          <Cascader
-            options={
-              getFilters(
-                combinedFilterData.assistFilters,
-                studentsMap
-              ) as FilterOption[]
-            }
-            value={Assist ? [Assist] : []}
-            onChange={(value) =>
-              setAssist(value.length > 0 ? value[0] : undefined)
-            }
-            placeholder="조력자를 선택하세요"
-            className="w-full"
-            allowClear
-            showSearch
-          />
-        </div>
-        <div className="flex items-center space-x-2 mb-2">
-          <Checkbox
-            id="allowDuplicate"
-            checked={AllowDuplicate}
-            onCheckedChange={(checked) => setAllowDuplicate(!!checked)}
-          />
-          <label htmlFor="allowDuplicate" className="text-sm">
-            조력자 포함 중복 허용
-          </label>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id="youtubeOnly"
-            checked={YoutubeOnly}
-            onCheckedChange={(checked) => setYoutubeOnly(!!checked)}
-          />
-          <label htmlFor="youtubeOnly" className="text-sm">
-            Youtube 영상
-          </label>
-        </div>
-      </>
-    );
-  };
-
   const parties = filteredPartys(
     data,
-    LevelList,
+    ScoreRange,
     IncludeList,
     ExcludeList,
     Assist,
@@ -427,7 +217,29 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
             <ChevronDownIcon className="h-4 w-4 transition-transform" />
           </CollapsibleTrigger>
           <CollapsibleContent className="border-l border-r border-b border-gray-200 p-4 dark:border-gray-700">
-            <FilterComponent />
+            <PartyFilter
+              filters={{
+                scoreRange: ScoreRange,
+                includeList: IncludeList,
+                excludeList: ExcludeList,
+                assist: Assist,
+                partyCountRange: PartyCountRange as [number, number],
+                hardExclude: HardExclude,
+                allowDuplicate: AllowDuplicate,
+                youtubeOnly: YoutubeOnly,
+              }}
+              onFilterChange={handleFilterChange}
+              filterOptions={getFilters(combinedFilterData.filters, studentsMap) as FilterOption[]}
+              excludeOptions={Object.keys(combinedFilterData.filters).map((key) => ({
+                value: parseInt(key),
+                label: studentsMap[key],
+              }))}
+              assistOptions={getFilters(combinedFilterData.assistFilters, studentsMap) as FilterOption[]}
+              minPartys={data.minPartys}
+              maxPartys={data.maxPartys}
+              showYoutubeOnly={true}
+              onReset={confirmReset}
+            />
           </CollapsibleContent>
         </Collapsible>
       </div>

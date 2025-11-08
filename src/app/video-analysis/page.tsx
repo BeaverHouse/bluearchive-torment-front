@@ -36,15 +36,13 @@ import studentsData from "../../../data/students.json";
 import ErrorPage from "@/components/common/error-page";
 import { filteredPartys, getFilters } from "@/lib/party-filters";
 import { generateSearchKeyword } from "@/utils/raid";
+import { PartyFilter } from "@/components/features/raid/party-filter";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
-import { Cascader } from "@/components/shared/cascader";
-import { MultiSelect } from "@/components/shared/multi-select";
-import { Checkbox } from "@/components/ui/checkbox";
 import Swal from "sweetalert2";
 import Loading from "@/components/common/loading";
 
@@ -77,11 +75,11 @@ function VideoAnalysisContent() {
   const [currentPage, setCurrentPage] = useState(1);
 
   // 파티 필터 상태
-  const [scoreRange, setScoreRange] = useState([0, 100000000]);
+  const [scoreRange, setScoreRange] = useState<[number, number] | undefined>(undefined);
   const [includeList, setIncludeList] = useState<Array<number[]>>([]);
   const [excludeList, setExcludeList] = useState<number[]>([]);
   const [assist, setAssist] = useState<number[] | undefined>(undefined);
-  const [partyCountRange, setPartyCountRange] = useState([0, 99]);
+  const [partyCountRange, setPartyCountRange] = useState<[number, number]>([0, 99]);
   const [hardExclude, setHardExclude] = useState(false);
   const [allowDuplicate, setAllowDuplicate] = useState(false);
 
@@ -243,7 +241,7 @@ function VideoAnalysisContent() {
 
     const filtered = filteredPartys(
       raidData,
-      ["I", "T", "L"],
+      scoreRange,
       includeList,
       excludeList,
       assist,
@@ -254,12 +252,7 @@ function VideoAnalysisContent() {
     );
 
     const filteredScores = new Set(filtered.map((p) => p.score));
-    return allVideos.filter(
-      (video) =>
-        filteredScores.has(video.score) &&
-        video.score >= scoreRange[0] &&
-        video.score <= scoreRange[1]
-    );
+    return allVideos.filter((video) => filteredScores.has(video.score));
   };
 
   // 표시할 비디오 계산
@@ -450,176 +443,39 @@ function VideoAnalysisContent() {
               <ChevronDownIcon className="h-4 w-4 transition-transform" />
             </CollapsibleTrigger>
             <CollapsibleContent className="border-l border-r border-b border-gray-200 p-4 dark:border-gray-700">
-              <Button
-                className="w-60 mb-5"
-                onClick={() => {
-                  const confirm =
-                    window.confirm("모든 캐릭터 필터가 리셋됩니다.");
+              <PartyFilter
+                filters={{
+                  scoreRange,
+                  includeList,
+                  excludeList,
+                  assist,
+                  partyCountRange,
+                  hardExclude,
+                  allowDuplicate,
+                }}
+                onFilterChange={(updates) => {
+                  if ('scoreRange' in updates) setScoreRange(updates.scoreRange);
+                  if (updates.includeList !== undefined) setIncludeList(updates.includeList);
+                  if (updates.excludeList !== undefined) setExcludeList(updates.excludeList);
+                  if (updates.assist !== undefined) setAssist(updates.assist);
+                  if (updates.partyCountRange !== undefined) setPartyCountRange(updates.partyCountRange);
+                  if (updates.hardExclude !== undefined) setHardExclude(updates.hardExclude);
+                  if (updates.allowDuplicate !== undefined) setAllowDuplicate(updates.allowDuplicate);
+                }}
+                filterOptions={getFilters(filterData.filters, studentsMap)}
+                excludeOptions={Object.keys(filterData.filters).map((key) => ({
+                  value: parseInt(key),
+                  label: studentsMap[key],
+                }))}
+                assistOptions={getFilters(filterData.assistFilters, studentsMap)}
+                minPartys={0}
+                maxPartys={20}
+                showYoutubeOnly={false}
+                onReset={() => {
+                  const confirm = window.confirm("모든 캐릭터 필터가 리셋됩니다.");
                   if (confirm) removeFilters();
                 }}
-                variant="destructive"
-              >
-                필터 Reset
-              </Button>
-              <br />
-              {/* 점수 & 파티 수 Filter */}
-              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-center gap-6 mb-6">
-                {/* 점수 Filter */}
-                <div className="flex flex-col items-center">
-                  <label className="text-sm font-medium mb-2">점수 범위</label>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="number"
-                      value={scoreRange[0]}
-                      onChange={(e) => {
-                        const min = parseInt(e.target.value) || 0;
-                        setScoreRange([min, Math.max(min, scoreRange[1])]);
-                      }}
-                      placeholder="최소 점수"
-                      className="w-32 text-center"
-                    />
-                    <span className="text-sm text-muted-foreground">~</span>
-                    <Input
-                      type="number"
-                      value={scoreRange[1]}
-                      onChange={(e) => {
-                        const max = parseInt(e.target.value) || 100000000;
-                        setScoreRange([Math.min(scoreRange[0], max), max]);
-                      }}
-                      placeholder="최대 점수"
-                      className="w-32 text-center"
-                    />
-                  </div>
-                </div>
-
-                {/* 파티 수 Filter */}
-                <div className="flex flex-col items-center">
-                  <label className="text-sm font-medium mb-2">파티 수</label>
-                  <div className="flex items-center gap-2">
-                    <Select
-                      value={partyCountRange[0].toString()}
-                      onValueChange={(value) => {
-                        const min = parseInt(value);
-                        setPartyCountRange([
-                          min,
-                          Math.max(min, partyCountRange[1]),
-                        ]);
-                      }}
-                    >
-                      <SelectTrigger className="w-20">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="0">전체</SelectItem>
-                        {Array.from({ length: 20 }, (_, i) => {
-                          const value = i + 1;
-                          return (
-                            <SelectItem key={value} value={value.toString()}>
-                              {value}
-                            </SelectItem>
-                          );
-                        })}
-                      </SelectContent>
-                    </Select>
-                    <span className="text-sm text-muted-foreground">~</span>
-                    <Select
-                      value={partyCountRange[1].toString()}
-                      onValueChange={(value) => {
-                        const max = parseInt(value);
-                        setPartyCountRange([
-                          Math.min(partyCountRange[0], max),
-                          max,
-                        ]);
-                      }}
-                    >
-                      <SelectTrigger className="w-20">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Array.from({ length: 20 }, (_, i) => {
-                          const value = i + 1;
-                          return (
-                            <SelectItem key={value} value={value.toString()}>
-                              {value}
-                            </SelectItem>
-                          );
-                        })}
-                        <SelectItem value="99">전체</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <span className="text-sm text-muted-foreground">파티</span>
-                  </div>
-                </div>
-              </div>
-              {/* 포함 캐릭터 Filter */}
-              <div className="mb-4">
-                <label className="text-sm font-medium mb-2 block">
-                  포함할 <strong>내 캐릭터</strong>
-                </label>
-                <Cascader
-                  multiple
-                  options={getFilters(filterData.filters, studentsMap)}
-                  value={includeList}
-                  onChange={setIncludeList}
-                  placeholder="캐릭터를 선택하세요"
-                  className="w-full"
-                  allowClear
-                  showSearch
-                />
-              </div>
-              {/* 제외 캐릭터 Filter */}
-              <div className="mb-4">
-                <label className="text-sm font-medium mb-2 block">
-                  제외할 <strong>내 캐릭터</strong>
-                </label>
-                <MultiSelect
-                  options={Object.keys(filterData.filters).map((key) => ({
-                    value: parseInt(key),
-                    label: studentsMap[key],
-                  }))}
-                  value={excludeList}
-                  onChange={(value) => setExcludeList(value as number[])}
-                  placeholder="제외할 캐릭터를 선택하세요"
-                  className="w-full"
-                  allowClear
-                  showSearch
-                />
-              </div>
-              <div className="flex items-center space-x-2 mb-4">
-                <Checkbox
-                  id="hardExclude"
-                  checked={hardExclude}
-                  onCheckedChange={(checked) => setHardExclude(!!checked)}
-                />
-                <label htmlFor="hardExclude" className="text-sm">
-                  조력자에서도 제외
-                </label>
-              </div>
-              {/* 조력자 Filter */}
-              <div className="mb-4">
-                <label className="text-sm font-medium mb-2 block">조력자</label>
-                <Cascader
-                  options={getFilters(filterData.assistFilters, studentsMap)}
-                  value={assist ? [assist] : []}
-                  onChange={(value) =>
-                    setAssist(value.length > 0 ? value[0] : undefined)
-                  }
-                  placeholder="조력자를 선택하세요"
-                  className="w-full"
-                  allowClear
-                  showSearch
-                />
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="allowDuplicate"
-                  checked={allowDuplicate}
-                  onCheckedChange={(checked) => setAllowDuplicate(!!checked)}
-                />
-                <label htmlFor="allowDuplicate" className="text-sm">
-                  조력자 포함 중복 허용
-                </label>
-              </div>
+              />
             </CollapsibleContent>
           </Collapsible>
         </div>
