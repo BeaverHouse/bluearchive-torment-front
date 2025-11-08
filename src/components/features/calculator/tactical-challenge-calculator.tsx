@@ -12,41 +12,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { parseTimeToSeconds, formatSecondsToTime } from "@/utils/time";
 
 type Stage = "stage3" | "stage4";
 
 const FPS = 30; // 30프레임 기준
-
-// 시간 문자열(mm:ss.SSS 또는 mm:ss)을 초로 변환
-function parseTimeToSeconds(timeStr: string): number | null {
-  // mm:ss.SSS 형식
-  let match = timeStr.match(/^(\d+):(\d{2})\.(\d{3})$/);
-  if (match) {
-    const minutes = parseInt(match[1]);
-    const seconds = parseInt(match[2]);
-    const milliseconds = parseInt(match[3]);
-    return minutes * 60 + seconds + milliseconds / 1000;
-  }
-
-  // mm:ss 형식 (소수점 없음)
-  match = timeStr.match(/^(\d+):(\d{2})$/);
-  if (match) {
-    const minutes = parseInt(match[1]);
-    const seconds = parseInt(match[2]);
-    return minutes * 60 + seconds;
-  }
-
-  return null;
-}
-
-// 초를 시간 문자열(mm:ss.SSS)로 변환
-function formatSecondsToTime(seconds: number): string {
-  const minutes = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  const ms = Math.round((seconds % 1) * 1000);
-
-  return `${minutes}:${secs.toString().padStart(2, '0')}.${ms.toString().padStart(3, '0')}`;
-}
 
 // 점수 계산
 // 3단계: 33750000 x n / (F + 900 x n) + 38000

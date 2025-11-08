@@ -4,7 +4,8 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { basePartyCounts, categoryMap, translations } from "@/constants/assault";
+import { basePartyCounts, categoryMap } from "@/constants/assault";
+import { generateSearchKeyword } from "@/utils/raid";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -102,15 +103,7 @@ const RaidSummary = ({
     setCharacter(null);
   }, [season]);
 
-  const keywords = Object.keys(translations)
-    .filter((key) => seasonDescription.includes(key))
-    .map((key) => translations[key]);
-
-  const searchKeyword = (
-    keywords.join(" ") +
-    " " +
-    (level === "T" ? "TORMENT" : level === "L" ? "LUNATIC" : "")
-  ).trim();
+  const searchKeyword = generateSearchKeyword(seasonDescription, level);
 
   const copySearchTerm = async () => {
     try {
@@ -312,7 +305,7 @@ const RaidSummary = ({
         {level !== "I" && (
           <CardWrapper
             className={`border-l-4 mx-0 ${
-              clearPercent > 50 ? "border-l-red-500" : "border-l-blue-500"
+              clearPercent > 50 ? "border-l-red-500" : "border-l-sky-500"
             }`}
             icon={<Trophy className="h-5 w-5 text-sky-500" />}
             title="Platinum 클리어 비율"
