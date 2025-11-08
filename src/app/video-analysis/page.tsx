@@ -28,7 +28,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Clock, RefreshCw, Copy, CheckCircle } from "lucide-react";
+import { Plus, Clock, RefreshCw, Youtube } from "lucide-react";
 import { useEffect, useState, Suspense, useMemo, useCallback } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import raidsData from "../../../data/raids.json";
@@ -44,7 +44,6 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
-import Swal from "sweetalert2";
 import Loading from "@/components/common/loading";
 
 const raids: RaidInfo[] = raidsData as RaidInfo[];
@@ -83,7 +82,7 @@ function VideoAnalysisContent() {
     assist: undefined,
     partyCountRange: [0, 99],
     hardExclude: false,
-    allowDuplicate: false,
+    allowDuplicate: true,
     youtubeOnly: false,
   });
 
@@ -105,9 +104,6 @@ function VideoAnalysisContent() {
   const [isQueueDialogOpen, setIsQueueDialogOpen] = useState(false);
   const [queueItems, setQueueItems] = useState<QueueItem[]>([]);
   const [queueLoading, setQueueLoading] = useState(false);
-
-  // 검색어 복사
-  const [copiedSearchTerm, setCopiedSearchTerm] = useState(false);
 
   // URL에서 raid 파라미터를 항상 읽어서 selectedRaid 설정 (없으면 "all")
   useEffect(() => {
@@ -383,32 +379,6 @@ function VideoAnalysisContent() {
     }
   };
 
-  // 검색어 복사 함수
-  const copySearchTerm = async () => {
-    if (selectedRaid === "all") {
-      Swal.fire("총력전을 선택해주세요!");
-      return;
-    }
-
-    const raid = raids.find((r) => r.id === selectedRaid);
-    if (!raid) {
-      Swal.fire("검색어를 생성할 수 없습니다!");
-      return;
-    }
-
-    const searchKeyword = generateSearchKeyword(raid.name, raid.top_level);
-
-    try {
-      await navigator.clipboard.writeText(searchKeyword);
-      setCopiedSearchTerm(true);
-      setTimeout(() => setCopiedSearchTerm(false), 2000);
-      Swal.fire("검색어가 복사되었습니다!");
-    } catch (err) {
-      console.error("Failed to copy search term:", err);
-      Swal.fire("복사에 실패했습니다!");
-    }
-  };
-
   if (loading) {
     return (
       <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
@@ -433,40 +403,6 @@ function VideoAnalysisContent() {
           총력전 영상을 분석하여 파티 구성과 스킬 순서를 확인하세요.
         </p>
       </div>
-      {/* 선택된 총력전의 검색어 표시 */}
-      {selectedRaid !== "all" && (() => {
-        const raid = raids.find((r) => r.id === selectedRaid);
-        return raid ? (
-        <div className="mb-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 mb-4">
-            <span className="text-sm text-muted-foreground shrink-0">
-              검색어:
-            </span>
-            <code className="px-2 py-1 bg-muted rounded text-xs sm:text-sm break-all">
-              {generateSearchKeyword(raid.name, raid.top_level)}
-            </code>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={copySearchTerm}
-              className="flex items-center gap-1 shrink-0"
-            >
-              {copiedSearchTerm ? (
-                <>
-                  <CheckCircle className="h-3 w-3" />
-                  <span className="hidden sm:inline">Copied!</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="h-3 w-3" />
-                  <span className="hidden sm:inline">Copy</span>
-                </>
-              )}
-            </Button>
-          </div>
-        </div>
-        ) : null;
-      })()}
 
       {/* RaidSearch와 동일한 필터 UI */}
       {isFilterMode && filterData && (
@@ -522,12 +458,34 @@ function VideoAnalysisContent() {
       )}
 
       <div className="mb-6 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
-        <SingleSelect
-          options={raidsSelectOptions}
-          value={selectedRaid}
-          onChange={handleRaidChange}
-          placeholder="총력전/대결전 선택"
-        />
+        <div className="flex gap-2 items-center">
+          <SingleSelect
+            options={raidsSelectOptions}
+            value={selectedRaid}
+            onChange={handleRaidChange}
+            placeholder="총력전/대결전 선택"
+          />
+          {selectedRaid !== "all" && (() => {
+            const selectedRaidInfo = raids.find((r) => r.id === selectedRaid);
+            if (!selectedRaidInfo) return null;
+
+            const searchKeyword = generateSearchKeyword(selectedRaidInfo.name, "");
+            const youtubeSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(searchKeyword)}`;
+
+            return (
+              <a
+                href={youtubeSearchUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                title="YouTube에서 검색"
+              >
+                <Button variant="outline" size="icon">
+                  <Youtube className="h-4 w-4" />
+                </Button>
+              </a>
+            );
+          })()}
+        </div>
 
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
           {/* 큐 상태 조회 버튼 */}

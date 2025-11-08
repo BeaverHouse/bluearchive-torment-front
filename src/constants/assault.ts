@@ -32,6 +32,7 @@ export const translations: Record<string, string> = {
   그레고리오: "グレゴリオ",
   쿠로카게: "クロカゲ",
   게부라: "ゲブラ",
+  예소드: "イェソド",
 };
 
 export const basePartyCounts: number[] = [

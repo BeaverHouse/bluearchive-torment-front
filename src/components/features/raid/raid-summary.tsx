@@ -5,20 +5,16 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { basePartyCounts, categoryMap } from "@/constants/assault";
-import { generateSearchKeyword } from "@/utils/raid";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Users,
   Trophy,
   Target,
-  Copy,
-  CheckCircle,
   TrendingUp,
   ThumbsUp,
   ChartNoAxesColumn,
 } from "lucide-react";
-import Swal from "sweetalert2";
 import { VideoIcon } from "@radix-ui/react-icons";
 import { RaidComponentProps } from "@/types/raid";
 import PartyCard from "./party-card";
@@ -52,13 +48,12 @@ interface PartyTableType {
 
 const RaidSummary = ({
   season,
-  seasonDescription = "",
+  seasonDescription: _seasonDescription = "",
   studentsMap,
   level,
 }: RaidComponentProps) => {
   const router = useRouter();
   const [Character, setCharacter] = useState<number | null>(null);
-  const [copiedSearchTerm, setCopiedSearchTerm] = useState(false);
   const [showAllHighUsage, setShowAllHighUsage] = useState(false);
 
   const getSummaryDataQuery = useQuery({
@@ -104,19 +99,6 @@ const RaidSummary = ({
   useEffect(() => {
     setCharacter(null);
   }, [season]);
-
-  const searchKeyword = generateSearchKeyword(seasonDescription, level);
-
-  const copySearchTerm = async () => {
-    try {
-      await navigator.clipboard.writeText(searchKeyword);
-      setCopiedSearchTerm(true);
-      setTimeout(() => setCopiedSearchTerm(false), 2000);
-      Swal.fire("복사되었습니다!");
-    } catch (err) {
-      console.error("Failed to copy search term:", err);
-    }
-  };
 
   const handleGoToVideos = () => {
     router.push(`/video-analysis?raid=${season}`);
@@ -268,35 +250,8 @@ const RaidSummary = ({
 
   return (
     <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8 max-w-7xl">
-      {/* Header with Search Term */}
+      {/* Header */}
       <div className="mb-6 sm:mb-8">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 mb-4">
-          <span className="text-sm text-muted-foreground shrink-0">
-            검색어:
-          </span>
-          <code className="px-2 py-1 bg-muted rounded text-xs sm:text-sm break-all">
-            {searchKeyword}
-          </code>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={copySearchTerm}
-            className="flex items-center gap-1 shrink-0"
-          >
-            {copiedSearchTerm ? (
-              <>
-                <CheckCircle className="h-3 w-3" />
-                <span className="hidden sm:inline">Copied!</span>
-              </>
-            ) : (
-              <>
-                <Copy className="h-3 w-3" />
-                <span className="hidden sm:inline">Copy</span>
-              </>
-            )}
-          </Button>
-        </div>
-
         {/* Strategy Videos - 영상 분석 페이지로 이동 버튼 */}
         <Button
           onClick={handleGoToVideos}
