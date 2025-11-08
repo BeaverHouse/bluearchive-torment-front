@@ -34,8 +34,8 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import raidsData from "../../../data/raids.json";
 import studentsData from "../../../data/students.json";
 import ErrorPage from "@/components/common/error-page";
-import { translations } from "@/constants/assault";
 import { filteredPartys, getFilters } from "@/lib/party-filters";
+import { generateSearchKeyword } from "@/utils/raid";
 import {
   Collapsible,
   CollapsibleContent,
@@ -356,33 +356,20 @@ function VideoAnalysisContent() {
     }
   };
 
-  // 검색어 생성 및 복사 함수
-  const generateSearchKeyword = (raidId: string) => {
-    const raid = raids.find((r) => r.id === raidId);
-    if (!raid) return "";
-
-    const keywords = Object.keys(translations)
-      .filter((key) => raid.name.includes(key))
-      .map((key) => translations[key]);
-
-    const level = raid.top_level;
-    const levelText =
-      level === "T" ? "TORMENT" : level === "L" ? "LUNATIC" : "";
-
-    return (keywords.join(" ") + " " + levelText).trim();
-  };
-
+  // 검색어 복사 함수
   const copySearchTerm = async () => {
     if (selectedRaid === "all") {
       Swal.fire("총력전을 선택해주세요!");
       return;
     }
 
-    const searchKeyword = generateSearchKeyword(selectedRaid);
-    if (!searchKeyword) {
+    const raid = raids.find((r) => r.id === selectedRaid);
+    if (!raid) {
       Swal.fire("검색어를 생성할 수 없습니다!");
       return;
     }
+
+    const searchKeyword = generateSearchKeyword(raid.name, raid.top_level);
 
     try {
       await navigator.clipboard.writeText(searchKeyword);
@@ -420,14 +407,16 @@ function VideoAnalysisContent() {
         </p>
       </div>
       {/* 선택된 총력전의 검색어 표시 */}
-      {selectedRaid !== "all" && (
+      {selectedRaid !== "all" && (() => {
+        const raid = raids.find((r) => r.id === selectedRaid);
+        return raid ? (
         <div className="mb-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 mb-4">
             <span className="text-sm text-muted-foreground shrink-0">
               검색어:
             </span>
             <code className="px-2 py-1 bg-muted rounded text-xs sm:text-sm break-all">
-              {generateSearchKeyword(selectedRaid)}
+              {generateSearchKeyword(raid.name, raid.top_level)}
             </code>
             <Button
               variant="outline"
@@ -449,7 +438,8 @@ function VideoAnalysisContent() {
             </Button>
           </div>
         </div>
-      )}
+        ) : null;
+      })()}
 
       {/* RaidSearch와 동일한 필터 UI */}
       {isFilterMode && filterData && (

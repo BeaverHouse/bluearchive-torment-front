@@ -4,7 +4,8 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { basePartyCounts, categoryMap, translations } from "@/constants/assault";
+import { basePartyCounts, categoryMap } from "@/constants/assault";
+import { generateSearchKeyword } from "@/utils/raid";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -102,15 +103,7 @@ const RaidSummary = ({
     setCharacter(null);
   }, [season]);
 
-  const keywords = Object.keys(translations)
-    .filter((key) => seasonDescription.includes(key))
-    .map((key) => translations[key]);
-
-  const searchKeyword = (
-    keywords.join(" ") +
-    " " +
-    (level === "T" ? "TORMENT" : level === "L" ? "LUNATIC" : "")
-  ).trim();
+  const searchKeyword = generateSearchKeyword(seasonDescription, level);
 
   const copySearchTerm = async () => {
     try {
