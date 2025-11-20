@@ -33,19 +33,19 @@
     "id": "3S23-1",
     "name": "대결전 S23 시가지 예로니무스 (경장갑,인세인)",
     "top_level": "I",
-    "party_updated": true
+    "party_updated": false
   },
   {
     "id": "3S23-2",
     "name": "대결전 S23 시가지 예로니무스 (중장갑,토먼트)",
     "top_level": "T",
-    "party_updated": true
+    "party_updated": false
   },
   {
     "id": "3S23-3",
     "name": "대결전 S23 시가지 예로니무스 (탄력장갑,인세인)",
     "top_level": "I",
-    "party_updated": true
+    "party_updated": false
   },
   {
     "id": "S79-0",
@@ -109,14 +109,14 @@
   },
   {
     "id": "3S26-2",
-    "name": "대결전 S26 야외 헤세드 (탄력장갑,토먼트)",
-    "top_level": "T",
+    "name": "대결전 S26 야외 헤세드 (중장갑,인세인)",
+    "top_level": "I",
     "party_updated": true
   },
   {
-    "id": "3S26-3",
-    "name": "대결전 S26 야외 헤세드 (중장갑,인세인)",
-    "top_level": "I",
+    "id": "3S26-4",
+    "name": "대결전 S26 야외 헤세드 (탄력장갑,토먼트)",
+    "top_level": "T",
     "party_updated": true
   },
   {
@@ -148,5 +148,29 @@
     "name": "총력전 S83 시가지 예소드",
     "top_level": "L",
     "party_updated": true
+  },
+  {
+    "id": "3S28-1",
+    "name": "대결전 S28 시가지 예로니무스 (경장갑,토먼트)",
+    "top_level": "T",
+    "party_updated": true
+  },
+  {
+    "id": "3S28-3",
+    "name": "대결전 S28 시가지 예로니무스 (특수장갑,토먼트)",
+    "top_level": "T",
+    "party_updated": true
+  },
+  {
+    "id": "3S28-4",
+    "name": "대결전 S28 시가지 예로니무스 (탄력장갑,인세인)",
+    "top_level": "I",
+    "party_updated": true
+  },
+  {
+    "id": "S84-0",
+    "name": "총력전 S84 시가지 쿠로카게",
+    "top_level": "L",
+    "party_updated": false
   }
 ]
