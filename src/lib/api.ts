@@ -1,6 +1,6 @@
 import { VideoListResponse, VideoDetailResponse, AnalysisResult } from '@/types/video'
 
-const BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/ba-analyzer/v1`
+const BASE_URL = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8085'}/ba-analyzer/v1`
 
 class APIError extends Error {
   constructor(message: string, public status?: number) {
