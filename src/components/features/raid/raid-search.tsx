@@ -203,16 +203,16 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
 
   const handleFilterChange = (updates: Partial<PartyFilterState>) => {
     // Zustand store 업데이트
-    if (updates.scoreRange !== undefined) setScoreRange(updates.scoreRange);
-    if (updates.includeList !== undefined) setIncludeList(updates.includeList);
-    if (updates.excludeList !== undefined) setExcludeList(updates.excludeList);
-    if (updates.assist !== undefined) setAssist(updates.assist);
-    if (updates.hardExclude !== undefined) setHardExclude(updates.hardExclude);
-    if (updates.allowDuplicate !== undefined) setAllowDuplicate(updates.allowDuplicate);
-    if (updates.youtubeOnly !== undefined) setYoutubeOnly(updates.youtubeOnly);
+    if ('scoreRange' in updates) setScoreRange(updates.scoreRange);
+    if ('includeList' in updates && updates.includeList !== undefined) setIncludeList(updates.includeList);
+    if ('excludeList' in updates && updates.excludeList !== undefined) setExcludeList(updates.excludeList);
+    if ('assist' in updates) setAssist(updates.assist);
+    if ('hardExclude' in updates && updates.hardExclude !== undefined) setHardExclude(updates.hardExclude);
+    if ('allowDuplicate' in updates && updates.allowDuplicate !== undefined) setAllowDuplicate(updates.allowDuplicate);
+    if ('youtubeOnly' in updates && updates.youtubeOnly !== undefined) setYoutubeOnly(updates.youtubeOnly);
 
     // Local state 업데이트
-    if (updates.partyCountRange !== undefined) setPartyCountRange(updates.partyCountRange);
+    if ('partyCountRange' in updates && updates.partyCountRange !== undefined) setPartyCountRange(updates.partyCountRange);
   };
 
   const confirmReset = () => {

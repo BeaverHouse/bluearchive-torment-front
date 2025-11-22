@@ -294,10 +294,11 @@ export function PartyFilter({
         <label className="text-sm font-medium mb-2 block">조력자</label>
         <Cascader
           options={assistOptions}
-          value={filters.assist ? [filters.assist] : []}
-          onChange={(value) =>
-            onFilterChange({ assist: value.length > 0 ? value[0] : undefined })
-          }
+          value={filters.assist !== undefined ? [filters.assist] : []}
+          onChange={(value) => {
+            const newAssist = value.length > 0 ? value[0] : undefined;
+            onFilterChange({ assist: newAssist });
+          }}
           placeholder="조력자를 선택하세요"
           className="w-full"
           allowClear

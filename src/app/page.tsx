@@ -8,14 +8,23 @@ import NormalAnnounce from "@/components/common/normal-announce";
 import raidsData from "../../data/raids.json";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RaidInfo } from "@/types/raid";
-import { getStudentsMap } from "@/utils/character";
 import { SingleSelect } from "@/components/ui/custom/single-select";
 import { trackSummaryTabClick } from "@/utils/analytics";
+import { useEffect, useState } from "react";
+import { getStudentMap } from "@/lib/cdn";
 
 export default function Home() {
   const { V3Season, setV3Season } = useBAStore();
+  const [studentsMap, setStudentsMap] = useState<Record<string, string>>({});
 
-  const studentsMap = getStudentsMap();
+  useEffect(() => {
+    const fetchStudentMap = async () => {
+      const data = await getStudentMap();
+      setStudentsMap(data);
+    };
+
+    fetchStudentMap();
+  }, []);
   const raidInfos = (raidsData as RaidInfo[])
     .filter((raid) => raid.party_updated)
     .map((raid) => ({
