@@ -7,6 +7,7 @@ import {
   getQueueStatus,
   QueueItem,
 } from "@/lib/api";
+import { getStudentMap } from "@/lib/cdn";
 import { VideoListItem } from "@/types/video";
 import { RaidInfo } from "@/types/raid";
 import {
@@ -32,7 +33,6 @@ import { Plus, Clock, RefreshCw, Youtube } from "lucide-react";
 import { useEffect, useState, Suspense, useMemo, useCallback } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import raidsData from "../../../data/raids.json";
-import studentsData from "../../../data/students.json";
 import ErrorPage from "@/components/common/error-page";
 import { filteredPartys, getFilters } from "@/lib/party-filters";
 import { generateSearchKeyword } from "@/utils/raid";
@@ -86,7 +86,7 @@ function VideoAnalysisContent() {
     youtubeOnly: false,
   });
 
-  const studentsMap = studentsData as Record<string, string>;
+  const [studentsMap, setStudentsMap] = useState<Record<string, string>>({});
 
   // 필터 데이터 상태
   const [filterData, setFilterData] = useState<{
@@ -104,6 +104,16 @@ function VideoAnalysisContent() {
   const [isQueueDialogOpen, setIsQueueDialogOpen] = useState(false);
   const [queueItems, setQueueItems] = useState<QueueItem[]>([]);
   const [queueLoading, setQueueLoading] = useState(false);
+
+  // CDN에서 studentsMap 로드
+  useEffect(() => {
+    const fetchStudentMap = async () => {
+      const data = await getStudentMap();
+      setStudentsMap(data);
+    };
+
+    fetchStudentMap();
+  }, []);
 
   // URL에서 raid 파라미터를 항상 읽어서 selectedRaid 설정 (없으면 "all")
   useEffect(() => {

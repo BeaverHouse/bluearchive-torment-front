@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,8 +28,9 @@ import {
 } from "lucide-react";
 import { AnalysisResult, VideoAnalysisData, SkillOrder } from "@/types/video";
 import { updateVideoAnalysis } from "@/lib/api";
+import { getStudentMap } from "@/lib/cdn";
 import { SearchableSelect } from "@/components/features/video/searchable-select";
-import { getStudentsMap, getCharacterName } from "@/utils/character";
+import { getCharacterName } from "@/utils/character";
 import { StarRating } from "@/components/features/student/star-rating";
 import {
   DndContext,
@@ -67,8 +68,16 @@ export function EditableAnalysisResult({
   );
   const [saving, setSaving] = useState(false);
   const [compactMode, setCompactMode] = useState(true); // 기본값을 컴팩트 모드로 설정
+  const [studentsMap, setStudentsMap] = useState<Record<string, string>>({});
 
-  const studentsMap = getStudentsMap();
+  useEffect(() => {
+    const fetchStudentMap = async () => {
+      const data = await getStudentMap();
+      setStudentsMap(data);
+    };
+
+    fetchStudentMap();
+  }, []);
 
   const getCharacterOptions = (slotIndex?: number) => {
     return Object.entries(studentsMap)

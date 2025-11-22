@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ArrowLeft, Edit3, Copy, Check } from "lucide-react";
@@ -9,7 +9,8 @@ import { YouTubeEmbed } from "@/components/features/video/youtube-embed";
 import PartyCard from "@/components/features/raid/party-card";
 import { VideoAnalysisData } from "@/types/video";
 import Link from "next/link";
-import { getStudentsMap, getCharacterName } from "@/utils/character";
+import { getCharacterName } from "@/utils/character";
+import { getStudentMap } from "@/lib/cdn";
 
 interface VideoDetailProps {
   videos: VideoAnalysisData[];
@@ -26,8 +27,16 @@ export function VideoDetail({
 }: VideoDetailProps) {
   const [copiedId, setCopiedId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState(currentVideo.id.toString());
+  const [studentsMap, setStudentsMap] = useState<Record<string, string>>({});
 
-  const studentsMap = getStudentsMap();
+  useEffect(() => {
+    const fetchStudentMap = async () => {
+      const data = await getStudentMap();
+      setStudentsMap(data);
+    };
+
+    fetchStudentMap();
+  }, []);
 
   // 사용자 분석을 먼저, AI 분석을 나중에 정렬
   const sortedVideos = [...videos].sort((a, b) => {
