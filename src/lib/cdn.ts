@@ -20,8 +20,9 @@ export async function getStudentMap(): Promise<Record<string, string>> {
       throw new Error(`Failed to fetch student map: ${response.status}`)
     }
 
-    studentMapCache = await response.json()
-    return studentMapCache
+    const data: Record<string, string> = await response.json()
+    studentMapCache = data
+    return data
   } catch (error) {
     console.error('Failed to load student map from CDN:', error)
     return {}
