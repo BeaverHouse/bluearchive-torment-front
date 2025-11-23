@@ -17,6 +17,24 @@ import { PartyFilterState } from "@/types/filter";
 import { scoreInfo } from "@/constants/score";
 import { StudentSearchData } from "@/utils/search";
 
+/**
+ * 범위 선택을 위한 SelectItem 목록을 생성하는 컴포넌트
+ */
+function RangeSelectItems({ min, max }: { min: number; max: number }) {
+  return (
+    <>
+      {Array.from({ length: max - min + 1 }, (_, i) => {
+        const value = min + i;
+        return (
+          <SelectItem key={value} value={value.toString()}>
+            {value}
+          </SelectItem>
+        );
+      })}
+    </>
+  );
+}
+
 interface PartyFilterProps {
   // 필터 상태
   filters: PartyFilterState;
@@ -204,14 +222,7 @@ export function PartyFilter({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {Array.from({ length: maxPartys - minPartys + 1 }, (_, i) => {
-                  const value = minPartys + i;
-                  return (
-                    <SelectItem key={value} value={value.toString()}>
-                      {value}
-                    </SelectItem>
-                  );
-                })}
+                <RangeSelectItems min={minPartys} max={maxPartys} />
               </SelectContent>
             </Select>
             <span className="text-sm text-muted-foreground">~</span>
@@ -231,14 +242,7 @@ export function PartyFilter({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {Array.from({ length: maxPartys - minPartys + 1 }, (_, i) => {
-                  const value = minPartys + i;
-                  return (
-                    <SelectItem key={value} value={value.toString()}>
-                      {value}
-                    </SelectItem>
-                  );
-                })}
+                <RangeSelectItems min={minPartys} max={maxPartys} />
               </SelectContent>
             </Select>
             <span className="text-sm text-muted-foreground">파티</span>
