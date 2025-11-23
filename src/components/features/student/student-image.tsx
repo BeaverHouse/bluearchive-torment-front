@@ -3,6 +3,7 @@
 import Image from "next/image";
 import React from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { useStudentMaps } from "@/hooks/use-student-maps";
 import {
   HybridTooltip,
   HybridTooltipTrigger,
@@ -10,8 +11,6 @@ import {
 } from "@/components/ui/custom/hybrid-tooltip";
 import { categoryMap } from "@/constants/assault";
 import { getCharacterName } from "@/utils/character";
-import { getStudentSearchMap } from "@/lib/cdn";
-import { extractStudentsMap } from "@/utils/search";
 
 interface StudentImageProps {
   code: number;
@@ -23,15 +22,7 @@ interface StudentImageProps {
  * @param name Student name (to use in tooltip)
  */
 export function StudentImage({ code }: StudentImageProps) {
-  const [studentsMap, setStudentsMap] = React.useState<Record<string, string>>({});
-
-  React.useEffect(() => {
-    const fetchStudentMap = async () => {
-      const searchMap = await getStudentSearchMap();
-      setStudentsMap(extractStudentsMap(searchMap));
-    };
-    fetchStudentMap();
-  }, []);
+  const { studentsMap } = useStudentMaps();
 
   const studentID = React.useMemo(
     () => (code < 100000 ? code : Math.floor(code / 1000)),

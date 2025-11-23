@@ -10,24 +10,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RaidInfo } from "@/types/raid";
 import { SingleSelect } from "@/components/ui/custom/single-select";
 import { trackSummaryTabClick } from "@/utils/analytics";
-import { useEffect, useState } from "react";
-import { getStudentSearchMap } from "@/lib/cdn";
-import { extractStudentsMap } from "@/utils/search";
+import { useStudentMaps } from "@/hooks/use-student-maps";
 
 export default function Home() {
   const { V3Season, setV3Season } = useBAStore();
-  const [studentsMap, setStudentsMap] = useState<Record<string, string>>({});
-  const [studentSearchMap, setStudentSearchMap] = useState<Record<string, { nameJa: string; nameKo: string; searchKeywords: string[] | null }>>({});
-
-  useEffect(() => {
-    const fetchStudentMaps = async () => {
-      const searchMap = await getStudentSearchMap();
-      setStudentSearchMap(searchMap);
-      setStudentsMap(extractStudentsMap(searchMap));
-    };
-
-    fetchStudentMaps();
-  }, []);
+  const { studentsMap, studentSearchMap } = useStudentMaps();
   const raidInfos = (raidsData as RaidInfo[])
     .filter((raid) => raid.party_updated)
     .map((raid) => ({

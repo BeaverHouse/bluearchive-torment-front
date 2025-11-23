@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,11 +28,10 @@ import {
 } from "lucide-react";
 import { AnalysisResult, VideoAnalysisData, SkillOrder } from "@/types/video";
 import { updateVideoAnalysis } from "@/lib/api";
-import { getStudentSearchMap } from "@/lib/cdn";
 import { SearchableSelect } from "@/components/features/video/searchable-select";
 import { getCharacterName } from "@/utils/character";
-import { extractStudentsMap } from "@/utils/search";
 import { StarRating } from "@/components/features/student/star-rating";
+import { useStudentMaps } from "@/hooks/use-student-maps";
 import {
   DndContext,
   closestCenter,
@@ -69,18 +68,7 @@ export function EditableAnalysisResult({
   );
   const [saving, setSaving] = useState(false);
   const [compactMode, setCompactMode] = useState(true); // 기본값을 컴팩트 모드로 설정
-  const [studentsMap, setStudentsMap] = useState<Record<string, string>>({});
-  const [studentSearchMap, setStudentSearchMap] = useState<Record<string, { nameJa: string; nameKo: string; searchKeywords: string[] | null }>>({});
-
-  useEffect(() => {
-    const fetchStudentMaps = async () => {
-      const searchMap = await getStudentSearchMap();
-      setStudentSearchMap(searchMap);
-      setStudentsMap(extractStudentsMap(searchMap));
-    };
-
-    fetchStudentMaps();
-  }, []);
+  const { studentsMap, studentSearchMap } = useStudentMaps();
 
   const getCharacterOptions = (slotIndex?: number) => {
     return Object.entries(studentsMap)
