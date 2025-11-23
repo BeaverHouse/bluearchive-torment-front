@@ -23,7 +23,7 @@ import Loading from "../../common/loading";
 import { PartyFilter } from "./party-filter";
 import { PartyFilterState } from "@/types/filter";
 
-const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
+const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProps) => {
   const [PartyCountRange, setPartyCountRange] = useState([0, 99]);
   const [Page, setPage] = useState(1);
   const [PageSize, setPageSize] = useState(10);
@@ -261,6 +261,7 @@ const RaidSearch = ({ season, studentsMap }: RaidComponentProps) => {
               assistOptions={assistOptions}
               minPartys={data.minPartys}
               maxPartys={data.maxPartys}
+              studentSearchMap={studentSearchMap}
               showYoutubeOnly={true}
               onReset={confirmReset}
             />

@@ -1,5 +1,6 @@
 import { categoryMap } from "@/constants/assault";
 import { RaidData, PartyData, FilterOption } from "@/types/raid";
+import { parseCharacterInfo } from "@/utils/character";
 
 export const getFilters = (
   rawData: Record<string, Record<string, number>>,
@@ -75,10 +76,8 @@ const isAssistMatch = (assist: number[], partyAssist: number | null): boolean =>
 };
 
 const isInFilter = (arr: number[], num: number) => {
-  const charId = Math.floor(num / 1000);
-  const star = Math.floor((num % 1000) / 100);
-  const weapon = Math.floor((num % 100) / 10);
-  
+  const { code: charId, star, weapon } = parseCharacterInfo(num);
+
   if (arr.length === 2) {
     // 부모-자식 선택: [charId, gradeKey]
     const [selectedCharId, gradeKey] = arr;

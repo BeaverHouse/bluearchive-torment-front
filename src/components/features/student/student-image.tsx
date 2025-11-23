@@ -3,6 +3,7 @@
 import Image from "next/image";
 import React from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { useStudentMaps } from "@/hooks/use-student-maps";
 import {
   HybridTooltip,
   HybridTooltipTrigger,
@@ -21,14 +22,16 @@ interface StudentImageProps {
  * @param name Student name (to use in tooltip)
  */
 export function StudentImage({ code }: StudentImageProps) {
+  const { studentsMap } = useStudentMaps();
+
   const studentID = React.useMemo(
     () => (code < 100000 ? code : Math.floor(code / 1000)),
     [code]
   );
 
   const studentName = React.useMemo(
-    () => getCharacterName(studentID),
-    [studentID]
+    () => getCharacterName(studentID, studentsMap),
+    [studentID, studentsMap]
   );
 
   const gradeKey = React.useMemo(

@@ -10,21 +10,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RaidInfo } from "@/types/raid";
 import { SingleSelect } from "@/components/ui/custom/single-select";
 import { trackSummaryTabClick } from "@/utils/analytics";
-import { useEffect, useState } from "react";
-import { getStudentMap } from "@/lib/cdn";
+import { useStudentMaps } from "@/hooks/use-student-maps";
 
 export default function Home() {
   const { V3Season, setV3Season } = useBAStore();
-  const [studentsMap, setStudentsMap] = useState<Record<string, string>>({});
-
-  useEffect(() => {
-    const fetchStudentMap = async () => {
-      const data = await getStudentMap();
-      setStudentsMap(data);
-    };
-
-    fetchStudentMap();
-  }, []);
+  const { studentsMap, studentSearchMap } = useStudentMaps();
   const raidInfos = (raidsData as RaidInfo[])
     .filter((raid) => raid.party_updated)
     .map((raid) => ({
@@ -106,13 +96,14 @@ export default function Home() {
           )}
         </TabsList>
         <TabsContent value="search">
-          <RaidSearch season={season} studentsMap={studentsMap} level="NOUSE" />
+          <RaidSearch season={season} studentsMap={studentsMap} studentSearchMap={studentSearchMap} level="NOUSE" />
         </TabsContent>
         <TabsContent value="summary">
           <RaidSummary
             season={season}
             seasonDescription={seasonDescription}
             studentsMap={studentsMap}
+            studentSearchMap={studentSearchMap}
             level={seasonTopLevel === "L" ? "T" : seasonTopLevel}
           />
         </TabsContent>
@@ -122,6 +113,7 @@ export default function Home() {
               season={season}
               seasonDescription={seasonDescription}
               studentsMap={studentsMap}
+              studentSearchMap={studentSearchMap}
               level="L"
             />
           </TabsContent>

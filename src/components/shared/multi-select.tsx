@@ -8,11 +8,13 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { MultiSelectOption, BaseSelectProps } from "@/types/ui";
+import { matchesStudentSearch, StudentSearchData } from "@/utils/search";
 
 interface MultiSelectProps extends BaseSelectProps {
   options: MultiSelectOption[];
   value?: (string | number)[];
   onChange?: (value: (string | number)[]) => void;
+  studentSearchMap?: StudentSearchData;
 }
 
 export const MultiSelect = React.memo(function MultiSelect({
@@ -23,6 +25,7 @@ export const MultiSelect = React.memo(function MultiSelect({
   className,
   allowClear = true,
   showSearch = false,
+  studentSearchMap,
 }: MultiSelectProps) {
   const [open, setOpen] = React.useState(false);
   const [searchValue, setSearchValue] = React.useState("");
@@ -71,9 +74,11 @@ export const MultiSelect = React.memo(function MultiSelect({
     if (!showSearch || !searchValue) return options;
 
     return options.filter((option) =>
-      option.label.toLowerCase().includes(searchValue.toLowerCase())
+      studentSearchMap
+        ? matchesStudentSearch(option.value.toString(), searchValue, studentSearchMap)
+        : option.label.toLowerCase().includes(searchValue.toLowerCase())
     );
-  }, [options, searchValue, showSearch]);
+  }, [options, searchValue, showSearch, studentSearchMap]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

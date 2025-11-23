@@ -204,7 +204,7 @@ export function RaidScoreCalculator() {
           <div>
             <CardTitle>총력전/대결전 점수 계산기</CardTitle>
             <CardDescription>
-              시간 또는 점수를 입력하면 나머지를 계산합니다. (최대 3개)
+              시간 또는 점수를 입력하면 나머지를 계산해요. (최대 3개)
             </CardDescription>
           </div>
           {totalScore > 0 && (

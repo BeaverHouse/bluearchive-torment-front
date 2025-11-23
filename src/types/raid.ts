@@ -39,6 +39,7 @@ export interface FilterOption {
 export interface RaidComponentProps {
   season: string;
   studentsMap: Record<string, string>;
+  studentSearchMap?: Record<string, { nameJa: string; nameKo: string; searchKeywords: string[] | null }>;
   level: string;
   seasonDescription?: string;
 }

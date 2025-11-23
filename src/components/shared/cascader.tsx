@@ -8,12 +8,14 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { CascaderOption, BaseSelectProps } from "@/types/ui";
+import { matchesStudentSearch, StudentSearchData } from "@/utils/search";
 
 interface CascaderProps extends BaseSelectProps {
   options: CascaderOption[];
   value?: number[][];
   onChange?: (value: number[][]) => void;
   multiple?: boolean;
+  studentSearchMap?: StudentSearchData;
 }
 
 export const Cascader = React.memo(function Cascader({
@@ -25,6 +27,7 @@ export const Cascader = React.memo(function Cascader({
   multiple = false,
   allowClear = true,
   showSearch = false,
+  studentSearchMap,
 }: CascaderProps) {
   const [open, setOpen] = React.useState(false);
   const [searchValue, setSearchValue] = React.useState("");
@@ -116,15 +119,21 @@ export const Cascader = React.memo(function Cascader({
     if (!showSearch || !searchValue) return options;
 
     return options.filter((option) => {
-      const parentMatch = option.label
-        .toLowerCase()
-        .includes(searchValue.toLowerCase());
+      // 부모 항목 매칭
+      const parentMatch = studentSearchMap
+        ? matchesStudentSearch(option.value.toString(), searchValue, studentSearchMap)
+        : option.label.toLowerCase().includes(searchValue.toLowerCase());
+
+      // 자식 항목 매칭
       const childMatch = option.children?.some((child) =>
-        child.label.toLowerCase().includes(searchValue.toLowerCase())
+        studentSearchMap
+          ? matchesStudentSearch(child.value.toString(), searchValue, studentSearchMap)
+          : child.label.toLowerCase().includes(searchValue.toLowerCase())
       );
+
       return parentMatch || childMatch;
     });
-  }, [options, searchValue, showSearch]);
+  }, [options, searchValue, showSearch, studentSearchMap]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

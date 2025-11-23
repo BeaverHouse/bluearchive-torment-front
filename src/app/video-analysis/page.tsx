@@ -7,7 +7,6 @@ import {
   getQueueStatus,
   QueueItem,
 } from "@/lib/api";
-import { getStudentMap } from "@/lib/cdn";
 import { VideoListItem } from "@/types/video";
 import { RaidInfo } from "@/types/raid";
 import {
@@ -32,6 +31,7 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Clock, RefreshCw, Youtube } from "lucide-react";
 import { useEffect, useState, Suspense, useMemo, useCallback } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useStudentMaps } from "@/hooks/use-student-maps";
 import raidsData from "../../../data/raids.json";
 import ErrorPage from "@/components/common/error-page";
 import { filteredPartys, getFilters } from "@/lib/party-filters";
@@ -86,7 +86,7 @@ function VideoAnalysisContent() {
     youtubeOnly: false,
   });
 
-  const [studentsMap, setStudentsMap] = useState<Record<string, string>>({});
+  const { studentsMap, studentSearchMap } = useStudentMaps();
 
   // 필터 데이터 상태
   const [filterData, setFilterData] = useState<{
@@ -104,16 +104,6 @@ function VideoAnalysisContent() {
   const [isQueueDialogOpen, setIsQueueDialogOpen] = useState(false);
   const [queueItems, setQueueItems] = useState<QueueItem[]>([]);
   const [queueLoading, setQueueLoading] = useState(false);
-
-  // CDN에서 studentsMap 로드
-  useEffect(() => {
-    const fetchStudentMap = async () => {
-      const data = await getStudentMap();
-      setStudentsMap(data);
-    };
-
-    fetchStudentMap();
-  }, []);
 
   // URL에서 raid 파라미터를 항상 읽어서 selectedRaid 설정 (없으면 "all")
   useEffect(() => {
@@ -394,7 +384,7 @@ function VideoAnalysisContent() {
       <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
         <div className="mb-8">
           <p className="text-muted-foreground">
-            총력전 영상을 분석하여 파티 구성과 스킬 순서를 확인하세요.
+            700개 이상의 총력전 영상이 준비되어 있어요.
           </p>
         </div>
         <Loading />
@@ -410,7 +400,7 @@ function VideoAnalysisContent() {
     <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
       <div className="mb-8">
         <p className="text-muted-foreground">
-          총력전 영상을 분석하여 파티 구성과 스킬 순서를 확인하세요.
+          700개 이상의 총력전 영상이 준비되어 있어요.
         </p>
       </div>
 
@@ -431,6 +421,7 @@ function VideoAnalysisContent() {
                 assistOptions={assistOptions}
                 minPartys={0}
                 maxPartys={20}
+                studentSearchMap={studentSearchMap}
                 showYoutubeOnly={false}
                 onReset={() => {
                   const confirm = window.confirm("모든 캐릭터 필터가 리셋됩니다.");
@@ -646,7 +637,7 @@ export default function VideoAnalysisPage() {
         <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
           <div className="mb-8">
             <p className="text-muted-foreground">
-              총력전 영상을 분석하여 파티 구성과 스킬 순서를 확인하세요.
+              700개 이상의 총력전 영상이 준비되어 있어요.
             </p>
           </div>
           <Loading />
