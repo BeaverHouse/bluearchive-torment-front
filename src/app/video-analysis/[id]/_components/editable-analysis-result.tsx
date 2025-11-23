@@ -29,7 +29,7 @@ import {
 import { AnalysisResult, VideoAnalysisData, SkillOrder } from "@/types/video";
 import { updateVideoAnalysis } from "@/lib/api";
 import { SearchableSelect } from "@/components/features/video/searchable-select";
-import { getCharacterName } from "@/utils/character";
+import { getCharacterName, parseCharacterInfo } from "@/utils/character";
 import { StarRating } from "@/components/features/student/star-rating";
 import { useStudentMaps } from "@/hooks/use-student-maps";
 import {
@@ -286,15 +286,9 @@ export function EditableAnalysisResult({
   );
 
   // 캐릭터 코드에서 정보 추출
-  const parseCharacterInfo = (charValue: number) => {
+  const parseCharacterInfoSafe = (charValue: number) => {
     if (charValue === 0) return null;
-
-    const code = Math.floor(charValue / 1000);
-    const star = Math.floor((charValue % 1000) / 100);
-    const weapon = Math.floor((charValue % 100) / 10);
-    const assist = charValue % 10;
-
-    return { code, star, weapon, assist };
+    return parseCharacterInfo(charValue);
   };
 
   // 캐릭터 세부 정보 업데이트 (성급, 무기 등)
@@ -312,7 +306,7 @@ export function EditableAnalysisResult({
 
         if (currentChar === 0) return prev;
 
-        const info = parseCharacterInfo(currentChar);
+        const info = parseCharacterInfoSafe(currentChar);
         if (!info) return prev;
 
         // 조력자를 체크하는 경우, 같은 파티의 다른 조력자들을 해제
@@ -320,7 +314,7 @@ export function EditableAnalysisResult({
           console.log('조력자 체크 - 파티 정리 시작:', partyIndex, characterIndex);
           for (let i = 0; i < newParty.length; i++) {
             if (i !== characterIndex && newParty[i] !== 0) {
-              const otherCharInfo = parseCharacterInfo(newParty[i]);
+              const otherCharInfo = parseCharacterInfoSafe(newParty[i]);
               console.log(`슬롯 ${i} 캐릭터 정보:`, otherCharInfo);
               if (otherCharInfo && otherCharInfo.assist === 1) {
                 // 다른 캐릭터의 조력자 해제
@@ -441,7 +435,7 @@ export function EditableAnalysisResult({
                   {/* 캐릭터 슬롯 */}
                   <div className="grid grid-cols-6 gap-3">
                     {party.map((charValue, charIndex) => {
-                      const charInfo = parseCharacterInfo(charValue);
+                      const charInfo = parseCharacterInfoSafe(charValue);
 
                       return (
                         <div

@@ -9,7 +9,7 @@ import { YouTubeEmbed } from "@/components/features/video/youtube-embed";
 import PartyCard from "@/components/features/raid/party-card";
 import { VideoAnalysisData } from "@/types/video";
 import Link from "next/link";
-import { getCharacterName } from "@/utils/character";
+import { getCharacterName, parseCharacterInfo } from "@/utils/character";
 import { useStudentMaps } from "@/hooks/use-student-maps";
 
 interface VideoDetailProps {
@@ -101,10 +101,7 @@ export function VideoDetail({
           return;
         }
 
-        const code = Math.floor(char / 1000);
-        const star = Math.floor((char % 1000) / 100);
-        const weapon = Math.floor((char % 100) / 10);
-        const assist = char % 10;
+        const { code, star, weapon, assist } = parseCharacterInfo(char);
         const name = getCharacterName(code, studentsMap);
 
         // 성급과 무기 표시 개선
@@ -161,7 +158,7 @@ export function VideoDetail({
             skill.type === "striker" ? skill.order - 1 : skill.order - 1 + 4;
           const charValue = party[characterIndex];
           if (charValue && charValue > 0) {
-            const code = Math.floor(charValue / 1000);
+            const { code } = parseCharacterInfo(charValue);
             characterName = getCharacterName(code, studentsMap);
           }
         }
@@ -508,9 +505,9 @@ export function VideoDetail({
                                     : skill.order - 1 + 4;
                                 const charValue = party[characterIndex];
                                 if (charValue && charValue > 0) {
-                                  characterCode = Math.floor(charValue / 1000);
-                                  characterName =
-                                    getCharacterName(characterCode);
+                                  const { code } = parseCharacterInfo(charValue);
+                                  characterCode = code;
+                                  characterName = getCharacterName(characterCode);
                                 }
                               }
 
