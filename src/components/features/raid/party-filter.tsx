@@ -15,6 +15,7 @@ import { MultiSelect } from "@/components/shared/multi-select";
 import { FilterOption } from "@/types/raid";
 import { PartyFilterState } from "@/types/filter";
 import { scoreInfo } from "@/constants/score";
+import { StudentSearchData } from "@/utils/search";
 
 interface PartyFilterProps {
   // 필터 상태
@@ -27,6 +28,7 @@ interface PartyFilterProps {
   assistOptions: FilterOption[]; // 조력자 옵션
   minPartys: number;
   maxPartys: number;
+  studentSearchMap?: StudentSearchData; // 학생 검색 데이터 맵
 
   // Optional 기능
   showYoutubeOnly?: boolean; // Youtube 옵션 표시 여부
@@ -54,6 +56,7 @@ export function PartyFilter({
   assistOptions,
   minPartys,
   maxPartys,
+  studentSearchMap,
   showYoutubeOnly = false,
   showScoreButtons = true,
   onReset,
@@ -257,6 +260,7 @@ export function PartyFilter({
           className="w-full"
           allowClear
           showSearch
+          studentSearchMap={studentSearchMap}
         />
       </div>
 
@@ -273,6 +277,7 @@ export function PartyFilter({
           className="w-full"
           allowClear
           showSearch
+          studentSearchMap={studentSearchMap}
         />
       </div>
 
@@ -303,6 +308,7 @@ export function PartyFilter({
           className="w-full"
           allowClear
           showSearch
+          studentSearchMap={studentSearchMap}
         />
       </div>
 

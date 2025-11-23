@@ -50,6 +50,7 @@ const RaidSummary = ({
   season,
   seasonDescription: _seasonDescription = "",
   studentsMap,
+  studentSearchMap,
   level,
 }: RaidComponentProps) => {
   const router = useRouter();
@@ -447,6 +448,7 @@ const RaidSummary = ({
             onValueChange={(value) => setCharacter(value ? Number(value) : null)}
             placeholder="캐릭터를 선택하세요"
             className="w-full max-w-sm"
+            studentSearchMap={studentSearchMap}
           />
         </div>
 

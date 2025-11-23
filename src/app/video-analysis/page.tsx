@@ -7,7 +7,7 @@ import {
   getQueueStatus,
   QueueItem,
 } from "@/lib/api";
-import { getStudentMap } from "@/lib/cdn";
+import { getStudentSearchMap } from "@/lib/cdn";
 import { VideoListItem } from "@/types/video";
 import { RaidInfo } from "@/types/raid";
 import {
@@ -87,6 +87,7 @@ function VideoAnalysisContent() {
   });
 
   const [studentsMap, setStudentsMap] = useState<Record<string, string>>({});
+  const [studentSearchMap, setStudentSearchMap] = useState<Record<string, { nameJa: string; nameKo: string; searchKeywords: string[] | null }>>({});
 
   // 필터 데이터 상태
   const [filterData, setFilterData] = useState<{
@@ -105,14 +106,21 @@ function VideoAnalysisContent() {
   const [queueItems, setQueueItems] = useState<QueueItem[]>([]);
   const [queueLoading, setQueueLoading] = useState(false);
 
-  // CDN에서 studentsMap 로드
+  // CDN에서 studentSearchMap 로드
   useEffect(() => {
-    const fetchStudentMap = async () => {
-      const data = await getStudentMap();
-      setStudentsMap(data);
+    const fetchStudentMaps = async () => {
+      const searchMap = await getStudentSearchMap();
+      setStudentSearchMap(searchMap);
+
+      // studentsMap은 studentSearchMap에서 추출
+      const nameMap: Record<string, string> = {};
+      for (const [id, data] of Object.entries(searchMap)) {
+        nameMap[id] = data.nameKo;
+      }
+      setStudentsMap(nameMap);
     };
 
-    fetchStudentMap();
+    fetchStudentMaps();
   }, []);
 
   // URL에서 raid 파라미터를 항상 읽어서 selectedRaid 설정 (없으면 "all")
@@ -431,6 +439,7 @@ function VideoAnalysisContent() {
                 assistOptions={assistOptions}
                 minPartys={0}
                 maxPartys={20}
+                studentSearchMap={studentSearchMap}
                 showYoutubeOnly={false}
                 onReset={() => {
                   const confirm = window.confirm("모든 캐릭터 필터가 리셋됩니다.");

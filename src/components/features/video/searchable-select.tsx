@@ -19,11 +19,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { ImageSelectOption, BaseSelectProps } from "@/types/ui"
+import { StudentSearchData } from "@/utils/search"
 
 interface SearchableSelectProps extends BaseSelectProps {
   options: ImageSelectOption[]
   value: string
   onValueChange: (value: string) => void
+  studentSearchMap?: StudentSearchData
 }
 
 const OptionImage = ({ value, label }: { value: string | number; label: string }) => {
@@ -54,10 +56,21 @@ export function SearchableSelect({
   onValueChange,
   placeholder = "학생 선택...",
   className,
-  disabled = false
+  disabled = false,
+  studentSearchMap
 }: SearchableSelectProps) {
   const [open, setOpen] = React.useState(false)
   const selectedOption = options.find(option => option.value.toString() === value)
+
+  // 검색용 문자열 생성 (이름 + 동의어)
+  const getSearchableValue = React.useCallback((option: ImageSelectOption) => {
+    const studentData = studentSearchMap?.[option.value.toString()];
+    if (studentData) {
+      const keywords = studentData.searchKeywords?.join(' ') || '';
+      return `${option.label}-${option.value}-${studentData.nameJa}-${keywords}`;
+    }
+    return `${option.label}-${option.value}`;
+  }, [studentSearchMap]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -86,7 +99,7 @@ export function SearchableSelect({
               {options.map((option) => (
                 <CommandItem
                   key={option.value}
-                  value={`${option.label}-${option.value}`}
+                  value={getSearchableValue(option)}
                   onSelect={() => {
                     onValueChange(option.value.toString())
                     setOpen(false)

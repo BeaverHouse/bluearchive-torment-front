@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 import { AnalysisResult, VideoAnalysisData, SkillOrder } from "@/types/video";
 import { updateVideoAnalysis } from "@/lib/api";
-import { getStudentMap } from "@/lib/cdn";
+import { getStudentSearchMap } from "@/lib/cdn";
 import { SearchableSelect } from "@/components/features/video/searchable-select";
 import { getCharacterName } from "@/utils/character";
 import { StarRating } from "@/components/features/student/star-rating";
@@ -69,14 +69,22 @@ export function EditableAnalysisResult({
   const [saving, setSaving] = useState(false);
   const [compactMode, setCompactMode] = useState(true); // 기본값을 컴팩트 모드로 설정
   const [studentsMap, setStudentsMap] = useState<Record<string, string>>({});
+  const [studentSearchMap, setStudentSearchMap] = useState<Record<string, { nameJa: string; nameKo: string; searchKeywords: string[] | null }>>({});
 
   useEffect(() => {
-    const fetchStudentMap = async () => {
-      const data = await getStudentMap();
-      setStudentsMap(data);
+    const fetchStudentMaps = async () => {
+      const searchMap = await getStudentSearchMap();
+      setStudentSearchMap(searchMap);
+
+      // studentsMap은 studentSearchMap에서 추출
+      const nameMap: Record<string, string> = {};
+      for (const [id, data] of Object.entries(searchMap)) {
+        nameMap[id] = data.nameKo;
+      }
+      setStudentsMap(nameMap);
     };
 
-    fetchStudentMap();
+    fetchStudentMaps();
   }, []);
 
   const getCharacterOptions = (slotIndex?: number) => {
@@ -475,6 +483,7 @@ export function EditableAnalysisResult({
                               }
                               placeholder={charIndex < 4 ? "스트라이커 선택" : "스페셜 선택"}
                               className="w-full"
+                              studentSearchMap={studentSearchMap}
                             />
                           </div>
 

@@ -11,19 +11,27 @@ import { RaidInfo } from "@/types/raid";
 import { SingleSelect } from "@/components/ui/custom/single-select";
 import { trackSummaryTabClick } from "@/utils/analytics";
 import { useEffect, useState } from "react";
-import { getStudentMap } from "@/lib/cdn";
+import { getStudentSearchMap } from "@/lib/cdn";
 
 export default function Home() {
   const { V3Season, setV3Season } = useBAStore();
   const [studentsMap, setStudentsMap] = useState<Record<string, string>>({});
+  const [studentSearchMap, setStudentSearchMap] = useState<Record<string, { nameJa: string; nameKo: string; searchKeywords: string[] | null }>>({});
 
   useEffect(() => {
-    const fetchStudentMap = async () => {
-      const data = await getStudentMap();
-      setStudentsMap(data);
+    const fetchStudentMaps = async () => {
+      const searchMap = await getStudentSearchMap();
+      setStudentSearchMap(searchMap);
+
+      // studentsMap은 studentSearchMap에서 추출
+      const nameMap: Record<string, string> = {};
+      for (const [id, data] of Object.entries(searchMap)) {
+        nameMap[id] = data.nameKo;
+      }
+      setStudentsMap(nameMap);
     };
 
-    fetchStudentMap();
+    fetchStudentMaps();
   }, []);
   const raidInfos = (raidsData as RaidInfo[])
     .filter((raid) => raid.party_updated)
@@ -106,13 +114,14 @@ export default function Home() {
           )}
         </TabsList>
         <TabsContent value="search">
-          <RaidSearch season={season} studentsMap={studentsMap} level="NOUSE" />
+          <RaidSearch season={season} studentsMap={studentsMap} studentSearchMap={studentSearchMap} level="NOUSE" />
         </TabsContent>
         <TabsContent value="summary">
           <RaidSummary
             season={season}
             seasonDescription={seasonDescription}
             studentsMap={studentsMap}
+            studentSearchMap={studentSearchMap}
             level={seasonTopLevel === "L" ? "T" : seasonTopLevel}
           />
         </TabsContent>
@@ -122,6 +131,7 @@ export default function Home() {
               season={season}
               seasonDescription={seasonDescription}
               studentsMap={studentsMap}
+              studentSearchMap={studentSearchMap}
               level="L"
             />
           </TabsContent>
