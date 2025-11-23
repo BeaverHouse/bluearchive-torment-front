@@ -8,6 +8,7 @@ import {
   QueueItem,
 } from "@/lib/api";
 import { getStudentSearchMap } from "@/lib/cdn";
+import { extractStudentsMap } from "@/utils/search";
 import { VideoListItem } from "@/types/video";
 import { RaidInfo } from "@/types/raid";
 import {
@@ -111,13 +112,7 @@ function VideoAnalysisContent() {
     const fetchStudentMaps = async () => {
       const searchMap = await getStudentSearchMap();
       setStudentSearchMap(searchMap);
-
-      // studentsMap은 studentSearchMap에서 추출
-      const nameMap: Record<string, string> = {};
-      for (const [id, data] of Object.entries(searchMap)) {
-        nameMap[id] = data.nameKo;
-      }
-      setStudentsMap(nameMap);
+      setStudentsMap(extractStudentsMap(searchMap));
     };
 
     fetchStudentMaps();

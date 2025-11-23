@@ -43,3 +43,18 @@ export function matchesStudentSearch(
 
   return false;
 }
+
+/**
+ * studentSearchMap에서 간단한 이름 맵(studentsMap)을 추출
+ * @param studentSearchMap 학생 검색 데이터 맵
+ * @returns 학생 ID를 키로, 한국어 이름을 값으로 하는 맵
+ */
+export function extractStudentsMap(
+  studentSearchMap: StudentSearchData
+): Record<string, string> {
+  const nameMap: Record<string, string> = {};
+  for (const [id, data] of Object.entries(studentSearchMap)) {
+    nameMap[id] = data.nameKo;
+  }
+  return nameMap;
+}

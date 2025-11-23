@@ -12,6 +12,7 @@ import { SingleSelect } from "@/components/ui/custom/single-select";
 import { trackSummaryTabClick } from "@/utils/analytics";
 import { useEffect, useState } from "react";
 import { getStudentSearchMap } from "@/lib/cdn";
+import { extractStudentsMap } from "@/utils/search";
 
 export default function Home() {
   const { V3Season, setV3Season } = useBAStore();
@@ -22,13 +23,7 @@ export default function Home() {
     const fetchStudentMaps = async () => {
       const searchMap = await getStudentSearchMap();
       setStudentSearchMap(searchMap);
-
-      // studentsMap은 studentSearchMap에서 추출
-      const nameMap: Record<string, string> = {};
-      for (const [id, data] of Object.entries(searchMap)) {
-        nameMap[id] = data.nameKo;
-      }
-      setStudentsMap(nameMap);
+      setStudentsMap(extractStudentsMap(searchMap));
     };
 
     fetchStudentMaps();

@@ -31,6 +31,7 @@ import { updateVideoAnalysis } from "@/lib/api";
 import { getStudentSearchMap } from "@/lib/cdn";
 import { SearchableSelect } from "@/components/features/video/searchable-select";
 import { getCharacterName } from "@/utils/character";
+import { extractStudentsMap } from "@/utils/search";
 import { StarRating } from "@/components/features/student/star-rating";
 import {
   DndContext,
@@ -75,13 +76,7 @@ export function EditableAnalysisResult({
     const fetchStudentMaps = async () => {
       const searchMap = await getStudentSearchMap();
       setStudentSearchMap(searchMap);
-
-      // studentsMap은 studentSearchMap에서 추출
-      const nameMap: Record<string, string> = {};
-      for (const [id, data] of Object.entries(searchMap)) {
-        nameMap[id] = data.nameKo;
-      }
-      setStudentsMap(nameMap);
+      setStudentsMap(extractStudentsMap(searchMap));
     };
 
     fetchStudentMaps();
