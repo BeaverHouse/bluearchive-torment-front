@@ -10,7 +10,8 @@ import {
 } from "@/components/ui/custom/hybrid-tooltip";
 import { categoryMap } from "@/constants/assault";
 import { getCharacterName } from "@/utils/character";
-import { getStudentMap } from "@/lib/cdn";
+import { getStudentSearchMap } from "@/lib/cdn";
+import { extractStudentsMap } from "@/utils/search";
 
 interface StudentImageProps {
   code: number;
@@ -26,8 +27,8 @@ export function StudentImage({ code }: StudentImageProps) {
 
   React.useEffect(() => {
     const fetchStudentMap = async () => {
-      const data = await getStudentMap();
-      setStudentsMap(data);
+      const searchMap = await getStudentSearchMap();
+      setStudentsMap(extractStudentsMap(searchMap));
     };
     fetchStudentMap();
   }, []);

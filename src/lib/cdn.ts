@@ -28,18 +28,3 @@ export async function getStudentSearchMap(): Promise<Record<string, { nameJa: st
     return {}
   }
 }
-
-/**
- * student-search-map에서 간단한 이름 맵을 추출
- * @deprecated getStudentSearchMap을 사용하고 nameKo를 직접 추출하세요
- */
-export async function getStudentMap(): Promise<Record<string, string>> {
-  const searchMap = await getStudentSearchMap()
-  const nameMap: Record<string, string> = {}
-
-  for (const [id, data] of Object.entries(searchMap)) {
-    nameMap[id] = data.nameKo
-  }
-
-  return nameMap
-}

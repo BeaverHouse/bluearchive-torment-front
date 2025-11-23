@@ -10,7 +10,8 @@ import PartyCard from "@/components/features/raid/party-card";
 import { VideoAnalysisData } from "@/types/video";
 import Link from "next/link";
 import { getCharacterName } from "@/utils/character";
-import { getStudentMap } from "@/lib/cdn";
+import { getStudentSearchMap } from "@/lib/cdn";
+import { extractStudentsMap } from "@/utils/search";
 
 interface VideoDetailProps {
   videos: VideoAnalysisData[];
@@ -31,8 +32,8 @@ export function VideoDetail({
 
   useEffect(() => {
     const fetchStudentMap = async () => {
-      const data = await getStudentMap();
-      setStudentsMap(data);
+      const searchMap = await getStudentSearchMap();
+      setStudentsMap(extractStudentsMap(searchMap));
     };
 
     fetchStudentMap();
