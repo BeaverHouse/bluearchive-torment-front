@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/custom/hybrid-tooltip";
 import { categoryMap } from "@/constants/assault";
 import { getCharacterName } from "@/utils/character";
+import { getStudentMap } from "@/lib/cdn";
 
 interface StudentImageProps {
   code: number;
@@ -21,14 +22,24 @@ interface StudentImageProps {
  * @param name Student name (to use in tooltip)
  */
 export function StudentImage({ code }: StudentImageProps) {
+  const [studentsMap, setStudentsMap] = React.useState<Record<string, string>>({});
+
+  React.useEffect(() => {
+    const fetchStudentMap = async () => {
+      const data = await getStudentMap();
+      setStudentsMap(data);
+    };
+    fetchStudentMap();
+  }, []);
+
   const studentID = React.useMemo(
     () => (code < 100000 ? code : Math.floor(code / 1000)),
     [code]
   );
 
   const studentName = React.useMemo(
-    () => getCharacterName(studentID),
-    [studentID]
+    () => getCharacterName(studentID, studentsMap),
+    [studentID, studentsMap]
   );
 
   const gradeKey = React.useMemo(
