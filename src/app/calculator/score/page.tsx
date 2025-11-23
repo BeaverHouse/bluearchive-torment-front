@@ -10,7 +10,7 @@ export default function ScoreCalculatorPage() {
       <div className="mb-6">
         <h1 className="text-3xl font-bold mb-2">점수 계산기</h1>
         <p className="text-muted-foreground">
-          총력전/대결전 또는 종합전술시험의 점수를 계산합니다.
+          총력전/대결전 또는 종합전술시험의 점수를 계산할 수 있어요.
         </p>
       </div>
 

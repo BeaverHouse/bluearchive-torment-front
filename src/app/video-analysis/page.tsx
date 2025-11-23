@@ -402,7 +402,7 @@ function VideoAnalysisContent() {
       <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
         <div className="mb-8">
           <p className="text-muted-foreground">
-            총력전 영상을 분석하여 파티 구성과 스킬 순서를 확인하세요.
+            700개 이상의 총력전 영상이 준비되어 있어요.
           </p>
         </div>
         <Loading />
@@ -418,7 +418,7 @@ function VideoAnalysisContent() {
     <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
       <div className="mb-8">
         <p className="text-muted-foreground">
-          총력전 영상을 분석하여 파티 구성과 스킬 순서를 확인하세요.
+          700개 이상의 총력전 영상이 준비되어 있어요.
         </p>
       </div>
 
@@ -655,7 +655,7 @@ export default function VideoAnalysisPage() {
         <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
           <div className="mb-8">
             <p className="text-muted-foreground">
-              총력전 영상을 분석하여 파티 구성과 스킬 순서를 확인하세요.
+              700개 이상의 총력전 영상이 준비되어 있어요.
             </p>
           </div>
           <Loading />
