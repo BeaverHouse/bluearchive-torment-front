@@ -24,9 +24,9 @@ export function TopAssistants({ data, studentsMap }: TopAssistantsProps) {
         {data.map((char, index) => (
           <div
             key={char.studentId}
-            className="flex items-center gap-4 p-4 rounded-lg border bg-secondary/20 border-transparent"
+            className="flex items-center gap-4 p-2 rounded-lg"
           >
-            <div className="relative w-16 h-16 flex-shrink-0 rounded-full overflow-hidden border-2 border-sky-500">
+            <div className="relative w-16 h-16 flex-shrink-0 rounded-full overflow-hidden">
               <Image
                 src={`${
                   process.env.NEXT_PUBLIC_CDN_URL || ""
@@ -35,9 +35,6 @@ export function TopAssistants({ data, studentsMap }: TopAssistantsProps) {
                 fill
                 className="object-cover"
               />
-              <div className="absolute bottom-0 w-full bg-black/60 text-white text-[10px] text-center py-0.5">
-                {index + 1}위
-              </div>
             </div>
             <div className="flex-1 min-w-0">
               <div className="font-bold truncate">{char.name}</div>
