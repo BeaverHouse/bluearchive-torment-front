@@ -22,6 +22,10 @@ import Loading from "../../common/loading";
 import CardWrapper from "../../common/card-wrapper";
 import { SearchableSelect } from "../video/searchable-select";
 import { CharacterUsageTable } from "./character-usage-table";
+import { PlatinumCuts } from "./platinum-cuts";
+import { EssentialCharacters } from "./essential-characters";
+import { HighImpactCharacters } from "./high-impact-characters";
+import { TopAssistants } from "./top-assistants";
 
 interface RaidSummaryData {
   clearCount: number;
@@ -29,6 +33,25 @@ interface RaidSummaryData {
   assistFilters: Record<string, Record<string, number>>;
   partyCounts: Record<string, number[]>;
   top5Partys: Array<[string, number]>;
+  platinumCuts?: Array<{ rank: number; score: number }>;
+  essentialCharacters?: Array<{ studentId: number; ratio: number }>;
+  highImpactCharacters?: Array<{
+    studentId: number;
+    rankGap: number;
+    topRank: number;
+    withoutBestRank: number;
+  }>;
+  minUEUser?: {
+    rank: number;
+    score: number;
+    ueCount: number;
+    partyData: number[][];
+  };
+  maxPartyUser?: {
+    rank: number;
+    score: number;
+    partyData: number[][];
+  };
 }
 
 interface CharTableType {
@@ -129,6 +152,7 @@ const RaidSummary = ({
     ...summaryData,
     filters: filterData?.filters || {},
     assistFilters: filterData?.assistFilters || {},
+    platinumCuts: getSummaryDataQuery.data?.platinumCuts,
   };
 
   const highUsageCharacters = Object.entries(data?.filters || {})
@@ -147,7 +171,13 @@ const RaidSummary = ({
   if (!data || data.clearCount === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-24">
-        <Image src="/empty.webp" alt="Empty" width={192} height={192} className="mb-4" />
+        <Image
+          src="/empty.webp"
+          alt="Empty"
+          width={192}
+          height={192}
+          className="mb-4"
+        />
         <p className="text-muted-foreground text-lg">클리어 데이터가 없어요.</p>
       </div>
     );
@@ -276,7 +306,7 @@ const RaidSummary = ({
                 clearPercent > 50 ? "text-red-600" : ""
               }`}
             >
-              {(Math.min(data?.clearCount || 0, 20000)).toLocaleString()} (
+              {Math.min(data?.clearCount || 0, 20000).toLocaleString()} (
               {(level === "T"
                 ? tormentClearPercent
                 : lunaticClearPercent
@@ -285,223 +315,287 @@ const RaidSummary = ({
             </div>
             {level === "T" && lunaticSummaryData.clearCount > 0 && (
               <p className="text-xs text-muted-foreground">
-                루나틱: {lunaticClearPercent.toFixed(2)}%, 총합{" "}
-                {clearPercent.toFixed(2)}%
+                루나틱: {lunaticClearPercent.toFixed(2)}%
               </p>
             )}
           </CardWrapper>
         )}
       </div>
 
-      {highUsageCharacters.length > 0 && (
+      <div className="space-y-6">
+        {/* Platinum Cuts */}
+        {data.platinumCuts && data.platinumCuts.length > 0 && (
+          <PlatinumCuts data={data.platinumCuts} />
+        )}
+
+        {/* Essential Characters */}
+        {data.essentialCharacters && data.essentialCharacters.length > 0 && (
+          <EssentialCharacters
+            data={data.essentialCharacters}
+            studentsMap={studentsMap}
+          />
+        )}
+
+        {/* High Impact Characters */}
+        {data.highImpactCharacters && data.highImpactCharacters.length > 0 && (
+          <HighImpactCharacters
+            data={data.highImpactCharacters}
+            studentsMap={studentsMap}
+          />
+        )}
+
+        {/* Top 3 Assistants */}
+        {assistData.length > 0 && (
+          <TopAssistants
+            data={assistData.slice(0, 3)}
+            studentsMap={studentsMap}
+          />
+        )}
+
+        {highUsageCharacters.length > 0 && (
+          <CardWrapper
+            icon={<ThumbsUp className="h-5 w-5 text-sky-500" />}
+            title="많이 쓰인 학생들"
+            description="10% 이상 사용된 학생들이에요."
+          >
+            <div className="flex flex-wrap gap-2">
+              {(showAllHighUsage
+                ? highUsageCharacters
+                : highUsageCharacters.slice(0, 8)
+              ).map((char) => (
+                <Badge
+                  key={char.id}
+                  variant="secondary"
+                  className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 font-medium"
+                >
+                  {char.name} ({char.usageRate.toFixed(1)}%)
+                </Badge>
+              ))}
+              {!showAllHighUsage && highUsageCharacters.length > 8 && (
+                <Badge
+                  variant="outline"
+                  className="cursor-pointer hover:bg-blue-50 hover:border-blue-300 dark:hover:bg-blue-950/20"
+                  onClick={() => setShowAllHighUsage(true)}
+                >
+                  +{highUsageCharacters.length - 8} more
+                </Badge>
+              )}
+            </div>
+          </CardWrapper>
+        )}
+
+        {/* Top 5 Parties */}
         <CardWrapper
-          icon={<ThumbsUp className="h-5 w-5 text-sky-500" />}
-          title="많이 쓰인 학생들"
-          description="10% 이상 사용된 학생들이에요."
+          icon={<Users className="h-5 w-5 text-sky-500" />}
+          title="Top 5 Party"
+          description="전용무기와 배치는 표시되지 않아요."
         >
-          <div className="flex flex-wrap gap-2">
-            {(showAllHighUsage
-              ? highUsageCharacters
-              : highUsageCharacters.slice(0, 8)
-            ).map((char) => (
-              <Badge
-                key={char.id}
-                variant="secondary"
-                className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 font-medium"
-              >
-                {char.name} ({char.usageRate.toFixed(1)}%)
-              </Badge>
-            ))}
-            {!showAllHighUsage && highUsageCharacters.length > 8 && (
-              <Badge
-                variant="outline"
-                className="cursor-pointer hover:bg-blue-50 hover:border-blue-300 dark:hover:bg-blue-950/20"
-                onClick={() => setShowAllHighUsage(true)}
-              >
-                +{highUsageCharacters.length - 8} more
-              </Badge>
-            )}
+          <div className="space-y-3">
+            {(data?.top5Partys || []).map(([party_string, count], idx) => {
+              const students = party_string.split("_").map(Number);
+              // Split into parties (6 students per party)
+              const parties = [];
+              for (let i = 0; i < students.length; i += 6) {
+                parties.push(students.slice(i, i + 6));
+              }
+              return (
+                <PartyCard
+                  key={idx}
+                  rank={idx + 1}
+                  value={count}
+                  valueSuffix="명 사용"
+                  parties={parties}
+                />
+              );
+            })}
           </div>
         </CardWrapper>
-      )}
 
-      {/* Top 5 Parties */}
-      <CardWrapper
-        icon={<Users className="h-5 w-5 text-sky-500" />}
-        title="Top 5 Party"
-        description="전용무기와 배치는 표시되지 않아요."
-      >
-        <div className="space-y-3">
-          {(data?.top5Partys || []).map(([party_string, count], idx) => {
-            const students = party_string.split("_").map(Number);
-            // Split into parties (6 students per party)
-            const parties = [];
-            for (let i = 0; i < students.length; i += 6) {
-              parties.push(students.slice(i, i + 6));
-            }
-            return (
-              <PartyCard
-                key={idx}
-                rank={idx + 1}
-                value={count}
-                valueSuffix="명 사용"
-                parties={parties}
-              />
-            );
-          })}
-        </div>
-      </CardWrapper>
-      {/* Party Composition Chart */}
+        {/* Min UE User */}
+        {data.minUEUser && (
+          <CardWrapper
+            icon={<Target className="h-5 w-5 text-sky-500" />}
+            title="최소 전용무기 클리어"
+            description={`전용무기 ${data.minUEUser.ueCount}개로 클리어했어요.`}
+          >
+            <PartyCard
+              rank={data.minUEUser.rank}
+              value={data.minUEUser.score}
+              valueSuffix="점"
+              parties={data.minUEUser.partyData}
+            />
+          </CardWrapper>
+        )}
 
-      <CardWrapper
-        icon={<Target className="h-5 w-5 text-sky-500" />}
-        title="파티 비율"
-      >
-        <div className="space-y-4 mx-1">
-          {partyCountData.map((row) => (
-            <div key={row.key} className="space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="font-medium text-sm">
-                  {row.key.split("-")[0]}
-                </span>
-                <div className="flex gap-4 text-xs">
-                  <span className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-sky-500 rounded"></div>
-                    1PT
+        {/* Max Party User */}
+        {data.maxPartyUser && (
+          <CardWrapper
+            icon={<Users className="h-5 w-5 text-sky-500" />}
+            title="최다 파티 클리어"
+            description={`${data.maxPartyUser.partyData.length}파티로 클리어했어요.`}
+          >
+            <PartyCard
+              rank={data.maxPartyUser.rank}
+              value={data.maxPartyUser.score}
+              valueSuffix="점"
+              parties={data.maxPartyUser.partyData}
+            />
+          </CardWrapper>
+        )}
+
+        {/* Party Composition Chart */}
+        <CardWrapper
+          icon={<Target className="h-5 w-5 text-sky-500" />}
+          title="파티 비율"
+        >
+          <div className="space-y-4 mx-1">
+            {partyCountData.map((row) => (
+              <div key={row.key} className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="font-medium text-sm">
+                    {row.key.split("-")[0]}
                   </span>
-                  <span className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-green-500 rounded"></div>
-                    2PT
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-yellow-500 rounded"></div>
-                    3PT
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-red-500 rounded"></div>
-                    4PT+
-                  </span>
+                  <div className="flex gap-4 text-xs">
+                    <span className="flex items-center gap-1">
+                      <div className="w-3 h-3 bg-sky-500 rounded"></div>
+                      1PT
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <div className="w-3 h-3 bg-green-500 rounded"></div>
+                      2PT
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <div className="w-3 h-3 bg-yellow-500 rounded"></div>
+                      3PT
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <div className="w-3 h-3 bg-red-500 rounded"></div>
+                      4PT+
+                    </span>
+                  </div>
+                </div>
+                <div className="relative h-6 bg-gray-200 rounded overflow-hidden">
+                  <div
+                    className="absolute top-0 left-0 h-full bg-sky-500 flex items-center justify-center text-white text-xs font-medium"
+                    style={{ width: `${row.one}%` }}
+                  >
+                    {row.one > 5 ? `${row.one}%` : ""}
+                  </div>
+                  <div
+                    className="absolute top-0 h-full bg-green-500 flex items-center justify-center text-white text-xs font-medium"
+                    style={{ left: `${row.one}%`, width: `${row.two}%` }}
+                  >
+                    {row.two > 5 ? `${row.two}%` : ""}
+                  </div>
+                  <div
+                    className="absolute top-0 h-full bg-yellow-500 flex items-center justify-center text-white text-xs font-medium"
+                    style={{
+                      left: `${row.one + row.two}%`,
+                      width: `${row.three}%`,
+                    }}
+                  >
+                    {row.three > 5 ? `${row.three}%` : ""}
+                  </div>
+                  <div
+                    className="absolute top-0 h-full bg-red-500 flex items-center justify-center text-white text-xs font-medium"
+                    style={{
+                      left: `${row.one + row.two + row.three}%`,
+                      width: `${row.fourOrMore}%`,
+                    }}
+                  >
+                    {row.fourOrMore > 5 ? `${row.fourOrMore}%` : ""}
+                  </div>
                 </div>
               </div>
-              <div className="relative h-6 bg-gray-200 rounded overflow-hidden">
-                <div
-                  className="absolute top-0 left-0 h-full bg-sky-500 flex items-center justify-center text-white text-xs font-medium"
-                  style={{ width: `${row.one}%` }}
-                >
-                  {row.one > 5 ? `${row.one}%` : ""}
-                </div>
-                <div
-                  className="absolute top-0 h-full bg-green-500 flex items-center justify-center text-white text-xs font-medium"
-                  style={{ left: `${row.one}%`, width: `${row.two}%` }}
-                >
-                  {row.two > 5 ? `${row.two}%` : ""}
-                </div>
-                <div
-                  className="absolute top-0 h-full bg-yellow-500 flex items-center justify-center text-white text-xs font-medium"
-                  style={{
-                    left: `${row.one + row.two}%`,
-                    width: `${row.three}%`,
-                  }}
-                >
-                  {row.three > 5 ? `${row.three}%` : ""}
-                </div>
-                <div
-                  className="absolute top-0 h-full bg-red-500 flex items-center justify-center text-white text-xs font-medium"
-                  style={{
-                    left: `${row.one + row.two + row.three}%`,
-                    width: `${row.fourOrMore}%`,
-                  }}
-                >
-                  {row.fourOrMore > 5 ? `${row.fourOrMore}%` : ""}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </CardWrapper>
-
-      <CardWrapper
-        icon={<TrendingUp className="h-5 w-5 text-sky-500" />}
-        title="캐릭터 사용률"
-      >
-        <div className="space-y-6">
-          {/* Mobile: Stack tables vertically, Desktop: 3 columns */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <CharacterUsageTable title="STRIKER" data={strikerData} />
-            <CharacterUsageTable title="SPECIAL" data={specialData} />
-            <CharacterUsageTable title="조력자" data={assistData} />
+            ))}
           </div>
-        </div>
-      </CardWrapper>
+        </CardWrapper>
 
-      <CardWrapper
-        icon={<ChartNoAxesColumn className="h-5 w-5 text-sky-500" />}
-        title="캐릭터 성장 통계"
-      >
-        <div className="mb-4">
-          <SearchableSelect
-            options={Object.keys(data?.filters || {}).map((key) => ({
-              value: Number(key),
-              label: studentsMap[key] || `Character ${key}`,
-            }))}
-            value={Character?.toString() || ""}
-            onValueChange={(value) => setCharacter(value ? Number(value) : null)}
-            placeholder="캐릭터를 선택하세요"
-            className="w-full max-w-sm"
-            studentSearchMap={studentSearchMap}
-          />
-        </div>
+        <CardWrapper
+          icon={<TrendingUp className="h-5 w-5 text-sky-500" />}
+          title="캐릭터 사용률"
+        >
+          <div className="space-y-6">
+            {/* Mobile: Stack tables vertically, Desktop: 3 columns */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <CharacterUsageTable title="STRIKER" data={strikerData} />
+              <CharacterUsageTable title="SPECIAL" data={specialData} />
+              <CharacterUsageTable title="조력자" data={assistData} />
+            </div>
+          </div>
+        </CardWrapper>
 
-        {Character !== null && data?.filters?.[Character] && (
-          <div className="space-y-4">
-            {Object.entries(data?.filters?.[Character] || {}).map(
-              ([gradeKey, count], idx) => {
-                const sum = Object.values(
-                  data?.filters?.[Character] || {}
-                ).reduce((sum, cur) => sum + cur, 0);
-                const percent = (count / sum) * 100;
-                const maxPercent = Math.max(
-                  ...Object.values(data?.filters?.[Character] || {}).map(
-                    (c) => (c / sum) * 100
-                  )
-                );
-                return (
-                  <div key={idx} className="space-y-1">
-                    <div className="flex justify-between items-center">
-                      <span
-                        className={`font-medium text-sm ${
-                          percent > 20 ? "text-red-600" : ""
-                        }`}
-                      >
-                        {categoryMap[gradeKey]}
-                      </span>
-                      <span
-                        className={`text-xs ${
-                          percent > 20
-                            ? "text-red-600 font-bold"
-                            : "text-muted-foreground"
-                        }`}
-                      >
-                        {count} ({percent.toFixed(2)}%)
-                      </span>
-                    </div>
-                    <div className="relative h-4 bg-gray-200 rounded overflow-hidden">
-                      <div
-                        className={`absolute top-0 left-0 h-full flex items-center justify-center text-white text-xs font-medium transition-all ${
-                          percent > 20 ? "bg-red-500" : "bg-sky-500"
-                        }`}
-                        style={{ width: `${(percent / maxPercent) * 100}%` }}
-                      >
-                        {percent > 5 ? `${percent.toFixed(1)}%` : ""}
+        <CardWrapper
+          icon={<ChartNoAxesColumn className="h-5 w-5 text-sky-500" />}
+          title="캐릭터 성장 통계"
+        >
+          <div className="mb-4">
+            <SearchableSelect
+              options={Object.keys(data?.filters || {}).map((key) => ({
+                value: Number(key),
+                label: studentsMap[key] || `Character ${key}`,
+              }))}
+              value={Character?.toString() || ""}
+              onValueChange={(value) =>
+                setCharacter(value ? Number(value) : null)
+              }
+              placeholder="캐릭터를 선택하세요"
+              className="w-full max-w-sm"
+              studentSearchMap={studentSearchMap}
+            />
+          </div>
+
+          {Character !== null && data?.filters?.[Character] && (
+            <div className="space-y-4">
+              {Object.entries(data?.filters?.[Character] || {}).map(
+                ([gradeKey, count], idx) => {
+                  const sum = Object.values(
+                    data?.filters?.[Character] || {}
+                  ).reduce((sum, cur) => sum + cur, 0);
+                  const percent = (count / sum) * 100;
+                  const maxPercent = Math.max(
+                    ...Object.values(data?.filters?.[Character] || {}).map(
+                      (c) => (c / sum) * 100
+                    )
+                  );
+                  return (
+                    <div key={idx} className="space-y-1">
+                      <div className="flex justify-between items-center">
+                        <span
+                          className={`font-medium text-sm ${
+                            percent > 20 ? "text-red-600" : ""
+                          }`}
+                        >
+                          {categoryMap[gradeKey]}
+                        </span>
+                        <span
+                          className={`text-xs ${
+                            percent > 20
+                              ? "text-red-600 font-bold"
+                              : "text-muted-foreground"
+                          }`}
+                        >
+                          {count} ({percent.toFixed(2)}%)
+                        </span>
+                      </div>
+                      <div className="relative h-4 bg-gray-200 rounded overflow-hidden">
+                        <div
+                          className={`absolute top-0 left-0 h-full flex items-center justify-center text-white text-xs font-medium transition-all ${
+                            percent > 20 ? "bg-red-500" : "bg-sky-500"
+                          }`}
+                          style={{ width: `${(percent / maxPercent) * 100}%` }}
+                        >
+                          {percent > 5 ? `${percent.toFixed(1)}%` : ""}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              }
-            )}
-          </div>
-        )}
-      </CardWrapper>
+                  );
+                }
+              )}
+            </div>
+          )}
+        </CardWrapper>
+      </div>
     </div>
   );
 };
