@@ -51,9 +51,9 @@ export function HighImpactCharacters({
                 </span>
                 {char.withoutBestRank === 0 ? (
                   <div className="text-xs text-muted-foreground mt-1">
-                    20000등 안의 모두가
+                    최고: {char.topRank}
                     <br />
-                    빌려서라도 사용했어요
+                    미사용: 20000+
                   </div>
                 ) : (
                   <div className="text-xs text-muted-foreground mt-1">
