@@ -250,32 +250,30 @@ export const Cascader = React.memo(function Cascader({
                 className="flex items-center p-2 hover:bg-muted cursor-pointer border-b border-gray-100 last:border-b-0"
                 onClick={() => handleSelect([option.value])}
               >
-                <div className="flex items-center flex-1">
-                  <div className="mr-2">
-                    {multiple ? (
-                      <div
-                        className={cn(
-                          "w-4 h-4 rounded border border-gray-300 flex items-center justify-center",
-                          isSelected([option.value]) &&
-                            "bg-blue-600 border-blue-600"
-                        )}
-                      >
-                        {isSelected([option.value]) && (
-                          <Check className="h-3 w-3 text-white" />
-                        )}
-                      </div>
-                    ) : (
-                      <input
-                        type="radio"
-                        name="cascader-option"
-                        checked={isSelected([option.value])}
-                        onChange={() => {}}
-                        className="w-4 h-4"
-                      />
-                    )}
-                  </div>
-                  <span className="text-sm font-medium">{option.label}</span>
+                <div className="mr-2">
+                  {multiple ? (
+                    <div
+                      className={cn(
+                        "w-4 h-4 rounded border border-gray-300 flex items-center justify-center",
+                        isSelected([option.value]) &&
+                          "bg-blue-600 border-blue-600"
+                      )}
+                    >
+                      {isSelected([option.value]) && (
+                        <Check className="h-3 w-3 text-white" />
+                      )}
+                    </div>
+                  ) : (
+                    <input
+                      type="radio"
+                      name="cascader-option"
+                      checked={isSelected([option.value])}
+                      onChange={() => {}}
+                      className="w-4 h-4"
+                    />
+                  )}
                 </div>
+                <span className="text-sm font-medium">{option.label}</span>
               </div>
               {option.children?.map((child, childIndex) => (
                 <div

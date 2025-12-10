@@ -1,13 +1,7 @@
 import CardWrapper from "@/components/common/card-wrapper";
 import { TrendingUp } from "lucide-react";
 import Image from "next/image";
-
-interface HighImpactCharacter {
-  studentId: number;
-  rankGap: number;
-  topRank: number;
-  withoutBestRank: number;
-}
+import { HighImpactCharacter } from "@/types/raid";
 
 interface HighImpactCharactersProps {
   data: HighImpactCharacter[];
@@ -49,19 +43,11 @@ export function HighImpactCharacters({
                   {studentsMap[char.studentId.toString()] ||
                     `Student ${char.studentId}`}
                 </span>
-                {char.withoutBestRank === 0 ? (
-                  <div className="text-xs text-muted-foreground mt-1">
-                    최고: {char.topRank}
-                    <br />
-                    미사용: 20000+
-                  </div>
-                ) : (
-                  <div className="text-xs text-muted-foreground mt-1">
-                    최고: {char.topRank}
-                    <br />
-                    미사용: {char.withoutBestRank}
-                  </div>
-                )}
+                <div className="text-xs text-muted-foreground mt-1">
+                최고: {char.topRank}
+                <br />
+                미사용: {char.withoutBestRank === 0 ? "20000+" : char.withoutBestRank}
+              </div>
               </div>
             </div>
           );

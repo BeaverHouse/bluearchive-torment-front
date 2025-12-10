@@ -16,7 +16,12 @@ import {
   ChartNoAxesColumn,
 } from "lucide-react";
 import { VideoIcon } from "@radix-ui/react-icons";
-import { RaidComponentProps } from "@/types/raid";
+import {
+  RaidComponentProps,
+  RaidSummaryData,
+  CharTableType,
+  PartyTableType,
+} from "@/types/raid";
 import PartyCard from "./party-card";
 import Loading from "../../common/loading";
 import CardWrapper from "../../common/card-wrapper";
@@ -27,46 +32,31 @@ import { EssentialCharacters } from "./essential-characters";
 import { HighImpactCharacters } from "./high-impact-characters";
 import { TopAssistants } from "./top-assistants";
 
-interface RaidSummaryData {
-  clearCount: number;
-  filters: Record<string, Record<string, number>>;
-  assistFilters: Record<string, Record<string, number>>;
-  partyCounts: Record<string, number[]>;
-  top5Partys: Array<[string, number]>;
-  platinumCuts?: Array<{ rank: number; score: number }>;
-  essentialCharacters?: Array<{ studentId: number; ratio: number }>;
-  highImpactCharacters?: Array<{
-    studentId: number;
-    rankGap: number;
-    topRank: number;
-    withoutBestRank: number;
-  }>;
-  minUEUser?: {
-    rank: number;
-    score: number;
-    ueCount: number;
-    partyData: number[][];
-  };
-  maxPartyUser?: {
-    rank: number;
-    score: number;
-    partyData: number[][];
-  };
-}
-
-interface CharTableType {
-  key: string;
-  studentId: string;
-  name: string;
-  percent: number;
-}
-
-interface PartyTableType {
-  key: string;
-  one: number;
-  two: number;
-  three: number;
-  fourOrMore: number;
+function createCharTableData(
+  filters: Record<string, Record<string, number>>,
+  clearCount: number,
+  studentsMap: Record<string, string>,
+  filterPrefix?: string
+): CharTableType[] {
+  return Object.entries(filters)
+    .filter(([key]) => (filterPrefix ? key.startsWith(filterPrefix) : true))
+    .sort(
+      (a, b) =>
+        Object.values(b[1]).reduce((sum, cur) => sum + cur, 0) -
+        Object.values(a[1]).reduce((sum, cur) => sum + cur, 0)
+    )
+    .map(([key, value], idx) => ({
+      key: (idx + 1).toString(),
+      studentId: key,
+      name: studentsMap[key],
+      percent: Number(
+        (
+          (Object.values(value).reduce((sum, cur) => sum + cur, 0) /
+            (clearCount || 1)) *
+          100
+        ).toFixed(2)
+      ),
+    }));
 }
 
 const RaidSummary = ({
@@ -153,6 +143,7 @@ const RaidSummary = ({
     filters: filterData?.filters || {},
     assistFilters: filterData?.assistFilters || {},
     platinumCuts: getSummaryDataQuery.data?.platinumCuts,
+    partPlatinumCuts: getSummaryDataQuery.data?.partPlatinumCuts,
   };
 
   const highUsageCharacters = Object.entries(data?.filters || {})
@@ -183,65 +174,25 @@ const RaidSummary = ({
     );
   }
 
-  const strikerData: CharTableType[] = Object.entries(data?.filters || {})
-    .filter(([key]) => key.startsWith("1"))
-    .sort(
-      (a, b) =>
-        Object.values(b[1]).reduce((sum, cur) => sum + cur, 0) -
-        Object.values(a[1]).reduce((sum, cur) => sum + cur, 0)
-    )
-    .map(([key, value], idx) => ({
-      key: (idx + 1).toString(),
-      studentId: key,
-      name: studentsMap[key],
-      percent: Number(
-        (
-          (Object.values(value).reduce((sum, cur) => sum + cur, 0) /
-            (data?.clearCount || 1)) *
-          100
-        ).toFixed(2)
-      ),
-    }));
+  const strikerData = createCharTableData(
+    data?.filters || {},
+    data?.clearCount || 0,
+    studentsMap,
+    "1"
+  );
 
-  const specialData: CharTableType[] = Object.entries(data?.filters || {})
-    .filter(([key]) => key.startsWith("2"))
-    .sort(
-      (a, b) =>
-        Object.values(b[1]).reduce((sum, cur) => sum + cur, 0) -
-        Object.values(a[1]).reduce((sum, cur) => sum + cur, 0)
-    )
-    .map(([key, value], idx) => ({
-      key: (idx + 1).toString(),
-      studentId: key,
-      name: studentsMap[key],
-      percent: Number(
-        (
-          (Object.values(value).reduce((sum, cur) => sum + cur, 0) /
-            (data?.clearCount || 1)) *
-          100
-        ).toFixed(2)
-      ),
-    }));
+  const specialData = createCharTableData(
+    data?.filters || {},
+    data?.clearCount || 0,
+    studentsMap,
+    "2"
+  );
 
-  const assistData: CharTableType[] = Object.entries(data?.assistFilters || {})
-    .sort(
-      (a, b) =>
-        Object.values(b[1]).reduce((sum, cur) => sum + cur, 0) -
-        Object.values(a[1]).reduce((sum, cur) => sum + cur, 0)
-    )
-    .map(([key, value], idx) => ({
-      key: (idx + 1).toString(),
-      studentId: key,
-      name: studentsMap[key],
-      percent: Number(
-        (
-          (Object.values(value).reduce((sum, cur) => sum + cur, 0) /
-            (data?.clearCount || 1)) *
-          100
-        ).toFixed(2)
-      ),
-    }))
-    .filter((item) => item.percent >= 1);
+  const assistData = createCharTableData(
+    data?.assistFilters || {},
+    data?.clearCount || 0,
+    studentsMap
+  ).filter((item) => item.percent >= 1);
 
   const partyCountData: PartyTableType[] = [
     // 중복 제거를 위해 Set 사용
@@ -280,7 +231,7 @@ const RaidSummary = ({
       : lunaticClearPercent;
 
   return (
-    <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8 max-w-7xl">
+    <div className="container mx-auto py-4 sm:py-8 max-w-7xl">
       {/* Header */}
       <div className="mb-6 sm:mb-8">
         {/* Strategy Videos - 영상 분석 페이지로 이동 버튼 */}
@@ -325,7 +276,10 @@ const RaidSummary = ({
       <div className="space-y-6">
         {/* Platinum Cuts */}
         {data.platinumCuts && data.platinumCuts.length > 0 && (
-          <PlatinumCuts data={data.platinumCuts} />
+          <PlatinumCuts
+            data={data.platinumCuts}
+            partPlatinumCuts={data.partPlatinumCuts}
+          />
         )}
 
         {/* Essential Characters */}

@@ -53,21 +53,19 @@ export function StudentImage({ code }: StudentImageProps) {
       <HybridTooltip delayDuration={0}>
         <HybridTooltipTrigger asChild>
           <div className="flex flex-col items-center cursor-pointer select-none">
-            <div className="w-10 h-10 mb-1 relative">
-              <Image
-                src={`${
-                  process.env.NEXT_PUBLIC_CDN_URL || ""
-                }/batorment/character/${studentID}.webp`}
-                alt={studentName}
-                width={40}
-                height={40}
-                className={`object-cover rounded ${borderClass}`}
-                draggable={false}
-                loading="lazy"
-                quality={75}
-                placeholder="empty"
-              />
-            </div>
+            <Image
+              src={`${
+                process.env.NEXT_PUBLIC_CDN_URL || ""
+              }/batorment/character/${studentID}.webp`}
+              alt={studentName}
+              width={40}
+              height={40}
+              className={`object-cover rounded mb-1 ${borderClass}`}
+              draggable={false}
+              loading="lazy"
+              quality={75}
+              placeholder="empty"
+            />
             {gradeKey >= 10 && (
               <div
                 className={`text-xs text-center w-full ${
