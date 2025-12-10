@@ -117,12 +117,12 @@ export const MultiSelect = React.memo(function MultiSelect({
           </div>
           <div className="flex items-center gap-1">
             {allowClear && value.length > 0 && (
-              <button
+              <div
                 onClick={clearAll}
-                className="p-0.5 hover:text-foreground rounded-sm hover:bg-muted"
+                className="p-0.5 hover:text-foreground rounded-sm hover:bg-muted cursor-pointer"
               >
                 <X className="h-4 w-4" />
-              </button>
+              </div>
             )}
             <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
           </div>
