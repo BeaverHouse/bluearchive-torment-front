@@ -34,6 +34,7 @@ interface RaidSummaryData {
   partyCounts: Record<string, number[]>;
   top5Partys: Array<[string, number]>;
   platinumCuts?: Array<{ rank: number; score: number }>;
+  partPlatinumCuts?: Array<{ rank: number; score: number }>;
   essentialCharacters?: Array<{ studentId: number; ratio: number }>;
   highImpactCharacters?: Array<{
     studentId: number;
@@ -153,6 +154,7 @@ const RaidSummary = ({
     filters: filterData?.filters || {},
     assistFilters: filterData?.assistFilters || {},
     platinumCuts: getSummaryDataQuery.data?.platinumCuts,
+    partPlatinumCuts: getSummaryDataQuery.data?.partPlatinumCuts,
   };
 
   const highUsageCharacters = Object.entries(data?.filters || {})
@@ -325,7 +327,10 @@ const RaidSummary = ({
       <div className="space-y-6">
         {/* Platinum Cuts */}
         {data.platinumCuts && data.platinumCuts.length > 0 && (
-          <PlatinumCuts data={data.platinumCuts} />
+          <PlatinumCuts
+            data={data.platinumCuts}
+            partPlatinumCuts={data.partPlatinumCuts}
+          />
         )}
 
         {/* Essential Characters */}
