@@ -172,5 +172,23 @@
     "name": "총력전 S84 시가지 쿠로카게",
     "top_level": "L",
     "party_updated": true
+  },
+  {
+    "id": "3S29-1",
+    "name": "대결전 S29 시가지 카이텐 (경장갑,토먼트)",
+    "top_level": "T",
+    "party_updated": false
+  },
+  {
+    "id": "3S29-2",
+    "name": "대결전 S29 시가지 카이텐 (중장갑,토먼트)",
+    "top_level": "T",
+    "party_updated": false
+  },
+  {
+    "id": "3S29-3",
+    "name": "대결전 S29 시가지 카이텐 (특수장갑,인세인)",
+    "top_level": "I",
+    "party_updated": false
   }
 ]
