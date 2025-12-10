@@ -1,10 +1,6 @@
 import CardWrapper from "@/components/common/card-wrapper";
 import { Trophy } from "lucide-react";
-
-interface PlatinumCut {
-  rank: number;
-  score: number;
-}
+import { PlatinumCut } from "@/types/raid";
 
 interface PlatinumCutItemProps {
   cut: PlatinumCut;

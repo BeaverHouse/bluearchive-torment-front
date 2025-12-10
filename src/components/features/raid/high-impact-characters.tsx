@@ -1,13 +1,7 @@
 import CardWrapper from "@/components/common/card-wrapper";
 import { TrendingUp } from "lucide-react";
 import Image from "next/image";
-
-interface HighImpactCharacter {
-  studentId: number;
-  rankGap: number;
-  topRank: number;
-  withoutBestRank: number;
-}
+import { HighImpactCharacter } from "@/types/raid";
 
 interface HighImpactCharactersProps {
   data: HighImpactCharacter[];

@@ -1,12 +1,6 @@
 import React from "react";
 import Image from "next/image";
-
-interface CharTableType {
-  key: string;
-  studentId: string;
-  name: string;
-  percent: number;
-}
+import { CharTableType } from "@/types/raid";
 
 interface CharacterUsageTableProps {
   title: string;

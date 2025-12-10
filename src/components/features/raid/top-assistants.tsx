@@ -1,12 +1,7 @@
 import CardWrapper from "@/components/common/card-wrapper";
 import { Users } from "lucide-react";
 import Image from "next/image";
-
-interface Assistant {
-  studentId: string;
-  name: string;
-  percent: number;
-}
+import { Assistant } from "@/types/raid";
 
 interface TopAssistantsProps {
   data: Assistant[];

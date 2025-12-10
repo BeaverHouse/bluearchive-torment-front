@@ -16,7 +16,12 @@ import {
   ChartNoAxesColumn,
 } from "lucide-react";
 import { VideoIcon } from "@radix-ui/react-icons";
-import { RaidComponentProps } from "@/types/raid";
+import {
+  RaidComponentProps,
+  RaidSummaryData,
+  CharTableType,
+  PartyTableType,
+} from "@/types/raid";
 import PartyCard from "./party-card";
 import Loading from "../../common/loading";
 import CardWrapper from "../../common/card-wrapper";
@@ -26,49 +31,6 @@ import { PlatinumCuts } from "./platinum-cuts";
 import { EssentialCharacters } from "./essential-characters";
 import { HighImpactCharacters } from "./high-impact-characters";
 import { TopAssistants } from "./top-assistants";
-
-interface RaidSummaryData {
-  clearCount: number;
-  filters: Record<string, Record<string, number>>;
-  assistFilters: Record<string, Record<string, number>>;
-  partyCounts: Record<string, number[]>;
-  top5Partys: Array<[string, number]>;
-  platinumCuts?: Array<{ rank: number; score: number }>;
-  partPlatinumCuts?: Array<{ rank: number; score: number }>;
-  essentialCharacters?: Array<{ studentId: number; ratio: number }>;
-  highImpactCharacters?: Array<{
-    studentId: number;
-    rankGap: number;
-    topRank: number;
-    withoutBestRank: number;
-  }>;
-  minUEUser?: {
-    rank: number;
-    score: number;
-    ueCount: number;
-    partyData: number[][];
-  };
-  maxPartyUser?: {
-    rank: number;
-    score: number;
-    partyData: number[][];
-  };
-}
-
-interface CharTableType {
-  key: string;
-  studentId: string;
-  name: string;
-  percent: number;
-}
-
-interface PartyTableType {
-  key: string;
-  one: number;
-  two: number;
-  three: number;
-  fourOrMore: number;
-}
 
 const RaidSummary = ({
   season,

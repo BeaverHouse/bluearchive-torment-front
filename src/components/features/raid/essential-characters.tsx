@@ -1,11 +1,7 @@
 import CardWrapper from "@/components/common/card-wrapper";
 import { CheckCircle } from "lucide-react";
 import Image from "next/image";
-
-interface EssentialCharacter {
-  studentId: number;
-  ratio: number;
-}
+import { EssentialCharacter } from "@/types/raid";
 
 interface EssentialCharactersProps {
   data: EssentialCharacter[];
