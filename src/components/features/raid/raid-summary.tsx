@@ -231,7 +231,7 @@ const RaidSummary = ({
       : lunaticClearPercent;
 
   return (
-    <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8 max-w-7xl">
+    <div className="container mx-auto py-4 sm:py-8 max-w-7xl">
       {/* Header */}
       <div className="mb-6 sm:mb-8">
         {/* Strategy Videos - 영상 분석 페이지로 이동 버튼 */}

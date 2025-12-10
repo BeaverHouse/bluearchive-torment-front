@@ -46,7 +46,7 @@ export default function Home() {
         alignItems: "center",
         textAlign: "center",
         margin: "0 auto",
-        padding: "5px",
+        padding: "4px",
       }}
     >
       <NormalAnnounce />
@@ -96,7 +96,12 @@ export default function Home() {
           )}
         </TabsList>
         <TabsContent value="search">
-          <RaidSearch season={season} studentsMap={studentsMap} studentSearchMap={studentSearchMap} level="NOUSE" />
+          <RaidSearch
+            season={season}
+            studentsMap={studentsMap}
+            studentSearchMap={studentSearchMap}
+            level="NOUSE"
+          />
         </TabsContent>
         <TabsContent value="summary">
           <RaidSummary
