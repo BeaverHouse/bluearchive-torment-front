@@ -24,13 +24,13 @@ const CardWrapper = ({
   return (
     <Card className={className || "my-3 mx-0"}>
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
           <CardTitle className="flex items-center gap-2">
             {icon}
             {title}
           </CardTitle>
           {description && (
-            <CardDescription className="mt-0 text-xs">
+            <CardDescription className="mt-0 text-xs text-left sm:text-right">
               {description}
             </CardDescription>
           )}
