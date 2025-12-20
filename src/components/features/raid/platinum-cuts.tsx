@@ -4,6 +4,7 @@ import { PlatinumCut } from "@/types/raid";
 
 interface PlatinumCutItemProps {
   cut: PlatinumCut;
+  partCut?: PlatinumCut;
   color: "red" | "amber";
 }
 
@@ -34,7 +35,7 @@ const colorClasses = {
   },
 };
 
-function PlatinumCutItem({ cut, color }: PlatinumCutItemProps) {
+function PlatinumCutItem({ cut, partCut, color }: PlatinumCutItemProps) {
   const isLastCut = cut.rank === 20000;
   const classes = colorClasses[color][isLastCut ? "highlight" : "normal"];
 
@@ -42,12 +43,17 @@ function PlatinumCutItem({ cut, color }: PlatinumCutItemProps) {
     <div
       className={`flex flex-col items-center p-2 rounded-lg ${classes.container}`}
     >
-      <span className={`text-sm font-medium ${classes.rank}`}>
+      <span className={`text-xs sm:text-sm font-medium ${classes.rank}`}>
         {cut.rank.toLocaleString()}등
       </span>
-      <span className={`text-lg font-bold ${classes.score}`}>
+      <span className={`text-base sm:text-lg font-bold ${classes.score}`}>
         {cut.score.toLocaleString()}
       </span>
+      {partCut && (
+        <span className="text-xs sm:text-sm font-semibold text-amber-600 dark:text-amber-500 mt-1">
+          {partCut.score.toLocaleString()}
+        </span>
+      )}
     </div>
   );
 }
@@ -62,24 +68,21 @@ export function PlatinumCuts({ data, partPlatinumCuts }: PlatinumCutsProps) {
     <CardWrapper
       icon={<Trophy className="h-5 w-5 text-sky-500" />}
       title="Platinum 컷"
+      description="파란색은 총력전 점수, 주황색은 현재 속성 점수예요."
     >
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        {data.map((cut) => (
-          <PlatinumCutItem key={cut.rank} cut={cut} color="red" />
-        ))}
+        {data.map((cut, index) => {
+          const partCut = partPlatinumCuts?.find((p) => p.rank === cut.rank);
+          return (
+            <PlatinumCutItem
+              key={cut.rank}
+              cut={cut}
+              partCut={partCut}
+              color="red"
+            />
+          );
+        })}
       </div>
-      {partPlatinumCuts && partPlatinumCuts.length > 0 && (
-        <>
-          <div className="mt-4 mb-2 text-sm font-medium text-muted-foreground">
-            현재 속성
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {partPlatinumCuts.map((cut) => (
-              <PlatinumCutItem key={`part-${cut.rank}`} cut={cut} color="amber" />
-            ))}
-          </div>
-        </>
-      )}
     </CardWrapper>
   );
 }
