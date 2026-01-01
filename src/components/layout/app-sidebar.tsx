@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Video, Calculator, ChevronDown } from "lucide-react";
+import { Home, Video, Calculator, ChevronDown, PieChart } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -31,6 +31,11 @@ const menuItems = [
     title: "영상 분석",
     url: "/video-analysis",
     icon: Video,
+  },
+  {
+    title: "종합 분석",
+    url: "/total-analysis",
+    icon: PieChart,
   },
   {
     title: "계산기",
