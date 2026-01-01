@@ -32,7 +32,7 @@ import { Plus, Clock, RefreshCw, Youtube } from "lucide-react";
 import { useEffect, useState, Suspense, useMemo, useCallback } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useStudentMaps } from "@/hooks/use-student-maps";
-import raidsData from "../../../data/raids.json";
+import { useRaids } from "@/hooks/use-raids";
 import ErrorPage from "@/components/common/error-page";
 import { filteredPartys, getFilters } from "@/lib/party-filters";
 import { generateSearchKeyword } from "@/utils/raid";
@@ -45,8 +45,6 @@ import {
 } from "@/components/ui/collapsible";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import Loading from "@/components/common/loading";
-
-const raids: RaidInfo[] = raidsData as RaidInfo[];
 
 function VideoAnalysisContent() {
   const searchParams = useSearchParams();
@@ -87,6 +85,7 @@ function VideoAnalysisContent() {
   });
 
   const { studentsMap, studentSearchMap } = useStudentMaps();
+  const { raids } = useRaids();
 
   // 필터 데이터 상태
   const [filterData, setFilterData] = useState<{

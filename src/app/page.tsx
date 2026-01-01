@@ -5,17 +5,17 @@ import RaidSearch from "@/components/features/raid/raid-search";
 import RaidSummary from "@/components/features/raid/raid-summary";
 import InfoFAB from "@/components/common/info-fab";
 import NormalAnnounce from "@/components/common/normal-announce";
-import raidsData from "../../data/raids.json";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RaidInfo } from "@/types/raid";
 import { SingleSelect } from "@/components/ui/custom/single-select";
 import { trackSummaryTabClick } from "@/utils/analytics";
 import { useStudentMaps } from "@/hooks/use-student-maps";
+import { useRaids } from "@/hooks/use-raids";
 
 export default function Home() {
   const { V3Season, setV3Season } = useBAStore();
   const { studentsMap, studentSearchMap } = useStudentMaps();
-  const raidInfos = (raidsData as RaidInfo[])
+  const { raids } = useRaids();
+  const raidInfos = raids
     .filter((raid) => raid.party_updated)
     .map((raid) => ({
       value: raid.id,

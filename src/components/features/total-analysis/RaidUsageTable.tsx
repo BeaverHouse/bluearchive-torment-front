@@ -3,8 +3,7 @@
 import { useMemo } from "react";
 import { TotalAnalysisData } from "@/types/total-analysis";
 import { StudentImage } from "@/components/features/student/student-image";
-import raidsData from "../../../../data/raids.json";
-import { RaidInfo } from "@/types/raid";
+import { useRaids } from "@/hooks/use-raids";
 import {
   Table,
   TableBody,
@@ -28,7 +27,7 @@ export function RaidUsageTable({
   title,
   limit = 5,
 }: RaidUsageTableProps) {
-  const raids = raidsData as RaidInfo[];
+  const { raids } = useRaids();
 
   const processedData = useMemo(() => {
     const sortedAnalyses = [...data.raidAnalyses].sort(() => {

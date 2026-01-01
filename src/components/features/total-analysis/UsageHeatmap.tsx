@@ -6,8 +6,7 @@ import {
   RaidAnalysis,
 } from "@/types/total-analysis";
 import { categorizeAssault } from "@/utils/total-analysis";
-import raidsData from "../../../../data/raids.json";
-import { RaidInfo } from "@/types/raid";
+import { useRaids } from "@/hooks/use-raids";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Tooltip,
@@ -43,7 +42,7 @@ export function UsageHeatmap({
   characterData,
   raidAnalyses,
 }: UsageHeatmapProps) {
-  const raids = raidsData as RaidInfo[];
+  const { raids } = useRaids();
 
   // lunaticClearCount 맵 생성
   const lunaticClearMap = useMemo(() => {

@@ -13,20 +13,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { VideoListItem } from "@/types/video";
-import { RaidInfo } from "@/types/raid";
-import raidsData from "../../../../data/raids.json";
+import { useRaids } from "@/hooks/use-raids";
 import { trackVideoClick } from "@/utils/analytics";
 
 interface VideoListProps {
   videos: VideoListItem[];
-}
-
-const raids: RaidInfo[] = raidsData as RaidInfo[];
-
-function getRaidName(raidId: string | null): string | null {
-  if (!raidId) return null;
-  const raid = raids.find((r) => r.id === raidId);
-  return raid?.name || null;
 }
 
 // YouTube 썸네일 품질 fallback
@@ -71,6 +62,14 @@ function YouTubeThumbnail({ videoId, title }: { videoId: string; title: string }
 }
 
 export function VideoList({ videos }: VideoListProps) {
+  const { raids } = useRaids();
+
+  const getRaidName = (raidId: string | null): string | null => {
+    if (!raidId) return null;
+    const raid = raids.find((r) => r.id === raidId);
+    return raid?.name || null;
+  };
+
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">

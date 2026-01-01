@@ -3,8 +3,7 @@
 import { useMemo } from "react";
 import { TotalAnalysisData } from "@/types/total-analysis";
 import { categorizeAssault } from "@/utils/total-analysis";
-import raidsData from "../../../../data/raids.json";
-import { RaidInfo } from "@/types/raid";
+import { useRaids } from "@/hooks/use-raids";
 import {
   AreaChart,
   Area,
@@ -21,7 +20,7 @@ interface LunaticClearChartProps {
 }
 
 export function LunaticClearChart({ data }: LunaticClearChartProps) {
-  const raids = raidsData as RaidInfo[];
+  const { raids } = useRaids();
 
   const chartData = useMemo(() => {
     return data.raidAnalyses

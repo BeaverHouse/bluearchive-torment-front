@@ -6,23 +6,16 @@ import { VideoAnalysisData, VideoDetailResponse } from "@/types/video";
 import { RaidInfo } from "@/types/raid";
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
-import raidsData from "../../../../data/raids.json";
+import { useRaids } from "@/hooks/use-raids";
 import ErrorPage from "@/components/common/error-page";
 import Loading from "@/components/common/loading";
-
-const raids: RaidInfo[] = raidsData as RaidInfo[];
-
-function getRaidName(raidId: string | null): string | null {
-  if (!raidId) return null;
-  const raid = raids.find((r) => r.id === raidId);
-  return raid?.name || null;
-}
 
 export default function VideoDetailPage() {
   const params = useParams();
   const searchParams = useSearchParams();
   const videoId = params.id as string;
   const raidId = searchParams.get("raid_id");
+  const { raids } = useRaids();
   const [videoDetail, setVideoDetail] = useState<
     VideoDetailResponse["data"] | null
   >(null);
@@ -31,6 +24,12 @@ export default function VideoDetailPage() {
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const getRaidName = (raidIdParam: string | null): string | null => {
+    if (!raidIdParam) return null;
+    const raid = raids.find((r) => r.id === raidIdParam);
+    return raid?.name || null;
+  };
 
   useEffect(() => {
     const fetchVideo = async () => {
