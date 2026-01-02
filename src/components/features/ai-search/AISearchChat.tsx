@@ -276,25 +276,38 @@ export function AISearchChat() {
       </Card>
 
       {/* 입력 영역 */}
-      <form onSubmit={handleSubmit} className="flex gap-2">
+      <form onSubmit={handleSubmit} className="relative">
         <Textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={apiKey ? "질문을 입력하세요..." : "API 키를 먼저 설정해주세요"}
           disabled={isLoading || !apiKey}
-          className="min-h-[60px] max-h-[200px] resize-none"
-          rows={2}
+          className="min-h-[80px] max-h-[200px] resize-none pr-14 pb-12"
+          rows={3}
         />
-        {isLoading ? (
-          <Button type="button" variant="destructive" onClick={handleStop} className="shrink-0">
-            <StopCircle className="h-4 w-4" />
-          </Button>
-        ) : (
-          <Button type="submit" disabled={!input.trim() || !apiKey} className="shrink-0">
-            <Send className="h-4 w-4" />
-          </Button>
-        )}
+        <div className="absolute right-3 bottom-3">
+          {isLoading ? (
+            <Button
+              type="button"
+              variant="destructive"
+              size="icon"
+              onClick={handleStop}
+              className="h-9 w-9 rounded-full"
+            >
+              <StopCircle className="h-4 w-4" />
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              size="icon"
+              disabled={!input.trim() || !apiKey}
+              className="h-9 w-9 rounded-full"
+            >
+              <Send className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
       </form>
 
       {/* API 키 모달 */}
