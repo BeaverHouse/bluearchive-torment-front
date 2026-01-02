@@ -89,7 +89,7 @@ export function StarDistChart({ characterData }: StarDistChartProps) {
   }
 
   return (
-    <Card className="flex-1 flex flex-col">
+    <Card className="md:flex-1 flex flex-col max-w-full overflow-hidden">
       <CardHeader className="pb-1 px-3">
         <CardTitle className="text-sm flex items-center justify-between">
           <span>성급 분포</span>
@@ -101,8 +101,8 @@ export function StarDistChart({ characterData }: StarDistChartProps) {
       <CardContent className="px-3 py-0 flex-1 flex items-center justify-center">
         {/* PC: 가로 배치, 모바일: 세로 배치 */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-          {/* Pie Chart - 크기 키움 */}
-          <div className="h-[180px] w-[180px] flex-shrink-0 mx-auto sm:mx-0">
+          {/* Pie Chart - 모바일에서 크기 축소 */}
+          <div className="h-[140px] w-[140px] sm:h-[180px] sm:w-[180px] flex-shrink-0 mx-auto sm:mx-0">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie

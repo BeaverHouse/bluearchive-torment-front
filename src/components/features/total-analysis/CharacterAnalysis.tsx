@@ -40,25 +40,27 @@ export function CharacterAnalysis({ data }: CharacterAnalysisProps) {
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center justify-between">
-        <h2 className="text-2xl font-bold tracking-tight">캐릭터 상세 분석</h2>
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
+          캐릭터 상세 분석
+        </h2>
         <SearchableSelect
           options={characterOptions}
           value={selectedStudentId}
           onValueChange={setSelectedStudentId}
           placeholder={isLoaded ? "학생을 선택하세요" : "로딩 중..."}
-          className="w-[200px]"
+          className="w-full sm:w-[200px]"
           studentSearchMap={studentSearchMap}
           disabled={!isLoaded}
         />
       </div>
 
       {selectedCharData ? (
-        <div className="grid gap-3 md:grid-cols-[1fr_auto] items-stretch">
+        <div className="flex flex-col md:grid md:grid-cols-[1fr_auto] gap-3 items-stretch max-w-full overflow-hidden">
           {/* Left Column: Info + Synergy + Pie Chart */}
-          <div className="flex flex-col gap-2 min-w-0">
+          <div className="flex flex-col gap-2 min-w-0 max-w-full overflow-hidden">
             {/* Character Info + Stats */}
-            <Card>
-              <CardContent className="px-3 py-0">
+            <Card className="max-w-full overflow-hidden">
+              <CardContent className="px-3 py-0 max-w-full overflow-hidden">
                 <div className="flex items-center gap-3">
                   <div className="flex-shrink-0">
                     <StudentImage code={selectedCharData.studentId} size={48} />
@@ -153,8 +155,8 @@ export function CharacterAnalysis({ data }: CharacterAnalysisProps) {
             </Card>
 
             {/* Synergy Characters */}
-            <Card>
-              <CardContent className="px-3 py-0">
+            <Card className="max-w-full overflow-hidden">
+              <CardContent className="px-3 py-0 max-w-full overflow-hidden">
                 <div className="text-sm font-semibold mb-2">시너지 TOP 3</div>
                 <div className="space-y-2">
                   {selectedCharData.topSynergyChars
@@ -203,8 +205,8 @@ export function CharacterAnalysis({ data }: CharacterAnalysisProps) {
           />
         </div>
       ) : (
-        <Card>
-          <CardContent className="flex items-center justify-center h-[150px] text-muted-foreground">
+        <Card className="max-w-full overflow-hidden">
+          <CardContent className="flex items-center justify-center h-[120px] sm:h-[150px] text-muted-foreground text-sm">
             분석할 캐릭터를 선택해주세요.
           </CardContent>
         </Card>

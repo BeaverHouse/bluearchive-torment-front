@@ -39,20 +39,21 @@ export function LunaticClearChart({ data }: LunaticClearChartProps) {
   }, [data, raids]);
 
   return (
-    <Card>
+    <Card className="max-w-full overflow-hidden">
       <CardHeader>
-        <CardTitle>LUNATIC 클리어 수</CardTitle>
+        <CardTitle className="text-sm sm:text-base">LUNATIC 클리어 수</CardTitle>
       </CardHeader>
-      <CardContent className="h-[400px]">
+      <CardContent className="h-[250px] sm:h-[400px] max-w-full overflow-hidden">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={chartData}
             margin={{
               top: 10,
-              right: 30,
-              left: 20,
+              right: 10,
+              left: 0,
               bottom: 5,
             }}
+            className="sm:!mr-[30px] sm:!ml-[20px]"
           >
             <defs>
               <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
@@ -71,11 +72,12 @@ export function LunaticClearChart({ data }: LunaticClearChartProps) {
             <CartesianGrid strokeDasharray="3 3" vertical={false} />
             <XAxis
               dataKey="name"
-              tick={{ fontSize: 11 }}
+              tick={{ fontSize: 9 }}
               interval={0}
               angle={-45}
               textAnchor="end"
-              height={80}
+              height={90}
+              className="sm:text-[11px]"
             />
             <YAxis tick={{ fontSize: 12 }} />
             <Tooltip

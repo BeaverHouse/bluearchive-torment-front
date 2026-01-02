@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useCallback, useEffect } from "react";
 import { TotalAnalysisData } from "@/types/total-analysis";
 import { RaidUsageTable } from "./RaidUsageTable";
 import { LunaticClearChart } from "./LunaticClearChart";
@@ -10,57 +11,81 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
+  type CarouselApi,
 } from "@/components/ui/carousel";
+import { cn } from "@/lib/utils";
 
 interface TotalAnalysisLayoutProps {
   data: TotalAnalysisData;
 }
 
 export function TotalAnalysisLayout({ data }: TotalAnalysisLayoutProps) {
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!api) return;
+
+    setCount(api.scrollSnapList().length);
+    setCurrent(api.selectedScrollSnap());
+
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap());
+    });
+  }, [api]);
+
+  const scrollTo = useCallback(
+    (index: number) => {
+      api?.scrollTo(index);
+    },
+    [api]
+  );
+
   return (
-    <div className="flex flex-col items-center gap-6">
-      <div className="w-full max-w-[1200px]">
-        <p className="text-muted-foreground">
-          일본 서버 S80 시가지 호드부터의 통계에요.
-          <br />이 때부터 전용무기 4성과 LUNATIC 난이도가 동시에 적용되기 때문에
-          기준으로 했어요.
+    <div className="w-full max-w-full overflow-x-hidden flex flex-col items-center gap-6">
+      <div className="w-full max-w-full md:max-w-[1200px] overflow-hidden px-2 sm:px-4 md:px-0">
+        <p className="text-muted-foreground text-sm sm:text-base">
+          일본 서버 S80 시가지 호드부터의 통계에요. 이 때부터 전용무기 4성과
+          LUNATIC 난이도가 동시에 적용되기 때문에 기준으로 했어요.
         </p>
       </div>
 
-      <div className="w-full max-w-[1200px]">
+      <div className="w-full max-w-full md:max-w-[1200px] overflow-hidden px-2 sm:px-4 md:px-0">
         <CharacterAnalysis data={data} />
       </div>
 
-      <hr className="w-full max-w-[1200px]" />
+      <hr className="w-full max-w-full md:max-w-[1200px]" />
 
-      <div className="w-full max-w-[1200px]">
+      <div className="w-full max-w-full md:max-w-[1200px] overflow-hidden px-2 sm:px-4 md:px-0">
         <LunaticClearChart data={data} />
       </div>
 
-      <div className="w-full max-w-[1200px] px-12">
+      <div className="w-full max-w-full md:max-w-[1200px] px-2 sm:px-12 md:px-12 overflow-hidden">
         <Carousel
           opts={{
             loop: true,
             align: "start",
           }}
-          className="w-full"
+          setApi={setApi}
+          className="w-full max-w-full"
         >
-          <CarouselContent className="-ml-4">
-            <CarouselItem className="pl-4 basis-full md:basis-1/2">
+          <CarouselContent className="-ml-2 sm:-ml-4 max-w-full">
+            <CarouselItem className="pl-2 sm:pl-4 basis-full md:basis-1/2">
               <RaidUsageTable
                 data={data}
                 type="striker"
                 title="STRIKER 사용률 TOP 5"
               />
             </CarouselItem>
-            <CarouselItem className="pl-4 basis-full md:basis-1/2">
+            <CarouselItem className="pl-2 sm:pl-4 basis-full md:basis-1/2">
               <RaidUsageTable
                 data={data}
                 type="special"
                 title="SPECIAL 사용률 TOP 5"
               />
             </CarouselItem>
-            <CarouselItem className="pl-4 basis-full md:basis-1/2">
+            <CarouselItem className="pl-2 sm:pl-4 basis-full md:basis-1/2">
               <RaidUsageTable
                 data={data}
                 type="assist"
@@ -69,9 +94,25 @@ export function TotalAnalysisLayout({ data }: TotalAnalysisLayoutProps) {
               />
             </CarouselItem>
           </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
+          <CarouselPrevious className="hidden sm:flex" />
+          <CarouselNext className="hidden sm:flex" />
         </Carousel>
+        {/* 모바일 dot indicator */}
+        <div className="flex sm:hidden justify-center gap-2 mt-3">
+          {Array.from({ length: count }).map((_, index) => (
+            <button
+              key={index}
+              onClick={() => scrollTo(index)}
+              className={cn(
+                "w-2 h-2 rounded-full transition-colors",
+                current === index
+                  ? "bg-primary"
+                  : "bg-muted-foreground/30"
+              )}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

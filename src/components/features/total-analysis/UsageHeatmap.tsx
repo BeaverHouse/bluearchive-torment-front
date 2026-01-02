@@ -183,20 +183,21 @@ export function UsageHeatmap({
   const ALL_BOSSES = [...RAID_BOSSES, ...ASSAULT_BOSSES];
 
   return (
-    <Card>
-      <CardHeader className="pb-1 px-3">
-        <CardTitle className="text-base">공격타입/보스별 사용 현황</CardTitle>
+    <Card className="max-w-full overflow-hidden">
+      <CardHeader className="pb-1 px-2 sm:px-3">
+        <CardTitle className="text-sm sm:text-base">
+          공격타입/보스별 사용 현황
+        </CardTitle>
       </CardHeader>
-      <CardContent className="px-3 py-0">
+      <CardContent className="px-2 sm:px-3 py-0">
         <div className="overflow-x-auto pb-2">
-          <div className="min-w-[580px]">
-            {/* Header Row */}
+          <div className="min-w-0 sm:min-w-[580px]">
             <div className="flex mb-2">
-              <div className="w-[90px]" />
+              <div className="w-[45px] sm:w-[90px]" />
               {COLUMN_TYPES.map((type) => (
                 <div
                   key={type}
-                  className="w-[72px] text-center text-xs font-semibold"
+                  className="w-[42px] sm:w-[72px] text-center text-[8px] sm:text-xs font-semibold"
                 >
                   {type}
                 </div>
@@ -207,7 +208,7 @@ export function UsageHeatmap({
             <div className="flex flex-col gap-0.5">
               {ALL_BOSSES.map((boss) => (
                 <div key={boss} className="flex items-center">
-                  <div className="w-[90px] text-xs font-medium pr-2 text-right truncate">
+                  <div className="w-[45px] sm:w-[90px] text-[8px] sm:text-xs font-medium pr-0.5 sm:pr-2 text-right truncate">
                     {boss}
                   </div>
                   {COLUMN_TYPES.map((colType) => {
@@ -221,7 +222,7 @@ export function UsageHeatmap({
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <div
-                              className={`w-[68px] h-7 m-0.5 rounded-sm transition-colors ${getColor(
+                              className={`w-[38px] sm:w-[68px] h-4 sm:h-7 m-0.5 rounded-sm transition-colors ${getColor(
                                 percent,
                                 isValid
                               )} ${
@@ -270,12 +271,16 @@ export function UsageHeatmap({
             </div>
 
             {/* Legend */}
-            <div className="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t">
-              <span className="text-[11px] text-muted-foreground">사용률:</span>
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-3 pt-3 border-t">
+              <span className="text-[10px] sm:text-[11px] text-muted-foreground">
+                사용률:
+              </span>
               {LEGEND_ITEMS.map((item) => (
                 <div key={item.label} className="flex items-center gap-0.5">
                   <div className={`w-2.5 h-2.5 rounded-sm ${item.className}`} />
-                  <span className="text-[10px]">{item.label}</span>
+                  <span className="text-[9px] sm:text-[10px]">
+                    {item.label}
+                  </span>
                 </div>
               ))}
             </div>
