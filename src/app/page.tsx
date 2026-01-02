@@ -14,7 +14,7 @@ import { useRaids } from "@/hooks/use-raids";
 export default function Home() {
   const { V3Season, setV3Season } = useBAStore();
   const { studentsMap, studentSearchMap } = useStudentMaps();
-  const { raids } = useRaids();
+  const { raids, isLoading } = useRaids();
   const raidInfos = raids
     .filter((raid) => raid.party_updated)
     .map((raid) => ({
@@ -22,6 +22,29 @@ export default function Home() {
       label: raid.name,
       topLevel: raid.top_level,
     }));
+
+  // 로딩 중이거나 데이터가 없으면 로딩 화면 표시
+  if (isLoading || raidInfos.length === 0) {
+    return (
+      <div
+        className="App"
+        style={{
+          width: "100%",
+          maxWidth: 800,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          textAlign: "center",
+          margin: "0 auto",
+          padding: "4px",
+          minHeight: "50vh",
+        }}
+      >
+        <p className="text-muted-foreground">데이터를 불러오는 중...</p>
+      </div>
+    );
+  }
 
   const season = raidInfos.map((raid) => raid.value).includes(V3Season)
     ? V3Season

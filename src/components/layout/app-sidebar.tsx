@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Video, Calculator, ChevronDown, PieChart } from "lucide-react";
+import { Home, Video, Calculator, ChevronDown, PieChart, Sparkles } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -26,6 +26,11 @@ const menuItems = [
     title: "홈",
     url: "/",
     icon: Home,
+  },
+  {
+    title: "AI Search",
+    url: "/ai-search",
+    icon: Sparkles,
   },
   {
     title: "영상 분석",
