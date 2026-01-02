@@ -35,13 +35,13 @@ export function LunaticClearChart({ data }: LunaticClearChartProps) {
           count: raid.lunaticClearCount,
           raidId: raid.raidId,
         };
-      })
+      });
   }, [data, raids]);
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>LUNATIC 클리어 카운트 추이</CardTitle>
+        <CardTitle>LUNATIC 클리어 수</CardTitle>
       </CardHeader>
       <CardContent className="h-[400px]">
         <ResponsiveContainer width="100%" height="100%">

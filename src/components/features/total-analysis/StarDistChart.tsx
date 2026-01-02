@@ -32,6 +32,11 @@ export function StarDistChart({ characterData }: StarDistChartProps) {
 
     const starDist = characterData.starDistribution;
 
+    // raidId가 없으면 빈 데이터 반환
+    if (!starDist.raidId) {
+      return { chartData: [], latestRaidName: "" };
+    }
+
     // raidId 형식: S80 (총력전), 3S26 (대결전)
     let raidName: string;
     if (starDist.raidId.startsWith("3S")) {
@@ -72,10 +77,10 @@ export function StarDistChart({ characterData }: StarDistChartProps) {
     return (
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-lg">성급 분포</CardTitle>
+          <CardTitle className="text-sm">성급 분포</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-center h-[300px] text-muted-foreground">
+          <div className="flex items-center justify-center h-[200px] text-muted-foreground">
             데이터가 없습니다.
           </div>
         </CardContent>
@@ -84,111 +89,77 @@ export function StarDistChart({ characterData }: StarDistChartProps) {
   }
 
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg flex items-center justify-between">
+    <Card className="flex-1 flex flex-col">
+      <CardHeader className="pb-1 px-3">
+        <CardTitle className="text-sm flex items-center justify-between">
           <span>성급 분포</span>
-          <span className="text-sm font-normal text-muted-foreground">
+          <span className="text-xs font-normal text-muted-foreground">
             {latestRaidName} 기준
           </span>
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="h-[280px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={chartData}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={100}
-                paddingAngle={2}
-                dataKey="value"
-                label={({ name, value, cx, cy, midAngle, outerRadius }) => {
-                  // 5% 미만은 레이블 표시하지 않음
-                  if (value < 5) return null;
-                  const RADIAN = Math.PI / 180;
-                  const radius = outerRadius + 25;
-                  const x = cx + radius * Math.cos(-midAngle * RADIAN);
-                  const y = cy + radius * Math.sin(-midAngle * RADIAN);
-                  return (
-                    <text
-                      x={x}
-                      y={y}
-                      fill="currentColor"
-                      textAnchor={x > cx ? "start" : "end"}
-                      dominantBaseline="central"
-                      className="text-xs"
-                    >
-                      {`${name} ${value}%`}
-                    </text>
-                  );
-                }}
-                labelLine={({ cx, cy, midAngle, outerRadius, percent }) => {
-                  const RADIAN = Math.PI / 180;
-                  const innerPoint = {
-                    x: cx + outerRadius * Math.cos(-midAngle * RADIAN),
-                    y: cy + outerRadius * Math.sin(-midAngle * RADIAN),
-                  };
-                  const outerPoint = {
-                    x: cx + (outerRadius + 20) * Math.cos(-midAngle * RADIAN),
-                    y: cy + (outerRadius + 20) * Math.sin(-midAngle * RADIAN),
-                  };
-                  // 5% 미만은 라인도 표시하지 않음
-                  if (percent * 100 < 5) {
-                    return <path d="" />;
-                  }
-                  return (
-                    <path
-                      d={`M${innerPoint.x},${innerPoint.y}L${outerPoint.x},${outerPoint.y}`}
-                      stroke="currentColor"
-                      strokeWidth={1}
-                      fill="none"
-                      className="text-muted-foreground"
+      <CardContent className="px-3 py-0 flex-1 flex items-center justify-center">
+        {/* PC: 가로 배치, 모바일: 세로 배치 */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          {/* Pie Chart - 크기 키움 */}
+          <div className="h-[180px] w-[180px] flex-shrink-0 mx-auto sm:mx-0">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={chartData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={42}
+                  outerRadius={72}
+                  paddingAngle={2}
+                  dataKey="value"
+                  label={false}
+                  labelLine={false}
+                >
+                  {chartData.map((entry) => (
+                    <Cell
+                      key={entry.name}
+                      fill={STAR_COLORS[entry.name] || "#888"}
+                      stroke="transparent"
                     />
-                  );
-                }}
-              >
-                {chartData.map((entry) => (
-                  <Cell
-                    key={entry.name}
-                    fill={STAR_COLORS[entry.name] || "#888"}
-                    stroke="transparent"
-                  />
-                ))}
-              </Pie>
-              <Tooltip
-                content={({ active, payload }) => {
-                  if (!active || !payload || payload.length === 0) return null;
-                  const data = payload[0].payload;
-                  return (
-                    <div className="bg-popover border border-border rounded-lg shadow-lg p-3 text-sm">
-                      <p className="font-semibold text-popover-foreground">
-                        {data.name}
-                      </p>
-                      <p className="text-popover-foreground">
-                        {data.value}% ({data.count.toLocaleString()}명)
-                      </p>
-                    </div>
-                  );
-                }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
+                  ))}
+                </Pie>
+                <Tooltip
+                  content={({ active, payload }) => {
+                    if (!active || !payload || payload.length === 0)
+                      return null;
+                    const data = payload[0].payload;
+                    return (
+                      <div className="bg-popover border border-border rounded-lg shadow-lg p-2 text-sm">
+                        <p className="font-semibold text-popover-foreground">
+                          {data.name}
+                        </p>
+                        <p className="text-popover-foreground">
+                          {data.value}% ({data.count.toLocaleString()}명)
+                        </p>
+                      </div>
+                    );
+                  }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
 
-        {/* Legend */}
-        <div className="flex flex-wrap justify-center gap-4 mt-2">
-          {chartData.map((entry) => (
-            <div key={entry.name} className="flex items-center gap-1.5">
-              <div
-                className="w-3 h-3 rounded-full"
-                style={{ backgroundColor: STAR_COLORS[entry.name] || "#888" }}
-              />
-              <span className="text-xs">{entry.name}</span>
-            </div>
-          ))}
+          {/* Legend - 색깔과 퍼센트 붙임 */}
+          <div className="flex flex-wrap sm:flex-col gap-x-4 gap-y-1.5 justify-center sm:justify-start">
+            {chartData.map((entry) => (
+              <div key={entry.name} className="flex items-center gap-1.5">
+                <div
+                  className="w-3 h-3 rounded-full flex-shrink-0"
+                  style={{
+                    backgroundColor: STAR_COLORS[entry.name] || "#888",
+                  }}
+                />
+                <span className="text-xs">{entry.name}</span>
+                <span className="text-xs font-medium">{entry.value}%</span>
+              </div>
+            ))}
+          </div>
         </div>
       </CardContent>
     </Card>

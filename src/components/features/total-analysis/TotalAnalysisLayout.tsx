@@ -20,15 +20,18 @@ export function TotalAnalysisLayout({ data }: TotalAnalysisLayoutProps) {
   return (
     <div className="flex flex-col items-center gap-6">
       <div className="w-full max-w-[1200px]">
-        <h1 className="text-3xl font-bold tracking-tight">종합 분석</h1>
         <p className="text-muted-foreground">
-          총력전/대결전 통계 및 학생별 상세 분석 데이터를 확인하세요.
+          일본 서버 S80 시가지 호드부터의 통계에요.
+          <br />이 때부터 전용무기 4성과 LUNATIC 난이도가 동시에 적용되기 때문에
+          기준으로 했어요.
         </p>
       </div>
 
       <div className="w-full max-w-[1200px]">
         <CharacterAnalysis data={data} />
       </div>
+
+      <hr className="w-full max-w-[1200px]" />
 
       <div className="w-full max-w-[1200px]">
         <LunaticClearChart data={data} />

@@ -1,10 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import {
-  CharacterAnalysis,
-  RaidAnalysis,
-} from "@/types/total-analysis";
+import { CharacterAnalysis, RaidAnalysis } from "@/types/total-analysis";
 import { categorizeAssault } from "@/utils/total-analysis";
 import { useRaids } from "@/hooks/use-raids";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -142,11 +139,13 @@ export function UsageHeatmap({
   const getPercent = (
     boss: string,
     colType: string,
-    data: {
-      userCount: number;
-      lunaticUserCount: number;
-      raidId: string;
-    } | undefined
+    data:
+      | {
+          userCount: number;
+          lunaticUserCount: number;
+          raidId: string;
+        }
+      | undefined
   ) => {
     if (!data) return 0;
 
@@ -185,19 +184,19 @@ export function UsageHeatmap({
 
   return (
     <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg">공격타입/보스별 사용 현황</CardTitle>
+      <CardHeader className="pb-1 px-3">
+        <CardTitle className="text-base">공격타입/보스별 사용 현황</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="overflow-x-auto pb-4">
-          <div className="min-w-[520px]">
+      <CardContent className="px-3 py-0">
+        <div className="overflow-x-auto pb-2">
+          <div className="min-w-[580px]">
             {/* Header Row */}
             <div className="flex mb-2">
-              <div className="w-[100px]" />
+              <div className="w-[90px]" />
               {COLUMN_TYPES.map((type) => (
                 <div
                   key={type}
-                  className="w-14 text-center text-xs font-semibold"
+                  className="w-[72px] text-center text-xs font-semibold"
                 >
                   {type}
                 </div>
@@ -208,7 +207,7 @@ export function UsageHeatmap({
             <div className="flex flex-col gap-0.5">
               {ALL_BOSSES.map((boss) => (
                 <div key={boss} className="flex items-center">
-                  <div className="w-[100px] text-xs font-medium pr-2 text-right truncate">
+                  <div className="w-[90px] text-xs font-medium pr-2 text-right truncate">
                     {boss}
                   </div>
                   {COLUMN_TYPES.map((colType) => {
@@ -222,7 +221,7 @@ export function UsageHeatmap({
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <div
-                              className={`w-14 h-7 m-0.5 rounded-sm transition-colors ${getColor(
+                              className={`w-[68px] h-7 m-0.5 rounded-sm transition-colors ${getColor(
                                 percent,
                                 isValid
                               )} ${
@@ -271,12 +270,12 @@ export function UsageHeatmap({
             </div>
 
             {/* Legend */}
-            <div className="flex flex-wrap items-center gap-3 mt-4 pt-4 border-t">
-              <span className="text-xs text-muted-foreground">사용률:</span>
+            <div className="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t">
+              <span className="text-[11px] text-muted-foreground">사용률:</span>
               {LEGEND_ITEMS.map((item) => (
-                <div key={item.label} className="flex items-center gap-1">
-                  <div className={`w-3 h-3 rounded-sm ${item.className}`} />
-                  <span className="text-xs">{item.label}</span>
+                <div key={item.label} className="flex items-center gap-0.5">
+                  <div className={`w-2.5 h-2.5 rounded-sm ${item.className}`} />
+                  <span className="text-[10px]">{item.label}</span>
                 </div>
               ))}
             </div>

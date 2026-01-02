@@ -24,7 +24,8 @@ export function CharacterAnalysis({ data }: CharacterAnalysisProps) {
     return data.characterAnalyses
       .map((char) => ({
         value: char.studentId,
-        label: studentsMap[char.studentId.toString()] || `학생 ${char.studentId}`,
+        label:
+          studentsMap[char.studentId.toString()] || `학생 ${char.studentId}`,
       }))
       .sort((a, b) => a.label.localeCompare(b.label, "ko"));
   }, [data.characterAnalyses, studentsMap, isLoaded]);
@@ -37,8 +38,8 @@ export function CharacterAnalysis({ data }: CharacterAnalysisProps) {
   }, [data.characterAnalyses, selectedStudentId]);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center justify-between">
+    <div className="space-y-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center justify-between">
         <h2 className="text-2xl font-bold tracking-tight">캐릭터 상세 분석</h2>
         <SearchableSelect
           options={characterOptions}
@@ -52,56 +53,100 @@ export function CharacterAnalysis({ data }: CharacterAnalysisProps) {
       </div>
 
       {selectedCharData ? (
-        <div className="grid gap-6">
-          {/* Summary Stats + Synergy */}
-          <div className="grid gap-6 md:grid-cols-3">
-            <Card className="md:col-span-2">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-4">
-                  <StudentImage code={selectedCharData.studentId} />
-                  <span>
-                    {studentsMap[selectedCharData.studentId.toString()] ||
-                      selectedCharData.studentId}
-                  </span>
-                  <span className="text-sm font-normal text-muted-foreground ml-auto">
-                    {selectedCharData.studentId < 20000 ? "STRIKER" : "SPECIAL"}
-                  </span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                  <div>
-                    <div className="text-sm text-muted-foreground">종합 순위</div>
-                    <div className="text-2xl font-bold">
+        <div className="grid gap-3 md:grid-cols-[1fr_auto] items-stretch">
+          {/* Left Column: Info + Synergy + Pie Chart */}
+          <div className="flex flex-col gap-2 min-w-0">
+            {/* Character Info + Stats */}
+            <Card>
+              <CardContent className="px-3 py-0">
+                <div className="flex items-center gap-3">
+                  <div className="flex-shrink-0">
+                    <StudentImage code={selectedCharData.studentId} size={48} />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-semibold text-base truncate">
+                      {studentsMap[selectedCharData.studentId.toString()] ||
+                        selectedCharData.studentId}
+                    </div>
+                  </div>
+                  {/* PC: 같은 줄에 랭킹 표시 (2줄 구조), 모바일: 숨김 */}
+                  <div className="hidden sm:grid sm:grid-cols-4 gap-x-6 flex-1 text-center">
+                    <div className="flex flex-col">
+                      <span className="text-xs text-muted-foreground">
+                        종합
+                      </span>
+                      <span className="text-lg font-bold">
+                        {selectedCharData.overallRank}위
+                      </span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-xs text-muted-foreground">
+                        {selectedCharData.studentId < 20000
+                          ? "STRIKER"
+                          : "SPECIAL"}{" "}
+                        내
+                      </span>
+                      <span className="text-lg font-bold">
+                        {selectedCharData.categoryRank}위
+                      </span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-xs text-muted-foreground">
+                        사용
+                      </span>
+                      <span className="text-lg font-bold">
+                        {selectedCharData.totalUsage.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-xs text-muted-foreground">
+                        조력자
+                      </span>
+                      <span className="text-lg font-bold">
+                        {(
+                          selectedCharData.assistStats.assistRatio * 100
+                        ).toFixed(1)}
+                        %
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                {/* 모바일: 랭킹 아래에 표시 (2줄 구조) */}
+                <div className="sm:hidden grid grid-cols-4 gap-2 mt-3 text-center">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] text-muted-foreground">
+                      종합
+                    </span>
+                    <span className="text-sm font-bold">
                       {selectedCharData.overallRank}위
-                    </div>
+                    </span>
                   </div>
-                  <div>
-                    <div className="text-sm text-muted-foreground">
-                      타입 내 순위
-                    </div>
-                    <div className="text-2xl font-bold">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] text-muted-foreground">
+                      타입내
+                    </span>
+                    <span className="text-sm font-bold">
                       {selectedCharData.categoryRank}위
-                    </div>
+                    </span>
                   </div>
-                  <div>
-                    <div className="text-sm text-muted-foreground">
-                      총 사용 횟수
-                    </div>
-                    <div className="text-2xl font-bold">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] text-muted-foreground">
+                      사용
+                    </span>
+                    <span className="text-sm font-bold">
                       {selectedCharData.totalUsage.toLocaleString()}
-                    </div>
+                    </span>
                   </div>
-                  <div>
-                    <div className="text-sm text-muted-foreground">
-                      조력자 채용률
-                    </div>
-                    <div className="text-2xl font-bold">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] text-muted-foreground">
+                      조력자
+                    </span>
+                    <span className="text-sm font-bold">
                       {(selectedCharData.assistStats.assistRatio * 100).toFixed(
                         1
                       )}
                       %
-                    </div>
+                    </span>
                   </div>
                 </div>
               </CardContent>
@@ -109,50 +154,57 @@ export function CharacterAnalysis({ data }: CharacterAnalysisProps) {
 
             {/* Synergy Characters */}
             <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">시너지 캐릭터 TOP 3</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {selectedCharData.topSynergyChars.slice(0, 3).map((synergy, idx) => (
-                    <div key={synergy.studentId} className="flex items-center gap-3">
-                      <span className="text-sm text-muted-foreground w-4">
-                        {idx + 1}
-                      </span>
-                      <StudentImage code={synergy.studentId} size={32} />
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium truncate">
-                          {studentsMap[synergy.studentId.toString()] ||
-                            `학생 ${synergy.studentId}`}
+              <CardContent className="px-3 py-0">
+                <div className="text-sm font-semibold mb-2">시너지 TOP 3</div>
+                <div className="space-y-2">
+                  {selectedCharData.topSynergyChars
+                    .slice(0, 3)
+                    .map((synergy, idx) => (
+                      <div
+                        key={synergy.studentId}
+                        className="flex items-center gap-2.5"
+                      >
+                        <span className="text-sm text-muted-foreground w-4 flex-shrink-0">
+                          {idx + 1}
+                        </span>
+                        <div className="flex-shrink-0">
+                          <StudentImage code={synergy.studentId} size={32} />
                         </div>
-                        <div className="text-xs text-muted-foreground">
-                          동시 사용률 {(synergy.coUsageRate * 100).toFixed(1)}%
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm truncate">
+                            {studentsMap[synergy.studentId.toString()] ||
+                              `학생 ${synergy.studentId}`}
+                          </div>
                         </div>
+                        <span className="text-sm text-muted-foreground">
+                          {(synergy.coUsageRate * 100).toFixed(1)}%
+                        </span>
                       </div>
-                    </div>
-                  ))}
+                    ))}
                   {selectedCharData.topSynergyChars.length === 0 && (
-                    <div className="text-sm text-muted-foreground text-center py-4">
+                    <div className="text-sm text-muted-foreground text-center py-2">
                       데이터 없음
                     </div>
                   )}
                 </div>
               </CardContent>
             </Card>
+
+            {/* Star Distribution - 남은 공간 채움 */}
+            <div className="flex-1 flex">
+              <StarDistChart characterData={selectedCharData} />
+            </div>
           </div>
 
-          {/* Charts Grid */}
-          <div className="grid gap-6 md:grid-cols-2">
-            <StarDistChart characterData={selectedCharData} />
-            <UsageHeatmap
-              characterData={selectedCharData}
-              raidAnalyses={data.raidAnalyses}
-            />
-          </div>
+          {/* Right Column: Heatmap */}
+          <UsageHeatmap
+            characterData={selectedCharData}
+            raidAnalyses={data.raidAnalyses}
+          />
         </div>
       ) : (
         <Card>
-          <CardContent className="flex items-center justify-center h-[200px] text-muted-foreground">
+          <CardContent className="flex items-center justify-center h-[150px] text-muted-foreground">
             분석할 캐릭터를 선택해주세요.
           </CardContent>
         </Card>
