@@ -77,7 +77,7 @@ export type StreamMessage =
 export interface AISearchRequest {
   question: string;
   language: "ko";
-  fixed_service_id: "batorment";
+  fixed_service_ids: string[];
   messages?: Message[];
   additional_system_prompt?: string;
 }
