@@ -8,15 +8,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Search,
-  PieChart,
-  Video,
-  Calculator,
-  ExternalLink,
-} from "lucide-react";
+import { Search, PieChart, Video, Calculator } from "lucide-react";
 
 const features = [
   {
@@ -110,26 +103,31 @@ export default function Home() {
       {/* 데이터 출처 및 후원 */}
       <div className="mt-12 flex flex-col items-center gap-6 text-center">
         {/* 데이터 출처 */}
-        <div className="flex flex-col items-center gap-2">
-          <p className="text-sm text-muted-foreground">인게임 데이터 제공</p>
-          <div className="flex flex-wrap justify-center gap-2">
-            <Button variant="outline" size="sm" asChild>
-              <a href="https://schaledb.com/" target="_blank" rel="noreferrer">
-                Schale DB
-                <ExternalLink className="ml-1 h-3 w-3" />
-              </a>
-            </Button>
-            <Button variant="outline" size="sm" asChild>
-              <a
-                href="https://plana-stats.vercel.app/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Plana Stats
-                <ExternalLink className="ml-1 h-3 w-3" />
-              </a>
-            </Button>
-          </div>
+        <div className="flex flex-col items-center gap-1 text-xs text-muted-foreground">
+          <p>
+            총력전/대결전 데이터는{" "}
+            <a
+              href="https://plana-stats.vercel.app/"
+              target="_blank"
+              rel="noreferrer"
+              className="!underline underline-offset-2 hover:text-foreground"
+            >
+              Plana Stats
+            </a>
+            에서 가져왔어요.
+          </p>
+          <p>
+            인게임 데이터는{" "}
+            <a
+              href="https://schaledb.com/"
+              target="_blank"
+              rel="noreferrer"
+              className="!underline underline-offset-2 hover:text-foreground"
+            >
+              Schale DB
+            </a>
+            에서 가져왔어요.
+          </p>
         </div>
 
         {/* 후원 */}

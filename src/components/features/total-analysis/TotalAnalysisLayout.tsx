@@ -46,8 +46,7 @@ export function TotalAnalysisLayout({ data }: TotalAnalysisLayoutProps) {
     <div className="w-full max-w-full overflow-x-hidden flex flex-col items-center gap-6">
       <div className="w-full max-w-full md:max-w-[1200px] overflow-hidden px-2 sm:px-4 md:px-0">
         <p className="text-muted-foreground text-sm sm:text-base">
-          일본 서버 S80 시가지 호드부터의 통계에요. 이 때부터 전용무기 4성과
-          LUNATIC 난이도가 동시에 적용되기 때문에 기준으로 했어요.
+          전용무기 4성 + LUNATIC 난이도 이후의 통계에요.
         </p>
       </div>
 
@@ -105,9 +104,7 @@ export function TotalAnalysisLayout({ data }: TotalAnalysisLayoutProps) {
               onClick={() => scrollTo(index)}
               className={cn(
                 "w-2 h-2 rounded-full transition-colors",
-                current === index
-                  ? "bg-primary"
-                  : "bg-muted-foreground/30"
+                current === index ? "bg-primary" : "bg-muted-foreground/30"
               )}
               aria-label={`Go to slide ${index + 1}`}
             />

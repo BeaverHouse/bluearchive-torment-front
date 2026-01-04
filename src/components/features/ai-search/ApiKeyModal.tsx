@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ExternalLink, Key } from "lucide-react";
+import { ExternalLink, Key, AlertTriangle } from "lucide-react";
 
 interface ApiKeyModalProps {
   open: boolean;
@@ -77,7 +77,7 @@ export function ApiKeyModal({
           </div>
 
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <ExternalLink className="h-4 w-4" />
+            <ExternalLink className="h-4 w-4 flex-shrink-0" />
             <a
               href="https://aistudio.google.com/app/apikey"
               target="_blank"
@@ -86,6 +86,20 @@ export function ApiKeyModal({
             >
               Google AI Studio에서 무료 API 키 발급받기
             </a>
+          </div>
+
+          {/* 주의사항 */}
+          <div className="rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 p-3">
+            <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400 font-medium text-sm mb-2">
+              <AlertTriangle className="h-4 w-4" />
+              주의사항
+            </div>
+            <ul className="text-xs text-amber-700 dark:text-amber-400/80 space-y-1 list-disc list-inside">
+              <li>현재 베타 기능으로 제대로 동작하지 않을 수 있어요.</li>
+              <li>AI는 잘못된 답변을 할 수 있어요.</li>
+              <li>질문한 내용과 답변이 기능 개선에 사용될 수 있어요.</li>
+              <li>Google에 의해 호출 제한이 걸리거나, 요금이 청구될 수 있어요.</li>
+            </ul>
           </div>
 
           <div className="flex justify-end gap-2">

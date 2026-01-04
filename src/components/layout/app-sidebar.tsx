@@ -36,24 +36,24 @@ const menuItems = [
     icon: Home,
   },
   {
-    title: "파티 찾기",
+    title: "파티 찾기 & 요약",
     url: "/party",
     icon: Search,
   },
   {
-    title: "종합 분석",
+    title: "통계",
     url: "/total-analysis",
     icon: PieChart,
+  },
+  {
+    title: "영상",
+    url: "/video-analysis",
+    icon: Video,
   },
   {
     title: "ARONA",
     url: "/arona",
     image: "/arona.webp",
-  },
-  {
-    title: "영상 분석",
-    url: "/video-analysis",
-    icon: Video,
   },
   {
     title: "계산기",
