@@ -3,7 +3,6 @@
 import Image from "next/image";
 import InfoFAB from "./info-fab";
 import { Button } from "@/components/ui/button";
-import NormalAnnounce from "./normal-announce";
 
 function ErrorPage() {
   return (
@@ -19,7 +18,6 @@ function ErrorPage() {
       }}
     >
       <h1 className="text-3xl font-bold">BA Torment</h1>
-      <NormalAnnounce />
       <div className="text-center py-8">
         <Image src="/error.png" alt="Error" width={192} height={192} className="mx-auto mb-4" />
         <p className="text-muted-foreground">에러가 발생했어요..</p>

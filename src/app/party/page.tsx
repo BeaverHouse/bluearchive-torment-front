@@ -3,7 +3,6 @@
 import useBAStore from "@/store/useBAStore";
 import RaidSearch from "@/components/features/raid/raid-search";
 import RaidSummary from "@/components/features/raid/raid-summary";
-import NormalAnnounce from "@/components/common/normal-announce";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SingleSelect } from "@/components/ui/custom/single-select";
 import { trackSummaryTabClick } from "@/utils/analytics";
@@ -71,8 +70,6 @@ export default function PartyPage() {
         padding: "4px",
       }}
     >
-      <NormalAnnounce />
-
       <div
         style={{
           display: "flex",
