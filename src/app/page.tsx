@@ -76,7 +76,7 @@ export default function Home() {
                     alt={feature.title}
                     width={40}
                     height={40}
-                    className="rounded-full mb-2"
+                    className="rounded-full mb-2 object-cover"
                   />
                 ) : (
                   <div

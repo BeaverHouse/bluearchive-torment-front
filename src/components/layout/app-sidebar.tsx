@@ -143,7 +143,7 @@ export function AppSidebar() {
                             alt={item.title}
                             width={16}
                             height={16}
-                            className="rounded-full"
+                            className="rounded-full object-cover"
                           />
                         ) : (
                           <item.icon />

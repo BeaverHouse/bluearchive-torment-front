@@ -225,7 +225,7 @@ export function AISearchChat() {
             alt="ARONA"
             width={48}
             height={48}
-            className="rounded-full"
+            className="rounded-full object-cover"
           />
           <div>
             <div className="flex items-center gap-2">
@@ -263,7 +263,7 @@ export function AISearchChat() {
                   alt="ARONA"
                   width={80}
                   height={80}
-                  className="rounded-full mb-4"
+                  className="rounded-full mb-4 object-cover"
                 />
                 <p className="text-lg font-medium mb-3">
                   선생님, 무엇을 도와드릴까요?
@@ -307,7 +307,7 @@ export function AISearchChat() {
                         alt="ARONA"
                         width={32}
                         height={32}
-                        className="rounded-full flex-shrink-0 mt-1"
+                        className="w-8 h-8 rounded-full flex-shrink-0 mt-1 object-cover"
                       />
                     )}
                     <div
@@ -338,7 +338,7 @@ export function AISearchChat() {
                       alt="ARONA"
                       width={32}
                       height={32}
-                      className="rounded-full flex-shrink-0 mt-1"
+                      className="w-8 h-8 rounded-full flex-shrink-0 mt-1 object-cover"
                     />
                     <div className="max-w-[80%] rounded-lg px-4 py-2 bg-muted">
                       {currentStatus && (
