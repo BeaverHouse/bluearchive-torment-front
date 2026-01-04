@@ -18,6 +18,16 @@ interface BaseStreamMessage {
   timestamp?: string;
 }
 
+// 상태 키 타입
+export type StatusKey = "thinking" | "searching" | "tool_execution" | "answer_complete";
+
+// 도구 이름 타입
+export type ToolName =
+  | "search_students"
+  | "search_enemies"
+  | "get_student_detail"
+  | "calculate_field_status";
+
 // 상태 메시지 (로딩, 도구 실행 등)
 export interface StatusMessage extends BaseStreamMessage {
   type: "status";
@@ -25,7 +35,8 @@ export interface StatusMessage extends BaseStreamMessage {
   title_key?: string;
   content?: string;
   metadata?: {
-    statusKey?: string;
+    statusKey?: StatusKey;
+    toolName?: ToolName;
     sessionID?: string;
     tool?: string;
     errorKey?: string;

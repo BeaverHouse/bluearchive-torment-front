@@ -38,7 +38,7 @@ export function RaidUsageTable({
       const raidInfo = raids.find((r) => r.id === raid.raidId);
       const fullName = raidInfo?.name || raid.raidId;
       // 총력전/대결전 SXX 제거
-      let displayName = fullName.replace(/^(총력전|대결전)\s+S\d+\s+/, "");
+      const displayName = fullName.replace(/^(총력전|대결전)\s+S\d+\s+/, "");
 
       // 대결전: 괄호 앞에서 줄바꿈 (2줄로 분리)
       // "시가지 예로니무스 (경장갑,토먼트)" → { main: "시가지 예로니무스", sub: "(경장갑,토먼트)" }

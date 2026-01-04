@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Home, Video, Calculator, ChevronDown, PieChart, Sparkles } from "lucide-react";
+import { Home, Video, Calculator, ChevronDown, PieChart, Search } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -28,19 +29,24 @@ const menuItems = [
     icon: Home,
   },
   {
-    title: "AI Search",
-    url: "/ai-search",
-    icon: Sparkles,
-  },
-  {
-    title: "영상 분석",
-    url: "/video-analysis",
-    icon: Video,
+    title: "파티 찾기",
+    url: "/party",
+    icon: Search,
   },
   {
     title: "종합 분석",
     url: "/total-analysis",
     icon: PieChart,
+  },
+  {
+    title: "ARONA",
+    url: "/arona",
+    image: "/arona.webp",
+  },
+  {
+    title: "영상 분석",
+    url: "/video-analysis",
+    icon: Video,
   },
   {
     title: "계산기",
@@ -72,7 +78,7 @@ export function AppSidebar() {
         <div className="p-4">
           <h2 className="text-lg font-semibold">BA Torment</h2>
           <p className="text-sm text-muted-foreground">
-            블루 아카이브 파티 찾기
+            블루 아카이브 총력전 도우미
           </p>
         </div>
       </SidebarHeader>
@@ -124,7 +130,17 @@ export function AppSidebar() {
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild isActive={pathname === item.url}>
                       <Link href={item.url} onClick={handleMenuClick}>
-                        <item.icon />
+                        {"image" in item ? (
+                          <Image
+                            src={item.image as string}
+                            alt={item.title}
+                            width={16}
+                            height={16}
+                            className="rounded-full"
+                          />
+                        ) : (
+                          <item.icon />
+                        )}
                         <span>{item.title}</span>
                       </Link>
                     </SidebarMenuButton>

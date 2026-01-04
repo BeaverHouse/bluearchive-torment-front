@@ -1,13 +1,19 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Send, Loader2, StopCircle, Trash2, Key } from "lucide-react";
 import { ApiKeyModal } from "./ApiKeyModal";
 import { aiSearchService } from "@/lib/ai-search-service";
 import type { Message, StreamMessage } from "@/types/ai-search";
+import {
+  getStatusMessage,
+  AI_SEARCH_FALLBACK_MESSAGE,
+} from "@/constants/ai-search";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -17,6 +23,8 @@ interface ChatMessage {
 }
 
 const API_KEY_STORAGE_KEY = "batorment_gemini_api_key";
+const API_KEY_EXPIRY_KEY = "batorment_gemini_api_key_expiry";
+const API_KEY_TTL_MS = 30 * 60 * 1000; // 30분
 const SYSTEM_PROMPT_URL = "/data/prompt_ko.md";
 
 export function AISearchChat() {
@@ -24,11 +32,20 @@ export function AISearchChat() {
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const [systemPrompt, setSystemPrompt] = useState<string>("");
 
-  // 로컬스토리지에서 API 키 로드
+  // 세션스토리지에서 API 키 로드 (30분 만료)
   useEffect(() => {
-    const savedKey = localStorage.getItem(API_KEY_STORAGE_KEY);
-    if (savedKey) {
-      setApiKey(savedKey);
+    const savedKey = sessionStorage.getItem(API_KEY_STORAGE_KEY);
+    const expiry = sessionStorage.getItem(API_KEY_EXPIRY_KEY);
+
+    if (savedKey && expiry) {
+      const expiryTime = parseInt(expiry, 10);
+      if (Date.now() < expiryTime) {
+        setApiKey(savedKey);
+      } else {
+        // 만료됨 - 삭제
+        sessionStorage.removeItem(API_KEY_STORAGE_KEY);
+        sessionStorage.removeItem(API_KEY_EXPIRY_KEY);
+      }
     }
   }, []);
 
@@ -40,10 +57,12 @@ export function AISearchChat() {
       .catch((err) => console.error("Failed to load system prompt:", err));
   }, []);
 
-  // API 키 저장 핸들러
+  // API 키 저장 핸들러 (30분 후 만료)
   const handleApiKeySubmit = (key: string) => {
     setApiKey(key);
-    localStorage.setItem(API_KEY_STORAGE_KEY, key);
+    const expiryTime = Date.now() + API_KEY_TTL_MS;
+    sessionStorage.setItem(API_KEY_STORAGE_KEY, key);
+    sessionStorage.setItem(API_KEY_EXPIRY_KEY, expiryTime.toString());
   };
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -69,9 +88,14 @@ export function AISearchChat() {
   // 스트림 업데이트 핸들러
   const handleStreamUpdate = useCallback((message: StreamMessage) => {
     switch (message.type) {
-      case "status":
-        setCurrentStatus(message.title || message.content || "");
+      case "status": {
+        const { statusKey, toolName } = message.metadata ?? {};
+        // answer_complete는 무시
+        if (statusKey === "answer_complete") break;
+        const displayMessage = getStatusMessage(statusKey, toolName);
+        setCurrentStatus(displayMessage);
         break;
+      }
       case "answer":
         setCurrentAnswer((prev) => prev + message.content);
         setCurrentStatus("");
@@ -138,13 +162,30 @@ export function AISearchChat() {
     }
   };
 
+  // 스트리밍 완료 여부 추적
+  const wasLoadingRef = useRef(false);
+
   // 스트리밍 완료 시 메시지 추가 (useEffect로 처리)
   useEffect(() => {
-    if (!isLoading && currentAnswer) {
-      setMessages((prev) => [...prev, { role: "assistant", content: currentAnswer }]);
-      setCurrentAnswer("");
+    // 로딩이 끝났을 때
+    if (wasLoadingRef.current && !isLoading) {
+      if (currentAnswer) {
+        // 정상 응답
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: currentAnswer },
+        ]);
+        setCurrentAnswer("");
+      } else if (!error) {
+        // 빈 응답이고 에러도 없으면 fallback 메시지
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: AI_SEARCH_FALLBACK_MESSAGE },
+        ]);
+      }
     }
-  }, [isLoading, currentAnswer]);
+    wasLoadingRef.current = isLoading;
+  }, [isLoading, currentAnswer, error]);
 
   // 요청 중단
   const handleStop = () => {
@@ -178,11 +219,23 @@ export function AISearchChat() {
     <div className="flex flex-col h-[calc(100vh-200px)] max-w-4xl mx-auto">
       {/* 헤더 */}
       <div className="flex items-center justify-between mb-4">
-        <div>
-          <h1 className="text-2xl font-bold">AI Search</h1>
-          <p className="text-sm text-muted-foreground">
-            블루 아카이브 관련 질문을 AI에게 물어보세요
-          </p>
+        <div className="flex items-center gap-3">
+          <Image
+            src="/arona.webp"
+            alt="ARONA"
+            width={48}
+            height={48}
+            className="rounded-full"
+          />
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-bold text-sky-600 dark:text-sky-400">ARONA</h1>
+              <Badge variant="secondary" className="text-xs">Beta</Badge>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              블루 아카이브 AI 비서
+            </p>
+          </div>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={handleApiKeyChange}>
@@ -203,11 +256,23 @@ export function AISearchChat() {
         <CardContent className="p-0 h-full">
           <div className="h-full overflow-y-auto p-4" ref={scrollAreaRef}>
             {messages.length === 0 && !currentAnswer && !isLoading ? (
-              <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-                <p className="text-lg mb-2">대화를 시작해보세요!</p>
-                <p className="text-sm">블루 아카이브 총력전, 캐릭터, 공략 등에 대해 질문할 수 있습니다.</p>
+              <div className="flex flex-col items-center justify-center h-full text-center">
+                <Image
+                  src="/arona.webp"
+                  alt="ARONA"
+                  width={80}
+                  height={80}
+                  className="rounded-full mb-4"
+                />
+                <p className="text-lg font-medium mb-3">선생님, 무엇을 도와드릴까요?</p>
+                <div className="text-sm text-muted-foreground space-y-1 mb-4">
+                  <p>🔍 <strong>학생 검색</strong> - 이름이나 별명으로 학생을 찾아요</p>
+                  <p>📋 <strong>스킬 설명</strong> - 학생의 스킬과 능력을 설명해요</p>
+                  <p>⚔️ <strong>데미지 계산</strong> - 특정 조건에서 데미지/힐량을 계산해요</p>
+                  <p>👹 <strong>보스 정보</strong> - 총력전/대결전 보스 정보를 알려줘요</p>
+                </div>
                 {!apiKey && (
-                  <Button className="mt-4" onClick={() => setShowApiKeyModal(true)}>
+                  <Button className="mt-2" onClick={() => setShowApiKeyModal(true)}>
                     <Key className="h-4 w-4 mr-2" />
                     API 키 설정하기
                   </Button>
@@ -218,8 +283,17 @@ export function AISearchChat() {
                 {messages.map((msg, idx) => (
                   <div
                     key={idx}
-                    className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                    className={`flex gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                   >
+                    {msg.role === "assistant" && (
+                      <Image
+                        src="/arona.webp"
+                        alt="ARONA"
+                        width={32}
+                        height={32}
+                        className="rounded-full flex-shrink-0 mt-1"
+                      />
+                    )}
                     <div
                       className={`max-w-[80%] rounded-lg px-4 py-2 ${
                         msg.role === "user"
@@ -242,7 +316,14 @@ export function AISearchChat() {
 
                 {/* 현재 스트리밍 중인 답변 */}
                 {(currentAnswer || currentStatus) && (
-                  <div className="flex justify-start">
+                  <div className="flex gap-2 justify-start">
+                    <Image
+                      src="/arona.webp"
+                      alt="ARONA"
+                      width={32}
+                      height={32}
+                      className="rounded-full flex-shrink-0 mt-1"
+                    />
                     <div className="max-w-[80%] rounded-lg px-4 py-2 bg-muted">
                       {currentStatus && (
                         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
