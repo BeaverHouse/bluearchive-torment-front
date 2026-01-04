@@ -1,6 +1,4 @@
-import type { Context } from "@netlify/edge-functions";
-
-export default async function handler(request: Request, context: Context) {
+export default async function handler(request: Request) {
   // 경로에서 /api/llm/ 이후 부분 추출
   const url = new URL(request.url);
   const path = url.pathname.replace(/^\/api\/llm\/?/, "");
