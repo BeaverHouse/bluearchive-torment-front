@@ -20,24 +20,24 @@ import {
 
 const features = [
   {
-    title: "파티 찾기",
-    description: "총력전/대결전 파티 검색 및 요약",
+    title: "파티 찾기 & 요약",
+    description: "시즌별 파티 정보와 요약을 볼 수 있어요.",
     href: "/party",
     icon: Search,
     color: "text-blue-500",
     bgColor: "bg-blue-500/10",
   },
   {
-    title: "종합 분석",
-    description: "캐릭터별 사용률, 시너지 분석",
+    title: "통계",
+    description: "전체 총력전 추이와 캐릭터별 통계를 볼 수 있어요.",
     href: "/total-analysis",
     icon: PieChart,
     color: "text-purple-500",
     bgColor: "bg-purple-500/10",
   },
   {
-    title: "영상 분석",
-    description: "총력전/대결전 클리어 영상 분석",
+    title: "영상",
+    description: "Youtube에 올라온 클리어 영상들이에요.",
     href: "/video-analysis",
     icon: Video,
     color: "text-rose-500",
@@ -45,14 +45,14 @@ const features = [
   },
   {
     title: "ARONA",
-    description: "학생 정보, 스킬 설명, 데미지/힐량 계산",
+    description: "아로나에게 궁금한 것을 물어보세요!",
     href: "/arona",
     image: "/arona.webp",
     badge: "Beta",
   },
   {
     title: "점수 계산기",
-    description: "총력전 점수 계산",
+    description: "총력전, 대결전, 종합전술시험 점수를 계산할 수 있어요.",
     href: "/calculator/score",
     icon: Calculator,
     color: "text-emerald-500",
@@ -95,7 +95,9 @@ export default function Home() {
                 <CardTitle className="text-lg flex items-center gap-2">
                   {feature.title}
                   {"badge" in feature && (
-                    <Badge variant="secondary" className="text-xs">{feature.badge}</Badge>
+                    <Badge variant="secondary" className="text-xs">
+                      {feature.badge}
+                    </Badge>
                   )}
                 </CardTitle>
                 <CardDescription>{feature.description}</CardDescription>
@@ -109,9 +111,7 @@ export default function Home() {
       <div className="mt-12 flex flex-col items-center gap-6 text-center">
         {/* 데이터 출처 */}
         <div className="flex flex-col items-center gap-2">
-          <p className="text-sm text-muted-foreground">
-            인게임 데이터 제공
-          </p>
+          <p className="text-sm text-muted-foreground">인게임 데이터 제공</p>
           <div className="flex flex-wrap justify-center gap-2">
             <Button variant="outline" size="sm" asChild>
               <a href="https://schaledb.com/" target="_blank" rel="noreferrer">

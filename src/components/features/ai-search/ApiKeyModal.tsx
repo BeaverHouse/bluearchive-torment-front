@@ -18,7 +18,11 @@ interface ApiKeyModalProps {
   onSubmit: (apiKey: string) => void;
 }
 
-export function ApiKeyModal({ open, onOpenChange, onSubmit }: ApiKeyModalProps) {
+export function ApiKeyModal({
+  open,
+  onOpenChange,
+  onSubmit,
+}: ApiKeyModalProps) {
   const [apiKey, setApiKey] = useState("");
   const [error, setError] = useState("");
 
@@ -50,14 +54,17 @@ export function ApiKeyModal({ open, onOpenChange, onSubmit }: ApiKeyModalProps) 
             Gemini API 키 입력
           </DialogTitle>
           <DialogDescription>
-            AI Search 기능을 사용하려면 Google Gemini API 키가 필요합니다.
-            API 키는 서버에 저장되지 않으며, 브라우저 세션에서만 사용됩니다.
+            아로나와 대화하려면 Google Gemini API 키가 필요해요.
+            <br />
+            API 키는 서버에 저장되지 않고, 30분간만 유지돼요.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="apiKey" className="text-sm font-medium">API Key</label>
+            <label htmlFor="apiKey" className="text-sm font-medium">
+              API Key
+            </label>
             <Input
               id="apiKey"
               type="password"
@@ -82,7 +89,11 @@ export function ApiKeyModal({ open, onOpenChange, onSubmit }: ApiKeyModalProps) 
           </div>
 
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               취소
             </Button>
             <Button type="submit">확인</Button>

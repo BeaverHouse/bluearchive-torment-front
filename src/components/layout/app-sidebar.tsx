@@ -3,7 +3,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Home, Video, Calculator, ChevronDown, PieChart, Search } from "lucide-react";
+import {
+  Home,
+  Video,
+  Calculator,
+  ChevronDown,
+  PieChart,
+  Search,
+} from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -78,7 +85,7 @@ export function AppSidebar() {
         <div className="p-4">
           <h2 className="text-lg font-semibold">BA Torment</h2>
           <p className="text-sm text-muted-foreground">
-            블루 아카이브 총력전 도우미
+            블루 아카이브 총력전/대결전 도우미
           </p>
         </div>
       </SidebarHeader>

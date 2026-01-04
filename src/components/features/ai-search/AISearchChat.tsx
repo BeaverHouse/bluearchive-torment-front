@@ -151,7 +151,7 @@ export function AISearchChat() {
     } catch (err) {
       if ((err as Error).name === "AbortError") {
         // 사용자가 중단한 경우 - 현재까지의 답변에 중단 표시 추가
-        setCurrentAnswer((prev) => prev ? prev + "\n\n(중단됨)" : "");
+        setCurrentAnswer((prev) => (prev ? prev + "\n\n(중단됨)" : ""));
       } else {
         setError((err as Error).message || "오류가 발생했습니다.");
       }
@@ -229,12 +229,13 @@ export function AISearchChat() {
           />
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold text-sky-600 dark:text-sky-400">ARONA</h1>
-              <Badge variant="secondary" className="text-xs">Beta</Badge>
+              <h1 className="text-2xl font-bold text-sky-600 dark:text-sky-400">
+                A.R.O.N.A
+              </h1>
+              <Badge variant="secondary" className="text-xs">
+                Beta
+              </Badge>
             </div>
-            <p className="text-sm text-muted-foreground">
-              블루 아카이브 AI 비서
-            </p>
           </div>
         </div>
         <div className="flex gap-2">
@@ -264,15 +265,28 @@ export function AISearchChat() {
                   height={80}
                   className="rounded-full mb-4"
                 />
-                <p className="text-lg font-medium mb-3">선생님, 무엇을 도와드릴까요?</p>
+                <p className="text-lg font-medium mb-3">
+                  선생님, 무엇을 도와드릴까요?
+                </p>
                 <div className="text-sm text-muted-foreground space-y-1 mb-4">
-                  <p>🔍 <strong>학생 검색</strong> - 이름이나 별명으로 학생을 찾아요</p>
-                  <p>📋 <strong>스킬 설명</strong> - 학생의 스킬과 능력을 설명해요</p>
-                  <p>⚔️ <strong>데미지 계산</strong> - 특정 조건에서 데미지/힐량을 계산해요</p>
-                  <p>👹 <strong>보스 정보</strong> - 총력전/대결전 보스 정보를 알려줘요</p>
+                  <p>
+                    🔍 <strong>학생 검색</strong> - 이름이나 별명으로 학생을
+                    찾아요
+                  </p>
+                  <p>
+                    📋 <strong>스킬 설명</strong> - 학생의 스킬과 능력을
+                    설명해요
+                  </p>
+                  <p>
+                    ⚔️ <strong>데미지 계산</strong> - 특정 조건에서
+                    데미지/힐량/스탯을 계산해요
+                  </p>
                 </div>
                 {!apiKey && (
-                  <Button className="mt-2" onClick={() => setShowApiKeyModal(true)}>
+                  <Button
+                    className="mt-2"
+                    onClick={() => setShowApiKeyModal(true)}
+                  >
                     <Key className="h-4 w-4 mr-2" />
                     API 키 설정하기
                   </Button>
@@ -283,7 +297,9 @@ export function AISearchChat() {
                 {messages.map((msg, idx) => (
                   <div
                     key={idx}
-                    className={`flex gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                    className={`flex gap-2 ${
+                      msg.role === "user" ? "justify-end" : "justify-start"
+                    }`}
                   >
                     {msg.role === "assistant" && (
                       <Image
@@ -362,7 +378,9 @@ export function AISearchChat() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={apiKey ? "질문을 입력하세요..." : "API 키를 먼저 설정해주세요"}
+          placeholder={
+            apiKey ? "질문을 입력하세요..." : "API 키를 먼저 설정해주세요"
+          }
           disabled={isLoading || !apiKey}
           className="min-h-[80px] max-h-[200px] resize-none pr-14 pb-12"
           rows={3}
