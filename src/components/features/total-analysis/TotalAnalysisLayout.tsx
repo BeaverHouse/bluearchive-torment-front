@@ -43,7 +43,7 @@ export function TotalAnalysisLayout({ data }: TotalAnalysisLayoutProps) {
   );
 
   return (
-    <div className="w-full max-w-full overflow-x-hidden flex flex-col items-center gap-6">
+    <div className="w-full max-w-[1200px] mx-auto overflow-x-hidden flex flex-col items-center gap-6">
       <div className="w-full max-w-full md:max-w-[1200px] overflow-hidden px-2 sm:px-4 md:px-0">
         <p className="text-muted-foreground text-sm sm:text-base">
           전용무기 4성 + LUNATIC 난이도 이후의 통계에요.
