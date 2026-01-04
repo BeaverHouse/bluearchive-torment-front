@@ -7,3 +7,21 @@
 
 [build.environment]
   NODE_VERSION = "18"
+
+# Deploy Preview에서만 프록시 설정 (CORS 우회)
+[context.deploy-preview.environment]
+  NEXT_PUBLIC_API_URL = "/api/proxy"
+  NEXT_PUBLIC_LLM_BASE_URL = "/api/llm"
+
+[context.deploy-preview]
+  [[redirects]]
+    from = "/api/proxy/*"
+    to = "https://api.tinyclover.com/:splat"
+    status = 200
+    force = true
+
+  [[redirects]]
+    from = "/api/llm/*"
+    to = "https://llm.tinyclover.com/:splat"
+    status = 200
+    force = true
