@@ -14,14 +14,14 @@
   NEXT_PUBLIC_LLM_BASE_URL = "/api/llm"
 
 [context.deploy-preview]
+  # 일반 API 프록시
   [[redirects]]
     from = "/api/proxy/*"
     to = "https://api.tinyclover.com/:splat"
     status = 200
     force = true
 
-  [[redirects]]
-    from = "/api/llm/*"
-    to = "https://llm.tinyclover.com/:splat"
-    status = 200
-    force = true
+# LLM API는 Edge Function으로 프록시 (SSE 스트리밍 지원)
+[[edge_functions]]
+  path = "/api/llm/*"
+  function = "llm-proxy"
