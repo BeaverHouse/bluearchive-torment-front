@@ -7,3 +7,21 @@
 
 [build.environment]
   NODE_VERSION = "18"
+
+# Deploy Preview에서만 프록시 설정 (CORS 우회)
+[context.deploy-preview.environment]
+  NEXT_PUBLIC_API_URL = "/api/proxy"
+  NEXT_PUBLIC_LLM_BASE_URL = "/api/llm"
+
+[context.deploy-preview]
+  # 일반 API 프록시
+  [[redirects]]
+    from = "/api/proxy/*"
+    to = "https://api.tinyclover.com/:splat"
+    status = 200
+    force = true
+
+# LLM API는 Edge Function으로 프록시 (SSE 스트리밍 지원)
+[[edge_functions]]
+  path = "/api/llm/*"
+  function = "llm-proxy"

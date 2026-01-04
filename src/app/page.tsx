@@ -1,129 +1,150 @@
 "use client";
 
-import useBAStore from "@/store/useBAStore";
-import RaidSearch from "@/components/features/raid/raid-search";
-import RaidSummary from "@/components/features/raid/raid-summary";
-import InfoFAB from "@/components/common/info-fab";
-import NormalAnnounce from "@/components/common/normal-announce";
-import raidsData from "../../data/raids.json";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RaidInfo } from "@/types/raid";
-import { SingleSelect } from "@/components/ui/custom/single-select";
-import { trackSummaryTabClick } from "@/utils/analytics";
-import { useStudentMaps } from "@/hooks/use-student-maps";
+import Link from "next/link";
+import Image from "next/image";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Search, PieChart, Video, Calculator } from "lucide-react";
+
+const features = [
+  {
+    title: "파티 찾기 & 요약",
+    description: "시즌별 파티 정보와 요약을 볼 수 있어요.",
+    href: "/party",
+    icon: Search,
+    color: "text-blue-500",
+    bgColor: "bg-blue-500/10",
+  },
+  {
+    title: "통계",
+    description: "전체 총력전 추이와 캐릭터별 통계를 볼 수 있어요.",
+    href: "/total-analysis",
+    icon: PieChart,
+    color: "text-purple-500",
+    bgColor: "bg-purple-500/10",
+  },
+  {
+    title: "영상",
+    description: "Youtube에 올라온 클리어 영상들이에요.",
+    href: "/video-analysis",
+    icon: Video,
+    color: "text-rose-500",
+    bgColor: "bg-rose-500/10",
+  },
+  {
+    title: "ARONA",
+    description: "아로나에게 궁금한 것을 물어보세요!",
+    href: "/arona",
+    image: "/arona.webp",
+    badge: "Beta",
+  },
+  {
+    title: "점수 계산기",
+    description: "총력전, 대결전, 종합전술시험 점수를 계산할 수 있어요.",
+    href: "/calculator/score",
+    icon: Calculator,
+    color: "text-emerald-500",
+    bgColor: "bg-emerald-500/10",
+  },
+];
 
 export default function Home() {
-  const { V3Season, setV3Season } = useBAStore();
-  const { studentsMap, studentSearchMap } = useStudentMaps();
-  const raidInfos = (raidsData as RaidInfo[])
-    .filter((raid) => raid.party_updated)
-    .map((raid) => ({
-      value: raid.id,
-      label: raid.name,
-      topLevel: raid.top_level,
-    }));
-
-  const season = raidInfos.map((raid) => raid.value).includes(V3Season)
-    ? V3Season
-    : raidInfos[0].value;
-
-  const seasonDescription = raidInfos.find(
-    (raid) => raid.value === season
-  )!.label;
-
-  const seasonTopLevel = raidInfos.find(
-    (raid) => raid.value === season
-  )!.topLevel;
-
   return (
-    <div
-      className="App"
-      style={{
-        width: "100%",
-        maxWidth: 800,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        textAlign: "center",
-        margin: "0 auto",
-        padding: "4px",
-      }}
-    >
-      <NormalAnnounce />
-      <InfoFAB />
-
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          alignItems: "center",
-          justifyContent: "center",
-          textAlign: "center",
-          width: "90%",
-        }}
-      >
-        <SingleSelect
-          options={raidInfos.map((raid) => ({
-            value: raid.value,
-            label: raid.label,
-          }))}
-          value={season}
-          onChange={setV3Season}
-          placeholder="총력전/대결전 선택"
-        />
+    <div className="w-full max-w-4xl mx-auto px-4 py-8">
+      {/* 헤더 */}
+      <div className="text-center mb-10">
+        <h1 className="text-3xl sm:text-4xl font-bold mb-3">BA Torment</h1>
+        <p className="text-muted-foreground text-sm sm:text-base">
+          블루 아카이브 총력전/대결전 도우미
+        </p>
       </div>
-      <br />
-      <Tabs defaultValue="search" className="w-full max-w-4xl">
-        <TabsList
-          className={`grid w-full ${
-            seasonTopLevel === "L" ? "grid-cols-3" : "grid-cols-2"
-          }`}
-        >
-          <TabsTrigger value="search">파티 찾기</TabsTrigger>
-          <TabsTrigger
-            value="summary"
-            onClick={() => trackSummaryTabClick("summary")}
-          >
-            요약
-          </TabsTrigger>
-          {seasonTopLevel === "L" && (
-            <TabsTrigger
-              value="summary-lunatic"
-              onClick={() => trackSummaryTabClick("summary-lunatic")}
+
+      {/* 기능 카드 그리드 */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {features.map((feature) => (
+          <Link key={feature.href} href={feature.href}>
+            <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer hover:border-primary/50">
+              <CardHeader className="pb-3">
+                {"image" in feature ? (
+                  <Image
+                    src={feature.image as string}
+                    alt={feature.title}
+                    width={40}
+                    height={40}
+                    className="rounded-full mb-2 object-cover"
+                  />
+                ) : (
+                  <div
+                    className={`w-10 h-10 rounded-lg ${feature.bgColor} flex items-center justify-center mb-2`}
+                  >
+                    <feature.icon className={`w-5 h-5 ${feature.color}`} />
+                  </div>
+                )}
+                <CardTitle className="text-lg flex items-center gap-2">
+                  {feature.title}
+                  {"badge" in feature && (
+                    <Badge variant="secondary" className="text-xs">
+                      {feature.badge}
+                    </Badge>
+                  )}
+                </CardTitle>
+                <CardDescription>{feature.description}</CardDescription>
+              </CardHeader>
+            </Card>
+          </Link>
+        ))}
+      </div>
+
+      {/* 데이터 출처 및 후원 */}
+      <div className="mt-12 flex flex-col items-center gap-6 text-center">
+        {/* 데이터 출처 */}
+        <div className="flex flex-col items-center gap-1 text-xs text-muted-foreground">
+          <p>
+            총력전/대결전 데이터는{" "}
+            <a
+              href="https://plana-stats.vercel.app/"
+              target="_blank"
+              rel="noreferrer"
+              className="!underline underline-offset-2 hover:text-foreground"
             >
-              요약 (루나틱)
-            </TabsTrigger>
-          )}
-        </TabsList>
-        <TabsContent value="search">
-          <RaidSearch
-            season={season}
-            studentsMap={studentsMap}
-            studentSearchMap={studentSearchMap}
-            level="NOUSE"
+              Plana Stats
+            </a>
+            에서 가져왔어요.
+          </p>
+          <p>
+            인게임 데이터는{" "}
+            <a
+              href="https://schaledb.com/"
+              target="_blank"
+              rel="noreferrer"
+              className="!underline underline-offset-2 hover:text-foreground"
+            >
+              Schale DB
+            </a>
+            에서 가져왔어요.
+          </p>
+        </div>
+
+        {/* 후원 */}
+        <a
+          href="https://buymeacoffee.com/haulrest"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <Image
+            src="/bmc-button.png"
+            alt="Buy Me a Coffee"
+            width={180}
+            height={50}
+            className="hover:opacity-80 transition-opacity"
           />
-        </TabsContent>
-        <TabsContent value="summary">
-          <RaidSummary
-            season={season}
-            seasonDescription={seasonDescription}
-            studentsMap={studentsMap}
-            studentSearchMap={studentSearchMap}
-            level={seasonTopLevel === "L" ? "T" : seasonTopLevel}
-          />
-        </TabsContent>
-        {seasonTopLevel === "L" && (
-          <TabsContent value="summary-lunatic">
-            <RaidSummary
-              season={season}
-              seasonDescription={seasonDescription}
-              studentsMap={studentsMap}
-              studentSearchMap={studentSearchMap}
-              level="L"
-            />
-          </TabsContent>
-        )}
-      </Tabs>
+        </a>
+      </div>
     </div>
   );
 }

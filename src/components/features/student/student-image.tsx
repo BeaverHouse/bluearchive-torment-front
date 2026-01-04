@@ -14,6 +14,7 @@ import { getCharacterName } from "@/utils/character";
 
 interface StudentImageProps {
   code: number;
+  size?: number;
 }
 
 /**
@@ -21,7 +22,7 @@ interface StudentImageProps {
  * @param code Student code (5-digit or 8-digit)
  * @param name Student name (to use in tooltip)
  */
-export function StudentImage({ code }: StudentImageProps) {
+export function StudentImage({ code, size = 40 }: StudentImageProps) {
   const { studentsMap } = useStudentMaps();
 
   const studentID = React.useMemo(
@@ -58,8 +59,8 @@ export function StudentImage({ code }: StudentImageProps) {
                 process.env.NEXT_PUBLIC_CDN_URL || ""
               }/batorment/character/${studentID}.webp`}
               alt={studentName}
-              width={40}
-              height={40}
+              width={size}
+              height={size}
               className={`object-cover rounded mb-1 ${borderClass}`}
               draggable={false}
               loading="lazy"

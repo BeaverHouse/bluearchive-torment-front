@@ -150,8 +150,14 @@ a {
   * {
     @apply border-border outline-ring/50;
   }
-  body {
+  html, body {
     @apply bg-background text-foreground;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  /* Flexbox 자식 요소의 min-width 기본값 제거 - viewport 넘침 방지 */
+  .flex > *, .grid > * {
+    min-width: 0;
   }
 }
 

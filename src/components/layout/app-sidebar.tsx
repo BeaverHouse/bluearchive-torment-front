@@ -1,8 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Home, Video, Calculator, ChevronDown } from "lucide-react";
+import {
+  Home,
+  Video,
+  Calculator,
+  ChevronDown,
+  PieChart,
+  Search,
+} from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -28,9 +36,24 @@ const menuItems = [
     icon: Home,
   },
   {
-    title: "영상 분석",
+    title: "파티 찾기 & 요약",
+    url: "/party",
+    icon: Search,
+  },
+  {
+    title: "통계",
+    url: "/total-analysis",
+    icon: PieChart,
+  },
+  {
+    title: "영상",
     url: "/video-analysis",
     icon: Video,
+  },
+  {
+    title: "ARONA",
+    url: "/arona",
+    image: "/arona.webp",
   },
   {
     title: "계산기",
@@ -62,7 +85,7 @@ export function AppSidebar() {
         <div className="p-4">
           <h2 className="text-lg font-semibold">BA Torment</h2>
           <p className="text-sm text-muted-foreground">
-            블루 아카이브 파티 찾기
+            블루 아카이브 총력전/대결전 도우미
           </p>
         </div>
       </SidebarHeader>
@@ -114,7 +137,17 @@ export function AppSidebar() {
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild isActive={pathname === item.url}>
                       <Link href={item.url} onClick={handleMenuClick}>
-                        <item.icon />
+                        {"image" in item ? (
+                          <Image
+                            src={item.image as string}
+                            alt={item.title}
+                            width={16}
+                            height={16}
+                            className="rounded-full object-cover"
+                          />
+                        ) : (
+                          <item.icon />
+                        )}
                         <span>{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
