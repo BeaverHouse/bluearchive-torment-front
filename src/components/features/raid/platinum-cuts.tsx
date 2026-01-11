@@ -87,7 +87,7 @@ export function PlatinumStats({
               <SelectTrigger className="w-[115px] h-8">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="min-w-0 w-[115px]">
                 {rankOptions.map((rank) => (
                   <SelectItem key={rank} value={rank.toString()}>
                     {rank.toLocaleString()}등
