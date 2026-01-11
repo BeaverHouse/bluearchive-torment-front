@@ -55,9 +55,9 @@ const features = [
 
 export default function Home() {
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-8">
+    <div className="w-full max-w-4xl mx-auto">
       {/* 헤더 */}
-      <div className="text-center mb-10">
+      <div className="text-center mb-6">
         <h1 className="text-3xl sm:text-4xl font-bold mb-3">BA Torment</h1>
         <p className="text-muted-foreground text-sm sm:text-base">
           블루 아카이브 총력전/대결전 도우미
@@ -70,30 +70,32 @@ export default function Home() {
           <Link key={feature.href} href={feature.href}>
             <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer hover:border-primary/50">
               <CardHeader className="pb-3">
-                {"image" in feature ? (
-                  <Image
-                    src={feature.image as string}
-                    alt={feature.title}
-                    width={40}
-                    height={40}
-                    className="rounded-full mb-2 object-cover"
-                  />
-                ) : (
-                  <div
-                    className={`w-10 h-10 rounded-lg ${feature.bgColor} flex items-center justify-center mb-2`}
-                  >
-                    <feature.icon className={`w-5 h-5 ${feature.color}`} />
-                  </div>
-                )}
-                <CardTitle className="text-lg flex items-center gap-2">
-                  {feature.title}
-                  {"badge" in feature && (
-                    <Badge variant="secondary" className="text-xs">
-                      {feature.badge}
-                    </Badge>
+                <div className="flex items-center gap-3">
+                  {"image" in feature ? (
+                    <Image
+                      src={feature.image as string}
+                      alt={feature.title}
+                      width={40}
+                      height={40}
+                      className="rounded-full object-cover flex-shrink-0"
+                    />
+                  ) : (
+                    <div
+                      className={`w-10 h-10 rounded-lg ${feature.bgColor} flex items-center justify-center flex-shrink-0`}
+                    >
+                      <feature.icon className={`w-5 h-5 ${feature.color}`} />
+                    </div>
                   )}
-                </CardTitle>
-                <CardDescription>{feature.description}</CardDescription>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    {feature.title}
+                    {"badge" in feature && (
+                      <Badge variant="secondary" className="text-xs">
+                        {feature.badge}
+                      </Badge>
+                    )}
+                  </CardTitle>
+                </div>
+                <CardDescription className="mt-2">{feature.description}</CardDescription>
               </CardHeader>
             </Card>
           </Link>
