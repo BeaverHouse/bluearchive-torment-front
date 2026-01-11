@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 
-const ANNOUNCE_DATE = "26.01.11";
+const ANNOUNCE_DATE = "26.01.12";
 const ANNOUNCE_TEXT = "필터 기능과 디자인이 개선되었어요.";
 const STORAGE_KEY = "batorment_announce_dismissed";
 
