@@ -28,7 +28,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Clock, RefreshCw, Youtube } from "lucide-react";
+import { Plus, Clock, RefreshCw, Youtube, RotateCcw } from "lucide-react";
 import { useEffect, useState, Suspense, useMemo, useCallback } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useStudentMaps } from "@/hooks/use-student-maps";
@@ -407,10 +407,27 @@ function VideoAnalysisContent() {
       {isFilterMode && filterData && (
         <div className="mx-auto mb-5 w-full">
           <Collapsible>
-            <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg border border-gray-200 p-4 hover:bg-gray-50 dark:hover:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-800">
-              <span className="text-sm font-medium">파티 Filter</span>
-              <ChevronDownIcon className="h-4 w-4 transition-transform" />
-            </CollapsibleTrigger>
+            <div className="flex items-center rounded-lg border border-gray-200 dark:border-gray-700">
+              <CollapsibleTrigger className="flex flex-1 items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800">
+                <span className="text-sm font-medium">파티 Filter</span>
+                <ChevronDownIcon className="h-4 w-4 transition-transform" />
+              </CollapsibleTrigger>
+              <div className="flex items-center gap-1 pr-2">
+                <Button
+                  variant="destructive"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => {
+                    const confirm =
+                      window.confirm("모든 캐릭터 필터가 리셋됩니다.");
+                    if (confirm) handleResetFilters();
+                  }}
+                  title="필터 초기화"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
             <CollapsibleContent className="border-l border-r border-b border-gray-200 p-4 dark:border-gray-700">
               <PartyFilter
                 filters={filters}
@@ -422,11 +439,6 @@ function VideoAnalysisContent() {
                 maxPartys={20}
                 studentSearchMap={studentSearchMap}
                 showYoutubeOnly={false}
-                onReset={() => {
-                  const confirm =
-                    window.confirm("모든 캐릭터 필터가 리셋됩니다.");
-                  if (confirm) handleResetFilters();
-                }}
               />
             </CollapsibleContent>
           </Collapsible>
