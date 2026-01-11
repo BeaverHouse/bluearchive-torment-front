@@ -3,7 +3,6 @@
 import { VideoDetail } from "../_components/video-detail";
 import { getVideoDetail } from "@/lib/api";
 import { VideoAnalysisData, VideoDetailResponse } from "@/types/video";
-import { RaidInfo } from "@/types/raid";
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { useRaids } from "@/hooks/use-raids";

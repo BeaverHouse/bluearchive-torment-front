@@ -8,7 +8,6 @@ import {
   QueueItem,
 } from "@/lib/api";
 import { VideoListItem } from "@/types/video";
-import { RaidInfo } from "@/types/raid";
 import {
   Select,
   SelectContent,
@@ -281,7 +280,7 @@ function VideoAnalysisContent() {
         label: raid.name,
       })),
     ],
-    []
+    [raids]
   );
 
   // 표시할 비디오 계산

@@ -9,7 +9,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Users,
-  Trophy,
   Target,
   TrendingUp,
   ThumbsUp,
@@ -61,7 +60,6 @@ function createCharTableData(
 
 const RaidSummary = ({
   season,
-  seasonDescription: _seasonDescription = "",
   studentsMap,
   studentSearchMap,
   level,
@@ -225,10 +223,6 @@ const RaidSummary = ({
     Number(Math.min(tormentSummaryData.clearCount, 20000) / 20000) * 100;
   const lunaticClearPercent =
     Number(Math.min(lunaticSummaryData.clearCount, 20000) / 20000) * 100;
-  const clearPercent =
-    level === "T"
-      ? tormentClearPercent + lunaticClearPercent
-      : lunaticClearPercent;
 
   return (
     <div className="container mx-auto py-4 sm:py-8 max-w-7xl">
@@ -275,10 +269,7 @@ const RaidSummary = ({
 
         {/* Top 3 Assistants */}
         {assistData.length > 0 && (
-          <TopAssistants
-            data={assistData.slice(0, 3)}
-            studentsMap={studentsMap}
-          />
+          <TopAssistants data={assistData.slice(0, 3)} />
         )}
 
         {highUsageCharacters.length > 0 && (
