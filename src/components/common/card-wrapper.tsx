@@ -22,7 +22,7 @@ const CardWrapper = ({
   children,
 }: CardWrapperProps) => {
   return (
-    <Card className={className || "my-3 mx-0"}>
+    <Card className={className || "my-2 mx-0 gap-3"}>
       <CardHeader>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
           <CardTitle className="flex items-center gap-2">
@@ -36,7 +36,7 @@ const CardWrapper = ({
           )}
         </div>
       </CardHeader>
-      <CardContent className="p-2">{children}</CardContent>
+      <CardContent className="px-2 py-1">{children}</CardContent>
     </Card>
   );
 };

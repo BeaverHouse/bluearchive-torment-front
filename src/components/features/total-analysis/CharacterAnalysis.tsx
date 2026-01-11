@@ -7,7 +7,7 @@ import { useStudentMaps } from "@/hooks/use-student-maps";
 import { StarDistChart } from "./StarDistChart";
 import { UsageHeatmap } from "./UsageHeatmap";
 import { StudentImage } from "@/components/features/student/student-image";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface CharacterAnalysisProps {
   data: TotalAnalysisData;

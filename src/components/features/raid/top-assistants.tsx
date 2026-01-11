@@ -5,10 +5,9 @@ import { Assistant } from "@/types/raid";
 
 interface TopAssistantsProps {
   data: Assistant[];
-  studentsMap: Record<string, string>;
 }
 
-export function TopAssistants({ data, studentsMap }: TopAssistantsProps) {
+export function TopAssistants({ data }: TopAssistantsProps) {
   return (
     <CardWrapper
       icon={<Users className="h-5 w-5 text-sky-500" />}
@@ -16,7 +15,7 @@ export function TopAssistants({ data, studentsMap }: TopAssistantsProps) {
       description="가장 많이 빌린 학생 3명이에요."
     >
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {data.map((char, index) => (
+        {data.map((char) => (
           <div
             key={char.studentId}
             className="flex items-center gap-4 p-2 rounded-lg"

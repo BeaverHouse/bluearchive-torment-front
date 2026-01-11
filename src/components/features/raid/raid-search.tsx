@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import useBAStore from "@/store/useBAStore";
 import { filteredPartys, getFilters } from "@/lib/party-filters";
@@ -22,6 +22,9 @@ import { Pagination } from "../../shared/pagination";
 import Loading from "../../common/loading";
 import { PartyFilter } from "./party-filter";
 import { PartyFilterState } from "@/types/filter";
+import { FilterPresetPopover } from "./filter-preset-popover";
+import { Button } from "@/components/ui/button";
+import { Download, RotateCcw } from "lucide-react";
 
 const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProps) => {
   const [PartyCountRange, setPartyCountRange] = useState([0, 99]);
@@ -170,17 +173,17 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
   const partyData = getPartyDataQuery.data;
   const filterData = getFilterDataQuery.data;
 
-  // 파티 데이터와 필터 데이터 분리
-  const data: RaidData = {
+  // 파티 데이터와 필터 데이터 분리 (메모이제이션)
+  const data: RaidData = useMemo(() => ({
     parties: partyData?.parties || [],
     minPartys: partyData?.minPartys || 1,
     maxPartys: partyData?.maxPartys || 10,
-  };
+  }), [partyData]);
 
-  const combinedFilterData: FilterData = {
+  const combinedFilterData: FilterData = useMemo(() => ({
     filters: filterData?.filters || {},
     assistFilters: filterData?.assistFilters || {},
-  };
+  }), [filterData]);
 
   const filterOptions = useMemo(
     () => getFilters(combinedFilterData.filters, studentsMap) as FilterOption[],
@@ -201,7 +204,7 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
     [combinedFilterData.assistFilters, studentsMap]
   );
 
-  const handleFilterChange = (updates: Partial<PartyFilterState>) => {
+  const handleFilterChange = useCallback((updates: Partial<PartyFilterState>) => {
     // Zustand store 업데이트
     if ('scoreRange' in updates) setScoreRange(updates.scoreRange);
     if ('includeList' in updates && updates.includeList !== undefined) setIncludeList(updates.includeList);
@@ -213,14 +216,54 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
 
     // Local state 업데이트
     if ('partyCountRange' in updates && updates.partyCountRange !== undefined) setPartyCountRange(updates.partyCountRange);
-  };
+  }, [setScoreRange, setIncludeList, setExcludeList, setAssist, setHardExclude, setAllowDuplicate, setYoutubeOnly]);
 
   const confirmReset = () => {
     const confirm = window.confirm("모든 캐릭터 필터가 리셋됩니다.");
     if (confirm) removeFilters();
   };
 
-  const parties = filteredPartys(
+  // 프리셋 불러오기 핸들러
+  const handleLoadPreset = useCallback((preset: Partial<PartyFilterState>) => {
+    handleFilterChange(preset);
+  }, [handleFilterChange]);
+
+  // 점수로 이동 핸들러
+  const handleScoreJump = useCallback((targetScore: number) => {
+    // 현재 필터로 파티 목록 가져오기
+    const currentParties = filteredPartys(
+      data,
+      ScoreRange,
+      IncludeList,
+      ExcludeList,
+      Assist,
+      PartyCountRange,
+      HardExclude,
+      AllowDuplicate,
+      YoutubeOnly
+    );
+
+    if (currentParties.length === 0) return;
+
+    // 가장 가까운 점수를 가진 파티 찾기
+    let closestIndex = 0;
+    let closestDiff = Math.abs(currentParties[0].score - targetScore);
+
+    currentParties.forEach((party, index) => {
+      const diff = Math.abs(party.score - targetScore);
+      if (diff < closestDiff) {
+        closestDiff = diff;
+        closestIndex = index;
+      }
+    });
+
+    // 해당 파티가 있는 페이지로 이동
+    const targetPage = Math.floor(closestIndex / PageSize) + 1;
+    setPage(targetPage);
+  }, [data, ScoreRange, IncludeList, ExcludeList, Assist, PartyCountRange, HardExclude, AllowDuplicate, YoutubeOnly, PageSize]);
+
+  // 필터링된 파티 목록 (메모이제이션)
+  const parties = useMemo(() => filteredPartys(
     data,
     ScoreRange,
     IncludeList,
@@ -230,7 +273,19 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
     HardExclude,
     AllowDuplicate,
     YoutubeOnly
-  );
+  ), [data, ScoreRange, IncludeList, ExcludeList, Assist, PartyCountRange, HardExclude, AllowDuplicate, YoutubeOnly]);
+
+  // 현재 필터 상태 (메모이제이션) - 모든 훅은 조건부 리턴 전에 호출
+  const currentFilters: PartyFilterState = useMemo(() => ({
+    scoreRange: ScoreRange,
+    includeList: IncludeList,
+    excludeList: ExcludeList,
+    assist: Assist,
+    partyCountRange: PartyCountRange as [number, number],
+    hardExclude: HardExclude,
+    allowDuplicate: AllowDuplicate,
+    youtubeOnly: YoutubeOnly,
+  }), [ScoreRange, IncludeList, ExcludeList, Assist, PartyCountRange, HardExclude, AllowDuplicate, YoutubeOnly]);
 
   if (getPartyDataQuery.isLoading || getFilterDataQuery.isLoading)
     return <Loading />;
@@ -239,22 +294,39 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
     <>
       <div className="mx-auto mb-5 w-full">
         <Collapsible defaultOpen>
-          <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg border border-gray-200 p-4 hover:bg-gray-50 dark:hover:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-800">
-            <span className="text-sm font-medium">파티 Filter</span>
-            <ChevronDownIcon className="h-4 w-4 transition-transform" />
-          </CollapsibleTrigger>
+          <div className="flex items-center rounded-lg border border-gray-200 dark:border-gray-700">
+            <CollapsibleTrigger className="flex flex-1 items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800">
+              <span className="text-sm font-medium">파티 Filter</span>
+              <ChevronDownIcon className="h-4 w-4 transition-transform" />
+            </CollapsibleTrigger>
+            <div className="flex items-center gap-1 pr-2">
+              <FilterPresetPopover
+                filters={currentFilters}
+                onLoadPreset={handleLoadPreset}
+              >
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  className="h-8 w-8"
+                  title="필터 프리셋"
+                >
+                  <Download className="h-4 w-4" />
+                </Button>
+              </FilterPresetPopover>
+              <Button
+                variant="destructive"
+                size="icon"
+                className="h-8 w-8"
+                onClick={confirmReset}
+                title="필터 초기화"
+              >
+                <RotateCcw className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
           <CollapsibleContent className="border-l border-r border-b border-gray-200 p-4 dark:border-gray-700">
             <PartyFilter
-              filters={{
-                scoreRange: ScoreRange,
-                includeList: IncludeList,
-                excludeList: ExcludeList,
-                assist: Assist,
-                partyCountRange: PartyCountRange as [number, number],
-                hardExclude: HardExclude,
-                allowDuplicate: AllowDuplicate,
-                youtubeOnly: YoutubeOnly,
-              }}
+              filters={currentFilters}
               onFilterChange={handleFilterChange}
               filterOptions={filterOptions}
               excludeOptions={excludeOptions}
@@ -263,7 +335,7 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
               maxPartys={data.maxPartys}
               studentSearchMap={studentSearchMap}
               showYoutubeOnly={true}
-              onReset={confirmReset}
+              onScoreJump={handleScoreJump}
             />
           </CollapsibleContent>
         </Collapsible>

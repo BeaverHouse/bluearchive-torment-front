@@ -28,7 +28,7 @@ export function Footer() {
           {/* Copyright */}
           <div className="text-xs text-muted-foreground text-center sm:text-right">
             <p>Blue Archive copyrighted by NEXON GAMES & YOSTAR</p>
-            <p>2023-2025, powered by Austin</p>
+            <p>2023-2026, powered by Austin</p>
           </div>
         </div>
       </div>

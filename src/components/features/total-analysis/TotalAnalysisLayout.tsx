@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { TotalAnalysisData } from "@/types/total-analysis";
+import { useTotalAnalysis } from "@/hooks/use-total-analysis";
 import { RaidUsageTable } from "./RaidUsageTable";
 import { LunaticClearChart } from "./LunaticClearChart";
 import { CharacterAnalysis } from "./CharacterAnalysis";
@@ -14,12 +14,10 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
 
-interface TotalAnalysisLayoutProps {
-  data: TotalAnalysisData;
-}
-
-export function TotalAnalysisLayout({ data }: TotalAnalysisLayoutProps) {
+export function TotalAnalysisLayout() {
+  const { data, isLoading } = useTotalAnalysis();
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
@@ -41,6 +39,14 @@ export function TotalAnalysisLayout({ data }: TotalAnalysisLayoutProps) {
     },
     [api]
   );
+
+  if (isLoading || !data) {
+    return (
+      <div className="w-full max-w-[1200px] mx-auto flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-[1200px] mx-auto overflow-x-hidden flex flex-col items-center gap-6">
