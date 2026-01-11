@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Search, PieChart, Video, Calculator } from "lucide-react";
+import BuyMeACoffeeButton from "@/components/common/coffee";
 
 const features = [
   {
@@ -133,19 +134,7 @@ export default function Home() {
         </div>
 
         {/* 후원 */}
-        <a
-          href="https://buymeacoffee.com/haulrest"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <Image
-            src="/bmc-button.png"
-            alt="Buy Me a Coffee"
-            width={180}
-            height={50}
-            className="hover:opacity-80 transition-opacity"
-          />
-        </a>
+        <BuyMeACoffeeButton />
       </div>
     </div>
   );

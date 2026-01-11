@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import InfoFAB from "./info-fab";
 import { Button } from "@/components/ui/button";
 
 function ErrorPage() {
@@ -32,7 +31,6 @@ function ErrorPage() {
           </a>
         </Button>
       </div>
-      <InfoFAB />
     </div>
   );
 }
