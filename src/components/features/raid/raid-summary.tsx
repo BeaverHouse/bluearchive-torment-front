@@ -27,7 +27,7 @@ import Loading from "../../common/loading";
 import CardWrapper from "../../common/card-wrapper";
 import { SearchableSelect } from "../video/searchable-select";
 import { CharacterUsageTable } from "./character-usage-table";
-import { PlatinumCuts } from "./platinum-cuts";
+import { PlatinumStats } from "./platinum-cuts";
 import { EssentialCharacters } from "./essential-characters";
 import { HighImpactCharacters } from "./high-impact-characters";
 import { TopAssistants } from "./top-assistants";
@@ -243,44 +243,19 @@ const RaidSummary = ({
           영상 분석 페이지로 이동
         </Button>
 
-        {/* Clear Rate Stats */}
+        {/* Platinum Stats (클리어 비율 + 컷) */}
         {level !== "I" && (
-          <CardWrapper
-            className={`border-l-4 mx-0 ${
-              clearPercent > 50 ? "border-l-red-500" : "border-l-sky-500"
-            }`}
-            icon={<Trophy className="h-5 w-5 text-sky-500" />}
-            title="Platinum 클리어 비율"
-          >
-            <div
-              className={`text-2xl font-bold ${
-                clearPercent > 50 ? "text-red-600" : ""
-              }`}
-            >
-              {Math.min(data?.clearCount || 0, 20000).toLocaleString()} (
-              {(level === "T"
-                ? tormentClearPercent
-                : lunaticClearPercent
-              ).toFixed(2)}
-              %)
-            </div>
-            {level === "T" && lunaticSummaryData.clearCount > 0 && (
-              <p className="text-xs text-muted-foreground">
-                루나틱: {lunaticClearPercent.toFixed(2)}%
-              </p>
-            )}
-          </CardWrapper>
+          <PlatinumStats
+            clearCount={data?.clearCount || 0}
+            clearPercent={level === "T" ? tormentClearPercent : lunaticClearPercent}
+            platinumCuts={data.platinumCuts || []}
+            partPlatinumCuts={data.partPlatinumCuts}
+            lunaticClearPercent={level === "T" && lunaticSummaryData.clearCount > 0 ? lunaticClearPercent : undefined}
+          />
         )}
       </div>
 
       <div className="space-y-6">
-        {/* Platinum Cuts */}
-        {data.platinumCuts && data.platinumCuts.length > 0 && (
-          <PlatinumCuts
-            data={data.platinumCuts}
-            partPlatinumCuts={data.partPlatinumCuts}
-          />
-        )}
 
         {/* Essential Characters */}
         {data.essentialCharacters && data.essentialCharacters.length > 0 && (

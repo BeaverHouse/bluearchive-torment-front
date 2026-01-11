@@ -1,87 +1,115 @@
+"use client";
+
+import { useState, useMemo } from "react";
 import CardWrapper from "@/components/common/card-wrapper";
 import { Trophy } from "lucide-react";
 import { PlatinumCut } from "@/types/raid";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-interface PlatinumCutItemProps {
-  cut: PlatinumCut;
-  partCut?: PlatinumCut;
-  color: "red" | "amber";
-}
-
-const colorClasses = {
-  red: {
-    highlight: {
-      container: "bg-red-50 border-2 border-red-500 dark:bg-red-950/30",
-      rank: "text-red-700 dark:text-red-300",
-      score: "text-red-600 dark:text-red-400",
-    },
-    normal: {
-      container: "bg-secondary/20",
-      rank: "text-muted-foreground",
-      score: "text-sky-600 dark:text-sky-400",
-    },
-  },
-  amber: {
-    highlight: {
-      container: "bg-amber-50 border-2 border-amber-500 dark:bg-amber-950/30",
-      rank: "text-amber-700 dark:text-amber-300",
-      score: "text-amber-600 dark:text-amber-400",
-    },
-    normal: {
-      container: "bg-secondary/20",
-      rank: "text-muted-foreground",
-      score: "text-amber-600 dark:text-amber-400",
-    },
-  },
-};
-
-function PlatinumCutItem({ cut, partCut, color }: PlatinumCutItemProps) {
-  const isLastCut = cut.rank === 20000;
-  const classes = colorClasses[color][isLastCut ? "highlight" : "normal"];
-
-  return (
-    <div
-      className={`flex flex-col items-center p-2 rounded-lg ${classes.container}`}
-    >
-      <span className={`text-xs sm:text-sm font-medium ${classes.rank}`}>
-        {cut.rank.toLocaleString()}등
-      </span>
-      <span className={`text-base sm:text-lg font-bold ${classes.score}`}>
-        {cut.score.toLocaleString()}
-      </span>
-      {partCut && (
-        <span className="text-xs sm:text-sm font-semibold text-amber-600 dark:text-amber-500 mt-1">
-          {partCut.score.toLocaleString()}
-        </span>
-      )}
-    </div>
-  );
-}
-
-interface PlatinumCutsProps {
-  data: PlatinumCut[];
+interface PlatinumStatsProps {
+  clearCount: number;
+  clearPercent: number;
+  platinumCuts: PlatinumCut[];
   partPlatinumCuts?: PlatinumCut[];
+  // 루나틱 정보 (토먼트 탭에서 표시용)
+  lunaticClearPercent?: number;
 }
 
-export function PlatinumCuts({ data, partPlatinumCuts }: PlatinumCutsProps) {
+export function PlatinumStats({
+  clearCount,
+  clearPercent,
+  platinumCuts,
+  partPlatinumCuts,
+  lunaticClearPercent,
+}: PlatinumStatsProps) {
+  // 사용 가능한 rank 목록
+  const rankOptions = useMemo(
+    () => platinumCuts.map((cut) => cut.rank).sort((a, b) => a - b),
+    [platinumCuts]
+  );
+
+  // 기본값: 20000등 (있으면), 없으면 첫 번째
+  const defaultRank = rankOptions.includes(20000) ? 20000 : rankOptions[0];
+  const [selectedRank, setSelectedRank] = useState<number>(defaultRank);
+
+  // 선택된 rank의 컷 데이터
+  const selectedCut = platinumCuts.find((cut) => cut.rank === selectedRank);
+  const selectedPartCut = partPlatinumCuts?.find(
+    (cut) => cut.rank === selectedRank
+  );
+
+  const isHighClearRate = clearPercent > 50;
+
   return (
     <CardWrapper
+      className={`border-l-4 mx-0 gap-3 ${
+        isHighClearRate ? "border-l-red-500" : "border-l-sky-500"
+      }`}
       icon={<Trophy className="h-5 w-5 text-sky-500" />}
-      title="Platinum 컷"
-      description="파란색은 총력전 점수, 주황색은 현재 속성 점수예요."
+      title="Platinum"
     >
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        {data.map((cut, index) => {
-          const partCut = partPlatinumCuts?.find((p) => p.rank === cut.rank);
-          return (
-            <PlatinumCutItem
-              key={cut.rank}
-              cut={cut}
-              partCut={partCut}
-              color="red"
-            />
-          );
-        })}
+      <div className="space-y-2 px-2">
+        {/* 클리어 비율 */}
+        <div className="grid grid-cols-[auto_1fr] items-start gap-x-4">
+          <span className="text-sm text-muted-foreground leading-7">
+            클리어
+          </span>
+          <div className="text-right">
+            <div
+              className={`text-lg font-bold ${
+                isHighClearRate ? "text-red-600" : ""
+              }`}
+            >
+              {Math.min(clearCount, 20000).toLocaleString()} (
+              {clearPercent.toFixed(2)}%)
+            </div>
+            {lunaticClearPercent !== undefined && lunaticClearPercent > 0 && (
+              <div className="text-xs text-muted-foreground">
+                루나틱: {lunaticClearPercent.toFixed(2)}%
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* 컷 라인 */}
+        {platinumCuts.length > 0 && (
+          <div className="grid grid-cols-[auto_1fr] items-start gap-x-4">
+            <Select
+              value={selectedRank.toString()}
+              onValueChange={(value) => setSelectedRank(parseInt(value))}
+            >
+              <SelectTrigger className="w-[115px] h-8">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {rankOptions.map((rank) => (
+                  <SelectItem key={rank} value={rank.toString()}>
+                    {rank.toLocaleString()}등
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <div className="text-right">
+              {selectedCut && (
+                <div className="text-lg font-bold text-sky-600 dark:text-sky-400">
+                  {selectedCut.score.toLocaleString()}
+                </div>
+              )}
+              {selectedPartCut && (
+                <div className="text-xs font-semibold text-amber-600 dark:text-amber-500">
+                  속성: {selectedPartCut.score.toLocaleString()}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </CardWrapper>
   );
