@@ -25,9 +25,27 @@ export function Footer() {
             </Link>
           </div>
 
+          {/* 법적 링크 */}
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+            <Link
+              href="/legal/privacy"
+              className="hover:text-foreground transition-colors"
+            >
+              개인정보처리방침
+            </Link>
+            <span>|</span>
+            <Link
+              href="/legal/terms"
+              className="hover:text-foreground transition-colors"
+            >
+              이용약관
+            </Link>
+          </div>
+
           {/* Copyright */}
           <div className="text-xs text-muted-foreground text-center sm:text-right">
             <p>Blue Archive copyrighted by NEXON GAMES & YOSTAR</p>
+            <p>This is an unofficial fan site.</p>
             <p>2023-2026, powered by Austin</p>
           </div>
         </div>
