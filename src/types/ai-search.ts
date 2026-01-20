@@ -24,9 +24,10 @@ export type StatusKey = "thinking" | "searching" | "tool_execution" | "answer_co
 // 도구 이름 타입
 export type ToolName =
   | "search_students"
-  | "search_enemies"
   | "get_student_detail"
-  | "calculate_field_status";
+  | "calculate_field_status"
+  | "get_stat_guide"
+  | "search_boss_guides";
 
 // 상태 메시지 (로딩, 도구 실행 등)
 export interface StatusMessage extends BaseStreamMessage {
