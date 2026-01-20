@@ -15,9 +15,10 @@ export const STATUS_KEY_MESSAGES: Record<StatusKey, string> = {
  */
 export const TOOL_NAME_MESSAGES: Record<ToolName, string> = {
   search_students: "아로나가 학생 명부 찾는 중...",
-  search_enemies: "아로나가 적 정보 검색 중...",
   get_student_detail: "아로나가 학생 상세 정보 확인 중...",
   calculate_field_status: "아로나가 계산하는 중...",
+  get_stat_guide: "아로나가 가이드 확인 중...",
+  search_boss_guides: "아로나가 보스 기록 찾는 중...",
 };
 
 /**
