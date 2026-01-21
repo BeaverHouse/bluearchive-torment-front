@@ -61,7 +61,7 @@ export function CharacterAnalysis({ data }: CharacterAnalysisProps) {
             {/* Character Info + Stats */}
             <Card className="max-w-full overflow-hidden">
               <CardContent className="px-3 py-0 max-w-full overflow-hidden">
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                   <div className="flex-shrink-0">
                     <StudentImage code={selectedCharData.studentId} size={48} />
                   </div>
@@ -71,84 +71,19 @@ export function CharacterAnalysis({ data }: CharacterAnalysisProps) {
                         selectedCharData.studentId}
                     </div>
                   </div>
-                  {/* PC: 같은 줄에 랭킹 표시 (2줄 구조), 모바일: 숨김 */}
-                  <div className="hidden sm:grid sm:grid-cols-4 gap-x-6 flex-1 text-center">
-                    <div className="flex flex-col">
-                      <span className="text-xs text-muted-foreground">
-                        종합
-                      </span>
-                      <span className="text-lg font-bold">
-                        {selectedCharData.overallRank}위
-                      </span>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-xs text-muted-foreground">
-                        {selectedCharData.studentId < 20000
-                          ? "STRIKER"
-                          : "SPECIAL"}{" "}
-                        내
-                      </span>
-                      <span className="text-lg font-bold">
-                        {selectedCharData.categoryRank}위
-                      </span>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-xs text-muted-foreground">
-                        사용
-                      </span>
-                      <span className="text-lg font-bold">
-                        {selectedCharData.totalUsage.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-xs text-muted-foreground">
-                        조력자
-                      </span>
-                      <span className="text-lg font-bold">
-                        {(
-                          selectedCharData.assistStats.assistRatio * 100
-                        ).toFixed(1)}
-                        %
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                {/* 모바일: 랭킹 아래에 표시 (2줄 구조) */}
-                <div className="sm:hidden grid grid-cols-4 gap-2 mt-3 text-center">
-                  <div className="flex flex-col">
-                    <span className="text-[10px] text-muted-foreground">
-                      종합
-                    </span>
-                    <span className="text-sm font-bold">
-                      {selectedCharData.overallRank}위
-                    </span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[10px] text-muted-foreground">
-                      타입내
-                    </span>
-                    <span className="text-sm font-bold">
-                      {selectedCharData.categoryRank}위
-                    </span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[10px] text-muted-foreground">
-                      사용
-                    </span>
-                    <span className="text-sm font-bold">
-                      {selectedCharData.totalUsage.toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[10px] text-muted-foreground">
-                      조력자
-                    </span>
-                    <span className="text-sm font-bold">
-                      {(selectedCharData.assistStats.assistRatio * 100).toFixed(
-                        1
-                      )}
-                      %
-                    </span>
+                  {/* 통계 그리드 - 모바일: 다음 줄, PC: 인라인 */}
+                  <div className="w-full sm:w-auto sm:flex-1 grid grid-cols-4 gap-2 sm:gap-x-6 text-center">
+                    {[
+                      { label: "종합", value: `${selectedCharData.overallRank}위` },
+                      { label: selectedCharData.studentId < 20000 ? "STRIKER 내" : "SPECIAL 내", value: `${selectedCharData.categoryRank}위` },
+                      { label: "사용", value: selectedCharData.totalUsage.toLocaleString() },
+                      { label: "조력자", value: `${(selectedCharData.assistStats.assistRatio * 100).toFixed(1)}%` },
+                    ].map((stat, i) => (
+                      <div key={i} className="flex flex-col">
+                        <span className="text-[10px] sm:text-xs text-muted-foreground">{stat.label}</span>
+                        <span className="text-sm sm:text-lg font-bold">{stat.value}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </CardContent>
