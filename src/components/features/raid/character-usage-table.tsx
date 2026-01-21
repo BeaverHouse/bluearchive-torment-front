@@ -1,36 +1,11 @@
 import React from "react";
-import Image from "next/image";
+import { CharacterImage } from "@/components/common/character-image";
 import { CharTableType } from "@/types/raid";
 
 interface CharacterUsageTableProps {
   title: string;
   data: CharTableType[];
 }
-
-const StudentImage = ({
-  studentId,
-  name,
-}: {
-  studentId: string;
-  name: string;
-}) => {
-  const [error, setError] = React.useState(false);
-
-  return (
-    <Image
-      src={
-        error
-          ? "/empty.webp"
-          : `${process.env.NEXT_PUBLIC_CDN_URL || ""}/batorment/character/${studentId}.webp`
-      }
-      alt={name}
-      width={20}
-      height={20}
-      className="rounded object-cover flex-shrink-0"
-      onError={() => setError(true)}
-    />
-  );
-};
 
 export const CharacterUsageTable = React.memo(
   ({ title, data }: CharacterUsageTableProps) => {
@@ -52,7 +27,12 @@ export const CharacterUsageTable = React.memo(
                 <tr key={char.key} className="border-b hover:bg-muted/50">
                   <td className="p-1 sm:p-2">
                     <div className="flex items-center gap-2">
-                      <StudentImage studentId={char.studentId} name={char.name} />
+                      <CharacterImage
+                        studentId={char.studentId}
+                        alt={char.name}
+                        size={20}
+                        className="rounded object-cover flex-shrink-0"
+                      />
                       <span className="truncate">{char.name}</span>
                     </div>
                   </td>
