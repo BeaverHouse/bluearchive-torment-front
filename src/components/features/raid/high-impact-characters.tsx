@@ -1,5 +1,5 @@
 import CardWrapper from "@/components/common/card-wrapper";
-import { CharacterAvatar } from "@/components/common/character-avatar";
+import { CharacterAvatar } from "@/components/common/character-image";
 import { TrendingUp } from "lucide-react";
 import { HighImpactCharacter } from "@/types/raid";
 import { getCharacterName } from "@/utils/character";
