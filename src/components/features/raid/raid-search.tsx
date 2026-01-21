@@ -12,19 +12,10 @@ import {
   FilterOption,
   RaidComponentProps,
 } from "@/types/raid";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "../../ui/collapsible";
-import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { Pagination } from "../../shared/pagination";
 import Loading from "../../common/loading";
-import { PartyFilter } from "./party-filter";
+import { PartyFilterSection } from "./party-filter-section";
 import { PartyFilterState } from "@/types/filter";
-import { FilterPresetPopover } from "./filter-preset-popover";
-import { Button } from "@/components/ui/button";
-import { Download, RotateCcw } from "lucide-react";
 
 const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProps) => {
   const [PartyCountRange, setPartyCountRange] = useState([0, 99]);
@@ -218,11 +209,6 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
     if ('partyCountRange' in updates && updates.partyCountRange !== undefined) setPartyCountRange(updates.partyCountRange);
   }, [setScoreRange, setIncludeList, setExcludeList, setAssist, setHardExclude, setAllowDuplicate, setYoutubeOnly]);
 
-  const confirmReset = () => {
-    const confirm = window.confirm("모든 캐릭터 필터가 리셋됩니다.");
-    if (confirm) removeFilters();
-  };
-
   // 프리셋 불러오기 핸들러
   const handleLoadPreset = useCallback((preset: Partial<PartyFilterState>) => {
     handleFilterChange(preset);
@@ -287,59 +273,27 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
     youtubeOnly: YoutubeOnly,
   }), [ScoreRange, IncludeList, ExcludeList, Assist, PartyCountRange, HardExclude, AllowDuplicate, YoutubeOnly]);
 
-  if (getPartyDataQuery.isLoading || getFilterDataQuery.isLoading)
+  if (getPartyDataQuery.isLoading || getFilterDataQuery.isLoading || !studentSearchMap)
     return <Loading />;
 
   return (
     <>
-      <div className="mx-auto mb-5 w-full">
-        <Collapsible defaultOpen>
-          <div className="flex items-center rounded-lg border border-gray-200 dark:border-gray-700">
-            <CollapsibleTrigger className="flex flex-1 items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800">
-              <span className="text-sm font-medium">파티 Filter</span>
-              <ChevronDownIcon className="h-4 w-4 transition-transform" />
-            </CollapsibleTrigger>
-            <div className="flex items-center gap-1 pr-2">
-              <FilterPresetPopover
-                filters={currentFilters}
-                onLoadPreset={handleLoadPreset}
-              >
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="h-8 w-8"
-                  title="필터 프리셋"
-                >
-                  <Download className="h-4 w-4" />
-                </Button>
-              </FilterPresetPopover>
-              <Button
-                variant="destructive"
-                size="icon"
-                className="h-8 w-8"
-                onClick={confirmReset}
-                title="필터 초기화"
-              >
-                <RotateCcw className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-          <CollapsibleContent className="border-l border-r border-b border-gray-200 p-4 dark:border-gray-700">
-            <PartyFilter
-              filters={currentFilters}
-              onFilterChange={handleFilterChange}
-              filterOptions={filterOptions}
-              excludeOptions={excludeOptions}
-              assistOptions={assistOptions}
-              minPartys={data.minPartys}
-              maxPartys={data.maxPartys}
-              studentSearchMap={studentSearchMap}
-              showYoutubeOnly={true}
-              onScoreJump={handleScoreJump}
-            />
-          </CollapsibleContent>
-        </Collapsible>
-      </div>
+      <PartyFilterSection
+        filters={currentFilters}
+        onFilterChange={handleFilterChange}
+        onReset={removeFilters}
+        filterOptions={filterOptions}
+        excludeOptions={excludeOptions}
+        assistOptions={assistOptions}
+        minPartys={data.minPartys}
+        maxPartys={data.maxPartys}
+        studentSearchMap={studentSearchMap}
+        defaultOpen
+        showYoutubeOnly
+        showPresetPopover
+        onScoreJump={handleScoreJump}
+        onLoadPreset={handleLoadPreset}
+      />
       <div className="mx-auto mb-5 w-full">
         검색 결과: 총 {parties.length}개
       </div>
