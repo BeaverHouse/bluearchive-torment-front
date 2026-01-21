@@ -5,6 +5,7 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import useBAStore from "@/store/useBAStore";
 import { filteredPartys, getFilters } from "@/lib/party-filters";
+import { createCDNQueryOptions } from "@/lib/queries";
 import PartyCard from "./party-card";
 import {
   RaidData,
@@ -55,47 +56,8 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
     season,
   ]);
 
-  const getPartyDataQuery = useQuery({
-    queryKey: ["getPartyData", season],
-    queryFn: async () => {
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_CDN_URL}/batorment/v3/party/${season}.json`
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return await response.json();
-      } catch (error) {
-        console.error("Failed to load party data:", error);
-        throw error;
-      }
-    },
-    throwOnError: true,
-    staleTime: 1000 * 60 * 5, // 5분 동안 데이터를 fresh 상태로 유지
-    gcTime: 1000 * 60 * 10, // 10분 동안 캐시 유지 (구 cacheTime)
-  });
-
-  const getFilterDataQuery = useQuery({
-    queryKey: ["getFilterData", season],
-    queryFn: async () => {
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_CDN_URL}/batorment/v3/filter/${season}.json`
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return await response.json();
-      } catch (error) {
-        console.error("Failed to load filter data:", error);
-        throw error;
-      }
-    },
-    throwOnError: true,
-    staleTime: 1000 * 60 * 5, // 5분 동안 데이터를 fresh 상태로 유지
-    gcTime: 1000 * 60 * 10, // 10분 동안 캐시 유지 (구 cacheTime)
-  });
+  const getPartyDataQuery = useQuery(createCDNQueryOptions<RaidData>("party", season));
+  const getFilterDataQuery = useQuery(createCDNQueryOptions<FilterData>("filter", season));
 
 
   // data가 변경될 때마다 필터 값을 업데이트

@@ -1,7 +1,8 @@
 import CardWrapper from "@/components/common/card-wrapper";
-import { CharacterImage } from "@/components/common/character-image";
+import { CharacterAvatar } from "@/components/common/character-avatar";
 import { CheckCircle } from "lucide-react";
 import { EssentialCharacter } from "@/types/raid";
+import { getCharacterName } from "@/utils/character";
 
 interface EssentialCharactersProps {
   data: EssentialCharacter[];
@@ -12,9 +13,6 @@ export function EssentialCharacters({
   data,
   studentsMap,
 }: EssentialCharactersProps) {
-  const getStudentName = (id: number) =>
-    studentsMap[id.toString()] || `Student ${id}`;
-
   return (
     <CardWrapper
       icon={<CheckCircle className="h-5 w-5 text-sky-500" />}
@@ -27,16 +25,13 @@ export function EssentialCharacters({
             key={char.studentId}
             className="flex flex-col items-center gap-2 p-2 rounded-lg"
           >
-            <div className="relative w-16 h-16 rounded-full overflow-hidden">
-              <CharacterImage
-                studentId={char.studentId}
-                alt={getStudentName(char.studentId)}
-                fill
-              />
-            </div>
+            <CharacterAvatar
+              studentId={char.studentId}
+              name={getCharacterName(char.studentId, studentsMap)}
+            />
             <div className="text-center">
               <div className="text-sm font-medium truncate w-full max-w-[100px]">
-                {getStudentName(char.studentId)}
+                {getCharacterName(char.studentId, studentsMap)}
               </div>
               <div className="text-xs font-bold text-sky-600 dark:text-sky-400">
                 {(char.ratio * 100).toFixed(1)}%

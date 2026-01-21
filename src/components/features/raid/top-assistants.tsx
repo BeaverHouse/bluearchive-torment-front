@@ -1,5 +1,5 @@
 import CardWrapper from "@/components/common/card-wrapper";
-import { CharacterImage } from "@/components/common/character-image";
+import { CharacterAvatar } from "@/components/common/character-avatar";
 import { Users } from "lucide-react";
 import { Assistant } from "@/types/raid";
 
@@ -20,13 +20,7 @@ export function TopAssistants({ data }: TopAssistantsProps) {
             key={char.studentId}
             className="flex items-center gap-4 p-2 rounded-lg"
           >
-            <div className="relative w-16 h-16 flex-shrink-0 rounded-full overflow-hidden">
-              <CharacterImage
-                studentId={char.studentId}
-                alt={char.name}
-                fill
-              />
-            </div>
+            <CharacterAvatar studentId={char.studentId} name={char.name} />
             <div className="flex-1 min-w-0">
               <div className="font-bold truncate">{char.name}</div>
               <div className="text-sm font-bold text-sky-600 dark:text-sky-400">
