@@ -34,7 +34,7 @@ export function useVideoAnalysis({ studentsMap, initialVideos, initialPagination
   const [videos, setVideos] = useState<VideoListItem[]>(initialVideos || []);
   const [allVideos, setAllVideos] = useState<VideoListItem[]>([]);
   const [filteredVideos, setFilteredVideos] = useState<VideoListItem[]>([]);
-  const [loading, setLoading] = useState(!initialVideos);
+  const [loading, setLoading] = useState(!initialVideos || initialVideos.length === 0);
   const [error, setError] = useState<string | null>(null);
   const [selectedRaid, setSelectedRaid] = useState<string>("all");
   const [isFilterMode, setIsFilterMode] = useState(false);
@@ -108,7 +108,7 @@ export function useVideoAnalysis({ studentsMap, initialVideos, initialPagination
   useEffect(() => {
     const fetchVideos = async () => {
       // 초기 데이터가 있고, 전체 모드이고, 첫 페이지면 fetch 스킵
-      if (initialVideos && !isFilterMode && selectedRaid === "all" && pagination.page === 1) {
+      if (initialVideos && initialVideos.length > 0 && !isFilterMode && selectedRaid === "all" && pagination.page === 1) {
         return;
       }
 

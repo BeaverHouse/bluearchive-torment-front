@@ -5,7 +5,13 @@ import { VideoListResponse } from "@/types/video";
 
 async function getInitialVideos(): Promise<VideoListResponse | null> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8085";
+    let baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8085";
+
+    // 서버 사이드에서 상대 경로는 사용할 수 없으므로 실제 API URL 사용
+    if (baseUrl.startsWith("/")) {
+      baseUrl = "https://api.tinyclover.com";
+    }
+
     const response = await fetch(
       `${baseUrl}/ba-analyzer/v1/video/analysis?page=1&limit=15`,
       {
