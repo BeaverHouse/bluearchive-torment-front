@@ -21,29 +21,33 @@ interface FilterData {
 
 interface UseVideoAnalysisProps {
   studentsMap: Record<string, string>;
+  initialVideos?: VideoListItem[];
+  initialPagination?: PaginationState;
 }
 
-export function useVideoAnalysis({ studentsMap }: UseVideoAnalysisProps) {
+export function useVideoAnalysis({ studentsMap, initialVideos, initialPagination }: UseVideoAnalysisProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
   const raidFromUrl = searchParams.get("raid");
 
-  const [videos, setVideos] = useState<VideoListItem[]>([]);
+  const [videos, setVideos] = useState<VideoListItem[]>(initialVideos || []);
   const [allVideos, setAllVideos] = useState<VideoListItem[]>([]);
   const [filteredVideos, setFilteredVideos] = useState<VideoListItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!initialVideos);
   const [error, setError] = useState<string | null>(null);
   const [selectedRaid, setSelectedRaid] = useState<string>("all");
   const [isFilterMode, setIsFilterMode] = useState(false);
-  const [pagination, setPagination] = useState<PaginationState>({
-    page: 1,
-    limit: 15,
-    total: 0,
-    total_pages: 0,
-    has_next: false,
-    has_prev: false,
-  });
+  const [pagination, setPagination] = useState<PaginationState>(
+    initialPagination || {
+      page: 1,
+      limit: 15,
+      total: 0,
+      total_pages: 0,
+      has_next: false,
+      has_prev: false,
+    }
+  );
 
   const [pageSize, setPageSize] = useState(15);
   const [currentPage, setCurrentPage] = useState(1);
@@ -103,6 +107,11 @@ export function useVideoAnalysis({ studentsMap }: UseVideoAnalysisProps) {
   // 비디오 데이터 로드
   useEffect(() => {
     const fetchVideos = async () => {
+      // 초기 데이터가 있고, 전체 모드이고, 첫 페이지면 fetch 스킵
+      if (initialVideos && !isFilterMode && selectedRaid === "all" && pagination.page === 1) {
+        return;
+      }
+
       try {
         setLoading(true);
         setError(null);
@@ -126,7 +135,7 @@ export function useVideoAnalysis({ studentsMap }: UseVideoAnalysisProps) {
     };
 
     fetchVideos();
-  }, [selectedRaid, pagination.page, isFilterMode]);
+  }, [selectedRaid, pagination.page, isFilterMode, initialVideos]);
 
   const handleRaidChange = useCallback(
     (value: string) => {
