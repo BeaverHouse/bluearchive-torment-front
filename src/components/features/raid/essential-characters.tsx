@@ -1,7 +1,8 @@
 import CardWrapper from "@/components/common/card-wrapper";
+import { CharacterAvatar } from "@/components/common/character-image";
 import { CheckCircle } from "lucide-react";
-import Image from "next/image";
 import { EssentialCharacter } from "@/types/raid";
+import { getCharacterName } from "@/utils/character";
 
 interface EssentialCharactersProps {
   data: EssentialCharacter[];
@@ -24,23 +25,13 @@ export function EssentialCharacters({
             key={char.studentId}
             className="flex flex-col items-center gap-2 p-2 rounded-lg"
           >
-            <div className="relative w-16 h-16 rounded-full overflow-hidden">
-              <Image
-                src={`${
-                  process.env.NEXT_PUBLIC_CDN_URL || ""
-                }/batorment/character/${char.studentId}.webp`}
-                alt={
-                  studentsMap[char.studentId.toString()] ||
-                  `Student ${char.studentId}`
-                }
-                fill
-                className="object-cover"
-              />
-            </div>
+            <CharacterAvatar
+              studentId={char.studentId}
+              name={getCharacterName(char.studentId, studentsMap)}
+            />
             <div className="text-center">
               <div className="text-sm font-medium truncate w-full max-w-[100px]">
-                {studentsMap[char.studentId.toString()] ||
-                  `Student ${char.studentId}`}
+                {getCharacterName(char.studentId, studentsMap)}
               </div>
               <div className="text-xs font-bold text-sky-600 dark:text-sky-400">
                 {(char.ratio * 100).toFixed(1)}%

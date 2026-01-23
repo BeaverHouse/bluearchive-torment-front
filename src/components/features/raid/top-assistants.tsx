@@ -1,6 +1,6 @@
 import CardWrapper from "@/components/common/card-wrapper";
+import { CharacterAvatar } from "@/components/common/character-image";
 import { Users } from "lucide-react";
-import Image from "next/image";
 import { Assistant } from "@/types/raid";
 
 interface TopAssistantsProps {
@@ -20,16 +20,7 @@ export function TopAssistants({ data }: TopAssistantsProps) {
             key={char.studentId}
             className="flex items-center gap-4 p-2 rounded-lg"
           >
-            <div className="relative w-16 h-16 flex-shrink-0 rounded-full overflow-hidden">
-              <Image
-                src={`${
-                  process.env.NEXT_PUBLIC_CDN_URL || ""
-                }/batorment/character/${char.studentId}.webp`}
-                alt={char.name}
-                fill
-                className="object-cover"
-              />
-            </div>
+            <CharacterAvatar studentId={char.studentId} name={char.name} />
             <div className="flex-1 min-w-0">
               <div className="font-bold truncate">{char.name}</div>
               <div className="text-sm font-bold text-sky-600 dark:text-sky-400">

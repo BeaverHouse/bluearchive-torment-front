@@ -36,12 +36,3 @@ export function useRaids() {
 
   return { raids, isLoading };
 }
-
-// For server components
-export async function getRaidsData(): Promise<RaidInfo[]> {
-  const res = await fetch(RAIDS_URL, { next: { revalidate: 3600 } });
-  if (!res.ok) {
-    throw new Error("Failed to fetch raids data");
-  }
-  return res.json();
-}
