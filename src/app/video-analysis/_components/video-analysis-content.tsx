@@ -8,7 +8,7 @@ import { useVideoAnalysis } from "./hooks/useVideoAnalysis";
 import { SingleSelect } from "@/components/ui/custom/single-select";
 import { Pagination } from "@/components/shared/pagination";
 import { Button } from "@/components/ui/button";
-import { Youtube } from "lucide-react";
+import { Youtube, RefreshCw } from "lucide-react";
 import { useStudentMaps } from "@/hooks/use-student-maps";
 import { useRaids } from "@/hooks/use-raids";
 import ErrorPage from "@/components/common/error-page";
@@ -38,6 +38,7 @@ export function VideoAnalysisContent({
 
   const {
     loading,
+    isRefreshing,
     error,
     selectedRaid,
     isFilterMode,
@@ -74,10 +75,13 @@ export function VideoAnalysisContent({
 
   return (
     <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
-      <div className="mb-8">
+      <div className="mb-8 flex items-center gap-2">
         <p className="text-muted-foreground">
           1000개 이상의 총력전 영상이 준비되어 있어요.
         </p>
+        {isRefreshing && (
+          <RefreshCw className="h-4 w-4 animate-spin text-muted-foreground" />
+        )}
       </div>
 
       {/* 파티 필터 */}

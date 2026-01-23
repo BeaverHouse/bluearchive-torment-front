@@ -34,7 +34,10 @@ export function useVideoAnalysis({ studentsMap, initialVideos, initialPagination
   const [videos, setVideos] = useState<VideoListItem[]>(initialVideos || []);
   const [allVideos, setAllVideos] = useState<VideoListItem[]>([]);
   const [filteredVideos, setFilteredVideos] = useState<VideoListItem[]>([]);
-  const [loading, setLoading] = useState(!initialVideos || initialVideos.length === 0);
+  // 전체 화면 로딩 (데이터 없을 때)
+  const [loading, setLoading] = useState(false);
+  // 백그라운드 새로고침 (1페이지에서 prerender 데이터 있을 때)
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedRaid, setSelectedRaid] = useState<string>("all");
   const [isFilterMode, setIsFilterMode] = useState(false);
@@ -107,14 +110,18 @@ export function useVideoAnalysis({ studentsMap, initialVideos, initialPagination
   // 비디오 데이터 로드
   useEffect(() => {
     const fetchVideos = async () => {
-      // 초기 데이터가 있고, 전체 모드이고, 첫 페이지면 fetch 스킵
-      if (initialVideos && initialVideos.length > 0 && !isFilterMode && selectedRaid === "all" && pagination.page === 1) {
-        return;
-      }
+      const hasInitialData = initialVideos && initialVideos.length > 0;
+      const isFirstPage = !isFilterMode && selectedRaid === "all" && pagination.page === 1;
 
       try {
-        setLoading(true);
         setError(null);
+
+        // 1페이지에서 prerender 데이터가 있으면 작은 로딩, 없으면 전체 로딩
+        if (isFirstPage && hasInitialData) {
+          setIsRefreshing(true);
+        } else {
+          setLoading(true);
+        }
 
         if (isFilterMode && selectedRaid !== "all") {
           const response = await getVideoList(selectedRaid, 1, 1000);
@@ -131,6 +138,7 @@ export function useVideoAnalysis({ studentsMap, initialVideos, initialPagination
         );
       } finally {
         setLoading(false);
+        setIsRefreshing(false);
       }
     };
 
@@ -262,6 +270,7 @@ export function useVideoAnalysis({ studentsMap, initialVideos, initialPagination
   return {
     // State
     loading,
+    isRefreshing,
     error,
     selectedRaid,
     isFilterMode,
