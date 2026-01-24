@@ -27,11 +27,13 @@ interface VideoAnalysisContentProps {
     has_next: boolean;
     has_prev: boolean;
   };
+  initialRaid: string;
 }
 
 export function VideoAnalysisContent({
   initialVideos,
   initialPagination,
+  initialRaid,
 }: VideoAnalysisContentProps) {
   const { studentsMap, studentSearchMap } = useStudentMaps();
   const { raids } = useRaids();
@@ -56,7 +58,7 @@ export function VideoAnalysisContent({
     updateFilters,
     setPageSize,
     setCurrentPage,
-  } = useVideoAnalysis({ studentsMap, initialVideos, initialPagination });
+  } = useVideoAnalysis({ studentsMap, initialVideos, initialPagination, initialRaid });
 
   const raidsSelectOptions = useMemo(
     () => [

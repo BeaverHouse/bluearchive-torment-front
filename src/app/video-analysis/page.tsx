@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import { VideoAnalysisContent } from "./_components/video-analysis-content";
 import Loading from "@/components/common/loading";
 import { VideoListResponse } from "@/types/video";
@@ -34,7 +33,12 @@ async function getInitialVideos(): Promise<VideoListResponse | null> {
   }
 }
 
-export default async function VideoAnalysisPage() {
+export default async function VideoAnalysisPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ raid?: string }>;
+}) {
+  const { raid } = await searchParams;
   const initialData = await getInitialVideos();
 
   const initialVideos = initialData?.data.data || [];
@@ -48,22 +52,10 @@ export default async function VideoAnalysisPage() {
   };
 
   return (
-    <Suspense
-      fallback={
-        <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
-          <div className="mb-8">
-            <p className="text-muted-foreground">
-              1000개 이상의 총력전 영상이 준비되어 있어요.
-            </p>
-          </div>
-          <Loading />
-        </div>
-      }
-    >
-      <VideoAnalysisContent
-        initialVideos={initialVideos}
-        initialPagination={initialPagination}
-      />
-    </Suspense>
+    <VideoAnalysisContent
+      initialVideos={initialVideos}
+      initialPagination={initialPagination}
+      initialRaid={raid || "all"}
+    />
   );
 }
