@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { getVideoList } from "@/lib/api";
 import { VideoListItem } from "@/types/video";
@@ -55,6 +55,9 @@ export function useVideoAnalysis({ studentsMap, initialVideos, initialPagination
   const [currentPage, setCurrentPage] = useState(1);
   const [filterData, setFilterData] = useState<FilterData | null>(null);
 
+  // Race condition 방지를 위한 요청 ID 추적
+  const requestIdRef = useRef(0);
+
   const { filters, updateFilters, resetFilters } = usePartyFilter({
     scoreRange: undefined,
     includeList: [],
@@ -107,6 +110,9 @@ export function useVideoAnalysis({ studentsMap, initialVideos, initialPagination
 
   // 비디오 데이터 로드
   useEffect(() => {
+    // 새 요청마다 ID 증가
+    const currentRequestId = ++requestIdRef.current;
+
     const fetchVideos = async () => {
       const hasInitialData = initialVideos && initialVideos.length > 0;
       const isFirstPage = !isFilterMode && selectedRaid === "all" && pagination.page === 1;
@@ -123,18 +129,26 @@ export function useVideoAnalysis({ studentsMap, initialVideos, initialPagination
 
         if (isFilterMode && selectedRaid !== "all") {
           const response = await getVideoList(selectedRaid, 1, 1000);
+          // Stale response 무시: 이 요청 이후 새 요청이 시작됐으면 무시
+          if (currentRequestId !== requestIdRef.current) return;
           setAllVideos(response.data.data);
           setFilteredVideos(response.data.data);
         } else {
           const response = await getVideoList(undefined, pagination.page, 15);
+          // Stale response 무시: 이 요청 이후 새 요청이 시작됐으면 무시
+          if (currentRequestId !== requestIdRef.current) return;
           setVideos(response.data.data);
           setPagination(response.data.pagination);
         }
       } catch (err) {
+        // Stale response 무시
+        if (currentRequestId !== requestIdRef.current) return;
         setError(
           err instanceof Error ? err.message : "비디오 목록을 불러오는데 실패했습니다"
         );
       } finally {
+        // Stale response 무시
+        if (currentRequestId !== requestIdRef.current) return;
         setLoading(false);
         setIsRefreshing(false);
       }
