@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { getVideoList } from "@/lib/api";
 import { VideoListItem } from "@/types/video";
 import { filteredPartys, getFilters } from "@/lib/party-filters";
@@ -23,13 +23,12 @@ interface UseVideoAnalysisProps {
   studentsMap: Record<string, string>;
   initialVideos?: VideoListItem[];
   initialPagination?: PaginationState;
+  initialRaid: string;
 }
 
-export function useVideoAnalysis({ studentsMap, initialVideos, initialPagination }: UseVideoAnalysisProps) {
-  const searchParams = useSearchParams();
+export function useVideoAnalysis({ studentsMap, initialVideos, initialPagination, initialRaid }: UseVideoAnalysisProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const raidFromUrl = searchParams.get("raid");
 
   const [videos, setVideos] = useState<VideoListItem[]>(initialVideos || []);
   const [allVideos, setAllVideos] = useState<VideoListItem[]>([]);
@@ -39,8 +38,8 @@ export function useVideoAnalysis({ studentsMap, initialVideos, initialPagination
   // 백그라운드 새로고침 (1페이지에서 prerender 데이터 있을 때)
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedRaid, setSelectedRaid] = useState<string>("all");
-  const [isFilterMode, setIsFilterMode] = useState(false);
+  const [selectedRaid, setSelectedRaid] = useState<string>(initialRaid);
+  const [isFilterMode, setIsFilterMode] = useState(initialRaid !== "all");
   const [pagination, setPagination] = useState<PaginationState>(
     initialPagination || {
       page: 1,
@@ -56,6 +55,9 @@ export function useVideoAnalysis({ studentsMap, initialVideos, initialPagination
   const [currentPage, setCurrentPage] = useState(1);
   const [filterData, setFilterData] = useState<FilterData | null>(null);
 
+  // Race condition 방지를 위한 요청 ID 추적
+  const requestIdRef = useRef(0);
+
   const { filters, updateFilters, resetFilters } = usePartyFilter({
     scoreRange: undefined,
     includeList: [],
@@ -67,13 +69,12 @@ export function useVideoAnalysis({ studentsMap, initialVideos, initialPagination
     youtubeOnly: false,
   });
 
-  // URL에서 raid 파라미터 읽기
+  // initialRaid 변경 시 상태 동기화
   useEffect(() => {
-    const raidValue = raidFromUrl || "all";
-    setSelectedRaid(raidValue);
-    setIsFilterMode(raidValue !== "all");
+    setSelectedRaid(initialRaid);
+    setIsFilterMode(initialRaid !== "all");
 
-    if (raidValue === "all") {
+    if (initialRaid === "all") {
       setPagination((prev) => ({ ...prev, page: 1, limit: 15 }));
       setCurrentPage(1);
       resetFilters({
@@ -81,7 +82,7 @@ export function useVideoAnalysis({ studentsMap, initialVideos, initialPagination
         partyCountRange: [0, 99],
       });
     }
-  }, [raidFromUrl, resetFilters]);
+  }, [initialRaid, resetFilters]);
 
   // 필터 데이터 로드
   useEffect(() => {
@@ -109,6 +110,9 @@ export function useVideoAnalysis({ studentsMap, initialVideos, initialPagination
 
   // 비디오 데이터 로드
   useEffect(() => {
+    // 새 요청마다 ID 증가
+    const currentRequestId = ++requestIdRef.current;
+
     const fetchVideos = async () => {
       const hasInitialData = initialVideos && initialVideos.length > 0;
       const isFirstPage = !isFilterMode && selectedRaid === "all" && pagination.page === 1;
@@ -125,18 +129,26 @@ export function useVideoAnalysis({ studentsMap, initialVideos, initialPagination
 
         if (isFilterMode && selectedRaid !== "all") {
           const response = await getVideoList(selectedRaid, 1, 1000);
+          // Stale response 무시: 이 요청 이후 새 요청이 시작됐으면 무시
+          if (currentRequestId !== requestIdRef.current) return;
           setAllVideos(response.data.data);
           setFilteredVideos(response.data.data);
         } else {
           const response = await getVideoList(undefined, pagination.page, 15);
+          // Stale response 무시: 이 요청 이후 새 요청이 시작됐으면 무시
+          if (currentRequestId !== requestIdRef.current) return;
           setVideos(response.data.data);
           setPagination(response.data.pagination);
         }
       } catch (err) {
+        // Stale response 무시
+        if (currentRequestId !== requestIdRef.current) return;
         setError(
           err instanceof Error ? err.message : "비디오 목록을 불러오는데 실패했습니다"
         );
       } finally {
+        // Stale response 무시
+        if (currentRequestId !== requestIdRef.current) return;
         setLoading(false);
         setIsRefreshing(false);
       }
@@ -148,19 +160,16 @@ export function useVideoAnalysis({ studentsMap, initialVideos, initialPagination
   const handleRaidChange = useCallback(
     (value: string) => {
       setSelectedRaid(value);
+      setIsFilterMode(value !== "all");
       setPagination((prev) => ({ ...prev, page: 1 }));
 
-      const params = new URLSearchParams(searchParams.toString());
       if (value === "all") {
-        params.delete("raid");
+        router.replace(pathname);
       } else {
-        params.set("raid", value);
+        router.replace(`${pathname}?raid=${value}`);
       }
-
-      const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
-      router.replace(newUrl);
     },
-    [searchParams, pathname, router]
+    [pathname, router]
   );
 
   const handlePageChange = useCallback(
