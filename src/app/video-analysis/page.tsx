@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import { VideoAnalysisContent } from "./_components/video-analysis-content";
 import { ServerVideoList } from "./_components/server-video-list";
 import { VideoListResponse } from "@/types/video";
@@ -52,28 +51,28 @@ export default async function VideoAnalysisPage({
     has_prev: false,
   };
 
-  // 서버 컴포넌트에서 렌더링되는 정적 비디오 목록 (Adsense 크롤러용)
-  const serverRenderedList = (
-    <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
-      <div className="mb-8">
-        <p className="text-muted-foreground">
-          1000개 이상의 총력전 영상이 준비되어 있어요.
-        </p>
-      </div>
-      <div className="mx-auto mb-5 w-full">
-        검색 결과: 총 {initialPagination.total}개
-      </div>
-      <ServerVideoList videos={initialVideos} />
-    </div>
-  );
-
   return (
-    <Suspense fallback={serverRenderedList}>
+    <>
+      {/* 서버 컴포넌트: HTML로 렌더링됨 (Adsense 크롤러용) */}
+      {/* 클라이언트 JS 로드 후 VideoAnalysisContent가 이를 숨김 */}
+      <div id="server-video-list" className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
+        <div className="mb-8">
+          <p className="text-muted-foreground">
+            1000개 이상의 총력전 영상이 준비되어 있어요.
+          </p>
+        </div>
+        <div className="mx-auto mb-5 w-full">
+          검색 결과: 총 {initialPagination.total}개
+        </div>
+        <ServerVideoList videos={initialVideos} />
+      </div>
+
+      {/* 클라이언트 컴포넌트: 상호작용 가능한 전체 UI */}
       <VideoAnalysisContent
         initialVideos={initialVideos}
         initialPagination={initialPagination}
         initialRaid={raid || "all"}
       />
-    </Suspense>
+    </>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { VideoList } from "./video-list";
 import { VideoQueueDialog } from "./VideoQueueDialog";
 import { AddVideoDialog } from "./AddVideoDialog";
@@ -37,6 +37,14 @@ export function VideoAnalysisContent({
 }: VideoAnalysisContentProps) {
   const { studentsMap, studentSearchMap } = useStudentMaps();
   const { raids } = useRaids();
+
+  // 클라이언트 마운트 후 서버 렌더링된 비디오 목록 숨기기
+  useEffect(() => {
+    const serverList = document.getElementById("server-video-list");
+    if (serverList) {
+      serverList.style.display = "none";
+    }
+  }, []);
 
   const {
     loading,
