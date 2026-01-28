@@ -1,69 +1,59 @@
-"use client";
-
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/layout/app-sidebar";
-import { TouchProvider } from "@/components/ui/custom/hybrid-tooltip";
+import type { Metadata } from "next";
+import Script from "next/script";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import { DarkModeToggle } from "@/components/layout/dark-mode-toggle";
-import { CustomSidebarTrigger } from "@/components/layout/sidebar-trigger";
-import { Footer } from "@/components/layout/footer";
-import { ScrollToTop } from "@/components/common/scroll-to-top";
-import NormalAnnounce from "@/components/common/normal-announce";
+import { ClientProviders } from "@/components/providers/client-providers";
 import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "BA Torment",
+  description:
+    "블루 아카이브 총력전/대결전 파티 찾기, 영상 분석, 통계 도우미. Blue Archive Raid Party Finder, Video Analysis, Statistics.",
+  keywords: [
+    "블루 아카이브",
+    "Blue Archive",
+    "총력전",
+    "대결전",
+    "파티",
+    "공략",
+    "Raid",
+    "Party",
+  ],
+  openGraph: {
+    title: "BA Torment",
+    description: "블루 아카이브 총력전/대결전 도우미",
+    type: "website",
+  },
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        refetchOnWindowFocus: true,
-      },
-    },
-  });
-
   const gaId = process.env.NEXT_PUBLIC_GA_ID || "G-XXXXXXXXXX";
 
   return (
     <html lang="ko">
       <head>
-        <title>BA Torment</title>
-        <meta name="description" content="Blue Archive Party Finder" />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-        />
-        <meta
-          name="google-adsense-account"
-          content="ca-pub-8498528248407607"
-        />
+        <meta name="google-adsense-account" content="ca-pub-8498528248407607" />
         <link rel="icon" href="/favicon.ico" />
       </head>
       <body>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8498528248407607"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
         <GoogleAnalytics gaId={gaId} />
-        <TouchProvider>
-          <QueryClientProvider client={queryClient}>
-            <SidebarProvider>
-              <AppSidebar />
-              <div className="flex-1 flex flex-col min-h-screen">
-                <NormalAnnounce />
-                <header className="sticky top-0 z-40 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-                  <div className="flex h-14 items-center gap-2 px-4">
-                    <CustomSidebarTrigger />
-                    <div className="flex-1" />
-                    <DarkModeToggle />
-                  </div>
-                </header>
-                <main className="flex-1 space-y-4 p-4 pt-6">{children}</main>
-                <Footer />
-                <ScrollToTop />
-              </div>
-            </SidebarProvider>
-          </QueryClientProvider>
-        </TouchProvider>
+        <ClientProviders>{children}</ClientProviders>
       </body>
     </html>
   );
