@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { ClientProviders } from "@/components/providers/client-providers";
 import "./globals.css";
@@ -46,12 +45,14 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
       </head>
       <body>
+        {/* AdSense 스크립트: 승인 후 활성화
         <Script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8498528248407607"
           crossOrigin="anonymous"
           strategy="afterInteractive"
         />
+        */}
         <GoogleAnalytics gaId={gaId} />
         <ClientProviders>{children}</ClientProviders>
       </body>
