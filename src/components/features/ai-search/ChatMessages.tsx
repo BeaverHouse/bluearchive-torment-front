@@ -1,9 +1,24 @@
 "use client";
 
 import Image from "next/image";
-import { Loader2 } from "lucide-react";
-import ReactMarkdown from "react-markdown";
+import { Loader2, ExternalLink } from "lucide-react";
+import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
+
+// 링크를 눈에 띄게 렌더링하는 커스텀 컴포넌트
+const markdownComponents: Components = {
+  a: ({ href, children }) => (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 underline underline-offset-2 hover:text-blue-800 dark:hover:text-blue-300 font-medium"
+    >
+      {children}
+      <ExternalLink className="h-3 w-3 flex-shrink-0" />
+    </a>
+  ),
+};
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -46,7 +61,9 @@ export function ChatMessages({
           >
             {msg.role === "assistant" ? (
               <div className="prose prose-sm dark:prose-invert max-w-none">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
+                <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+                  {msg.content}
+                </ReactMarkdown>
               </div>
             ) : (
               <p className="whitespace-pre-wrap">{msg.content}</p>
@@ -74,7 +91,9 @@ export function ChatMessages({
             )}
             {currentAnswer && (
               <div className="prose prose-sm dark:prose-invert max-w-none">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{currentAnswer}</ReactMarkdown>
+                <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+                  {currentAnswer}
+                </ReactMarkdown>
               </div>
             )}
           </div>
