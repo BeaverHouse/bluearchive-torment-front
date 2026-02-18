@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 
-const ANNOUNCE_DATE = "26.01.12";
-const ANNOUNCE_TEXT = "필터 기능과 디자인이 개선되었어요.";
+const ANNOUNCE_DATE = "26.02.19";
+const ANNOUNCE_TEXT = "영상 UI를 조금 개선하고, 아로나가 조금 더 똑똑해졌어요.";
 const STORAGE_KEY = "batorment_announce_dismissed";
 
 function NormalAnnounce() {
