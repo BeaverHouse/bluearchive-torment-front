@@ -82,7 +82,16 @@ export async function updateVideoAnalysis(videoId: string, analysisResult: Analy
   }
 }
 
-export async function addVideoToQueue(raidId: string, youtubeUrl: string): Promise<void> {
+// Result type for addVideoToQueue
+export interface AddVideoToQueueResult {
+  success: boolean
+  existingVideo?: {
+    videoId: string
+    raidId: string
+  }
+}
+
+export async function addVideoToQueue(raidId: string, youtubeUrl: string): Promise<AddVideoToQueueResult> {
   const url = `${BASE_URL}/video/analysis/queue`
 
   try {
@@ -99,9 +108,26 @@ export async function addVideoToQueue(raidId: string, youtubeUrl: string): Promi
       }),
     })
 
+    if (response.status === 409) {
+      // Video already processed - extract existing video info
+      const data = await response.json()
+      if (data.data?.video_id && data.data?.raid_id) {
+        return {
+          success: false,
+          existingVideo: {
+            videoId: data.data.video_id,
+            raidId: data.data.raid_id
+          }
+        }
+      }
+      throw new APIError('영상이 이미 처리되었습니다.', 409)
+    }
+
     if (!response.ok) {
       throw new APIError(`API 요청 실패: ${response.status} ${response.statusText}`, response.status)
     }
+
+    return { success: true }
   } catch (error) {
     if (error instanceof APIError) {
       throw error
