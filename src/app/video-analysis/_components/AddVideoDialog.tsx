@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -26,6 +28,7 @@ interface AddVideoDialogProps {
 }
 
 export function AddVideoDialog({ raids }: AddVideoDialogProps) {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [raidId, setRaidId] = useState<string>("");
   const [youtubeUrl, setYoutubeUrl] = useState<string>("");
@@ -33,19 +36,57 @@ export function AddVideoDialog({ raids }: AddVideoDialogProps) {
 
   const handleAddToQueue = async () => {
     if (!raidId || !youtubeUrl) {
-      alert("레이드와 YouTube URL을 모두 입력해주세요.");
+      await Swal.fire({
+        title: "입력 오류",
+        text: "레이드와 YouTube URL을 모두 입력해주세요.",
+        icon: "warning",
+        confirmButtonText: "확인",
+      });
       return;
     }
 
     try {
       setSubmitting(true);
-      await addVideoToQueue(raidId, youtubeUrl);
-      alert("영상이 분석 큐에 추가되었습니다.");
+      const result = await addVideoToQueue(raidId, youtubeUrl);
+
+      if (result.existingVideo) {
+        // Video already processed - close dialog first, then show swal
+        const { videoId, raidId: existingRaidId } = result.existingVideo;
+        setIsOpen(false);
+        setRaidId("");
+        setYoutubeUrl("");
+
+        const swalResult = await Swal.fire({
+          title: "이미 분석된 영상",
+          text: "해당 영상 페이지로 이동할까요?",
+          icon: "info",
+          showCancelButton: true,
+          confirmButtonText: "이동",
+          cancelButtonText: "취소",
+        });
+        if (swalResult.isConfirmed) {
+          window.location.href = `/video-analysis/${videoId}?raid_id=${existingRaidId}`;
+        }
+        return;
+      }
+
       setIsOpen(false);
       setRaidId("");
       setYoutubeUrl("");
+
+      await Swal.fire({
+        title: "추가 완료",
+        text: "영상이 분석 큐에 추가되었습니다.",
+        icon: "success",
+        confirmButtonText: "확인",
+      });
     } catch (error) {
-      alert(error instanceof Error ? error.message : "큐 추가에 실패했습니다.");
+      await Swal.fire({
+        title: "오류",
+        text: error instanceof Error ? error.message : "큐 추가에 실패했습니다.",
+        icon: "error",
+        confirmButtonText: "확인",
+      });
     } finally {
       setSubmitting(false);
     }

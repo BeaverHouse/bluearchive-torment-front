@@ -27,7 +27,11 @@ export type ToolName =
   | "get_student_detail"
   | "calculate_field_status"
   | "get_stat_guide"
-  | "search_boss_guides";
+  | "search_boss_guides"
+  | "get_raid_list"
+  | "search_parties"
+  | "get_raid_summary"
+  | "get_character_analysis";
 
 // 상태 메시지 (로딩, 도구 실행 등)
 export interface StatusMessage extends BaseStreamMessage {

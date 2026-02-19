@@ -19,6 +19,10 @@ export const TOOL_NAME_MESSAGES: Record<ToolName, string> = {
   calculate_field_status: "아로나가 계산하는 중...",
   get_stat_guide: "아로나가 가이드 확인 중...",
   search_boss_guides: "아로나가 보스 기록 찾는 중...",
+  get_raid_list: "아로나가 총력전 목록 확인 중...",
+  search_parties: "아로나가 파티 편성 검색 중...",
+  get_raid_summary: "아로나가 총력전 통계 분석 중...",
+  get_character_analysis: "아로나가 캐릭터 출전 기록 분석 중...",
 };
 
 /**
