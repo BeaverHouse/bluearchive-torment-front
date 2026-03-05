@@ -53,7 +53,7 @@ export default async function VideoAnalysisPage({
 
   return (
     <>
-      {/* 서버 컴포넌트: HTML로 렌더링됨 (Adsense 크롤러용) */}
+      {/* 서버 컴포넌트: HTML로 렌더링됨 */}
       {/* 클라이언트 JS 로드 후 VideoAnalysisContent가 이를 숨김 */}
       <div id="server-video-list" className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
         <div className="mb-8">

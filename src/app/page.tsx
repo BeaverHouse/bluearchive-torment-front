@@ -7,8 +7,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, PieChart, Video, Calculator } from "lucide-react";
-import BuyMeACoffeeButton from "@/components/common/coffee";
+import { Search, PieChart, Video, Calculator, Sprout } from "lucide-react";
+import { SupportModal } from "@/components/common/support-modal";
+import { Button } from "@/components/ui/button";
+import { Heart } from "lucide-react";
 
 const features = [
   {
@@ -101,38 +103,51 @@ export default function Home() {
         ))}
       </div>
 
-      {/* 데이터 출처 및 후원 */}
-      <div className="mt-12 flex flex-col items-center gap-6 text-center">
-        {/* 데이터 출처 */}
-        <div className="flex flex-col items-center gap-1 text-xs text-muted-foreground">
-          <p>
-            총력전/대결전 데이터는{" "}
-            <a
-              href="https://plana-stats.vercel.app/"
-              target="_blank"
-              rel="noreferrer"
-              className="!underline underline-offset-2 hover:text-foreground"
-            >
-              Plana Stats
-            </a>
-            에서 가져왔어요.
-          </p>
-          <p>
-            인게임 데이터는{" "}
-            <a
-              href="https://schaledb.com/"
-              target="_blank"
-              rel="noreferrer"
-              className="!underline underline-offset-2 hover:text-foreground"
-            >
-              Schale DB
-            </a>
-            에서 가져왔어요.
-          </p>
-        </div>
+      {/* 입문 가이드 배너 */}
+      <div className="mt-4">
+        <Link href="/guide">
+          <div className="flex items-center gap-3 px-4 py-3 rounded-lg border border-[#27a567]/40 bg-[#27a567]/10 hover:bg-[#27a567]/20 transition-colors cursor-pointer">
+            <Sprout className="w-5 h-5 text-[#27a567] shrink-0" />
+            <span className="text-sm font-medium text-[#27a567]">총력전이 처음이신가요?</span>
+            <span className="text-xs text-[#27a567]/80 ml-auto">입문 가이드 →</span>
+          </div>
+        </Link>
+      </div>
 
-        {/* 후원 */}
-        <BuyMeACoffeeButton />
+      {/* 데이터 출처 + 후원 */}
+      <div className="mt-12 flex flex-col items-center gap-3 text-center">
+        <SupportModal>
+          <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground hover:text-foreground">
+            <Heart className="w-4 h-4 text-red-500" />
+            후원하기
+          </Button>
+        </SupportModal>
+        <div className="flex flex-col items-center gap-1 text-xs text-muted-foreground">
+        <p>
+          총력전/대결전 데이터는{" "}
+          <a
+            href="https://plana-stats.vercel.app/"
+            target="_blank"
+            rel="noreferrer"
+            className="!underline underline-offset-2 hover:text-foreground"
+          >
+            Plana Stats
+          </a>
+          에서 가져왔어요.
+        </p>
+        <p>
+          인게임 데이터는{" "}
+          <a
+            href="https://schaledb.com/"
+            target="_blank"
+            rel="noreferrer"
+            className="!underline underline-offset-2 hover:text-foreground"
+          >
+            Schale DB
+          </a>
+          에서 가져왔어요.
+        </p>
+        </div>
       </div>
     </div>
   );

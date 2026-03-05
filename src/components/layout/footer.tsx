@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Github, Mail } from "lucide-react";
+import { SupportButton } from "@/components/common/support-modal";
 
 export function Footer() {
   return (
@@ -23,6 +24,7 @@ export function Footer() {
             >
               <Mail className="h-5 w-5" />
             </Link>
+            <SupportButton />
           </div>
 
           {/* 법적 링크 */}

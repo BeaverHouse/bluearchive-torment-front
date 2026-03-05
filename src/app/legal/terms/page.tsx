@@ -90,9 +90,7 @@ export default function TermsOfServicePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p>
-              본 서비스는 운영 비용 충당을 위해 Google AdSense를 통한 광고를
-              게재할 수 있습니다. 광고 수익은 서버 운영 및 서비스 개선에
-              사용됩니다.
+              본 서비스는 현재 광고를 게재하지 않습니다.
             </p>
           </CardContent>
         </Card>

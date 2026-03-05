@@ -1,6 +1,6 @@
 import { RaidInfo } from "@/types/raid";
 
-const bosses = [
+export const ALL_BOSSES = [
     "비나",
     "헤세드",
     "시로쿠로",
@@ -30,7 +30,7 @@ export const categorizeAssault = (raids: RaidInfo[], raidId: string): {boss: str
         return {boss: "", subcategory: ""};
     }
 
-    const boss = bosses.find((b) => raid.name.includes(b));
+    const boss = ALL_BOSSES.find((b) => raid.name.includes(b));
     if (!boss) {
         return {boss: "", subcategory: ""};
     } else if (raidId.startsWith("S")) {
