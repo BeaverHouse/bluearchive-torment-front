@@ -77,10 +77,10 @@ export default function PrivacyPolicyPage() {
               <li>
                 <strong>YouTube API</strong> - 영상 분석 기능
               </li>
-              <li>
-                <strong>Google AdSense</strong> - 광고 게재
-              </li>
             </ul>
+            <p className="text-sm text-muted-foreground">
+              본 서비스는 광고를 게재하지 않습니다.
+            </p>
             <p className="text-sm text-muted-foreground mt-4">
               각 서비스의 개인정보 처리에 관한 자세한 내용은 해당 서비스의
               개인정보처리방침을 참조해 주세요.

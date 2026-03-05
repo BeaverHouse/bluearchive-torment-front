@@ -9,7 +9,7 @@ interface ServerVideoListProps {
   videos: VideoListItem[];
 }
 
-// 서버 컴포넌트용 비디오 목록 (Adsense 크롤러를 위한 정적 HTML)
+// 서버 컴포넌트용 비디오 목록 (정적 HTML)
 export function ServerVideoList({ videos }: ServerVideoListProps) {
   if (videos.length === 0) {
     return null;

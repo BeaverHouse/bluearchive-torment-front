@@ -41,18 +41,9 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
-        <meta name="google-adsense-account" content="ca-pub-8498528248407607" />
         <link rel="icon" href="/favicon.ico" />
       </head>
       <body>
-        {/* AdSense 스크립트: 승인 후 활성화
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8498528248407607"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
-        */}
         <GoogleAnalytics gaId={gaId} />
         <ClientProviders>{children}</ClientProviders>
       </body>
