@@ -10,6 +10,7 @@ import {
   ChevronDown,
   PieChart,
   Search,
+  Sprout,
 } from "lucide-react";
 import {
   Sidebar,
@@ -34,6 +35,11 @@ const menuItems = [
     title: "홈",
     url: "/",
     icon: Home,
+  },
+  {
+    title: "입문 가이드",
+    url: "/guide",
+    icon: Sprout,
   },
   {
     title: "파티 찾기 & 요약",

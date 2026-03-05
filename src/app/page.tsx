@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, PieChart, Video, Calculator } from "lucide-react";
+import { Search, PieChart, Video, Calculator, Sprout } from "lucide-react";
 import BuyMeACoffeeButton from "@/components/common/coffee";
 
 const features = [
@@ -99,6 +99,17 @@ export default function Home() {
             </Card>
           </Link>
         ))}
+      </div>
+
+      {/* 입문 가이드 배너 */}
+      <div className="mt-4">
+        <Link href="/guide">
+          <div className="flex items-center gap-3 px-4 py-3 rounded-lg border border-[#27a567]/40 bg-[#27a567]/10 hover:bg-[#27a567]/20 transition-colors cursor-pointer">
+            <Sprout className="w-5 h-5 text-[#27a567] shrink-0" />
+            <span className="text-sm font-medium text-[#27a567]">총력전이 처음이신가요?</span>
+            <span className="text-xs text-[#27a567]/80 ml-auto">입문 가이드 →</span>
+          </div>
+        </Link>
       </div>
 
       {/* 데이터 출처 및 후원 */}
