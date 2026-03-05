@@ -75,7 +75,7 @@ export function StarDistChart({ characterData }: StarDistChartProps) {
 
   if (chartData.length === 0) {
     return (
-      <Card>
+      <Card className="md:flex-1 flex flex-col w-full max-w-full overflow-hidden">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm">성급 분포</CardTitle>
         </CardHeader>

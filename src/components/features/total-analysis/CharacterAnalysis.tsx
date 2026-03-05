@@ -15,7 +15,10 @@ interface CharacterAnalysisProps {
 
 export function CharacterAnalysis({ data }: CharacterAnalysisProps) {
   const { studentsMap, studentSearchMap } = useStudentMaps();
-  const [selectedStudentId, setSelectedStudentId] = useState<string>("");
+  const [selectedStudentId, setSelectedStudentId] = useState<string>(() => {
+    const random = data.characterAnalyses[Math.floor(Math.random() * data.characterAnalyses.length)];
+    return random ? random.studentId.toString() : "";
+  });
 
   const isLoaded = Object.keys(studentsMap).length > 0;
 
