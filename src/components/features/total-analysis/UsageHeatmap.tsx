@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { CharacterAnalysis, RaidAnalysis } from "@/types/total-analysis";
-import { categorizeAssault } from "@/utils/total-analysis";
+import { categorizeAssault, ALL_BOSSES } from "@/utils/total-analysis";
 import { useRaids } from "@/hooks/use-raids";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -19,21 +19,6 @@ interface UsageHeatmapProps {
 
 // 가로축: 대결전 속성 4개 + 총력전 + LUNATIC
 const COLUMN_TYPES = ["폭발", "관통", "신비", "진동", "총력전", "LUNATIC"];
-
-// 대결전 보스 (폭발/관통/신비/진동 속성 있음)
-const RAID_BOSSES = ["비나", "헤세드", "시로쿠로", "예로니무스", "카이텐"];
-
-// 총력전 보스 (총력전 + LUNATIC 있음)
-const ASSAULT_BOSSES = [
-  "페로로지라",
-  "호드",
-  "고즈",
-  "호버크래프트",
-  "그레고리오",
-  "쿠로카게",
-  "게부라",
-  "예소드",
-];
 
 export function UsageHeatmap({
   characterData,
@@ -108,25 +93,26 @@ export function UsageHeatmap({
   const validCells = useMemo(() => {
     const set = new Set<string>();
 
-    // 대결전 보스는 폭발/관통/신비/진동만 유효
-    RAID_BOSSES.forEach((boss) => {
-      ["폭발", "관통", "신비", "진동"].forEach((type) => {
-        // 실제로 존재하는 조합인지 확인
-        const exists = raids.some((r) => {
-          const { boss: b, subcategory } = categorizeAssault(raids, r.id);
-          return b === boss && subcategory === type;
-        });
-        if (exists) set.add(`${boss}-${type}`);
-      });
-    });
+    ALL_BOSSES.forEach((boss) => {
+      const inRaid = raids.some(
+        (r) =>
+          r.id.startsWith("3S") && categorizeAssault(raids, r.id).boss === boss,
+      );
+      const inAssault = raids.some(
+        (r) =>
+          r.id.startsWith("S") && categorizeAssault(raids, r.id).boss === boss,
+      );
 
-    // 총력전 보스는 총력전/LUNATIC만 유효
-    ASSAULT_BOSSES.forEach((boss) => {
-      const exists = raids.some((r) => {
-        const { boss: b } = categorizeAssault(raids, r.id);
-        return b === boss && !r.id.startsWith("3S");
-      });
-      if (exists) {
+      if (inRaid) {
+        ["폭발", "관통", "신비", "진동"].forEach((type) => {
+          const exists = raids.some((r) => {
+            const { boss: b, subcategory } = categorizeAssault(raids, r.id);
+            return b === boss && subcategory === type;
+          });
+          if (exists) set.add(`${boss}-${type}`);
+        });
+      }
+      if (inAssault) {
         set.add(`${boss}-총력전`);
         set.add(`${boss}-LUNATIC`);
       }
@@ -137,7 +123,6 @@ export function UsageHeatmap({
 
   // 퍼센트 계산
   const getPercent = (
-    boss: string,
     colType: string,
     data:
       | {
@@ -145,7 +130,7 @@ export function UsageHeatmap({
           lunaticUserCount: number;
           raidId: string;
         }
-      | undefined
+      | undefined,
   ) => {
     if (!data) return 0;
 
@@ -180,8 +165,6 @@ export function UsageHeatmap({
     { label: "90%~", className: "bg-green-700 dark:bg-green-400" },
   ];
 
-  const ALL_BOSSES = [...RAID_BOSSES, ...ASSAULT_BOSSES];
-
   return (
     <Card className="max-w-full overflow-hidden">
       <CardHeader className="pb-1 px-2 sm:px-3">
@@ -215,7 +198,7 @@ export function UsageHeatmap({
                     const key = `${boss}-${colType}`;
                     const isValid = validCells.has(key);
                     const data = gridData.get(key);
-                    const percent = getPercent(boss, colType, data);
+                    const percent = getPercent(colType, data);
 
                     return (
                       <TooltipProvider key={colType}>
@@ -224,7 +207,7 @@ export function UsageHeatmap({
                             <div
                               className={`w-[38px] sm:w-[68px] h-4 sm:h-7 m-0.5 rounded-sm transition-colors ${getColor(
                                 percent,
-                                isValid
+                                isValid,
                               )} ${
                                 isValid
                                   ? "hover:ring-2 ring-primary cursor-pointer"
@@ -257,7 +240,7 @@ export function UsageHeatmap({
                               <p className="text-xs text-muted-foreground mt-1">
                                 {data.raidName.replace(
                                   /^(총력전|대결전)\s+/,
-                                  ""
+                                  "",
                                 )}
                               </p>
                             </TooltipContent>
