@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useEffect } from "react";
+import { useMemo } from "react";
 import { VideoList } from "./video-list";
 import { VideoQueueDialog } from "./VideoQueueDialog";
 import { AddVideoDialog } from "./AddVideoDialog";
@@ -15,36 +15,16 @@ import ErrorPage from "@/components/common/error-page";
 import { generateSearchKeyword } from "@/utils/raid";
 import { PartyFilterSection } from "@/components/features/raid/party-filter-section";
 import Loading from "@/components/common/loading";
-import { VideoListItem } from "@/types/video";
 
 interface VideoAnalysisContentProps {
-  initialVideos: VideoListItem[];
-  initialPagination: {
-    page: number;
-    limit: number;
-    total: number;
-    total_pages: number;
-    has_next: boolean;
-    has_prev: boolean;
-  };
   initialRaid: string;
 }
 
 export function VideoAnalysisContent({
-  initialVideos,
-  initialPagination,
   initialRaid,
 }: VideoAnalysisContentProps) {
   const { studentsMap, studentSearchMap } = useStudentMaps();
   const { raids } = useRaids();
-
-  // 클라이언트 마운트 후 서버 렌더링된 비디오 목록 숨기기
-  useEffect(() => {
-    const serverList = document.getElementById("server-video-list");
-    if (serverList) {
-      serverList.style.display = "none";
-    }
-  }, []);
 
   const {
     loading,
@@ -66,7 +46,7 @@ export function VideoAnalysisContent({
     updateFilters,
     setPageSize,
     setCurrentPage,
-  } = useVideoAnalysis({ studentsMap, initialVideos, initialPagination, initialRaid });
+  } = useVideoAnalysis({ studentsMap, initialRaid });
 
   const raidsSelectOptions = useMemo(
     () => [
