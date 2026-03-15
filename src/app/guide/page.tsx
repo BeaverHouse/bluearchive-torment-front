@@ -25,7 +25,7 @@ const ASSISTANTS = [
       { id: 10033, name: "와카모" },
       { id: 10100, name: "시로코*테러" },
       { id: 10098, name: "호시노(무장)" },
-      { id: 10066, name: "아리스(메이드)" },
+      { id: 10134, name: "아리스(무장)" },
     ],
   },
   {
@@ -49,17 +49,29 @@ const TYPE_COLORS: Record<string, string> = {
 // url: null 이면 해당 셀 비워둠
 const VIDEO_TABLE: {
   boss: string;
-  extreme: string | null;
-  insane: string | null;
+  extreme: string[] | null;
+  insane: string[] | null;
   notes?: string[];
 }[] = [
   {
     boss: "비나",
-    extreme:
+    extreme: [
       "https://bluearchive-torment.netlify.app/video-analysis/2NI_MRwoPOY?raid_id=S86-0",
-    insane:
+    ],
+    insane: [
       "https://bluearchive-torment.netlify.app/video-analysis/6kJ_cSRr4AE?raid_id=S86-0",
+    ],
     notes: ["60레벨 정도에도 클리어 가능해요", "가장 쉬워요"],
+  },
+  {
+    boss: "예로니무스",
+    extreme: [
+      "https://bluearchive-torment.netlify.app/video-analysis/n1CwzkenlY4?raid_id=3S31-2",
+      "https://bluearchive-torment.netlify.app/video-analysis/BU652VOnvsk?raid_id=3S31-3",
+      "https://bluearchive-torment.netlify.app/video-analysis/69iFSgj3Vd0?raid_id=3S31-1",
+    ],
+    insane: null,
+    notes: ["단일 힐러와 방어력 감소가 효과적이에요"],
   },
   { boss: "헤세드", extreme: null, insane: null },
   { boss: "시로쿠로", extreme: null, insane: null },
@@ -134,12 +146,15 @@ export default function GuidePage() {
       {/* INSANE 도전하기 */}
       <Card>
         <CardHeader>
-          <CardTitle>2단계: INSANE 도전하기</CardTitle>
+          <CardTitle>2단계: EXTREME/INSANE 도전하기</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-muted-foreground text-sm">
-            준비가 끝났다면, INSANE 난이도를 도전해 보세요. 반복 클리어로 총력전
+            준비가 끝났다면, EXTREME/INSANE 난이도를 도전해 보세요. 반복 클리어로
             코인과 보상을 챙기는 것을 목표로 해요.
+          </p>
+          <p className="text-muted-foreground text-sm">
+            아래는 일본 서버 5주년 유입 기준 참고 영상이에요.
           </p>
           <div className="overflow-x-auto">
             <table className="w-full text-sm border-collapse">
@@ -161,24 +176,32 @@ export default function GuidePage() {
                     </td>
                     <td className="py-3 px-3 text-center whitespace-nowrap">
                       {row.extreme ? (
-                        <Button asChild size="sm">
-                          <a href={row.extreme} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink />
-                            영상
-                          </a>
-                        </Button>
+                        <div className="flex flex-wrap gap-1 justify-center">
+                          {row.extreme.map((url, i) => (
+                            <Button key={i} asChild size="sm">
+                              <a href={url} target="_blank" rel="noopener noreferrer">
+                                <ExternalLink />
+                                영상{row.extreme!.length > 1 ? ` ${i + 1}` : ""}
+                              </a>
+                            </Button>
+                          ))}
+                        </div>
                       ) : (
                         <span className="text-muted-foreground">—</span>
                       )}
                     </td>
                     <td className="py-3 px-3 text-center whitespace-nowrap">
                       {row.insane ? (
-                        <Button asChild size="sm">
-                          <a href={row.insane} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink />
-                            영상
-                          </a>
-                        </Button>
+                        <div className="flex flex-wrap gap-1 justify-center">
+                          {row.insane.map((url, i) => (
+                            <Button key={i} asChild size="sm">
+                              <a href={url} target="_blank" rel="noopener noreferrer">
+                                <ExternalLink />
+                                영상{row.insane!.length > 1 ? ` ${i + 1}` : ""}
+                              </a>
+                            </Button>
+                          ))}
+                        </div>
                       ) : (
                         <span className="text-muted-foreground">—</span>
                       )}
@@ -212,6 +235,9 @@ export default function GuidePage() {
             </li>
             <li>
               더 많은 정보가 필요하다면 Youtube나 외부 사이트도 찾아 보세요.
+            </li>
+            <li>
+              TORMENT는 보통 핵심 학생이 있다면 1-2파티로 준비할 수 있어요.
             </li>
             <li>
               <strong className="text-foreground">LUNATIC 입문은 비나</strong>가
