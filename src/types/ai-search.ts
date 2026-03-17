@@ -19,7 +19,7 @@ interface BaseStreamMessage {
 }
 
 // 상태 키 타입
-export type StatusKey = "thinking" | "searching" | "tool_execution" | "answer_complete";
+export type StatusKey = "thinking" | "searching" | "tool_execution" | "answering" | "answer_complete";
 
 // 도구 이름 타입
 export type ToolName =
@@ -57,9 +57,11 @@ export interface AnswerMessage extends BaseStreamMessage {
 // MCP 결과 메시지
 export interface MCPResultMessage extends BaseStreamMessage {
   type: "mcp_result";
-  tool?: string;
-  result?: unknown;
-  render_type?: "raw" | "json" | "table" | "list";
+  content?: string;
+  metadata?: {
+    tool?: string;
+    result?: unknown;
+  };
 }
 
 // 에러 메시지
@@ -95,7 +97,8 @@ export interface AISearchRequest {
   language: "ko";
   fixed_service_ids: string[];
   messages?: Message[];
-  additional_system_prompt?: string;
+  persona_prompt?: string;
+  instruction_prompt?: string;
 }
 
 // 채팅 상태

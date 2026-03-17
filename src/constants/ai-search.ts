@@ -6,7 +6,8 @@ import type { StatusKey, ToolName } from "@/types/ai-search";
 export const STATUS_KEY_MESSAGES: Record<StatusKey, string> = {
   thinking: "아로나가 생각하는 중...",
   searching: "아로나가 수소문 하는 중...",
-  tool_execution: "아로나가 도구 사용 중...", // toolName 없을 때 fallback
+  tool_execution: "아로나가 도구 사용 중...",
+  answering: "아로나가 답변 작성 중...",
   answer_complete: "",
 };
 
@@ -30,6 +31,28 @@ export const TOOL_NAME_MESSAGES: Record<ToolName, string> = {
  */
 export const AI_SEARCH_FALLBACK_MESSAGE =
   "선생님, 죄송해요! 아로나가 답변을 준비하지 못했어요. 다시 질문해 주시겠어요?";
+
+/**
+ * MCP 도구 결과 수신 완료 메시지
+ */
+const TOOL_RESULT_MESSAGES: Partial<Record<ToolName, string>> = {
+  search_students: "아로나가 학생 명부 확인 완료!",
+  get_student_detail: "아로나가 학생 상세 정보 확인 완료!",
+  calculate_field_status: "아로나가 계산 완료!",
+  get_stat_guide: "아로나가 가이드 확인 완료!",
+  search_boss_guides: "아로나가 보스 기록 확인 완료!",
+  get_raid_list: "아로나가 총력전 목록 확인 완료!",
+  search_parties: "아로나가 파티 편성 검색 완료!",
+  get_raid_summary: "아로나가 총력전 통계 분석 완료!",
+  get_character_analysis: "아로나가 캐릭터 출전 기록 분석 완료!",
+};
+
+export function getToolResultMessage(toolName?: string): string {
+  if (toolName && toolName in TOOL_RESULT_MESSAGES) {
+    return TOOL_RESULT_MESSAGES[toolName as ToolName]!;
+  }
+  return "아로나가 결과 확인 완료!";
+}
 
 /**
  * status key와 tool name에서 표시할 메시지를 반환

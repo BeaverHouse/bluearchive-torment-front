@@ -7,7 +7,8 @@ export interface AISearchStreamOptions {
   apiKey: string;
   question: string;
   messages?: Message[];
-  additionalSystemPrompt?: string;
+  personaPrompt?: string;
+  instructionPrompt?: string;
   onUpdate: (message: StreamMessage) => void;
   signal?: AbortSignal;
 }
@@ -22,7 +23,7 @@ class AISearchService {
    * /v1/call/free 엔드포인트 사용 (BYOK)
    */
   async streamSearch(options: AISearchStreamOptions): Promise<void> {
-    const { apiKey, question, messages, additionalSystemPrompt, onUpdate, signal } = options;
+    const { apiKey, question, messages, personaPrompt, instructionPrompt, onUpdate, signal } = options;
 
     const apiUrl = `${LLM_BASE_URL}/v1/call/free`;
 
@@ -47,9 +48,11 @@ class AISearchService {
       requestBody.messages = messages;
     }
 
-    // 추가 시스템 프롬프트
-    if (additionalSystemPrompt) {
-      requestBody.additional_system_prompt = additionalSystemPrompt;
+    if (personaPrompt) {
+      requestBody.persona_prompt = personaPrompt;
+    }
+    if (instructionPrompt) {
+      requestBody.instruction_prompt = instructionPrompt;
     }
 
     const response = await fetch(apiUrl, {

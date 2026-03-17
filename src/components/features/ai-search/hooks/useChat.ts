@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { aiSearchService } from "@/lib/ai-search-service";
 import type { Message, StreamMessage } from "@/types/ai-search";
-import { getStatusMessage, AI_SEARCH_FALLBACK_MESSAGE } from "@/constants/ai-search";
+import { getStatusMessage, getToolResultMessage, AI_SEARCH_FALLBACK_MESSAGE } from "@/constants/ai-search";
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -10,11 +10,12 @@ interface ChatMessage {
 
 interface UseChatProps {
   apiKey: string | null;
-  systemPrompt: string;
+  personaPrompt: string;
+  instructionPrompt: string;
   onApiKeyRequired: () => void;
 }
 
-export function useChat({ apiKey, systemPrompt, onApiKeyRequired }: UseChatProps) {
+export function useChat({ apiKey, personaPrompt, instructionPrompt, onApiKeyRequired }: UseChatProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -33,6 +34,11 @@ export function useChat({ apiKey, systemPrompt, onApiKeyRequired }: UseChatProps
         if (statusKey === "answer_complete") break;
         const displayMessage = getStatusMessage(statusKey, toolName);
         setCurrentStatus(displayMessage);
+        break;
+      }
+      case "mcp_result": {
+        const toolName = message.metadata?.tool;
+        setCurrentStatus(getToolResultMessage(toolName));
         break;
       }
       case "answer":
@@ -79,7 +85,8 @@ export function useChat({ apiKey, systemPrompt, onApiKeyRequired }: UseChatProps
         apiKey,
         question,
         messages: previousMessages,
-        additionalSystemPrompt: systemPrompt || undefined,
+        personaPrompt: personaPrompt || undefined,
+        instructionPrompt: instructionPrompt || undefined,
         onUpdate: handleStreamUpdate,
         signal: abortControllerRef.current.signal,
       });
