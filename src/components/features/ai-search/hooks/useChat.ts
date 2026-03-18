@@ -47,8 +47,8 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, onApiKeyRequ
         setCurrentStatus("");
         break;
       case "action": {
-        const actionType = (message as any).metadata?.action || (message as any).action;
-        const payload = (message as any).metadata?.payload || (message as any).payload;
+        const actionType = message.metadata?.action;
+        const payload = message.metadata?.payload;
         if (actionType && payload) {
           setActions((prev) => [...prev, { action: actionType, payload }]);
         }
@@ -56,7 +56,6 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, onApiKeyRequ
       }
       case "error":
         setError(message.content || message.title || "오류가 발생했습니다.");
-        setIsLoading(false);
         break;
     }
   }, []);

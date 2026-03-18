@@ -75,12 +75,15 @@ export interface ErrorMessage extends BaseStreamMessage {
   };
 }
 
-// 액션 메시지 (사용자 확인 필요)
+// 액션 메시지 (백엔드 UIChunk 구조: action/payload는 metadata 안에 있음)
 export interface ActionMessage extends BaseStreamMessage {
   type: "action";
-  action?: string;
-  payload?: Record<string, unknown>;
-  require_confirmation?: boolean;
+  content?: string;
+  metadata?: {
+    action?: string;
+    payload?: Record<string, unknown>;
+    require_confirmation?: boolean;
+  };
 }
 
 // 통합 스트림 메시지 타입
