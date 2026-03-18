@@ -13,10 +13,12 @@ import { EmptyState } from "./EmptyState";
 import { useApiKey } from "./hooks/useApiKey";
 import { useChat } from "./hooks/useChat";
 
-const SYSTEM_PROMPT_URL = "/data/prompt_ko.md";
+const PERSONA_PROMPT_URL = "/data/persona_ko.md";
+const INSTRUCTION_PROMPT_URL = "/data/instruction_ko.md";
 
 export function AISearchChat() {
-  const [systemPrompt, setSystemPrompt] = useState<string>("");
+  const [personaPrompt, setPersonaPrompt] = useState<string>("");
+  const [instructionPrompt, setInstructionPrompt] = useState<string>("");
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -35,21 +37,27 @@ export function AISearchChat() {
     currentAnswer,
     currentStatus,
     error,
+    actions,
     sendMessage,
     stopGeneration,
     clearChat,
   } = useChat({
     apiKey,
-    systemPrompt,
+    personaPrompt,
+    instructionPrompt,
     onApiKeyRequired: openApiKeyModal,
   });
 
-  // 시스템 프롬프트 로드
   useEffect(() => {
-    fetch(SYSTEM_PROMPT_URL)
-      .then((res) => res.text())
-      .then((text) => setSystemPrompt(text))
-      .catch((err) => console.error("Failed to load system prompt:", err));
+    Promise.all([
+      fetch(PERSONA_PROMPT_URL).then((res) => res.text()),
+      fetch(INSTRUCTION_PROMPT_URL).then((res) => res.text()),
+    ])
+      .then(([persona, instruction]) => {
+        setPersonaPrompt(persona);
+        setInstructionPrompt(instruction);
+      })
+      .catch((err) => console.error("Failed to load prompts:", err));
   }, []);
 
   // 스크롤 맨 아래로
@@ -114,6 +122,7 @@ export function AISearchChat() {
                 currentAnswer={currentAnswer}
                 currentStatus={currentStatus}
                 error={error}
+                actions={actions}
               />
             )}
           </div>

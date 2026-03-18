@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { aiSearchService } from "@/lib/ai-search-service";
 import type { Message, StreamMessage } from "@/types/ai-search";
-import { getStatusMessage, AI_SEARCH_FALLBACK_MESSAGE } from "@/constants/ai-search";
+import { getStatusMessage, getToolResultMessage, AI_SEARCH_FALLBACK_MESSAGE } from "@/constants/ai-search";
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -10,17 +10,19 @@ interface ChatMessage {
 
 interface UseChatProps {
   apiKey: string | null;
-  systemPrompt: string;
+  personaPrompt: string;
+  instructionPrompt: string;
   onApiKeyRequired: () => void;
 }
 
-export function useChat({ apiKey, systemPrompt, onApiKeyRequired }: UseChatProps) {
+export function useChat({ apiKey, personaPrompt, instructionPrompt, onApiKeyRequired }: UseChatProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [currentAnswer, setCurrentAnswer] = useState("");
   const [currentStatus, setCurrentStatus] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [actions, setActions] = useState<Array<{ action: string; payload: Record<string, unknown> }>>([]);
 
   const abortControllerRef = useRef<AbortController | null>(null);
   const wasLoadingRef = useRef(false);
@@ -35,13 +37,25 @@ export function useChat({ apiKey, systemPrompt, onApiKeyRequired }: UseChatProps
         setCurrentStatus(displayMessage);
         break;
       }
+      case "mcp_result": {
+        const toolName = message.metadata?.tool;
+        setCurrentStatus(getToolResultMessage(toolName));
+        break;
+      }
       case "answer":
         setCurrentAnswer((prev) => prev + message.content);
         setCurrentStatus("");
         break;
+      case "action": {
+        const actionType = message.metadata?.action;
+        const payload = message.metadata?.payload;
+        if (actionType && payload) {
+          setActions((prev) => [...prev, { action: actionType, payload }]);
+        }
+        break;
+      }
       case "error":
         setError(message.content || message.title || "오류가 발생했습니다.");
-        setIsLoading(false);
         break;
     }
   }, []);
@@ -62,6 +76,7 @@ export function useChat({ apiKey, systemPrompt, onApiKeyRequired }: UseChatProps
     setError(null);
     setCurrentAnswer("");
     setCurrentStatus("");
+    setActions([]);
     setIsLoading(true);
 
     const newUserMessage: ChatMessage = { role: "user", content: question };
@@ -79,7 +94,8 @@ export function useChat({ apiKey, systemPrompt, onApiKeyRequired }: UseChatProps
         apiKey,
         question,
         messages: previousMessages,
-        additionalSystemPrompt: systemPrompt || undefined,
+        personaPrompt: personaPrompt || undefined,
+        instructionPrompt: instructionPrompt || undefined,
         onUpdate: handleStreamUpdate,
         signal: abortControllerRef.current.signal,
       });
@@ -125,6 +141,7 @@ export function useChat({ apiKey, systemPrompt, onApiKeyRequired }: UseChatProps
     setCurrentAnswer("");
     setCurrentStatus("");
     setError(null);
+    setActions([]);
   };
 
   return {
@@ -136,6 +153,7 @@ export function useChat({ apiKey, systemPrompt, onApiKeyRequired }: UseChatProps
     currentStatus,
     error,
     sendMessage,
+    actions,
     stopGeneration,
     clearChat,
   };

@@ -7,7 +7,8 @@ export interface AISearchStreamOptions {
   apiKey: string;
   question: string;
   messages?: Message[];
-  additionalSystemPrompt?: string;
+  personaPrompt?: string;
+  instructionPrompt?: string;
   onUpdate: (message: StreamMessage) => void;
   signal?: AbortSignal;
 }
@@ -22,7 +23,7 @@ class AISearchService {
    * /v1/call/free 엔드포인트 사용 (BYOK)
    */
   async streamSearch(options: AISearchStreamOptions): Promise<void> {
-    const { apiKey, question, messages, additionalSystemPrompt, onUpdate, signal } = options;
+    const { apiKey, question, messages, personaPrompt, instructionPrompt, onUpdate, signal } = options;
 
     const apiUrl = `${LLM_BASE_URL}/v1/call/free`;
 
@@ -40,6 +41,7 @@ class AISearchService {
       question,
       language: "ko",
       fixed_service_ids: ["batorment"],
+      extract_actions: true,
     };
 
     // 이전 대화가 있으면 포함
@@ -47,9 +49,11 @@ class AISearchService {
       requestBody.messages = messages;
     }
 
-    // 추가 시스템 프롬프트
-    if (additionalSystemPrompt) {
-      requestBody.additional_system_prompt = additionalSystemPrompt;
+    if (personaPrompt) {
+      requestBody.persona_prompt = personaPrompt;
+    }
+    if (instructionPrompt) {
+      requestBody.instruction_prompt = instructionPrompt;
     }
 
     const response = await fetch(apiUrl, {
@@ -77,11 +81,15 @@ class AISearchService {
     try {
       while (true) {
         const { done, value } = await reader.read();
-        if (done) break;
 
-        buffer += decoder.decode(value, { stream: true });
+        if (done) {
+          buffer += decoder.decode();
+        } else {
+          buffer += decoder.decode(value, { stream: true });
+        }
+
         const lines = buffer.split("\n");
-        buffer = lines.pop() || "";
+        buffer = done ? "" : (lines.pop() || "");
 
         for (const line of lines) {
           if (line.startsWith("data: ")) {
@@ -93,6 +101,8 @@ class AISearchService {
             }
           }
         }
+
+        if (done) break;
       }
     } finally {
       reader.releaseLock();
