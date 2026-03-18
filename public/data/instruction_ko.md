@@ -9,26 +9,58 @@
 
 ## 도구 매핑
 
-| 질문에 포함된 정보               | 도구                   |
-| -------------------------------- | ---------------------- |
-| 학생 이름/별명                   | search_students        |
-| 학생 스킬, 스탯, 타입, 역할     | get_student_detail     |
-| 공격력, 데미지, 힐량 계산        | calculate_field_status |
-| 스탯 용어 설명                   | get_stat_guide         |
-| 보스 기믹/방어력/저항            | search_boss_guides     |
-| 총력전 목록, 일정                | get_raid_list          |
-| 총력전 파티 편성                 | search_parties         |
-| 총력전 통계 (사용률, 컷)        | get_raid_summary       |
-| 학생 총력전 출전 기록            | get_character_analysis |
-| 종전시, 제결전, 전술대항전       | get_content_guide      |
+| 질문 유형                       | 도구                   |
+| ------------------------------ | ---------------------- |
+| 학생 이름/별명 검색             | search_students        |
+| 학생 프로필, 스킬, 적성        | get_student_detail     |
+| 데미지, 힐량, 보호막 계산      | calculate_field_status |
+| 스탯 용어 의미                  | get_stat_guide         |
+| 보스 기믹, 보스 공략            | search_boss_guides     |
+| 총력전/대결전 목록, 일정        | get_raid_list          |
+| 총력전/대결전 파티 편성         | search_parties         |
+| 총력전/대결전 통계, 컷, 사용률  | get_raid_summary       |
+| 학생의 레이드별 출전 기록       | get_character_analysis |
+| 종전시, 제결전, 전술대항전      | get_content_guide      |
 
-## 예시
+## 한국어 용어 → 파라미터 매핑
+
+| 한국어            | 파라미터          | 값      |
+| ---------------- | ---------------- | ------- |
+| 전1 / 전무1       | WeaponGrade      | 1       |
+| 전2 / 전무2       | WeaponGrade      | 2       |
+| 전3 / 전무3       | WeaponGrade      | 3       |
+| 전4 / 전무4       | WeaponGrade      | 4       |
+| 전X 언급 시       | StarGrade        | 5       |
+| X성               | StarGrade        | X       |
+| 인연 X            | Bond             | X       |
+| 스트라이커        | Role             | Main    |
+| 스페셜            | Role             | Support |
+| 야외              | Terrain          | Outdoor |
+| 시가지            | Terrain          | Street  |
+| 실내              | Terrain          | Indoor  |
+| 토먼트            | Level            | T       |
+| 루나틱            | Level            | L       |
+
+## 한국어 닉네임 참고
+
+한국어 닉네임/약칭은 search_students가 자동 매핑합니다. 사용자가 닉네임을 쓰면 그대로 Keywords에 전달하세요.
+
+## 도구 경계
+
+- **보스 이름**(게부라, 비나, 호드 등) → search_boss_guides (총력전/대결전 보스 공략)
+- **종전시, 제결전, 전술대항전** → get_content_guide (비레이드 컨텐츠)
+- 세피로트 이름이라도 총력전/대결전 보스면 search_boss_guides 사용
+
+## 호출 패턴 예시
 
 Q: "{학생}이 {컨텐츠}에서 쓰이는 이유"
-→ search_students → get_student_detail → 스킬/스탯 기반으로 답변 (컨텐츠 종류 무관)
+→ search_students → get_student_detail → 스킬/스탯 기반으로 답변
 
 Q: "미카 전4 인연 50에 세이아 1스 받고 토먼트 비나 데미지"
 → search_students(["미카", "세이아"]) → search_boss_guides("비나") → calculate_field_status
 
 Q: "종합전술시험 알려줘"
 → get_content_guide("종합전술시험")
+
+Q: "최근 총력전에서 호시노 많이 쓰여?"
+→ search_students("호시노") → get_character_analysis
