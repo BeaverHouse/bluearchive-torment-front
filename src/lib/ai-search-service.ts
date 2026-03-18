@@ -41,6 +41,7 @@ class AISearchService {
       question,
       language: "ko",
       fixed_service_ids: ["batorment"],
+      extract_actions: true,
     };
 
     // 이전 대화가 있으면 포함

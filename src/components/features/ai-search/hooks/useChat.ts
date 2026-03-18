@@ -22,6 +22,7 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, onApiKeyRequ
   const [currentAnswer, setCurrentAnswer] = useState("");
   const [currentStatus, setCurrentStatus] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [actions, setActions] = useState<Array<{ action: string; payload: Record<string, unknown> }>>([]);
 
   const abortControllerRef = useRef<AbortController | null>(null);
   const wasLoadingRef = useRef(false);
@@ -45,6 +46,14 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, onApiKeyRequ
         setCurrentAnswer((prev) => prev + message.content);
         setCurrentStatus("");
         break;
+      case "action": {
+        const actionType = (message as any).metadata?.action || (message as any).action;
+        const payload = (message as any).metadata?.payload || (message as any).payload;
+        if (actionType && payload) {
+          setActions((prev) => [...prev, { action: actionType, payload }]);
+        }
+        break;
+      }
       case "error":
         setError(message.content || message.title || "오류가 발생했습니다.");
         setIsLoading(false);
@@ -68,6 +77,7 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, onApiKeyRequ
     setError(null);
     setCurrentAnswer("");
     setCurrentStatus("");
+    setActions([]);
     setIsLoading(true);
 
     const newUserMessage: ChatMessage = { role: "user", content: question };
@@ -132,6 +142,7 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, onApiKeyRequ
     setCurrentAnswer("");
     setCurrentStatus("");
     setError(null);
+    setActions([]);
   };
 
   return {
@@ -143,6 +154,7 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, onApiKeyRequ
     currentStatus,
     error,
     sendMessage,
+    actions,
     stopGeneration,
     clearChat,
   };

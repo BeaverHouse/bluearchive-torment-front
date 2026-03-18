@@ -37,6 +37,7 @@ export function AISearchChat() {
     currentAnswer,
     currentStatus,
     error,
+    actions,
     sendMessage,
     stopGeneration,
     clearChat,
@@ -121,6 +122,7 @@ export function AISearchChat() {
                 currentAnswer={currentAnswer}
                 currentStatus={currentStatus}
                 error={error}
+                actions={actions}
               />
             )}
           </div>

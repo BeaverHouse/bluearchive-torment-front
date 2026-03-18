@@ -99,6 +99,7 @@ export interface AISearchRequest {
   messages?: Message[];
   persona_prompt?: string;
   instruction_prompt?: string;
+  extract_actions?: boolean;
 }
 
 // 채팅 상태

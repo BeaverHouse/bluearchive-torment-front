@@ -30,6 +30,7 @@ interface ChatMessagesProps {
   currentAnswer: string;
   currentStatus: string;
   error: string | null;
+  actions: Array<{ action: string; payload: Record<string, unknown> }>;
 }
 
 export function ChatMessages({
@@ -37,6 +38,7 @@ export function ChatMessages({
   currentAnswer,
   currentStatus,
   error,
+  actions,
 }: ChatMessagesProps) {
   return (
     <div className="space-y-4">
@@ -97,6 +99,29 @@ export function ChatMessages({
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {/* 액션 링크 */}
+      {actions.length > 0 && (
+        <div className="flex flex-col gap-2 ml-10">
+          {actions.map((act, idx) => {
+            if (act.action === "open_link" && typeof act.payload?.url === "string") {
+              return (
+                <a
+                  key={idx}
+                  href={act.payload.url as string}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-sm hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors w-fit"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                  <span className="break-all">{act.payload.url as string}</span>
+                </a>
+              );
+            }
+            return null;
+          })}
         </div>
       )}
 
