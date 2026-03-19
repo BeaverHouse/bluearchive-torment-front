@@ -52,9 +52,9 @@
 | Ko           | Ja             | En           | Aliases                         |
 | ------------ | -------------- | ------------ | ------------------------------- |
 | 비나         | ビナー         | Binah        | bina                            |
-| 히에로니무스 | ヒエロニムス   | Hieronymus   | 히에로, 예로, 예로니무스, hiero |
+| 예로니무스 | ヒエロニムス   | Hieronymus   | 히에로, 예로, hiero |
 | 호드         | ホド           | Hod          |                                 |
-| 페로로질라   | ペロロジラ     | Perorodzilla | 페로로, peroro                  |
+| 페로로지라   | ペロロジラ     | Perorodzilla | 페로로, peroro                  |
 | 헤세드       | ケセド         | Chesed       |                                 |
 | 시로&쿠로    | シロ&クロ      | Shiro & Kuro | 시로, 쿠로, shirokuro           |
 | 카이텐져     | カイテンジャー | Kaitenger    | 카이텐, kaiten                  |
