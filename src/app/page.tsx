@@ -7,10 +7,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, PieChart, Video, Calculator, Sprout } from "lucide-react";
+import { Search, PieChart, Video, Calculator, Sprout, Heart } from "lucide-react";
 import { SupportModal } from "@/components/common/support-modal";
 import { Button } from "@/components/ui/button";
-import { Heart } from "lucide-react";
 
 const features = [
   {

@@ -76,31 +76,24 @@ export default function VideoEditPage() {
   const videoRef = useRef<HTMLDivElement>(null);
 
   // 비디오 상태 변화 처리
-  const handleVideoPlayStateChange = useCallback((playing: boolean) => {
-    console.log('🎵 Video play state changed:', playing);
+  const handleVideoPlayStateChange = useCallback((_playing: boolean) => {
     // 재생 상태로 인한 자동 확대 제거
   }, []);
 
   // 비디오 클릭 처리
   const handleVideoClick = useCallback(() => {
-    console.log('👆 Video clicked, isVideoExpanded:', isVideoExpanded);
-    
     if (!isVideoExpanded) {
       // 축소된 상태에서 클릭하면 확대만 하고 재생은 하지 않음
-      console.log('🔍 Expanding video without auto-play');
       setIsVideoExpanded(true);
     } else {
       // 확대된 상태에서 클릭하면 재생/일시정지 토글
       if (youtubePlayerRef.current) {
         const currentState = youtubePlayerRef.current.getPlayerState();
-        console.log('🎵 Current player state:', currentState);
-        
+
         // 재생 중이면 (state === 1) 일시정지, 아니면 재생
         if (currentState === 1) {
-          console.log('⏸️ Pausing video');
           youtubePlayerRef.current.pauseVideo();
         } else {
-          console.log('▶️ Playing video');
           youtubePlayerRef.current.playVideo();
         }
       }
@@ -111,7 +104,6 @@ export default function VideoEditPage() {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (videoRef.current && !videoRef.current.contains(event.target as Node)) {
-        console.log('🖱️ Outside click detected - collapsing video');
         setIsVideoExpanded(false);
       }
     };
@@ -140,11 +132,6 @@ export default function VideoEditPage() {
   const handleCancelEdit = () => {
     router.back();
   };
-
-  // 캐릭터 이름 가져오기 (향후 사용 예정)
-  // const getCharacterName = (code: number): string => {
-  //   return studentsMap[code.toString()] || `캐릭터 ${code}`;
-  // };
 
 
   // 로딩 중이거나 데이터가 없는 경우
@@ -184,7 +171,6 @@ export default function VideoEditPage() {
         }`}
         style={{ zIndex: 9999 }}
         onClick={(e) => {
-          console.log('📺 Video container clicked - preventing propagation');
           e.stopPropagation();
         }}
       >

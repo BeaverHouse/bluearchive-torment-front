@@ -9,7 +9,7 @@ interface SafeImageProps extends Omit<ImageProps, "onError"> {
   fallback?: string;
 }
 
-export function SafeImage({
+function SafeImage({
   src,
   alt,
   fallback = "/empty.webp",

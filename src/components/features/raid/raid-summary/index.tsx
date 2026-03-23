@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -32,7 +31,6 @@ const RaidSummary = ({
   level,
 }: RaidComponentProps) => {
   const router = useRouter();
-  const [, setCharacter] = useState<number | null>(null);
 
   const getSummaryDataQuery = useQuery({
     queryKey: ["getSummaryData", season],
@@ -62,10 +60,6 @@ const RaidSummary = ({
     },
     throwOnError: true,
   });
-
-  useEffect(() => {
-    setCharacter(null);
-  }, [season]);
 
   const handleGoToVideos = () => {
     router.push(`/video-analysis?raid=${season}`);

@@ -53,10 +53,7 @@ export async function getVideoDetail(videoId: string, raidId?: string): Promise<
 }
 
 export async function updateVideoAnalysis(videoId: string, analysisResult: AnalysisResult, raidId?: string): Promise<VideoDetailResponse> {
-  const params = new URLSearchParams()
-
-  const queryString = params.toString()
-  const url = queryString ? `${BASE_URL}/video/analysis/${videoId}?${queryString}` : `${BASE_URL}/video/analysis/${videoId}`
+  const url = `${BASE_URL}/video/analysis/${videoId}`
 
   try {
     const response = await fetch(url, {
@@ -83,7 +80,7 @@ export async function updateVideoAnalysis(videoId: string, analysisResult: Analy
 }
 
 // Result type for addVideoToQueue
-export interface AddVideoToQueueResult {
+interface AddVideoToQueueResult {
   success: boolean
   existingVideo?: {
     videoId: string
