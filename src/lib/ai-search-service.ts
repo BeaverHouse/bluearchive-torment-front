@@ -3,7 +3,7 @@ import type { StreamMessage, Message, AISearchRequest } from "@/types/ai-search"
 // LLM API Base URL - 환경변수에서 가져오거나 기본값 사용
 const LLM_BASE_URL = process.env.NEXT_PUBLIC_LLM_BASE_URL || "http://127.0.0.1:8080";
 
-export interface AISearchStreamOptions {
+interface AISearchStreamOptions {
   apiKey: string;
   question: string;
   messages?: Message[];

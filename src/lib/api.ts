@@ -83,7 +83,7 @@ export async function updateVideoAnalysis(videoId: string, analysisResult: Analy
 }
 
 // Result type for addVideoToQueue
-export interface AddVideoToQueueResult {
+interface AddVideoToQueueResult {
   success: boolean
   existingVideo?: {
     videoId: string

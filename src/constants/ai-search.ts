@@ -3,7 +3,7 @@ import type { StatusKey, ToolName } from "@/types/ai-search";
 /**
  * 기본 상태별 메시지
  */
-export const STATUS_KEY_MESSAGES: Record<StatusKey, string> = {
+const STATUS_KEY_MESSAGES: Record<StatusKey, string> = {
   thinking: "아로나가 생각하는 중...",
   searching: "아로나가 수소문 하는 중...",
   tool_execution: "아로나가 도구 사용 중...",
@@ -14,7 +14,7 @@ export const STATUS_KEY_MESSAGES: Record<StatusKey, string> = {
 /**
  * MCP 도구별 메시지
  */
-export const TOOL_NAME_MESSAGES: Record<ToolName, string> = {
+const TOOL_NAME_MESSAGES: Record<ToolName, string> = {
   search_students: "아로나가 학생 명부 찾는 중...",
   get_student_detail: "아로나가 학생 상세 정보 확인 중...",
   calculate_field_status: "아로나가 계산하는 중...",

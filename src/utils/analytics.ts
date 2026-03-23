@@ -5,7 +5,7 @@ import { sendGAEvent } from '@next/third-parties/google';
  * @param eventName 이벤트 이름
  * @param params 이벤트 파라미터
  */
-export function trackEvent(eventName: string, params?: Record<string, string | number>) {
+function trackEvent(eventName: string, params?: Record<string, string | number>) {
   if (params) {
     sendGAEvent('event', eventName, params);
   } else {
