@@ -2,7 +2,7 @@
 let studentSearchMapCache: Record<string, { nameJa: string; nameKo: string; searchKeywords: string[] | null }> | null = null
 
 // CDN URL 헬퍼 함수
-export function getCdnUrl(path: string): string {
+function getCdnUrl(path: string): string {
   return `${process.env.NEXT_PUBLIC_CDN_URL || ""}${path}`;
 }
 
