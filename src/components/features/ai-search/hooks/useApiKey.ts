@@ -1,24 +1,31 @@
 import { useState, useEffect, useRef } from "react";
 
-const API_KEY_TTL_MS = 30 * 60 * 1000; // 30분
-
-// 레거시 스토리지 키 (보안 이슈로 제거됨 - 평문 저장 문제)
-const LEGACY_STORAGE_KEYS = [
-  "batorment_gemini_api_key",
-  "batorment_gemini_api_key_expiry",
-];
+const API_KEY_TTL_MS = 10 * 60 * 1000; // 10분 (활동 시 갱신)
+const STORAGE_KEY = "batorment_gemini_api_key";
+const STORAGE_EXPIRY_KEY = "batorment_gemini_api_key_expiry";
 
 export function useApiKey() {
   const [apiKey, setApiKey] = useState<string | null>(null);
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const expiryTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // 마운트 시 레거시 스토리지 데이터 정리 & 언마운트 시 타이머 정리
+  // 마운트 시 sessionStorage에서 복원
   useEffect(() => {
-    // 기존 sessionStorage에 저장된 민감 데이터 삭제
-    LEGACY_STORAGE_KEYS.forEach((key) => {
-      sessionStorage.removeItem(key);
-    });
+    const stored = sessionStorage.getItem(STORAGE_KEY);
+    const expiry = sessionStorage.getItem(STORAGE_EXPIRY_KEY);
+
+    if (stored && expiry) {
+      const remaining = Number(expiry) - Date.now();
+      if (remaining > 0) {
+        setApiKey(stored);
+        expiryTimerRef.current = setTimeout(() => {
+          clearStorage();
+          setApiKey(null);
+        }, remaining);
+      } else {
+        clearStorage();
+      }
+    }
 
     return () => {
       if (expiryTimerRef.current) {
@@ -27,19 +34,29 @@ export function useApiKey() {
     };
   }, []);
 
-  // API 키 저장 핸들러 (30분 후 만료, 메모리에만 저장)
+  const clearStorage = () => {
+    sessionStorage.removeItem(STORAGE_KEY);
+    sessionStorage.removeItem(STORAGE_EXPIRY_KEY);
+  };
+
   const saveApiKey = (key: string) => {
-    // 기존 타이머 정리
     if (expiryTimerRef.current) {
       clearTimeout(expiryTimerRef.current);
     }
 
     setApiKey(key);
+    sessionStorage.setItem(STORAGE_KEY, key);
+    sessionStorage.setItem(STORAGE_EXPIRY_KEY, String(Date.now() + API_KEY_TTL_MS));
 
-    // 30분 후 자동 만료
     expiryTimerRef.current = setTimeout(() => {
+      clearStorage();
       setApiKey(null);
     }, API_KEY_TTL_MS);
+  };
+
+  const refreshApiKey = () => {
+    if (!apiKey) return;
+    saveApiKey(apiKey);
   };
 
   const openApiKeyModal = () => setShowApiKeyModal(true);
@@ -49,6 +66,7 @@ export function useApiKey() {
     apiKey,
     showApiKeyModal,
     saveApiKey,
+    refreshApiKey,
     openApiKeyModal,
     closeApiKeyModal,
     setShowApiKeyModal,
