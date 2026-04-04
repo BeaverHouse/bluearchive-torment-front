@@ -63,7 +63,7 @@ export function SkillOrderTable({
                   skill.type === "striker" ? skill.order - 1 : skill.order - 1 + 4;
                 const charValue = party[characterIndex];
                 if (charValue && charValue > 0) {
-                  const { code } = parseCharacterInfo(charValue);
+                  const { code } = parseCharacterInfo(charValue)!;
                   characterCode = code;
                   characterName = getCharacterName(characterCode, studentsMap);
                 }

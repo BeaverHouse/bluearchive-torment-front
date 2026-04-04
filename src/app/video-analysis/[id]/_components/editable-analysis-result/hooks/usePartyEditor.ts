@@ -14,11 +14,6 @@ export function usePartyEditor({
   setAnalysisResult,
   studentsMap,
 }: UsePartyEditorProps) {
-  const parseCharacterInfoSafe = (charValue: number) => {
-    if (charValue === 0) return null;
-    return parseCharacterInfo(charValue);
-  };
-
   const getCharacterOptions = useCallback(
     (slotIndex?: number): CharacterOption[] => {
       return Object.entries(studentsMap)
@@ -86,13 +81,13 @@ export function usePartyEditor({
 
         if (currentChar === 0) return prev;
 
-        const info = parseCharacterInfoSafe(currentChar);
+        const info = parseCharacterInfo(currentChar);
         if (!info) return prev;
 
         if (field === "assist" && value === 1) {
           for (let i = 0; i < newParty.length; i++) {
             if (i !== characterIndex && newParty[i] !== 0) {
-              const otherCharInfo = parseCharacterInfoSafe(newParty[i]);
+              const otherCharInfo = parseCharacterInfo(newParty[i]);
               if (otherCharInfo && otherCharInfo.assist === 1) {
                 const updatedOtherChar =
                   otherCharInfo.code * 1000 +
@@ -173,6 +168,6 @@ export function usePartyEditor({
     addParty,
     removeParty,
     getPartyCharacters,
-    parseCharacterInfoSafe,
+    parseCharacterInfo,
   };
 }

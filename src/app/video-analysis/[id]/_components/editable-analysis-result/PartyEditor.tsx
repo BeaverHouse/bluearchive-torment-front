@@ -34,11 +34,6 @@ export function PartyEditor({
   onRemoveParty,
   studentSearchMap,
 }: PartyEditorProps) {
-  const parseCharacterInfoSafe = (charValue: number) => {
-    if (charValue === 0) return null;
-    return parseCharacterInfo(charValue);
-  };
-
   return (
     <Card>
       <CardHeader>
@@ -75,7 +70,7 @@ export function PartyEditor({
 
                 <div className="grid grid-cols-6 gap-3">
                   {party.map((charValue, charIndex) => {
-                    const charInfo = parseCharacterInfoSafe(charValue);
+                    const charInfo = parseCharacterInfo(charValue);
 
                     return (
                       <div

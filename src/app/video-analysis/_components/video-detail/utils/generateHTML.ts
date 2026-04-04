@@ -39,7 +39,7 @@ export function generateHTML(
         return;
       }
 
-      const { code, star, weapon, assist } = parseCharacterInfo(char);
+      const { code, star, weapon, assist } = parseCharacterInfo(char)!;
       const name = getCharacterName(code, studentsMap);
 
       let starWeaponText = "";
@@ -90,7 +90,7 @@ export function generateHTML(
           skill.type === "striker" ? skill.order - 1 : skill.order - 1 + 4;
         const charValue = party[characterIndex];
         if (charValue && charValue > 0) {
-          const { code } = parseCharacterInfo(charValue);
+          const { code } = parseCharacterInfo(charValue)!;
           characterName = getCharacterName(code, studentsMap);
         }
       }

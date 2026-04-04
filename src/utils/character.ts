@@ -13,7 +13,8 @@ export interface CharacterInfo {
  * @param charValue 8자리 캐릭터 값 (예: 10003021)
  * @returns 캐릭터 정보 객체
  */
-export function parseCharacterInfo(charValue: number): CharacterInfo {
+export function parseCharacterInfo(charValue: number): CharacterInfo | null {
+  if (charValue === 0) return null;
   return {
     code: Math.floor(charValue / 1000),
     star: Math.floor((charValue % 1000) / 100),

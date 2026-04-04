@@ -20,10 +20,7 @@ const markdownComponents: Components = {
   ),
 };
 
-interface ChatMessage {
-  role: "user" | "assistant";
-  content: string;
-}
+import type { ChatMessage } from "@/types/ai-search";
 
 interface ChatMessagesProps {
   messages: ChatMessage[];

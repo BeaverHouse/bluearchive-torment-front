@@ -1,12 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { aiSearchService } from "@/lib/ai-search-service";
-import type { Message, StreamMessage } from "@/types/ai-search";
+import type { ChatMessage, Message, StreamMessage } from "@/types/ai-search";
 import { getStatusMessage, getToolResultMessage, AI_SEARCH_FALLBACK_MESSAGE } from "@/constants/ai-search";
-
-interface ChatMessage {
-  role: "user" | "assistant";
-  content: string;
-}
 
 interface UseChatProps {
   apiKey: string | null;
