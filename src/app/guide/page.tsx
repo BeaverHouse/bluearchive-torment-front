@@ -73,6 +73,16 @@ const VIDEO_TABLE: {
     insane: null,
     notes: ["단일 힐러와 방어력 감소가 효과적이에요"],
   },
+  {
+    boss: "고즈",
+    extreme: [
+      "https://bluearchive-torment.netlify.app/video-analysis/v5wabaK6VDk?raid_id=S87-0",
+    ],
+    insane: [
+      "https://bluearchive-torment.netlify.app/video-analysis/yhYZ9NKm2hI?raid_id=S87-0"
+    ],
+    notes: ["배포캐 전3 운스미와 수즈코를 활용하세요", "패턴 숙지가 어느 정도 필요해요"],
+  },
   { boss: "헤세드", extreme: null, insane: null },
   { boss: "시로쿠로", extreme: null, insane: null },
 ];
