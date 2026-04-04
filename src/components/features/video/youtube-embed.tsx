@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useImperativeHandle, forwardRef } from "react"
+import { useState, useEffect, useRef, useImperativeHandle, forwardRef } from "react"
 
 // YouTube IFrame API 타입 정의
 interface YouTubeAPI {
@@ -27,6 +27,54 @@ export interface YouTubePlayerRef {
   playVideo: () => void
   pauseVideo: () => void
   getPlayerState: () => number | null
+}
+
+const THUMBNAIL_QUALITIES = ['maxresdefault', 'sddefault', 'hqdefault'] as const
+
+function LiteYouTubeEmbed({ videoId, title }: { videoId: string; title: string }) {
+  const [activated, setActivated] = useState(false)
+  const [qualityIndex, setQualityIndex] = useState(0)
+
+  const thumbUrl = `https://img.youtube.com/vi/${videoId}/${THUMBNAIL_QUALITIES[qualityIndex]}.jpg`
+
+  if (activated) {
+    return (
+      <div className="relative w-full aspect-video rounded-lg overflow-hidden">
+        <iframe
+          src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+          title={title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          className="absolute inset-0 w-full h-full"
+        />
+      </div>
+    )
+  }
+
+  return (
+    <div
+      className="relative w-full aspect-video rounded-lg overflow-hidden cursor-pointer group bg-black"
+      onClick={() => setActivated(true)}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={thumbUrl}
+        alt={title}
+        className="absolute inset-0 w-full h-full object-cover"
+        onError={() => {
+          if (qualityIndex < THUMBNAIL_QUALITIES.length - 1) {
+            setQualityIndex(qualityIndex + 1)
+          }
+        }}
+      />
+      <div className="absolute inset-0 flex items-center justify-center">
+        <svg className="w-16 h-16 sm:w-20 sm:h-20 opacity-80 group-hover:opacity-100 transition-opacity" viewBox="0 0 68 48">
+          <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="red"/>
+          <path d="M45 24 27 14v20" fill="white"/>
+        </svg>
+      </div>
+    </div>
+  )
 }
 
 export const YouTubeEmbed = forwardRef<YouTubePlayerRef, YouTubeEmbedProps>(
@@ -164,19 +212,9 @@ export const YouTubeEmbed = forwardRef<YouTubePlayerRef, YouTubeEmbedProps>(
     }
   }, [videoId, onPlayStateChange])
 
-  // onPlayStateChange가 없으면 기본 iframe 사용
+  // onPlayStateChange가 없으면 lite embed 사용 (고해상도 썸네일 + 클릭 시 iframe 로드)
   if (!onPlayStateChange) {
-    return (
-      <div className="relative w-full aspect-video rounded-lg overflow-hidden">
-        <iframe
-          src={`https://www.youtube.com/embed/${videoId}`}
-          title={title}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          className="absolute inset-0 w-full h-full"
-        />
-      </div>
-    )
+    return <LiteYouTubeEmbed videoId={videoId} title={title} />
   }
 
     return (
