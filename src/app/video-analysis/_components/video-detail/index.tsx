@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ArrowLeft, Edit3, Copy, Check } from "lucide-react";
+import Swal from "sweetalert2";
 import { YouTubeEmbed } from "@/components/features/video/youtube-embed";
 import { VideoAnalysisData } from "@/types/video";
 import Link from "next/link";
@@ -35,6 +36,16 @@ export function VideoDetail({
   });
 
   const handleStartEdit = () => {
+    if (window.innerWidth < 1024) {
+      Swal.fire({
+        icon: "warning",
+        title: "PC에서만 편집 가능",
+        text: "파티 구성 편집 화면은 넓은 화면이 필요해요.",
+        confirmButtonText: "확인",
+      });
+      return;
+    }
+
     if (!raidId) {
       window.location.href = "/video-analysis";
       return;

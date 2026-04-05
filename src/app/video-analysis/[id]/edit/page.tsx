@@ -90,7 +90,7 @@ export default function VideoEditPage() {
         </Button>
       </div>
 
-      {/* 좌측: 영상 플레이어 (fixed) */}
+      {/* 영상 플레이어 (fixed) */}
       <div className="hidden lg:flex lg:items-center fixed top-[4.5rem] bottom-0 left-4 w-[38%] z-10">
         <div className="w-full rounded-lg overflow-hidden bg-black shadow-lg">
           <YouTubeEmbed
@@ -101,17 +101,7 @@ export default function VideoEditPage() {
         </div>
       </div>
 
-      {/* 모바일: 영상 인라인 */}
-      <div className="lg:hidden mb-4">
-        <div className="rounded-lg overflow-hidden bg-black shadow-lg">
-          <YouTubeEmbed
-            videoId={videoId}
-            title={`Video ${videoId}`}
-          />
-        </div>
-      </div>
-
-      {/* 우측: 편집 영역 */}
+      {/* 편집 영역 */}
       <div className="lg:ml-[40%] space-y-6">
         <EditableAnalysisResult
           videoData={currentVideo}
