@@ -85,18 +85,18 @@ export function usePartyEditor({
         if (!info) return prev;
 
         if (field === "assist" && value === 1) {
-          for (let i = 0; i < newParty.length; i++) {
-            if (i !== characterIndex && newParty[i] !== 0) {
-              const otherCharInfo = parseCharacterInfo(newParty[i]);
-              if (otherCharInfo && otherCharInfo.assist === 1) {
-                const updatedOtherChar =
-                  otherCharInfo.code * 1000 +
-                  otherCharInfo.star * 100 +
-                  otherCharInfo.weapon * 10 +
-                  0;
-                newParty[i] = updatedOtherChar;
+          for (let pi = 0; pi < newPartyData.length; pi++) {
+            const party = pi === partyIndex ? newParty : [...newPartyData[pi]];
+            for (let ci = 0; ci < party.length; ci++) {
+              if (pi === partyIndex && ci === characterIndex) continue;
+              if (party[ci] === 0) continue;
+              const otherInfo = parseCharacterInfo(party[ci]);
+              if (otherInfo && otherInfo.assist === 1) {
+                party[ci] =
+                  otherInfo.code * 1000 + otherInfo.star * 100 + otherInfo.weapon * 10 + 0;
               }
             }
+            if (pi !== partyIndex) newPartyData[pi] = party;
           }
         }
 
@@ -137,6 +137,31 @@ export function usePartyEditor({
     [analysisResult.partyData.length, setAnalysisResult]
   );
 
+  const reorderParty = useCallback(
+    (oldIndex: number, newIndex: number) => {
+      setAnalysisResult((prev) => {
+        const newPartyData = [...prev.partyData];
+        const [moved] = newPartyData.splice(oldIndex, 1);
+        newPartyData.splice(newIndex, 0, moved);
+        return { ...prev, partyData: newPartyData };
+      });
+    },
+    [setAnalysisResult]
+  );
+
+  const swapCharacter = useCallback(
+    (partyIndex: number, oldSlot: number, newSlot: number) => {
+      setAnalysisResult((prev) => {
+        const newPartyData = [...prev.partyData];
+        const newParty = [...newPartyData[partyIndex]];
+        [newParty[oldSlot], newParty[newSlot]] = [newParty[newSlot], newParty[oldSlot]];
+        newPartyData[partyIndex] = newParty;
+        return { ...prev, partyData: newPartyData };
+      });
+    },
+    [setAnalysisResult]
+  );
+
   const getPartyCharacters = useCallback(
     (partyIndex: number): (PartyCharacter | null)[] => {
       if (!analysisResult.partyData[partyIndex]) return [];
@@ -167,6 +192,8 @@ export function usePartyEditor({
     updateCharacterDetails,
     addParty,
     removeParty,
+    reorderParty,
+    swapCharacter,
     getPartyCharacters,
     parseCharacterInfo,
   };

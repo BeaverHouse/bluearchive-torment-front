@@ -183,11 +183,10 @@ export const YouTubeEmbed = forwardRef<YouTubePlayerRef, YouTubeEmbedProps>(
         playerVars: {
           enablejsapi: 1,
           origin: window.location.origin,
-          // 자동재생 정책 관련 설정
           autoplay: 0,
-          // 사용자 상호작용 허용
           controls: 1,
-          rel: 0
+          rel: 0,
+          vq: 'hd1080'
         },
         events: {
           onReady: (event: unknown) => {

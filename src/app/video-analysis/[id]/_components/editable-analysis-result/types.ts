@@ -46,6 +46,8 @@ export interface PartyEditorProps {
   ) => void;
   onAddParty: () => void;
   onRemoveParty: (partyIndex: number) => void;
+  onReorderParty: (oldIndex: number, newIndex: number) => void;
+  onSwapCharacter: (partyIndex: number, oldSlot: number, newSlot: number) => void;
   studentsMap: Record<string, string>;
   studentSearchMap: Record<string, string[]>;
 }
