@@ -32,6 +32,8 @@ export function EditableAnalysisResult({
     updateCharacterDetails,
     addParty,
     removeParty,
+    reorderParty,
+    swapCharacter,
     getPartyCharacters,
   } = usePartyEditor({
     analysisResult,
@@ -99,6 +101,8 @@ export function EditableAnalysisResult({
         onUpdateCharacterDetails={updateCharacterDetails}
         onAddParty={addParty}
         onRemoveParty={removeParty}
+        onReorderParty={reorderParty}
+        onSwapCharacter={swapCharacter}
         studentSearchMap={studentSearchMap}
       />
 

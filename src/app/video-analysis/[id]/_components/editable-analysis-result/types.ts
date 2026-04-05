@@ -1,4 +1,5 @@
 import { AnalysisResult, VideoAnalysisData, SkillOrder } from "@/types/video";
+import { StudentSearchData } from "@/utils/search";
 
 export interface EditableAnalysisResultProps {
   videoData: VideoAnalysisData;
@@ -46,8 +47,9 @@ export interface PartyEditorProps {
   ) => void;
   onAddParty: () => void;
   onRemoveParty: (partyIndex: number) => void;
-  studentsMap: Record<string, string>;
-  studentSearchMap: Record<string, string[]>;
+  onReorderParty: (oldIndex: number, newIndex: number) => void;
+  onSwapCharacter: (partyIndex: number, oldSlot: number, newSlot: number) => void;
+  studentSearchMap: StudentSearchData;
 }
 
 export interface SkillOrderListProps {
