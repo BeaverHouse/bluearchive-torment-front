@@ -132,8 +132,9 @@ export function VideoAnalysisContent({
                 rel="noopener noreferrer"
                 title="YouTube에서 검색"
               >
-                <Button variant="outline" size="icon">
+                <Button size="sm" className="gap-1.5 h-9 bg-red-500 hover:bg-red-600">
                   <Youtube className="h-4 w-4" />
+                  <span className="text-xs">YouTube</span>
                 </Button>
               </a>
             );
