@@ -9,16 +9,30 @@ class APIError extends Error {
   }
 }
 
-async function fetchAPI<T>(endpoint: string): Promise<T> {
+interface FetchAPIOptions {
+  method?: string
+  body?: unknown
+  rawResponse?: boolean
+}
+
+async function fetchAPI<T>(endpoint: string, options?: FetchAPIOptions): Promise<T> {
   const url = `${BASE_URL}${endpoint}`
+  const { method = 'GET', body, rawResponse } = options || {}
 
   try {
+    const headers: Record<string, string> = {
+      'Accept': 'application/json',
+      'X-Access-Token': process.env.NEXT_PUBLIC_SERVICE_TOKEN || '',
+    }
+    if (body) headers['Content-Type'] = 'application/json'
+
     const response = await fetch(url, {
-      headers: {
-        'Accept': 'application/json',
-        'X-Access-Token': process.env.NEXT_PUBLIC_SERVICE_TOKEN || '',
-      },
+      method,
+      headers,
+      body: body ? JSON.stringify(body) : undefined,
     })
+
+    if (rawResponse) return response as unknown as T
 
     if (!response.ok) {
       throw new APIError(`API 요청 실패: ${response.status} ${response.statusText}`, response.status)
@@ -53,30 +67,10 @@ export async function getVideoDetail(videoId: string, raidId?: string): Promise<
 }
 
 export async function updateVideoAnalysis(videoId: string, analysisResult: AnalysisResult, raidId?: string): Promise<VideoDetailResponse> {
-  const url = `${BASE_URL}/video/analysis/${videoId}`
-
-  try {
-    const response = await fetch(url, {
-      method: 'PUT',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-Access-Token': process.env.NEXT_PUBLIC_SERVICE_TOKEN || '',
-      },
-      body: JSON.stringify({ analysis_result: analysisResult, raid_id: raidId }),
-    })
-
-    if (!response.ok) {
-      throw new APIError(`API 요청 실패: ${response.status} ${response.statusText}`, response.status)
-    }
-
-    return response.json()
-  } catch (error) {
-    if (error instanceof APIError) {
-      throw error
-    }
-    throw new APIError(`API 연결 실패: ${error instanceof Error ? error.message : 'Unknown error'}`)
-  }
+  return fetchAPI<VideoDetailResponse>(`/video/analysis/${videoId}`, {
+    method: 'PUT',
+    body: { analysis_result: analysisResult, raid_id: raidId },
+  })
 }
 
 // Result type for addVideoToQueue
@@ -89,48 +83,31 @@ interface AddVideoToQueueResult {
 }
 
 export async function addVideoToQueue(raidId: string, youtubeUrl: string): Promise<AddVideoToQueueResult> {
-  const url = `${BASE_URL}/video/analysis/queue`
+  const response = await fetchAPI<Response>('/video/analysis/queue', {
+    method: 'POST',
+    body: { raid_id: raidId, youtube_url: youtubeUrl },
+    rawResponse: true,
+  })
 
-  try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-Access-Token': process.env.NEXT_PUBLIC_SERVICE_TOKEN || '',
-      },
-      body: JSON.stringify({
-        raid_id: raidId,
-        youtube_url: youtubeUrl
-      }),
-    })
-
-    if (response.status === 409) {
-      // Video already processed - extract existing video info
-      const data = await response.json()
-      if (data.data?.video_id && data.data?.raid_id) {
-        return {
-          success: false,
-          existingVideo: {
-            videoId: data.data.video_id,
-            raidId: data.data.raid_id
-          }
-        }
+  if (response.status === 409) {
+    const data = await response.json()
+    if (data.data?.video_id && data.data?.raid_id) {
+      return {
+        success: false,
+        existingVideo: {
+          videoId: data.data.video_id,
+          raidId: data.data.raid_id,
+        },
       }
-      throw new APIError('영상이 이미 처리되었습니다.', 409)
     }
-
-    if (!response.ok) {
-      throw new APIError(`API 요청 실패: ${response.status} ${response.statusText}`, response.status)
-    }
-
-    return { success: true }
-  } catch (error) {
-    if (error instanceof APIError) {
-      throw error
-    }
-    throw new APIError(`API 연결 실패: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    throw new APIError('영상이 이미 처리되었습니다.', 409)
   }
+
+  if (!response.ok) {
+    throw new APIError(`API 요청 실패: ${response.status} ${response.statusText}`, response.status)
+  }
+
+  return { success: true }
 }
 
 export interface QueueItem {

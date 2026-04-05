@@ -43,7 +43,7 @@ export function useVideoAnalysis({ studentsMap, initialRaid }: UseVideoAnalysisP
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedRaid, setSelectedRaid] = useState<string>(initialRaid);
-  const [isFilterMode, setIsFilterMode] = useState(initialRaid !== "all");
+  const isFilterMode = selectedRaid !== "all";
   const [pagination, setPagination] = useState<PaginationState>(DEFAULT_PAGINATION);
   const [pageSize, setPageSize] = useState(15);
   const [currentPage, setCurrentPage] = useState(1);
@@ -123,7 +123,6 @@ export function useVideoAnalysis({ studentsMap, initialRaid }: UseVideoAnalysisP
   const handleRaidChange = useCallback(
     (value: string) => {
       setSelectedRaid(value);
-      setIsFilterMode(value !== "all");
       setPagination((prev) => ({ ...prev, page: 1 }));
       setCurrentPage(1);
       resetFilters({

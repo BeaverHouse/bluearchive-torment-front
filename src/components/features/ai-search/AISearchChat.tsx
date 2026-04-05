@@ -25,6 +25,7 @@ export function AISearchChat() {
     apiKey,
     showApiKeyModal,
     saveApiKey,
+    refreshApiKey,
     openApiKeyModal,
     setShowApiKeyModal,
   } = useApiKey();
@@ -70,6 +71,11 @@ export function AISearchChat() {
   useEffect(() => {
     scrollToBottom();
   }, [messages, currentAnswer, scrollToBottom]);
+
+  const handleSendMessage = useCallback((e?: React.FormEvent) => {
+    refreshApiKey();
+    sendMessage(e);
+  }, [refreshApiKey, sendMessage]);
 
   const isEmpty = messages.length === 0 && !currentAnswer && !isLoading;
 
@@ -133,7 +139,7 @@ export function AISearchChat() {
       <ChatInput
         input={input}
         onInputChange={setInput}
-        onSubmit={sendMessage}
+        onSubmit={handleSendMessage}
         onStop={stopGeneration}
         isLoading={isLoading}
         disabled={!apiKey}

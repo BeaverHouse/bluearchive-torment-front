@@ -105,6 +105,12 @@ export interface AISearchRequest {
   extract_actions?: boolean;
 }
 
+// 채팅 UI용 메시지 (user/assistant만 사용)
+export interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
 // 채팅 상태
 export interface ChatState {
   isLoading: boolean;

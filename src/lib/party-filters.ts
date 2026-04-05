@@ -76,7 +76,9 @@ const isAssistMatch = (assist: number[], partyAssist: number | null): boolean =>
 };
 
 const isInFilter = (arr: number[], num: number) => {
-  const { code: charId, star, weapon } = parseCharacterInfo(num);
+  const info = parseCharacterInfo(num);
+  if (!info) return false;
+  const { code: charId, star, weapon } = info;
 
   if (arr.length === 2) {
     // 부모-자식 선택: [charId, gradeKey]

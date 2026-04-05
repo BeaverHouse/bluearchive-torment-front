@@ -22,6 +22,7 @@ interface VideoListProps {
 
 // YouTube 썸네일 품질 fallback
 const YOUTUBE_THUMBNAIL_QUALITIES = [
+  'maxresdefault', // 1280x720 - 일부 영상에 없을 수 있음
   'sddefault',     // 640x480 - 대부분 존재
   'hqdefault',     // 480x360 - 거의 항상 존재
 ] as const;
@@ -55,6 +56,7 @@ function YouTubeThumbnail({ videoId, title }: { videoId: string; title: string }
       src={`https://img.youtube.com/vi/${videoId}/${currentQuality}.jpg`}
       alt={title}
       fill
+      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
       className="object-cover"
       onError={handleError}
     />

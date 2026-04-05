@@ -56,7 +56,7 @@ export function ApiKeyModal({
           <DialogDescription>
             아로나와 대화하려면 Google Gemini API 키가 필요해요.
             <br />
-            API 키는 서버에 저장되지 않고, 30분간만 유지돼요.
+            API 키는 서버에 저장되지 않고, 10분간 유지돼요. (대화하면 자동 연장)
           </DialogDescription>
         </DialogHeader>
 
