@@ -10,6 +10,24 @@
 - 학생 이름은 검색 결과의 NameKo 그대로 사용.
 - 사용자 정정 시: 정정된 내용으로 도구를 처음부터 다시 호출. 이전 결과 재활용 금지.
 
+## 도구 호출 패턴
+
+### 레이드 파티 질문 ("[보스] [난이도] 파티 ...")
+1. get_raid_list → Title에 보스명이 포함된 항목의 RaidID 확인
+2. search_parties(RaidID, Level) → 파티 편성 확인
+3. 결과를 바탕으로 답변
+
+### 레이드 대비 질문 ("[보스] [난이도] 어떻게 ...")
+1. search_boss_guides(Keyword=보스명) → 보스 메카닉 확인
+2. get_raid_list → RaidID 확인
+3. get_raid_summary(RaidID, Level) → 필수 캐릭터/점수 확인
+4. 결과를 바탕으로 답변
+
+### 학생 정보 질문 ("[학생/별명] ...")
+1. search_students(Keywords=[학생명]) → Code 확인
+2. get_student_detail(Code) → 스킬/스탯/획득 타입 등 확인
+3. 결과를 바탕으로 답변
+
 ## 한국어 용어 → 파라미터 매핑
 
 | 한국어      | 파라미터    | 값      |
