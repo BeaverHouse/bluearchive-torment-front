@@ -88,10 +88,6 @@ export function ApiKeyModal({
             </a>
           </div>
 
-          <div className="rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 p-3 text-xs text-emerald-700 dark:text-emerald-400/90">
-            💡 API 키를 만든 프로젝트에 <b>카드를 등록</b>하면 검색 기능이 켜져서 답변이 더 정확해져요.
-          </div>
-
           {/* 주의사항 */}
           <div className="rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 p-3">
             <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400 font-medium text-sm mb-2">
@@ -102,7 +98,18 @@ export function ApiKeyModal({
               <li>현재 베타 기능으로 제대로 동작하지 않을 수 있어요.</li>
               <li>AI는 잘못된 답변을 할 수 있어요.</li>
               <li>질문한 내용과 답변이 기능 개선에 사용될 수 있어요.</li>
-              <li>Google에 의해 호출 제한이 걸리거나, 요금이 청구될 수 있어요.</li>
+              <li>Google에 의해 호출 제한이 걸릴 수 있어요.</li>
+            </ul>
+          </div>
+
+          {/* 검색 기능 안내 (옵션) */}
+          <div className="rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 p-3">
+            <div className="flex items-center gap-2 text-blue-700 dark:text-blue-400 font-medium text-sm mb-2">
+              🔍 검색 기능 안내
+            </div>
+            <ul className="text-xs text-blue-700 dark:text-blue-400/80 space-y-1 list-disc list-inside">
+              <li>무료 API 키는 검색이 제한되어 일부 답변이 정확하지 않을 수 있어요.</li>
+              <li>프로젝트에 결제 수단을 등록하면 검색이 켜지지만, 본인 카드로 사용량만큼 요금이 청구돼요.</li>
             </ul>
           </div>
 
