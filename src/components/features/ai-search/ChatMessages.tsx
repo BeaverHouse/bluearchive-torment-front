@@ -8,6 +8,7 @@ import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import { LinkCard } from "@/components/common/inline/link-card";
 import { CopyTextCard } from "@/components/common/inline/copy-text-card";
+import { CopyAnswerButton } from "@/components/common/copy-answer-button";
 import { resolveItemCard } from "@/components/features/ai-search/item-cards/registry";
 import type { ChatMessage, ItemCardData } from "@/types/ai-search";
 
@@ -144,7 +145,14 @@ export function ChatMessages({
             }`}
           >
             {msg.role === "assistant" ? (
-              renderAssistant(msg.content, msg.itemResults)
+              <>
+                {renderAssistant(msg.content, msg.itemResults)}
+                {msg.content && (
+                  <div className="flex items-center gap-1 mt-2">
+                    <CopyAnswerButton text={msg.content} />
+                  </div>
+                )}
+              </>
             ) : (
               <p className="whitespace-pre-wrap">{msg.content}</p>
             )}
