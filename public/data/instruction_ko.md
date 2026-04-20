@@ -16,6 +16,7 @@
 1. get_raid_list → Title에 보스명이 포함된 항목의 RaidID 확인
 2. search_parties(RaidID, Level) → 파티 편성 확인
 3. 결과를 바탕으로 답변
+4. 각 파티는 <item-ref id="..."/> 카드로 렌더되어 점수·랭크·편성이 이미 표시된다. 본문 prose에서 점수(Score)나 순위(Rank)를 숫자로 반복 서술하지 말 것. 대신 "상위 3개 파티" 처럼 개수로 지칭하거나 특징(핵심 캐릭터, 구성 차이)만 설명할 것.
 
 ### 레이드 대비 질문 ("[보스] [난이도] 어떻게 ...")
 1. search_boss_guides(Keyword=보스명) → 보스 메카닉 확인

@@ -1,6 +1,11 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { aiSearchService } from "@/lib/ai-search-service";
-import type { ChatMessage, Message, StreamMessage } from "@/types/ai-search";
+import type {
+  ChatMessage,
+  ItemCardData,
+  Message,
+  StreamMessage,
+} from "@/types/ai-search";
 import { getStatusMessage, getToolResultMessage, AI_SEARCH_FALLBACK_MESSAGE } from "@/constants/ai-search";
 
 interface UseChatProps {
@@ -15,9 +20,9 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, onApiKeyRequ
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [currentAnswer, setCurrentAnswer] = useState("");
+  const [currentItemResults, setCurrentItemResults] = useState<Record<string, ItemCardData>>({});
   const [currentStatus, setCurrentStatus] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [actions, setActions] = useState<Array<{ action: string; payload: Record<string, unknown> }>>([]);
 
   const abortControllerRef = useRef<AbortController | null>(null);
   const wasLoadingRef = useRef(false);
@@ -32,23 +37,23 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, onApiKeyRequ
         setCurrentStatus(displayMessage);
         break;
       }
-      case "mcp_result": {
-        const toolName = message.metadata?.tool;
-        setCurrentStatus(getToolResultMessage(toolName));
+      case "item_result": {
+        const { id, tool, item } = message.metadata ?? {};
+        // <item-ref .../> 태그는 LLM Client의 answer 청크에 이미 인라인으로 들어 있다.
+        // 여기서는 카드 원본 페이로드만 맵에 저장하고, answer 문자열은 건드리지 않는다.
+        if (id) {
+          setCurrentItemResults((prev) => ({
+            ...prev,
+            [id]: { tool: tool ?? "", item },
+          }));
+        }
+        setCurrentStatus(getToolResultMessage(tool));
         break;
       }
       case "answer":
         setCurrentAnswer((prev) => prev + message.content);
         setCurrentStatus("");
         break;
-      case "action": {
-        const actionType = message.metadata?.action;
-        const payload = message.metadata?.payload;
-        if (actionType && payload) {
-          setActions((prev) => [...prev, { action: actionType, payload }]);
-        }
-        break;
-      }
       case "error":
         setError(message.content || message.title || "오류가 발생했습니다.");
         break;
@@ -70,8 +75,8 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, onApiKeyRequ
     setInput("");
     setError(null);
     setCurrentAnswer("");
+    setCurrentItemResults({});
     setCurrentStatus("");
-    setActions([]);
     setIsLoading(true);
 
     const newUserMessage: ChatMessage = { role: "user", content: question };
@@ -111,8 +116,16 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, onApiKeyRequ
   useEffect(() => {
     if (wasLoadingRef.current && !isLoading) {
       if (currentAnswer) {
-        setMessages((prev) => [...prev, { role: "assistant", content: currentAnswer }]);
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: currentAnswer,
+            itemResults: Object.keys(currentItemResults).length > 0 ? currentItemResults : undefined,
+          },
+        ]);
         setCurrentAnswer("");
+        setCurrentItemResults({});
       } else if (!error) {
         setMessages((prev) => [
           ...prev,
@@ -121,7 +134,7 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, onApiKeyRequ
       }
     }
     wasLoadingRef.current = isLoading;
-  }, [isLoading, currentAnswer, error]);
+  }, [isLoading, currentAnswer, currentItemResults, error]);
 
   // 요청 중단
   const stopGeneration = () => {
@@ -134,9 +147,9 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, onApiKeyRequ
   const clearChat = () => {
     setMessages([]);
     setCurrentAnswer("");
+    setCurrentItemResults({});
     setCurrentStatus("");
     setError(null);
-    setActions([]);
   };
 
   return {
@@ -145,10 +158,10 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, onApiKeyRequ
     setInput,
     isLoading,
     currentAnswer,
+    currentItemResults,
     currentStatus,
     error,
     sendMessage,
-    actions,
     stopGeneration,
     clearChat,
   };

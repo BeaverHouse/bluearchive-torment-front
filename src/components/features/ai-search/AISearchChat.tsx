@@ -36,9 +36,9 @@ export function AISearchChat() {
     setInput,
     isLoading,
     currentAnswer,
+    currentItemResults,
     currentStatus,
     error,
-    actions,
     sendMessage,
     stopGeneration,
     clearChat,
@@ -126,9 +126,9 @@ export function AISearchChat() {
               <ChatMessages
                 messages={messages}
                 currentAnswer={currentAnswer}
+                currentItemResults={currentItemResults}
                 currentStatus={currentStatus}
                 error={error}
-                actions={actions}
               />
             )}
           </div>
@@ -145,6 +145,19 @@ export function AISearchChat() {
         disabled={!apiKey}
         placeholder={apiKey ? "질문을 입력하세요..." : "API 키를 먼저 설정해주세요"}
       />
+
+      {/* Powered by */}
+      <div className="mt-2 text-center text-xs text-muted-foreground">
+        Powered by{" "}
+        <a
+          href="https://tinyclover.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline underline-offset-2 hover:text-foreground transition-colors"
+        >
+          🍀 Tiny Clover
+        </a>
+      </div>
 
       {/* API 키 모달 */}
       <ApiKeyModal

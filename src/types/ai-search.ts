@@ -10,7 +10,7 @@ export interface Message {
 }
 
 // SSE 스트림 메시지 타입
-export type StreamMessageType = "status" | "answer" | "mcp_result" | "error" | "action";
+export type StreamMessageType = "status" | "answer" | "item_result" | "error";
 
 // 기본 스트림 메시지
 interface BaseStreamMessage {
@@ -54,14 +54,21 @@ export interface AnswerMessage extends BaseStreamMessage {
   content: string;
 }
 
-// MCP 결과 메시지
-export interface MCPResultMessage extends BaseStreamMessage {
-  type: "mcp_result";
+// Item 결과 메시지 (개별 아이템 단위 카드)
+export interface ItemResultMessage extends BaseStreamMessage {
+  type: "item_result";
   content?: string;
   metadata?: {
+    id?: string;
     tool?: string;
-    result?: unknown;
+    item?: unknown;
   };
+}
+
+// Item 결과 카드 데이터 (답변 본문의 <item-ref id=".."/> 태그가 참조하는 원본)
+export interface ItemCardData {
+  tool: string;
+  item: unknown;
 }
 
 // 에러 메시지
@@ -75,24 +82,12 @@ export interface ErrorMessage extends BaseStreamMessage {
   };
 }
 
-// 액션 메시지 (백엔드 UIChunk 구조: action/payload는 metadata 안에 있음)
-export interface ActionMessage extends BaseStreamMessage {
-  type: "action";
-  content?: string;
-  metadata?: {
-    action?: string;
-    payload?: Record<string, unknown>;
-    require_confirmation?: boolean;
-  };
-}
-
 // 통합 스트림 메시지 타입
 export type StreamMessage =
   | StatusMessage
   | AnswerMessage
-  | MCPResultMessage
-  | ErrorMessage
-  | ActionMessage;
+  | ItemResultMessage
+  | ErrorMessage;
 
 // AI Search 요청 body
 export interface AISearchRequest {
@@ -102,13 +97,13 @@ export interface AISearchRequest {
   messages?: Message[];
   persona_prompt?: string;
   instruction_prompt?: string;
-  extract_actions?: boolean;
 }
 
 // 채팅 UI용 메시지 (user/assistant만 사용)
 export interface ChatMessage {
   role: "user" | "assistant";
   content: string;
+  itemResults?: Record<string, ItemCardData>;
 }
 
 // 채팅 상태
