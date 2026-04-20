@@ -29,6 +29,9 @@ interface PartyComposition {
   Strikers?: PartyMember[];
   Specials?: PartyMember[];
   Assist?: PartyMember | null;
+  // Raw 6-slot encoded array preserved from CDN (slots 0-3 strikers, 4-5 specials).
+  // Present on modern BE responses; falls back to reconstruction when missing.
+  Slots?: number[];
 }
 
 // Encoding mirrors ba-analyzer's parsePartyMember (raid/party_filter.go):
@@ -42,12 +45,34 @@ function encodeMember(m: PartyMember): number {
   );
 }
 
+// Rebuild a fixed 6-slot array: slots 0-3 are striker positions, 4-5 are special positions.
+// Prefers the server-provided raw Slots array (accurate slot positions). When absent
+// (legacy BE), falls back to a best-effort reconstruction — assist goes to the first
+// empty striker slot, which matches common torment parties.
 function flattenParty(p: PartyComposition): number[] {
-  const flat: number[] = [];
-  (p.Strikers ?? []).forEach((m) => flat.push(encodeMember(m)));
-  (p.Specials ?? []).forEach((m) => flat.push(encodeMember(m)));
-  if (p.Assist) flat.push(encodeMember(p.Assist));
-  return flat;
+  if (Array.isArray(p.Slots) && p.Slots.length === 6) {
+    return p.Slots.slice(0, 6);
+  }
+  const slots: number[] = [0, 0, 0, 0, 0, 0];
+  const strikers = p.Strikers ?? [];
+  for (let i = 0; i < Math.min(strikers.length, 4); i++) {
+    slots[i] = encodeMember(strikers[i]);
+  }
+  const specials = p.Specials ?? [];
+  for (let i = 0; i < Math.min(specials.length, 2); i++) {
+    slots[4 + i] = encodeMember(specials[i]);
+  }
+  if (p.Assist) {
+    const encoded = encodeMember(p.Assist);
+    const firstEmptyStriker = slots.findIndex((v, idx) => idx < 4 && v === 0);
+    if (firstEmptyStriker !== -1) {
+      slots[firstEmptyStriker] = encoded;
+    } else {
+      const firstEmptySpecial = slots.findIndex((v, idx) => idx >= 4 && v === 0);
+      if (firstEmptySpecial !== -1) slots[firstEmptySpecial] = encoded;
+    }
+  }
+  return slots;
 }
 
 function extractYoutubeId(url?: string): string | undefined {
