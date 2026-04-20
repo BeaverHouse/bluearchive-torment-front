@@ -36,9 +36,9 @@ export function AISearchChat() {
     setInput,
     isLoading,
     currentAnswer,
+    currentItemResults,
     currentStatus,
     error,
-    actions,
     sendMessage,
     stopGeneration,
     clearChat,
@@ -126,9 +126,9 @@ export function AISearchChat() {
               <ChatMessages
                 messages={messages}
                 currentAnswer={currentAnswer}
+                currentItemResults={currentItemResults}
                 currentStatus={currentStatus}
                 error={error}
-                actions={actions}
               />
             )}
           </div>
