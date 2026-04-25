@@ -47,9 +47,6 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
   const poolStudents = useStudentPoolStore((state) => state.pool.students);
   const poolEnabled = useStudentPoolStore((state) => state.filter.enabled);
   const poolPolicy = useStudentPoolStore((state) => state.filter.policy);
-  const poolAllowExternalAssist = useStudentPoolStore(
-    (state) => state.filter.allowExternalAssist
-  );
 
   const poolFilterContext: PoolFilterContext | undefined = useMemo(() => {
     if (!poolEnabled) return undefined;
@@ -57,9 +54,8 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
     return {
       pool: { students: poolStudents },
       policy: poolPolicy,
-      allowExternalAssist: poolAllowExternalAssist,
     };
-  }, [poolEnabled, poolStudents, poolPolicy, poolAllowExternalAssist]);
+  }, [poolEnabled, poolStudents, poolPolicy]);
 
   useEffect(() => {
     setPage(1);
@@ -79,6 +75,77 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
 
   const getPartyDataQuery = useQuery(createCDNQueryOptions<RaidData>("party", season));
   const getFilterDataQuery = useQuery(createCDNQueryOptions<FilterData>("filter", season));
+
+  // summary는 clearCount만, filters는 별도의 lunatic-filter 엔드포인트.
+  // 둘 다 throwOnError 없이 (시즌에 루나틱이 없을 수 있음).
+  const getSummaryDataQuery = useQuery({
+    queryKey: ["getSummaryData", season],
+    queryFn: async () => {
+      const url = `${process.env.NEXT_PUBLIC_CDN_URL}/batorment/v3/summary/${season}.json`;
+      const response = await fetch(url);
+      if (!response.ok) return null;
+      return response.json() as Promise<{
+        torment?: { clearCount?: number };
+        lunatic?: { clearCount?: number };
+      }>;
+    },
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
+  });
+
+  const getLunaticFilterDataQuery = useQuery({
+    queryKey: ["getLunaticFilterData", season],
+    queryFn: async () => {
+      const url = `${process.env.NEXT_PUBLIC_CDN_URL}/batorment/v3/lunatic-filter/${season}.json`;
+      const response = await fetch(url);
+      if (!response.ok) return null;
+      return response.json() as Promise<FilterData>;
+    },
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
+  });
+
+  // 현재 시즌의 전체(파티 데이터 기준) 사용률 ≥ 10% 학생 ID 집합 (조력자 제외, 사용자 단위 카운트)
+  const highUsageStudentIds = useMemo<ReadonlySet<number>>(() => {
+    const parties = getPartyDataQuery.data?.parties ?? [];
+    if (parties.length === 0) return new Set<number>();
+    const counts: Record<number, number> = {};
+    for (const party of parties) {
+      const codeSet = new Set<number>();
+      for (const num of party.partyData.flat()) {
+        if (num % 10 === 1) continue;
+        codeSet.add(Math.floor(num / 1000));
+      }
+      for (const code of codeSet) {
+        counts[code] = (counts[code] || 0) + 1;
+      }
+    }
+    const threshold = parties.length * 0.1;
+    const result = new Set<number>();
+    for (const [code, count] of Object.entries(counts)) {
+      if (count >= threshold) result.add(Number(code));
+    }
+    return result;
+  }, [getPartyDataQuery.data?.parties]);
+
+  // 루나틱 사용률 ≥ 10% 학생 ID 집합 (lunatic-filter + summary clearCount 기준, 조력자 제외)
+  const highUsageLunaticStudentIds = useMemo<ReadonlySet<number>>(() => {
+    const filters = getLunaticFilterDataQuery.data?.filters;
+    const clearCount = getSummaryDataQuery.data?.lunatic?.clearCount ?? 0;
+    if (!filters || clearCount === 0) return new Set<number>();
+    const result = new Set<number>();
+    for (const [code, gradeCounts] of Object.entries(filters)) {
+      const total = Object.values(gradeCounts as Record<string, number>).reduce(
+        (a, b) => a + b,
+        0
+      );
+      if (total / clearCount >= 0.1) result.add(Number(code));
+    }
+    return result;
+  }, [
+    getLunaticFilterDataQuery.data?.filters,
+    getSummaryDataQuery.data?.lunatic,
+  ]);
 
 
   // data가 변경될 때마다 필터 값을 업데이트
@@ -263,7 +330,10 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
 
   return (
     <>
-      <PoolFilterToggle />
+      <PoolFilterToggle
+        highUsageStudentIds={highUsageStudentIds}
+        highUsageLunaticStudentIds={highUsageLunaticStudentIds}
+      />
       <PartyFilterSection
         filters={currentFilters}
         onFilterChange={handleFilterChange}

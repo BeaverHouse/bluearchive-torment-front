@@ -13,14 +13,14 @@ export function partyAgainstPool(
   partyStudents: number[],
   poolFilter: PoolFilterContext
 ): boolean {
-  const { pool, policy, allowExternalAssist } = poolFilter;
+  const { pool, policy } = poolFilter;
 
   for (const num of partyStudents) {
     const info = parseCharacterInfo(num);
     if (!info) continue;
 
-    const isAssist = info.assist === 1;
-    if (isAssist && allowExternalAssist) continue;
+    // 조력자는 항상 풀 외부 허용 (게임에서 친구의 캐릭터 사용)
+    if (info.assist === 1) continue;
 
     const poolGrade = pool.students[String(info.code)];
     if (poolGrade === undefined) return false;

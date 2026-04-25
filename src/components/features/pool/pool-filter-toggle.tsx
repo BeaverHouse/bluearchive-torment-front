@@ -1,12 +1,12 @@
 "use client";
 
-import React from "react";
-import Link from "next/link";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import useStudentPoolStore from "@/store/useStudentPoolStore";
 import type { StarMatchPolicy } from "@/types/pool";
+import PoolEditorDialog from "./pool-editor-dialog";
 
 const POLICY_OPTIONS: { value: StarMatchPolicy; label: string; hint: string }[] =
   [
@@ -27,17 +27,24 @@ const POLICY_OPTIONS: { value: StarMatchPolicy; label: string; hint: string }[] 
     },
   ];
 
-export default function PoolFilterToggle() {
+interface PoolFilterToggleProps {
+  highUsageStudentIds?: ReadonlySet<number>;
+  highUsageLunaticStudentIds?: ReadonlySet<number>;
+}
+
+export default function PoolFilterToggle({
+  highUsageStudentIds,
+  highUsageLunaticStudentIds,
+}: PoolFilterToggleProps) {
   const pool = useStudentPoolStore((state) => state.pool);
   const filter = useStudentPoolStore((state) => state.filter);
   const setEnabled = useStudentPoolStore((state) => state.setEnabled);
   const setPolicy = useStudentPoolStore((state) => state.setPolicy);
-  const setAllowExternalAssist = useStudentPoolStore(
-    (state) => state.setAllowExternalAssist
-  );
+
+  const [editorOpen, setEditorOpen] = useState(false);
 
   const ownedCount = Object.keys(pool.students).length;
-  const { enabled, policy, allowExternalAssist } = filter;
+  const { enabled, policy } = filter;
 
   return (
     <div className="mb-4 rounded-lg border border-primary/40 bg-primary/5 p-3">
@@ -54,8 +61,13 @@ export default function PoolFilterToggle() {
           </span>
           <Badge variant="secondary">{ownedCount}명</Badge>
         </label>
-        <Button asChild size="sm" variant="outline">
-          <Link href="/pool">풀 편집</Link>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          onClick={() => setEditorOpen(true)}
+        >
+          풀 편집
         </Button>
       </div>
 
@@ -86,20 +98,15 @@ export default function PoolFilterToggle() {
               ))}
             </div>
           </div>
-          <label className="flex items-center gap-2 cursor-pointer select-none">
-            <Checkbox
-              id="allowExternalAssist"
-              checked={allowExternalAssist}
-              onCheckedChange={(checked) =>
-                setAllowExternalAssist(!!checked)
-              }
-            />
-            <span className="text-xs">
-              조력자는 풀 밖에서도 허용 (게임에서 친구 캐릭터로 대체 가능)
-            </span>
-          </label>
         </div>
       )}
+
+      <PoolEditorDialog
+        open={editorOpen}
+        onOpenChange={setEditorOpen}
+        highUsageStudentIds={highUsageStudentIds}
+        highUsageLunaticStudentIds={highUsageLunaticStudentIds}
+      />
     </div>
   );
 }

@@ -21,13 +21,11 @@ interface StudentPoolState {
 
   setEnabled: (value: boolean) => void;
   setPolicy: (value: StarMatchPolicy) => void;
-  setAllowExternalAssist: (value: boolean) => void;
 }
 
 const initialFilter: PoolFilterState = {
   enabled: false,
   policy: "atLeast",
-  allowExternalAssist: true,
 };
 
 const initialPool: StudentPool = {
@@ -101,12 +99,6 @@ const useStudentPoolStore = create(
           set((state) => ({
             ...state,
             filter: { ...state.filter, policy: value },
-          })),
-
-        setAllowExternalAssist: (value) =>
-          set((state) => ({
-            ...state,
-            filter: { ...state.filter, allowExternalAssist: value },
           })),
       }),
       {

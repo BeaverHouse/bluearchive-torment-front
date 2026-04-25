@@ -13,13 +13,11 @@ export interface StudentPool {
 export interface PoolFilterState {
   enabled: boolean;
   policy: StarMatchPolicy;
-  allowExternalAssist: boolean;
 }
 
 export interface PoolFilterContext {
   pool: StudentPool;
   policy: StarMatchPolicy;
-  allowExternalAssist: boolean;
 }
 
 export function isGradeKey(value: unknown): value is GradeKey {

@@ -10,7 +10,6 @@ interface PoolToolbarProps {
 
 export default function PoolToolbar({ ownedCount }: PoolToolbarProps) {
   const clearPool = useStudentPoolStore((state) => state.clearPool);
-  const setAllGrade = useStudentPoolStore((state) => state.setAllGrade);
 
   const confirmClear = () => {
     if (ownedCount === 0) return;
@@ -21,33 +20,6 @@ export default function PoolToolbar({ ownedCount }: PoolToolbarProps) {
 
   return (
     <div className="flex flex-wrap gap-2 items-center">
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        onClick={() => setAllGrade(54)}
-        disabled={ownedCount === 0}
-      >
-        보유 전원 전무4
-      </Button>
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        onClick={() => setAllGrade(50)}
-        disabled={ownedCount === 0}
-      >
-        보유 전원 5성
-      </Button>
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        onClick={() => setAllGrade(30)}
-        disabled={ownedCount === 0}
-      >
-        보유 전원 3성
-      </Button>
       <Button
         type="button"
         variant="destructive"

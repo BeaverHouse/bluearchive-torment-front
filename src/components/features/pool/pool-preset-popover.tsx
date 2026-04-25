@@ -125,7 +125,7 @@ export default function PoolPresetPopover() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm">
+        <Button variant="outline" type="button">
           내보내기 / 불러오기
         </Button>
       </PopoverTrigger>
