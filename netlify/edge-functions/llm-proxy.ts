@@ -18,7 +18,7 @@ export default async function handler(request: Request) {
       method: request.method,
       headers,
       body: request.body,
-      // @ts-ignore - duplex is needed for streaming request body
+      // @ts-expect-error - duplex is needed for streaming request body
       duplex: "half",
     });
 

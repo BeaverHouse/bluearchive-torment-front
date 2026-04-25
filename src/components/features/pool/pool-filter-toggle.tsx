@@ -80,9 +80,6 @@ export default function PoolFilterToggle({
       {enabled && ownedCount > 0 && (
         <div className="mt-3 flex flex-col gap-3">
           <div>
-            <div className="text-xs font-medium text-muted-foreground mb-1">
-              성급 일치 정책
-            </div>
             <div className="flex flex-wrap gap-1">
               {POLICY_OPTIONS.map((opt) => (
                 <Button

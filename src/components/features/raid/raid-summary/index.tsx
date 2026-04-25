@@ -17,11 +17,9 @@ import { HighImpactCharacters } from "../high-impact-characters";
 import { TopAssistants } from "../top-assistants";
 import { PartyCompositionChart } from "./PartyCompositionChart";
 import { CharacterGrowthStats } from "./CharacterGrowthStats";
-import { HighUsageCharacters } from "./HighUsageCharacters";
 import {
   createCharTableData,
   createPartyCountData,
-  getHighUsageCharacters,
 } from "./utils/raidDataTransform";
 
 const RaidSummary = ({
@@ -105,7 +103,6 @@ const RaidSummary = ({
     (item) => item.percent >= 1
   );
   const partyCountData = createPartyCountData(data.partyCounts, data.clearCount || 0);
-  const highUsageCharacters = getHighUsageCharacters(data.filters, data.clearCount || 0, studentsMap);
 
   const tormentClearPercent = Number(Math.min(tormentSummaryData.clearCount, 20000) / 20000) * 100;
   const lunaticClearPercent = Number(Math.min(lunaticSummaryData.clearCount, 20000) / 20000) * 100;
@@ -144,8 +141,6 @@ const RaidSummary = ({
         )}
 
         {assistData.length > 0 && <TopAssistants data={assistData.slice(0, 3)} />}
-
-        <HighUsageCharacters characters={highUsageCharacters} />
 
         <CardWrapper
           icon={<Users className="h-5 w-5 text-sky-500" />}

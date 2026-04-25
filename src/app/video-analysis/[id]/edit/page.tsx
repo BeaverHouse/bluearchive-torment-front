@@ -51,7 +51,7 @@ export default function VideoEditPage() {
     }
   }, [videoId, router, raidId]);
 
-  const handleVideoPlayStateChange = useCallback((_playing: boolean) => {}, []);
+  const handleVideoPlayStateChange = useCallback(() => {}, []);
 
   const handleUpdateVideo = () => {
     if (!raidId) {

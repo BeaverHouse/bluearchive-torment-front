@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,7 +27,6 @@ interface AddVideoDialogProps {
 }
 
 export function AddVideoDialog({ raids }: AddVideoDialogProps) {
-  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [raidId, setRaidId] = useState<string>("");
   const [youtubeUrl, setYoutubeUrl] = useState<string>("");
