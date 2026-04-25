@@ -3,10 +3,9 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 
-const ANNOUNCE_DATE = "26.03.05";
+const ANNOUNCE_DATE = "26.04.25";
 const ANNOUNCE_ITEMS = [
-  "UI 오류를 수정하고 뉴비 가이드 페이지를 추가했어요.",
-  "3월 중에 보안 패치가 있을 예정이에요. 사이트 이용 중 5-10분 정도의 끊김이 있을 수 있어요.",
+  "이제 캐릭터 풀과 단일 파티 기반 검색이 가능해요.",
 ];
 const STORAGE_KEY = "batorment_announce_dismissed";
 
