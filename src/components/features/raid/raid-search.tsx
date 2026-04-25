@@ -71,8 +71,8 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
         },
       };
     }
-    if (searchMode === "combo") {
-      return { kind: "combo", codes: comboCodesSet };
+    if (searchMode === "single") {
+      return { kind: "single", codes: comboCodesSet };
     }
     return {
       kind: "filter",
@@ -332,9 +332,9 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
         />
       );
     }
-    if (searchMode === "combo") {
+    if (searchMode === "single") {
       return (
-        <div className="mb-4 rounded-lg border border-primary/40 bg-primary/5 p-3">
+        <div className="mb-4 rounded-lg border border-gray-200 dark:border-gray-700 p-3">
           <ComboSelector />
         </div>
       );
@@ -358,7 +358,7 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
         studentSearchMap={studentSearchMap}
         defaultOpen
         showYoutubeOnly
-        showPresetPopover
+        showPresetPopover={searchMode === "filter"}
         onScoreJump={handleScoreJump}
         onLoadPreset={handleLoadPreset}
         hideIncludeExclude={searchMode !== "filter"}
@@ -392,9 +392,6 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
                 video_id={party.video_id}
                 raid_id={party.video_id ? (party.raid_id || season) : undefined}
                 matchedSubPartyIndexes={matchedSubPartyIndexes}
-                highlightCodes={
-                  searchMode === "combo" ? comboCodesSet : undefined
-                }
               />
             ))
         ) : (

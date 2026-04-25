@@ -5,7 +5,6 @@ import useBAStore from "@/store/useBAStore";
 import RaidSearch from "@/components/features/raid/raid-search";
 import RaidSummary from "@/components/features/raid/raid-summary";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
 import { SingleSelect } from "@/components/ui/custom/single-select";
 import { trackSummaryTabClick } from "@/utils/analytics";
 import { useStudentMaps } from "@/hooks/use-student-maps";
@@ -122,37 +121,39 @@ export default function PartyPage() {
           />
         </TabsContent>
         <TabsContent value="summary">
-          {hasLunatic && (
-            <div className="flex justify-center gap-1 mb-4">
-              <Button
-                size="sm"
-                variant={summaryLevel === "T" ? "default" : "outline"}
-                onClick={() => {
-                  setSummaryLevel("T");
-                  trackSummaryTabClick("summary");
-                }}
-              >
-                Torment
-              </Button>
-              <Button
-                size="sm"
-                variant={summaryLevel === "L" ? "default" : "outline"}
-                onClick={() => {
-                  setSummaryLevel("L");
-                  trackSummaryTabClick("summary-lunatic");
-                }}
-              >
-                Lunatic
-              </Button>
-            </div>
+          {hasLunatic ? (
+            <Tabs
+              value={summaryLevel}
+              onValueChange={(v) => {
+                const next = v as "T" | "L";
+                setSummaryLevel(next);
+                trackSummaryTabClick(
+                  next === "L" ? "summary-lunatic" : "summary"
+                );
+              }}
+              className="w-full"
+            >
+              <TabsList className="grid w-full grid-cols-2 mb-4">
+                <TabsTrigger value="T">Torment</TabsTrigger>
+                <TabsTrigger value="L">Lunatic</TabsTrigger>
+              </TabsList>
+              <RaidSummary
+                season={season}
+                seasonDescription={seasonDescription}
+                studentsMap={studentsMap}
+                studentSearchMap={studentSearchMap}
+                level={effectiveSummaryLevel}
+              />
+            </Tabs>
+          ) : (
+            <RaidSummary
+              season={season}
+              seasonDescription={seasonDescription}
+              studentsMap={studentsMap}
+              studentSearchMap={studentSearchMap}
+              level={effectiveSummaryLevel}
+            />
           )}
-          <RaidSummary
-            season={season}
-            seasonDescription={seasonDescription}
-            studentsMap={studentsMap}
-            studentSearchMap={studentSearchMap}
-            level={effectiveSummaryLevel}
-          />
         </TabsContent>
       </Tabs>
     </div>

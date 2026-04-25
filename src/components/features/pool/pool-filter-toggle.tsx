@@ -45,7 +45,7 @@ export default function PoolFilterToggle({
   const { policy } = filter;
 
   return (
-    <div className="mb-4 rounded-lg border border-primary/40 bg-primary/5 p-3">
+    <div className="mb-4 rounded-lg border border-gray-200 dark:border-gray-700 p-3">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <span className="flex items-center gap-2 text-sm font-medium">
           내 캐릭터 풀

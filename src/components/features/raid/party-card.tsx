@@ -21,10 +21,8 @@ interface PartyCardProps {
   parties: number[][];
   video_id?: string;
   raid_id?: string;
-  /** 조합 매칭된 sub-party 인덱스 (강조 표시) */
+  /** 단일 파티 매칭된 sub-party 인덱스 (배경 틴트 강조) */
   matchedSubPartyIndexes?: number[];
-  /** 조합 매칭에 사용된 학생 5자리 코드 집합 */
-  highlightCodes?: ReadonlySet<number>;
 }
 
 const PartyCard: React.FC<PartyCardProps> = ({
@@ -35,7 +33,6 @@ const PartyCard: React.FC<PartyCardProps> = ({
   video_id,
   raid_id,
   matchedSubPartyIndexes,
-  highlightCodes,
 }) => {
   const matchedSet = React.useMemo(
     () => new Set(matchedSubPartyIndexes ?? []),
@@ -81,7 +78,6 @@ const PartyCard: React.FC<PartyCardProps> = ({
             party={party}
             key={"party" + partyIdx}
             highlighted={matchedSet.has(partyIdx)}
-            highlightCodes={highlightCodes}
           />
         ))}
 
@@ -98,7 +94,6 @@ const PartyCard: React.FC<PartyCardProps> = ({
                       party={party}
                       key={"party" + partyIdx}
                       highlighted={matchedSet.has(partyIdx + 4)}
-                      highlightCodes={highlightCodes}
                     />
                   ))}
                 </AccordionContent>

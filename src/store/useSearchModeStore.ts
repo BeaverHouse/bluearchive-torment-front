@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-export type SearchMode = "filter" | "pool" | "combo";
+export type SearchMode = "filter" | "pool" | "single";
 
 interface SearchModeState {
   mode: SearchMode;
@@ -28,7 +28,17 @@ const useSearchModeStore = create(
           if (exists) {
             return { comboCodes: state.comboCodes.filter((c) => c !== code) };
           }
-          if (state.comboCodes.length >= 6) return state;
+          // Striker(10000-19999) 4명, Special(20000-29999) 2명 제한
+          const isStriker = code >= 10000 && code < 20000;
+          const isSpecial = code >= 20000 && code < 30000;
+          const strikerCount = state.comboCodes.filter(
+            (c) => c >= 10000 && c < 20000
+          ).length;
+          const specialCount = state.comboCodes.filter(
+            (c) => c >= 20000 && c < 30000
+          ).length;
+          if (isStriker && strikerCount >= 4) return state;
+          if (isSpecial && specialCount >= 2) return state;
           return { comboCodes: [...state.comboCodes, code] };
         }),
       clearCombo: () => set({ comboCodes: [] }),

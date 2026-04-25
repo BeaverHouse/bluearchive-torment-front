@@ -5,21 +5,15 @@ import StudentImage from "../student/student-image";
 
 interface SinglePartyProps {
   party: number[];
-  /** 이 sub-party가 조합 매칭된 경우 강조 표시 */
+  /** 이 sub-party가 조합 매칭된 경우 강조 표시 (배경 틴트만) */
   highlighted?: boolean;
-  /** 강조할 학생 5자리 코드 집합 (조합 모드) */
-  highlightCodes?: ReadonlySet<number>;
 }
 
 /**
  * Single party component
  * @param party Student codes of the party. 0 is empty slot
  */
-export function SingleParty({
-  party,
-  highlighted = false,
-  highlightCodes,
-}: SinglePartyProps) {
+export function SingleParty({ party, highlighted = false }: SinglePartyProps) {
   // If party member is lower than 6, insert zero between the last 1xxxx(1xxxxxxx) and 2xxxx(2xxxxxxx)
   const finalParty = React.useMemo(() => {
     if (party.length >= 6) return party;
@@ -45,7 +39,7 @@ export function SingleParty({
   }, [party]);
 
   const containerCls = highlighted
-    ? "grid grid-cols-6 gap-2 p-2 mb-1 rounded border-2 border-sky-500 bg-sky-500/10"
+    ? "grid grid-cols-6 gap-2 p-2 mb-1 rounded border bg-sky-500/10"
     : "grid grid-cols-6 gap-2 p-2 mb-1 rounded border bg-muted/20";
 
   return (
@@ -55,18 +49,7 @@ export function SingleParty({
         if (student === 0)
           return <div key={key} className="w-10 h-10 sm:w-12 sm:h-12"></div>;
 
-        const code5 = student < 100000 ? student : Math.floor(student / 1000);
-        const isMatch = !!highlightCodes && highlightCodes.has(code5);
-        return (
-          <div
-            key={key}
-            className={
-              isMatch ? "rounded ring-2 ring-sky-500 ring-offset-1" : undefined
-            }
-          >
-            <StudentImage code={student} />
-          </div>
-        );
+        return <StudentImage code={student} key={key} />;
       })}
     </div>
   );

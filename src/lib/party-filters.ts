@@ -31,11 +31,11 @@ export const getFilters = (
 export type SearchModeContext =
   | { kind: "filter"; includeArray: number[][]; excludeArray: number[]; hardExclude: boolean }
   | { kind: "pool"; pool: PoolFilterContext }
-  | { kind: "combo"; codes: ReadonlySet<number> };
+  | { kind: "single"; codes: ReadonlySet<number> };
 
 export interface FilteredPartyResult {
   party: PartyData;
-  /** 조합 모드에서 매칭된 sub-party 인덱스 배열 (다른 모드는 빈 배열) */
+  /** 단일 파티 모드에서 매칭된 sub-party 인덱스 배열 (다른 모드는 빈 배열) */
   matchedSubPartyIndexes: number[];
 }
 
@@ -76,7 +76,7 @@ export const filteredPartys = (
       } else if (!partyAgainstPool(students, searchMode.pool)) {
         return acc;
       }
-    } else if (searchMode.kind === "combo") {
+    } else if (searchMode.kind === "single") {
       if (searchMode.codes.size === 0) {
         // 선택 없으면 통과 (필터 안 함)
       } else {
