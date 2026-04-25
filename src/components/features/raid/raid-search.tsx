@@ -5,8 +5,12 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import useBAStore from "@/store/useBAStore";
 import useStudentPoolStore from "@/store/useStudentPoolStore";
-import { filteredPartys, getFilters } from "@/lib/party-filters";
-import type { PoolFilterContext } from "@/types/pool";
+import useSearchModeStore from "@/store/useSearchModeStore";
+import {
+  filteredPartys,
+  getFilters,
+  type SearchModeContext,
+} from "@/lib/party-filters";
 import { createCDNQueryOptions } from "@/lib/queries";
 import PartyCard from "./party-card";
 import {
@@ -19,7 +23,9 @@ import { Pagination } from "../../shared/pagination";
 import Loading from "../../common/loading";
 import { PartyFilterSection } from "./party-filter-section";
 import { PartyFilterState } from "@/types/filter";
+import SearchModeSelector from "./search-mode-selector";
 import PoolFilterToggle from "@/components/features/pool/pool-filter-toggle";
+import ComboSelector from "@/components/features/combo/combo-selector";
 
 const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProps) => {
   const [PartyCountRange, setPartyCountRange] = useState([0, 99]);
@@ -45,39 +51,61 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
   } = useBAStore();
 
   const poolStudents = useStudentPoolStore((state) => state.pool.students);
-  const poolEnabled = useStudentPoolStore((state) => state.filter.enabled);
   const poolPolicy = useStudentPoolStore((state) => state.filter.policy);
 
-  const poolFilterContext: PoolFilterContext | undefined = useMemo(() => {
-    if (!poolEnabled) return undefined;
-    if (Object.keys(poolStudents).length === 0) return undefined;
+  const searchMode = useSearchModeStore((s) => s.mode);
+  const comboCodes = useSearchModeStore((s) => s.comboCodes);
+
+  const comboCodesSet = useMemo(
+    () => new Set(comboCodes),
+    [comboCodes]
+  );
+
+  const searchModeContext: SearchModeContext = useMemo(() => {
+    if (searchMode === "pool") {
+      return {
+        kind: "pool",
+        pool: {
+          pool: { students: poolStudents },
+          policy: poolPolicy,
+        },
+      };
+    }
+    if (searchMode === "combo") {
+      return { kind: "combo", codes: comboCodesSet };
+    }
     return {
-      pool: { students: poolStudents },
-      policy: poolPolicy,
+      kind: "filter",
+      includeArray: IncludeList,
+      excludeArray: ExcludeList,
+      hardExclude: HardExclude,
     };
-  }, [poolEnabled, poolStudents, poolPolicy]);
+  }, [
+    searchMode,
+    poolStudents,
+    poolPolicy,
+    comboCodesSet,
+    IncludeList,
+    ExcludeList,
+    HardExclude,
+  ]);
 
   useEffect(() => {
     setPage(1);
   }, [
     ScoreRange,
-    IncludeList,
-    ExcludeList,
     Assist,
     PartyCountRange,
     PageSize,
-    HardExclude,
     AllowDuplicate,
     YoutubeOnly,
     season,
-    poolFilterContext,
+    searchModeContext,
   ]);
 
   const getPartyDataQuery = useQuery(createCDNQueryOptions<RaidData>("party", season));
   const getFilterDataQuery = useQuery(createCDNQueryOptions<FilterData>("filter", season));
 
-  // summary는 clearCount만, filters는 별도의 lunatic-filter 엔드포인트.
-  // 둘 다 throwOnError 없이 (시즌에 루나틱이 없을 수 있음).
   const getSummaryDataQuery = useQuery({
     queryKey: ["getSummaryData", season],
     queryFn: async () => {
@@ -105,7 +133,7 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
     gcTime: 1000 * 60 * 10,
   });
 
-  // 현재 시즌의 전체(파티 데이터 기준) 사용률 ≥ 10% 학생 ID 집합 (조력자 제외, 사용자 단위 카운트)
+  // 현재 시즌의 전체(파티 데이터 기준) 사용률 ≥ 10% 학생 ID 집합
   const highUsageStudentIds = useMemo<ReadonlySet<number>>(() => {
     const parties = getPartyDataQuery.data?.parties ?? [];
     if (parties.length === 0) return new Set<number>();
@@ -128,7 +156,7 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
     return result;
   }, [getPartyDataQuery.data?.parties]);
 
-  // 루나틱 사용률 ≥ 10% 학생 ID 집합 (lunatic-filter + summary clearCount 기준, 조력자 제외)
+  // 루나틱 사용률 ≥ 10%
   const highUsageLunaticStudentIds = useMemo<ReadonlySet<number>>(() => {
     const filters = getLunaticFilterDataQuery.data?.filters;
     const clearCount = getSummaryDataQuery.data?.lunatic?.clearCount ?? 0;
@@ -147,14 +175,12 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
     getSummaryDataQuery.data?.lunatic,
   ]);
 
-
   // data가 변경될 때마다 필터 값을 업데이트
   useEffect(() => {
     const data = getPartyDataQuery.data as RaidData;
     const filterData = getFilterDataQuery.data as FilterData;
     if (!data || !filterData) return;
 
-    // 파티 수 필터 기본값 설정
     if (PartyCountRange[0] === 0 && PartyCountRange[1] === 99) {
       setPartyCountRange([data.minPartys, data.maxPartys]);
     }
@@ -165,7 +191,6 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
           return false;
         }
         if (item.length > 1) {
-          // item[1]은 이미 gradeKey 값 (예: 52)
           const gradeKey = item[1].toString();
           return filterData.filters[key][gradeKey] > 0;
         }
@@ -181,11 +206,8 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
       !Assist ||
       (filterData.assistFilters[Assist[0]] &&
         (Assist.length === 1
-          ? // 부모 항목 선택: 해당 캐릭터가 조력자 필터에 존재하는지만 확인
-            true
-          : // 자식 항목 선택: 특정 성급이 존재하는지 확인
-            (() => {
-              // Assist[1]은 이미 gradeKey 값 (예: 52)
+          ? true
+          : (() => {
               const gradeKey = Assist[1].toString();
               return filterData.assistFilters[Assist[0]][gradeKey] > 0;
             })()));
@@ -214,7 +236,6 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
   const partyData = getPartyDataQuery.data;
   const filterData = getFilterDataQuery.data;
 
-  // 파티 데이터와 필터 데이터 분리 (메모이제이션)
   const data: RaidData = useMemo(() => ({
     parties: partyData?.parties || [],
     minPartys: partyData?.minPartys || 1,
@@ -246,7 +267,6 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
   );
 
   const handleFilterChange = useCallback((updates: Partial<PartyFilterState>) => {
-    // Zustand store 업데이트
     if ('scoreRange' in updates) setScoreRange(updates.scoreRange);
     if ('includeList' in updates && updates.includeList !== undefined) setIncludeList(updates.includeList);
     if ('excludeList' in updates && updates.excludeList !== undefined) setExcludeList(updates.excludeList);
@@ -254,39 +274,30 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
     if ('hardExclude' in updates && updates.hardExclude !== undefined) setHardExclude(updates.hardExclude);
     if ('allowDuplicate' in updates && updates.allowDuplicate !== undefined) setAllowDuplicate(updates.allowDuplicate);
     if ('youtubeOnly' in updates && updates.youtubeOnly !== undefined) setYoutubeOnly(updates.youtubeOnly);
-
-    // Local state 업데이트
     if ('partyCountRange' in updates && updates.partyCountRange !== undefined) setPartyCountRange(updates.partyCountRange);
   }, [setScoreRange, setIncludeList, setExcludeList, setAssist, setHardExclude, setAllowDuplicate, setYoutubeOnly]);
 
-  // 프리셋 불러오기 핸들러
   const handleLoadPreset = useCallback((preset: Partial<PartyFilterState>) => {
     handleFilterChange(preset);
   }, [handleFilterChange]);
 
-  // 점수로 이동 핸들러
+  const results = useMemo(() => filteredPartys(
+    data,
+    ScoreRange,
+    Assist,
+    PartyCountRange,
+    AllowDuplicate,
+    YoutubeOnly,
+    searchModeContext
+  ), [data, ScoreRange, Assist, PartyCountRange, AllowDuplicate, YoutubeOnly, searchModeContext]);
+
   const handleScoreJump = useCallback((targetScore: number) => {
-    // 현재 필터로 파티 목록 가져오기
-    const currentParties = filteredPartys(
-      data,
-      ScoreRange,
-      IncludeList,
-      ExcludeList,
-      Assist,
-      PartyCountRange,
-      HardExclude,
-      AllowDuplicate,
-      YoutubeOnly,
-      poolFilterContext
-    );
+    if (results.length === 0) return;
 
-    if (currentParties.length === 0) return;
-
-    // 가장 가까운 점수를 가진 파티 찾기
     let closestIndex = 0;
-    let closestDiff = Math.abs(currentParties[0].score - targetScore);
+    let closestDiff = Math.abs(results[0].party.score - targetScore);
 
-    currentParties.forEach((party, index) => {
+    results.forEach(({ party }, index) => {
       const diff = Math.abs(party.score - targetScore);
       if (diff < closestDiff) {
         closestDiff = diff;
@@ -294,26 +305,10 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
       }
     });
 
-    // 해당 파티가 있는 페이지로 이동
     const targetPage = Math.floor(closestIndex / PageSize) + 1;
     setPage(targetPage);
-  }, [data, ScoreRange, IncludeList, ExcludeList, Assist, PartyCountRange, HardExclude, AllowDuplicate, YoutubeOnly, PageSize, poolFilterContext]);
+  }, [results, PageSize]);
 
-  // 필터링된 파티 목록 (메모이제이션)
-  const parties = useMemo(() => filteredPartys(
-    data,
-    ScoreRange,
-    IncludeList,
-    ExcludeList,
-    Assist,
-    PartyCountRange,
-    HardExclude,
-    AllowDuplicate,
-    YoutubeOnly,
-    poolFilterContext
-  ), [data, ScoreRange, IncludeList, ExcludeList, Assist, PartyCountRange, HardExclude, AllowDuplicate, YoutubeOnly, poolFilterContext]);
-
-  // 현재 필터 상태 (메모이제이션) - 모든 훅은 조건부 리턴 전에 호출
   const currentFilters: PartyFilterState = useMemo(() => ({
     scoreRange: ScoreRange,
     includeList: IncludeList,
@@ -328,12 +323,29 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
   if (getPartyDataQuery.isLoading || getFilterDataQuery.isLoading || !studentSearchMap)
     return <Loading />;
 
+  const renderModeUI = () => {
+    if (searchMode === "pool") {
+      return (
+        <PoolFilterToggle
+          highUsageStudentIds={highUsageStudentIds}
+          highUsageLunaticStudentIds={highUsageLunaticStudentIds}
+        />
+      );
+    }
+    if (searchMode === "combo") {
+      return (
+        <div className="mb-4 rounded-lg border border-primary/40 bg-primary/5 p-3">
+          <ComboSelector />
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <>
-      <PoolFilterToggle
-        highUsageStudentIds={highUsageStudentIds}
-        highUsageLunaticStudentIds={highUsageLunaticStudentIds}
-      />
+      <SearchModeSelector />
+      {renderModeUI()}
       <PartyFilterSection
         filters={currentFilters}
         onFilterChange={handleFilterChange}
@@ -349,15 +361,15 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
         showPresetPopover
         onScoreJump={handleScoreJump}
         onLoadPreset={handleLoadPreset}
-        poolActive={!!poolFilterContext}
+        hideIncludeExclude={searchMode !== "filter"}
       />
       <div className="mx-auto mb-5 w-full">
-        검색 결과: 총 {parties.length}개
+        검색 결과: 총 {results.length}개
       </div>
       <div className="mb-5">
         <Pagination
           currentPage={Page}
-          totalItems={parties.length}
+          totalItems={results.length}
           pageSize={PageSize}
           onPageChange={setPage}
           onPageSizeChange={setPageSize}
@@ -365,12 +377,12 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
         />
       </div>
       <div className="w-full mx-auto mt-5">
-        {parties.length > 0 ? (
-          parties
+        {results.length > 0 ? (
+          results
             .filter(
               (_, idx) => idx >= (Page - 1) * PageSize && idx < Page * PageSize
             )
-            .map((party, idx) => (
+            .map(({ party, matchedSubPartyIndexes }, idx) => (
               <PartyCard
                 key={idx}
                 rank={party.rank}
@@ -379,6 +391,10 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
                 parties={party.partyData}
                 video_id={party.video_id}
                 raid_id={party.video_id ? (party.raid_id || season) : undefined}
+                matchedSubPartyIndexes={matchedSubPartyIndexes}
+                highlightCodes={
+                  searchMode === "combo" ? comboCodesSet : undefined
+                }
               />
             ))
         ) : (

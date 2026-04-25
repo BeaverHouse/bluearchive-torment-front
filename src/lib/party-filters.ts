@@ -2,6 +2,7 @@ import { categoryMap } from "@/constants/assault";
 import { RaidData, PartyData, FilterOption } from "@/types/raid";
 import type { PoolFilterContext } from "@/types/pool";
 import { partyAgainstPool } from "@/lib/pool-filters";
+import { findMatchingSubPartyIndexes } from "@/lib/combo-filters";
 import { parseCharacterInfo } from "@/utils/character";
 
 export const getFilters = (
@@ -27,29 +28,35 @@ export const getFilters = (
   }));
 };
 
+export type SearchModeContext =
+  | { kind: "filter"; includeArray: number[][]; excludeArray: number[]; hardExclude: boolean }
+  | { kind: "pool"; pool: PoolFilterContext }
+  | { kind: "combo"; codes: ReadonlySet<number> };
+
+export interface FilteredPartyResult {
+  party: PartyData;
+  /** 조합 모드에서 매칭된 sub-party 인덱스 배열 (다른 모드는 빈 배열) */
+  matchedSubPartyIndexes: number[];
+}
+
 export const filteredPartys = (
   data: RaidData,
   scoreRange: [number, number] | undefined,
-  includeArray: Array<number[]>,
-  excludeArray: Array<number>,
   assist: Array<number> | undefined,
   partyCountRange: number[],
-  hardExclude: boolean,
   allowDuplicate: boolean,
   youtubeOnly: boolean,
-  poolFilter?: PoolFilterContext
-): PartyData[] => {
+  searchMode: SearchModeContext
+): FilteredPartyResult[] => {
   const rawPartys = data.parties;
-  const usePool =
-    !!poolFilter && Object.keys(poolFilter.pool.students).length > 0;
 
-  return rawPartys.filter((party) => {
+  return rawPartys.reduce<FilteredPartyResult[]>((acc, party) => {
     const students = party.partyData.flat();
     const codes = students.map((num) => Math.floor(num / 1000));
     const pureStudents = students.filter((num) => num % 10 !== 1);
     const partyAssist = students.find((num) => num % 10 === 1) || null;
 
-    // 공통 필터 (풀 필터와 관계없이 항상 적용)
+    // 공통 필터
     const commonPass =
       (!scoreRange ||
         (party.score >= scoreRange[0] && party.score <= scoreRange[1])) &&
@@ -59,23 +66,40 @@ export const filteredPartys = (
       (allowDuplicate || Array.from(new Set(codes)).length === codes.length) &&
       (!youtubeOnly || !!party.video_id);
 
-    if (!commonPass) return false;
+    if (!commonPass) return acc;
 
-    if (usePool) {
-      // 풀 필터 활성: include/exclude/hardExclude는 무시하고 풀 체크로 대체
-      return partyAgainstPool(students, poolFilter);
-    }
+    let matchedSubPartyIndexes: number[] = [];
 
-    // 기존 include/exclude/hardExclude 경로
-    return (
-      includeAll(pureStudents, includeArray) &&
-      !excludeArray.some((exclude) =>
-        (hardExclude ? students : pureStudents).some((num) =>
+    if (searchMode.kind === "pool") {
+      if (Object.keys(searchMode.pool.pool.students).length === 0) {
+        // 풀 비어있으면 풀 체크 패스
+      } else if (!partyAgainstPool(students, searchMode.pool)) {
+        return acc;
+      }
+    } else if (searchMode.kind === "combo") {
+      if (searchMode.codes.size === 0) {
+        // 선택 없으면 통과 (필터 안 함)
+      } else {
+        matchedSubPartyIndexes = findMatchingSubPartyIndexes(
+          party,
+          searchMode.codes
+        );
+        if (matchedSubPartyIndexes.length === 0) return acc;
+      }
+    } else {
+      // filter 모드
+      const includeOk = includeAll(pureStudents, searchMode.includeArray);
+      const excludeOk = !searchMode.excludeArray.some((exclude) =>
+        (searchMode.hardExclude ? students : pureStudents).some((num) =>
           isInFilter([exclude], num)
         )
-      )
-    );
-  });
+      );
+      if (!includeOk || !excludeOk) return acc;
+    }
+
+    acc.push({ party, matchedSubPartyIndexes });
+    return acc;
+  }, []);
 };
 
 const getNumber = (arr: number[]) => arr[0] * 100 + arr[1];

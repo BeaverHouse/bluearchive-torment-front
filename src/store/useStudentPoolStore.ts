@@ -19,12 +19,10 @@ interface StudentPoolState {
   clearPool: () => void;
   setAllGrade: (grade: GradeKey) => void;
 
-  setEnabled: (value: boolean) => void;
   setPolicy: (value: StarMatchPolicy) => void;
 }
 
 const initialFilter: PoolFilterState = {
-  enabled: false,
   policy: "atLeast",
 };
 
@@ -88,12 +86,6 @@ const useStudentPoolStore = create(
             }
             return { ...state, pool: { students: next } };
           }),
-
-        setEnabled: (value) =>
-          set((state) => ({
-            ...state,
-            filter: { ...state.filter, enabled: value },
-          })),
 
         setPolicy: (value) =>
           set((state) => ({

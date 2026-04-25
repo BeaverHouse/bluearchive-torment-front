@@ -47,8 +47,8 @@ const menuItems = [
     icon: Search,
   },
   {
-    title: "통계",
-    url: "/total-analysis",
+    title: "분석",
+    url: "/analysis",
     icon: PieChart,
   },
   {

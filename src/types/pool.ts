@@ -11,7 +11,6 @@ export interface StudentPool {
 }
 
 export interface PoolFilterState {
-  enabled: boolean;
   policy: StarMatchPolicy;
 }
 

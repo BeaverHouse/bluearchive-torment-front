@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import useStudentPoolStore from "@/store/useStudentPoolStore";
 import type { StarMatchPolicy } from "@/types/pool";
@@ -38,29 +37,20 @@ export default function PoolFilterToggle({
 }: PoolFilterToggleProps) {
   const pool = useStudentPoolStore((state) => state.pool);
   const filter = useStudentPoolStore((state) => state.filter);
-  const setEnabled = useStudentPoolStore((state) => state.setEnabled);
   const setPolicy = useStudentPoolStore((state) => state.setPolicy);
 
   const [editorOpen, setEditorOpen] = useState(false);
 
   const ownedCount = Object.keys(pool.students).length;
-  const { enabled, policy } = filter;
+  const { policy } = filter;
 
   return (
     <div className="mb-4 rounded-lg border border-primary/40 bg-primary/5 p-3">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-        <label className="flex items-center gap-2 cursor-pointer select-none">
-          <Checkbox
-            id="poolEnabled"
-            checked={enabled}
-            onCheckedChange={(checked) => setEnabled(!!checked)}
-            disabled={ownedCount === 0}
-          />
-          <span className="text-sm font-medium">
-            내 캐릭터 풀로 필터링
-          </span>
+        <span className="flex items-center gap-2 text-sm font-medium">
+          내 캐릭터 풀
           <Badge variant="secondary">{ownedCount}명</Badge>
-        </label>
+        </span>
         <Button
           type="button"
           size="sm"
@@ -78,7 +68,7 @@ export default function PoolFilterToggle({
         </p>
       )}
 
-      {enabled && ownedCount > 0 && (
+      {ownedCount > 0 && (
         <div className="mt-3 flex flex-wrap justify-center gap-1">
           {POLICY_OPTIONS.map((opt) => (
             <Button

@@ -36,8 +36,8 @@ interface PartyFilterSectionProps {
   onScoreJump?: (score: number) => void;
   onLoadPreset?: (preset: Partial<PartyFilterState>) => void;
 
-  // 풀 필터 활성 시 include/exclude/hardExclude disable
-  poolActive?: boolean;
+  // 다른 검색 모드(풀/조합) 활성 시 include/exclude/hardExclude UI 숨김
+  hideIncludeExclude?: boolean;
 }
 
 export function PartyFilterSection({
@@ -55,7 +55,7 @@ export function PartyFilterSection({
   showPresetPopover = false,
   onScoreJump,
   onLoadPreset,
-  poolActive = false,
+  hideIncludeExclude = false,
 }: PartyFilterSectionProps) {
   const handleReset = async () => {
     const result = await Swal.fire({
@@ -117,7 +117,7 @@ export function PartyFilterSection({
             studentSearchMap={studentSearchMap}
             showYoutubeOnly={showYoutubeOnly}
             onScoreJump={onScoreJump}
-            poolActive={poolActive}
+            hideIncludeExclude={hideIncludeExclude}
           />
         </CollapsibleContent>
       </Collapsible>
