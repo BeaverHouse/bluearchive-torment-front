@@ -1,5 +1,7 @@
 import { categoryMap } from "@/constants/assault";
 import { RaidData, PartyData, FilterOption } from "@/types/raid";
+import type { PoolFilterContext } from "@/types/pool";
+import { partyAgainstPool } from "@/lib/pool-filters";
 import { parseCharacterInfo } from "@/utils/character";
 
 export const getFilters = (
@@ -34,26 +36,44 @@ export const filteredPartys = (
   partyCountRange: number[],
   hardExclude: boolean,
   allowDuplicate: boolean,
-  youtubeOnly: boolean
+  youtubeOnly: boolean,
+  poolFilter?: PoolFilterContext
 ): PartyData[] => {
   const rawPartys = data.parties;
+  const usePool =
+    !!poolFilter && Object.keys(poolFilter.pool.students).length > 0;
+
   return rawPartys.filter((party) => {
     const students = party.partyData.flat();
     const codes = students.map((num) => Math.floor(num / 1000));
     const pureStudents = students.filter((num) => num % 10 !== 1);
     const partyAssist = students.find((num) => num % 10 === 1) || null;
 
-    return (
-      (!scoreRange || (party.score >= scoreRange[0] && party.score <= scoreRange[1])) &&
-      includeAll(pureStudents, includeArray) &&
-      // 포함 캐릭터에 대해서는 본인 캐릭터 목록에 모두 있어야 함
-      !excludeArray.some((exclude) => (hardExclude ? students : pureStudents).some((num) => isInFilter([exclude], num))) &&
-      // 제외 캐릭터에 대해서는 아예 없어야 함 (조력자까지 제외하냐 여부)
+    // 공통 필터 (풀 필터와 관계없이 항상 적용)
+    const commonPass =
+      (!scoreRange ||
+        (party.score >= scoreRange[0] && party.score <= scoreRange[1])) &&
       (!assist || isAssistMatch(assist, partyAssist)) &&
       party.partyData.length >= partyCountRange[0] &&
       party.partyData.length <= partyCountRange[1] &&
       (allowDuplicate || Array.from(new Set(codes)).length === codes.length) &&
-      (!youtubeOnly || !!party.video_id)
+      (!youtubeOnly || !!party.video_id);
+
+    if (!commonPass) return false;
+
+    if (usePool) {
+      // 풀 필터 활성: include/exclude/hardExclude는 무시하고 풀 체크로 대체
+      return partyAgainstPool(students, poolFilter);
+    }
+
+    // 기존 include/exclude/hardExclude 경로
+    return (
+      includeAll(pureStudents, includeArray) &&
+      !excludeArray.some((exclude) =>
+        (hardExclude ? students : pureStudents).some((num) =>
+          isInFilter([exclude], num)
+        )
+      )
     );
   });
 };

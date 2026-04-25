@@ -11,6 +11,7 @@ import {
   PieChart,
   Search,
   Sprout,
+  Users,
 } from "lucide-react";
 import {
   Sidebar,
@@ -45,6 +46,11 @@ const menuItems = [
     title: "파티 찾기 & 요약",
     url: "/party",
     icon: Search,
+  },
+  {
+    title: "내 캐릭터 풀",
+    url: "/pool",
+    icon: Users,
   },
   {
     title: "통계",

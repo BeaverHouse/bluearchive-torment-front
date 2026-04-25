@@ -4,7 +4,9 @@ import Image from "next/image";
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import useBAStore from "@/store/useBAStore";
+import useStudentPoolStore from "@/store/useStudentPoolStore";
 import { filteredPartys, getFilters } from "@/lib/party-filters";
+import type { PoolFilterContext } from "@/types/pool";
 import { createCDNQueryOptions } from "@/lib/queries";
 import PartyCard from "./party-card";
 import {
@@ -17,6 +19,7 @@ import { Pagination } from "../../shared/pagination";
 import Loading from "../../common/loading";
 import { PartyFilterSection } from "./party-filter-section";
 import { PartyFilterState } from "@/types/filter";
+import PoolFilterToggle from "@/components/features/pool/pool-filter-toggle";
 
 const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProps) => {
   const [PartyCountRange, setPartyCountRange] = useState([0, 99]);
@@ -41,6 +44,23 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
     removeFilters,
   } = useBAStore();
 
+  const poolStudents = useStudentPoolStore((state) => state.pool.students);
+  const poolEnabled = useStudentPoolStore((state) => state.filter.enabled);
+  const poolPolicy = useStudentPoolStore((state) => state.filter.policy);
+  const poolAllowExternalAssist = useStudentPoolStore(
+    (state) => state.filter.allowExternalAssist
+  );
+
+  const poolFilterContext: PoolFilterContext | undefined = useMemo(() => {
+    if (!poolEnabled) return undefined;
+    if (Object.keys(poolStudents).length === 0) return undefined;
+    return {
+      pool: { students: poolStudents },
+      policy: poolPolicy,
+      allowExternalAssist: poolAllowExternalAssist,
+    };
+  }, [poolEnabled, poolStudents, poolPolicy, poolAllowExternalAssist]);
+
   useEffect(() => {
     setPage(1);
   }, [
@@ -54,6 +74,7 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
     AllowDuplicate,
     YoutubeOnly,
     season,
+    poolFilterContext,
   ]);
 
   const getPartyDataQuery = useQuery(createCDNQueryOptions<RaidData>("party", season));
@@ -188,7 +209,8 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
       PartyCountRange,
       HardExclude,
       AllowDuplicate,
-      YoutubeOnly
+      YoutubeOnly,
+      poolFilterContext
     );
 
     if (currentParties.length === 0) return;
@@ -208,7 +230,7 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
     // 해당 파티가 있는 페이지로 이동
     const targetPage = Math.floor(closestIndex / PageSize) + 1;
     setPage(targetPage);
-  }, [data, ScoreRange, IncludeList, ExcludeList, Assist, PartyCountRange, HardExclude, AllowDuplicate, YoutubeOnly, PageSize]);
+  }, [data, ScoreRange, IncludeList, ExcludeList, Assist, PartyCountRange, HardExclude, AllowDuplicate, YoutubeOnly, PageSize, poolFilterContext]);
 
   // 필터링된 파티 목록 (메모이제이션)
   const parties = useMemo(() => filteredPartys(
@@ -220,8 +242,9 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
     PartyCountRange,
     HardExclude,
     AllowDuplicate,
-    YoutubeOnly
-  ), [data, ScoreRange, IncludeList, ExcludeList, Assist, PartyCountRange, HardExclude, AllowDuplicate, YoutubeOnly]);
+    YoutubeOnly,
+    poolFilterContext
+  ), [data, ScoreRange, IncludeList, ExcludeList, Assist, PartyCountRange, HardExclude, AllowDuplicate, YoutubeOnly, poolFilterContext]);
 
   // 현재 필터 상태 (메모이제이션) - 모든 훅은 조건부 리턴 전에 호출
   const currentFilters: PartyFilterState = useMemo(() => ({
@@ -240,6 +263,7 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
 
   return (
     <>
+      <PoolFilterToggle />
       <PartyFilterSection
         filters={currentFilters}
         onFilterChange={handleFilterChange}
@@ -255,6 +279,7 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
         showPresetPopover
         onScoreJump={handleScoreJump}
         onLoadPreset={handleLoadPreset}
+        poolActive={!!poolFilterContext}
       />
       <div className="mx-auto mb-5 w-full">
         검색 결과: 총 {parties.length}개
