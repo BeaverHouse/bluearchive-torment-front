@@ -49,18 +49,18 @@ export default function PoolEditorDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="px-6 pb-3 flex flex-col gap-2">
-          <div className="flex gap-2 items-center">
-            <Input
-              type="text"
-              placeholder="학생 이름 검색 (한/일/별명)"
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-              className="flex-1"
-            />
+        <div className="px-6 pb-3 flex flex-col sm:flex-row gap-2 sm:items-center">
+          <Input
+            type="text"
+            placeholder="학생 이름 검색 (한/일/별명)"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            className="sm:flex-1"
+          />
+          <div className="flex gap-2">
             <PoolPresetPopover />
+            <PoolToolbar ownedCount={ownedCount} />
           </div>
-          <PoolToolbar ownedCount={ownedCount} />
         </div>
 
         <div className="overflow-y-auto px-6 pb-6 flex-1">

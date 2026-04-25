@@ -12,18 +12,18 @@ const POLICY_OPTIONS: { value: StarMatchPolicy; label: string; hint: string }[] 
   [
     {
       value: "exact",
-      label: "완전 일치",
-      hint: "풀의 성급과 파티 성급이 정확히 같아야 함",
+      label: "일치",
+      hint: "풀의 성급과 파티 데이터가 정확히 같은 학생만 매칭",
     },
     {
       value: "atLeast",
-      label: "보유 성급 이상 (≥)",
-      hint: "풀 성급이 파티 요구 성급 이상이면 매칭",
+      label: "낮은 성급 허용",
+      hint: "파티 데이터보다 현재 풀의 성급이 더 좋으면 매칭",
     },
     {
       value: "any",
-      label: "성급 무관",
-      hint: "풀에 학생이 있기만 하면 매칭",
+      label: "보유 상태만",
+      hint: "학생 보유 상태로만 매칭",
     },
   ];
 
@@ -48,7 +48,7 @@ export default function PoolFilterToggle({
 
   return (
     <div className="mb-4 rounded-lg border border-primary/40 bg-primary/5 p-3">
-      <div className="flex flex-wrap items-center justify-between gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <label className="flex items-center gap-2 cursor-pointer select-none">
           <Checkbox
             id="poolEnabled"
@@ -66,6 +66,7 @@ export default function PoolFilterToggle({
           size="sm"
           variant="outline"
           onClick={() => setEditorOpen(true)}
+          className="w-full sm:w-auto"
         >
           풀 편집
         </Button>
@@ -78,23 +79,19 @@ export default function PoolFilterToggle({
       )}
 
       {enabled && ownedCount > 0 && (
-        <div className="mt-3 flex flex-col gap-3">
-          <div>
-            <div className="flex flex-wrap gap-1">
-              {POLICY_OPTIONS.map((opt) => (
-                <Button
-                  key={opt.value}
-                  type="button"
-                  size="sm"
-                  variant={policy === opt.value ? "default" : "outline"}
-                  onClick={() => setPolicy(opt.value)}
-                  title={opt.hint}
-                >
-                  {opt.label}
-                </Button>
-              ))}
-            </div>
-          </div>
+        <div className="mt-3 flex flex-wrap justify-center gap-1">
+          {POLICY_OPTIONS.map((opt) => (
+            <Button
+              key={opt.value}
+              type="button"
+              size="sm"
+              variant={policy === opt.value ? "default" : "outline"}
+              onClick={() => setPolicy(opt.value)}
+              title={opt.hint}
+            >
+              {opt.label}
+            </Button>
+          ))}
         </div>
       )}
 

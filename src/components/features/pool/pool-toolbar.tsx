@@ -19,16 +19,14 @@ export default function PoolToolbar({ ownedCount }: PoolToolbarProps) {
   };
 
   return (
-    <div className="flex flex-wrap gap-2 items-center">
-      <Button
-        type="button"
-        variant="destructive"
-        size="sm"
-        onClick={confirmClear}
-        disabled={ownedCount === 0}
-      >
-        전체 해제
-      </Button>
-    </div>
+    <Button
+      type="button"
+      variant="destructive"
+      onClick={confirmClear}
+      disabled={ownedCount === 0}
+      className="h-10"
+    >
+      전체 해제
+    </Button>
   );
 }
