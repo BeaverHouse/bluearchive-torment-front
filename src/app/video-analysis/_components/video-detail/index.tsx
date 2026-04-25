@@ -81,7 +81,7 @@ export function VideoDetail({
     }
   };
 
-  const ActionButtons = ({ video }: { video: VideoAnalysisData }) => (
+  const renderActionButtons = (video: VideoAnalysisData) => (
     <div className="flex gap-2">
       <Button
         variant="outline"
@@ -131,7 +131,7 @@ export function VideoDetail({
                 </TabsTrigger>
               ))}
             </TabsList>
-            <ActionButtons video={currentVideo} />
+            {renderActionButtons(currentVideo)}
           </div>
 
           {sortedVideos.map((video) => (
@@ -143,7 +143,7 @@ export function VideoDetail({
       ) : (
         <div className="space-y-4">
           <div className="flex gap-2 justify-end">
-            <ActionButtons video={currentVideo} />
+            {renderActionButtons(currentVideo)}
           </div>
           <VideoAnalysisContent video={currentVideo} studentsMap={studentsMap} />
         </div>

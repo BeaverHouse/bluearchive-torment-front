@@ -38,6 +38,9 @@ interface PartyFilterProps {
 
   // 점수 이동 핸들러
   onScoreJump?: (score: number) => void;
+
+  // 다른 검색 모드(풀/조합) 활성 시 include/exclude/hardExclude UI 숨김
+  hideIncludeExclude?: boolean;
 }
 
 // 점수 범위 계산 (3분 기준 사용)
@@ -81,6 +84,7 @@ function PartyFilterComponent({
   showYoutubeOnly = false,
   showScoreButtons = true,
   onScoreJump,
+  hideIncludeExclude = false,
 }: PartyFilterProps) {
   const [jumpScore, setJumpScore] = useState("");
   const [jumpPopoverOpen, setJumpPopoverOpen] = useState(false);
@@ -198,51 +202,56 @@ function PartyFilterComponent({
         </div>
       </div>
 
-      {/* 포함 캐릭터 Filter */}
-      <div className="mb-4">
-        <label className="text-sm font-medium mb-2 block">
-          포함할 <strong>내 캐릭터</strong>
-        </label>
-        <Cascader
-          multiple
-          options={filterOptions}
-          value={filters.includeList}
-          onChange={handleIncludeChange}
-          placeholder="캐릭터를 선택하세요"
-          className="w-full"
-          allowClear
-          showSearch
-          studentSearchMap={studentSearchMap}
-        />
-      </div>
+      {/* 포함/제외/hardExclude: 필터 모드일 때만 노출 */}
+      {!hideIncludeExclude && (
+        <>
+          {/* 포함 캐릭터 Filter */}
+          <div className="mb-4">
+            <label className="text-sm font-medium mb-2 block">
+              포함할 <strong>내 캐릭터</strong>
+            </label>
+            <Cascader
+              multiple
+              options={filterOptions}
+              value={filters.includeList}
+              onChange={handleIncludeChange}
+              placeholder="캐릭터를 선택하세요"
+              className="w-full"
+              allowClear
+              showSearch
+              studentSearchMap={studentSearchMap}
+            />
+          </div>
 
-      {/* 제외 캐릭터 Filter */}
-      <div className="mb-4">
-        <label className="text-sm font-medium mb-2 block">
-          제외할 <strong>내 캐릭터</strong>
-        </label>
-        <MultiSelect
-          options={excludeOptions}
-          value={filters.excludeList}
-          onChange={handleExcludeChange}
-          placeholder="제외할 캐릭터를 선택하세요"
-          className="w-full"
-          allowClear
-          showSearch
-          studentSearchMap={studentSearchMap}
-        />
-      </div>
+          {/* 제외 캐릭터 Filter */}
+          <div className="mb-4">
+            <label className="text-sm font-medium mb-2 block">
+              제외할 <strong>내 캐릭터</strong>
+            </label>
+            <MultiSelect
+              options={excludeOptions}
+              value={filters.excludeList}
+              onChange={handleExcludeChange}
+              placeholder="제외할 캐릭터를 선택하세요"
+              className="w-full"
+              allowClear
+              showSearch
+              studentSearchMap={studentSearchMap}
+            />
+          </div>
 
-      <div className="flex items-center space-x-2 mb-4">
-        <Checkbox
-          id="hardExclude"
-          checked={filters.hardExclude}
-          onCheckedChange={handleHardExcludeChange}
-        />
-        <label htmlFor="hardExclude" className="text-sm">
-          조력자에서도 제외
-        </label>
-      </div>
+          <div className="flex items-center space-x-2 mb-4">
+            <Checkbox
+              id="hardExclude"
+              checked={filters.hardExclude}
+              onCheckedChange={handleHardExcludeChange}
+            />
+            <label htmlFor="hardExclude" className="text-sm">
+              조력자에서도 제외
+            </label>
+          </div>
+        </>
+      )}
 
       {/* 조력자 Filter */}
       <div className="mb-4">

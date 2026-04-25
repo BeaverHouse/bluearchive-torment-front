@@ -1,5 +1,5 @@
-import { TotalAnalysisLayout } from "@/components/features/total-analysis/TotalAnalysisLayout";
+import { redirect } from "next/navigation";
 
 export default function TotalAnalysisPage() {
-  return <TotalAnalysisLayout />;
+  redirect("/analysis");
 }

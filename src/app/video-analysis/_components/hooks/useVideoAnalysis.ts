@@ -179,16 +179,19 @@ export function useVideoAnalysis({ studentsMap, initialRaid }: UseVideoAnalysisP
     const filtered = filteredPartys(
       raidData,
       filters.scoreRange,
-      filters.includeList,
-      filters.excludeList,
       filters.assist,
       filters.partyCountRange,
-      filters.hardExclude,
       filters.allowDuplicate,
-      false
+      false,
+      {
+        kind: "filter",
+        includeArray: filters.includeList,
+        excludeArray: filters.excludeList,
+        hardExclude: filters.hardExclude,
+      }
     );
 
-    const filteredScores = new Set(filtered.map((p) => p.score));
+    const filteredScores = new Set(filtered.map((r) => r.party.score));
     return allVideos.filter((video) => filteredScores.has(video.score));
   }, [isFilterMode, filterData, filteredVideos, allVideos, filters]);
 

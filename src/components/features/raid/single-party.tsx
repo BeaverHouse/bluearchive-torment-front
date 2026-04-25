@@ -5,13 +5,15 @@ import StudentImage from "../student/student-image";
 
 interface SinglePartyProps {
   party: number[];
+  /** 이 sub-party가 조합 매칭된 경우 강조 표시 (배경 틴트만) */
+  highlighted?: boolean;
 }
 
 /**
  * Single party component
  * @param party Student codes of the party. 0 is empty slot
  */
-export function SingleParty({ party }: SinglePartyProps) {
+export function SingleParty({ party, highlighted = false }: SinglePartyProps) {
   // If party member is lower than 6, insert zero between the last 1xxxx(1xxxxxxx) and 2xxxx(2xxxxxxx)
   const finalParty = React.useMemo(() => {
     if (party.length >= 6) return party;
@@ -36,8 +38,12 @@ export function SingleParty({ party }: SinglePartyProps) {
     return [...strikers, ...zeros, ...specials];
   }, [party]);
 
+  const containerCls = highlighted
+    ? "grid grid-cols-6 gap-2 p-2 mb-1 rounded border bg-sky-500/10"
+    : "grid grid-cols-6 gap-2 p-2 mb-1 rounded border bg-muted/20";
+
   return (
-    <div className="grid grid-cols-6 gap-2 p-2 mb-1 rounded border bg-muted/20">
+    <div className={containerCls}>
       {finalParty.map((student, idx) => {
         const key = "student" + idx;
         if (student === 0)

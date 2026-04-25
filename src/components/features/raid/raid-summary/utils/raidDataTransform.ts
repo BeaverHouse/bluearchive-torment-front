@@ -51,21 +51,3 @@ export function createPartyCountData(
   });
 }
 
-export function getHighUsageCharacters(
-  filters: Record<string, Record<string, number>> | undefined,
-  clearCount: number,
-  studentsMap: Record<string, string>
-) {
-  if (!filters) return [];
-
-  return Object.entries(filters)
-    .map(([id, usage]) => ({
-      id,
-      name: studentsMap[id] || `Character ${id}`,
-      totalUsage: Object.values(usage).reduce((a, b) => a + b, 0),
-      usageRate:
-        (Object.values(usage).reduce((a, b) => a + b, 0) / (clearCount || 1)) * 100,
-    }))
-    .filter((char) => char.usageRate >= 10)
-    .sort((a, b) => b.totalUsage - a.totalUsage);
-}

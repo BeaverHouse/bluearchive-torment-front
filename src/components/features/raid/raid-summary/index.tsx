@@ -1,10 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Users, Target, TrendingUp } from "lucide-react";
+import { Users, Target, TrendingUp, Search, Copy, Check, Youtube, ChevronRight } from "lucide-react";
 import { VideoIcon } from "@radix-ui/react-icons";
 import { RaidComponentProps, RaidSummaryData } from "@/types/raid";
 import PartyCard from "../party-card";
@@ -17,20 +18,37 @@ import { HighImpactCharacters } from "../high-impact-characters";
 import { TopAssistants } from "../top-assistants";
 import { PartyCompositionChart } from "./PartyCompositionChart";
 import { CharacterGrowthStats } from "./CharacterGrowthStats";
-import { HighUsageCharacters } from "./HighUsageCharacters";
 import {
   createCharTableData,
   createPartyCountData,
-  getHighUsageCharacters,
 } from "./utils/raidDataTransform";
+import { generateSearchKeyword } from "@/utils/raid";
 
 const RaidSummary = ({
   season,
+  seasonDescription,
   studentsMap,
   studentSearchMap,
   level,
 }: RaidComponentProps) => {
   const router = useRouter();
+  const [copied, setCopied] = useState(false);
+
+  const searchKeyword = generateSearchKeyword(
+    seasonDescription ?? "",
+    level === "L" ? "L" : level === "T" ? "T" : ""
+  );
+  const youtubeSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(searchKeyword)}`;
+
+  const handleCopyKeyword = async () => {
+    try {
+      await navigator.clipboard.writeText(searchKeyword);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // ignore
+    }
+  };
 
   const getSummaryDataQuery = useQuery({
     queryKey: ["getSummaryData", season],
@@ -105,7 +123,6 @@ const RaidSummary = ({
     (item) => item.percent >= 1
   );
   const partyCountData = createPartyCountData(data.partyCounts, data.clearCount || 0);
-  const highUsageCharacters = getHighUsageCharacters(data.filters, data.clearCount || 0, studentsMap);
 
   const tormentClearPercent = Number(Math.min(tormentSummaryData.clearCount, 20000) / 20000) * 100;
   const lunaticClearPercent = Number(Math.min(lunaticSummaryData.clearCount, 20000) / 20000) * 100;
@@ -113,13 +130,69 @@ const RaidSummary = ({
   return (
     <div className="container mx-auto py-4 sm:py-8 max-w-7xl">
       <div className="mb-6 sm:mb-8">
-        <Button
+        {searchKeyword && (
+          <div className="mb-4 rounded-lg border border-gray-200 dark:border-gray-700 p-3">
+            <div className="flex items-center gap-2 mb-2">
+              <Search className="h-4 w-4 text-sky-500" />
+              <span className="text-sm font-medium">검색어</span>
+            </div>
+            <code
+              className="block w-full rounded bg-muted px-2 py-1.5 text-sm truncate mb-2"
+              title={searchKeyword}
+            >
+              {searchKeyword}
+            </code>
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={handleCopyKeyword}
+                className="flex-1 gap-1"
+              >
+                {copied ? (
+                  <Check className="h-4 w-4" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
+                <span>{copied ? "복사됨" : "복사"}</span>
+              </Button>
+              <a
+                href={youtubeSearchUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1"
+              >
+                <Button
+                  type="button"
+                  size="sm"
+                  className="w-full gap-1 bg-red-500 hover:bg-red-600"
+                >
+                  <Youtube className="h-4 w-4" />
+                  <span>YouTube</span>
+                </Button>
+              </a>
+            </div>
+          </div>
+        )}
+        <button
+          type="button"
           onClick={handleGoToVideos}
-          className="w-full bg-sky-500 hover:bg-sky-600 h-12 text-base mb-6"
+          className="group w-full mb-6 rounded-lg border-2 border-sky-500 bg-sky-500/5 hover:bg-sky-500/10 transition-colors p-4 text-left flex items-center gap-3"
         >
-          <VideoIcon className="h-5 w-5 mr-2" />
-          영상 분석 페이지로 이동
-        </Button>
+          <div className="rounded-full bg-sky-500 p-2 shrink-0">
+            <VideoIcon className="h-5 w-5 text-white" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-base font-semibold text-sky-700 dark:text-sky-300">
+              영상 분석 페이지로 이동
+            </div>
+            <div className="text-xs text-muted-foreground mt-0.5">
+              파티 구성과 점수가 분석되어 있어요
+            </div>
+          </div>
+          <ChevronRight className="h-5 w-5 text-sky-500 shrink-0 group-hover:translate-x-1 transition-transform" />
+        </button>
 
         {level !== "I" && (
           <PlatinumStats
@@ -144,8 +217,6 @@ const RaidSummary = ({
         )}
 
         {assistData.length > 0 && <TopAssistants data={assistData.slice(0, 3)} />}
-
-        <HighUsageCharacters characters={highUsageCharacters} />
 
         <CardWrapper
           icon={<Users className="h-5 w-5 text-sky-500" />}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import useBAStore from "@/store/useBAStore";
 import RaidSearch from "@/components/features/raid/raid-search";
 import RaidSummary from "@/components/features/raid/raid-summary";
@@ -13,6 +14,8 @@ export default function PartyPage() {
   const { V3Season, setV3Season } = useBAStore();
   const { studentsMap, studentSearchMap } = useStudentMaps();
   const { raids, isLoading } = useRaids();
+  const [summaryLevel, setSummaryLevel] = useState<"T" | "L">("T");
+
   const raidInfos = raids
     .filter((raid) => raid.party_updated)
     .map((raid) => ({
@@ -56,6 +59,14 @@ export default function PartyPage() {
     (raid) => raid.value === season
   )!.topLevel;
 
+  const hasLunatic = seasonTopLevel === "L";
+  // Lunatic 미지원 시즌이면 강제로 T로 폴백
+  const effectiveSummaryLevel: "T" | "I" | "L" = hasLunatic
+    ? summaryLevel
+    : seasonTopLevel === "L"
+      ? "T"
+      : (seasonTopLevel as "T" | "I");
+
   return (
     <div
       className="App"
@@ -92,11 +103,7 @@ export default function PartyPage() {
       </div>
       <br />
       <Tabs defaultValue="search" className="w-full max-w-4xl">
-        <TabsList
-          className={`grid w-full ${
-            seasonTopLevel === "L" ? "grid-cols-3" : "grid-cols-2"
-          }`}
-        >
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="search">파티 찾기</TabsTrigger>
           <TabsTrigger
             value="summary"
@@ -104,14 +111,6 @@ export default function PartyPage() {
           >
             요약
           </TabsTrigger>
-          {seasonTopLevel === "L" && (
-            <TabsTrigger
-              value="summary-lunatic"
-              onClick={() => trackSummaryTabClick("summary-lunatic")}
-            >
-              요약 (루나틱)
-            </TabsTrigger>
-          )}
         </TabsList>
         <TabsContent value="search">
           <RaidSearch
@@ -122,25 +121,40 @@ export default function PartyPage() {
           />
         </TabsContent>
         <TabsContent value="summary">
-          <RaidSummary
-            season={season}
-            seasonDescription={seasonDescription}
-            studentsMap={studentsMap}
-            studentSearchMap={studentSearchMap}
-            level={seasonTopLevel === "L" ? "T" : seasonTopLevel}
-          />
-        </TabsContent>
-        {seasonTopLevel === "L" && (
-          <TabsContent value="summary-lunatic">
+          {hasLunatic ? (
+            <Tabs
+              value={summaryLevel}
+              onValueChange={(v) => {
+                const next = v as "T" | "L";
+                setSummaryLevel(next);
+                trackSummaryTabClick(
+                  next === "L" ? "summary-lunatic" : "summary"
+                );
+              }}
+              className="w-full"
+            >
+              <TabsList className="grid w-full grid-cols-2 mb-4">
+                <TabsTrigger value="T">Torment</TabsTrigger>
+                <TabsTrigger value="L">Lunatic</TabsTrigger>
+              </TabsList>
+              <RaidSummary
+                season={season}
+                seasonDescription={seasonDescription}
+                studentsMap={studentsMap}
+                studentSearchMap={studentSearchMap}
+                level={effectiveSummaryLevel}
+              />
+            </Tabs>
+          ) : (
             <RaidSummary
               season={season}
               seasonDescription={seasonDescription}
               studentsMap={studentsMap}
               studentSearchMap={studentSearchMap}
-              level="L"
+              level={effectiveSummaryLevel}
             />
-          </TabsContent>
-        )}
+          )}
+        </TabsContent>
       </Tabs>
     </div>
   );

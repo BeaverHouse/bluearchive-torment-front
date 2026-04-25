@@ -21,9 +21,9 @@ const features = [
     bgColor: "bg-blue-500/10",
   },
   {
-    title: "통계",
+    title: "분석",
     description: "전체 총력전 추이와 캐릭터별 통계를 볼 수 있어요.",
-    href: "/total-analysis",
+    href: "/analysis",
     icon: PieChart,
     color: "text-purple-500",
     bgColor: "bg-purple-500/10",

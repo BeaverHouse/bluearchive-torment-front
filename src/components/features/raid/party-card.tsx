@@ -21,6 +21,8 @@ interface PartyCardProps {
   parties: number[][];
   video_id?: string;
   raid_id?: string;
+  /** 단일 파티 매칭된 sub-party 인덱스 (배경 틴트 강조) */
+  matchedSubPartyIndexes?: number[];
 }
 
 const PartyCard: React.FC<PartyCardProps> = ({
@@ -30,7 +32,12 @@ const PartyCard: React.FC<PartyCardProps> = ({
   parties,
   video_id,
   raid_id,
+  matchedSubPartyIndexes,
 }) => {
+  const matchedSet = React.useMemo(
+    () => new Set(matchedSubPartyIndexes ?? []),
+    [matchedSubPartyIndexes]
+  );
   const handleVideoClick = React.useCallback(() => {
     if (video_id && raid_id) {
       trackVideoClick(video_id, raid_id, value);
@@ -67,7 +74,11 @@ const PartyCard: React.FC<PartyCardProps> = ({
         </div>
 
         {parties.slice(0, 4).map((party, partyIdx) => (
-          <SingleParty party={party} key={"party" + partyIdx} />
+          <SingleParty
+            party={party}
+            key={"party" + partyIdx}
+            highlighted={matchedSet.has(partyIdx)}
+          />
         ))}
 
         {parties.length > 4 && (
@@ -79,7 +90,11 @@ const PartyCard: React.FC<PartyCardProps> = ({
                 </AccordionTrigger>
                 <AccordionContent>
                   {parties.slice(4).map((party, partyIdx) => (
-                    <SingleParty party={party} key={"party" + partyIdx} />
+                    <SingleParty
+                      party={party}
+                      key={"party" + partyIdx}
+                      highlighted={matchedSet.has(partyIdx + 4)}
+                    />
                   ))}
                 </AccordionContent>
               </AccordionItem>

@@ -4,6 +4,11 @@ const API_KEY_TTL_MS = 10 * 60 * 1000; // 10분 (활동 시 갱신)
 const STORAGE_KEY = "batorment_gemini_api_key";
 const STORAGE_EXPIRY_KEY = "batorment_gemini_api_key_expiry";
 
+function clearStorage() {
+  sessionStorage.removeItem(STORAGE_KEY);
+  sessionStorage.removeItem(STORAGE_EXPIRY_KEY);
+}
+
 export function useApiKey() {
   const [apiKey, setApiKey] = useState<string | null>(null);
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
@@ -33,11 +38,6 @@ export function useApiKey() {
       }
     };
   }, []);
-
-  const clearStorage = () => {
-    sessionStorage.removeItem(STORAGE_KEY);
-    sessionStorage.removeItem(STORAGE_EXPIRY_KEY);
-  };
 
   const saveApiKey = (key: string) => {
     if (expiryTimerRef.current) {
