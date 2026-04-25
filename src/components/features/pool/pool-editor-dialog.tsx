@@ -10,10 +10,12 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
 import useStudentPoolStore from "@/store/useStudentPoolStore";
 import PoolToolbar from "./pool-toolbar";
 import PoolStudentGrid from "./pool-student-grid";
-import PoolPresetPopover from "./pool-preset-popover";
+import PresetPopover from "@/components/features/preset/preset-popover";
 
 interface PoolEditorDialogProps {
   open: boolean;
@@ -29,6 +31,7 @@ export default function PoolEditorDialog({
   highUsageLunaticStudentIds,
 }: PoolEditorDialogProps) {
   const pool = useStudentPoolStore((state) => state.pool);
+  const setAll = useStudentPoolStore((state) => state.setAll);
   const [searchQuery, setSearchQuery] = useState("");
 
   const ownedCount = useMemo(
@@ -57,8 +60,17 @@ export default function PoolEditorDialog({
             onChange={(event) => setSearchQuery(event.target.value)}
             className="sm:flex-1"
           />
-          <div className="flex gap-2">
-            <PoolPresetPopover />
+          <div className="flex gap-1 items-center justify-end sm:justify-start">
+            <PresetPopover mode="pool" pool={pool} onLoadPool={setAll}>
+              <Button
+                variant="secondary"
+                size="icon"
+                className="h-8 w-8"
+                title="풀 프리셋"
+              >
+                <Download className="h-4 w-4" />
+              </Button>
+            </PresetPopover>
             <PoolToolbar ownedCount={ownedCount} />
           </div>
         </div>

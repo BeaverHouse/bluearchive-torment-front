@@ -10,7 +10,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { PartyFilter } from "./party-filter";
-import { FilterPresetPopover } from "./filter-preset-popover";
+import PresetPopover from "@/components/features/preset/preset-popover";
 import { FilterOption } from "@/types/raid";
 import { PartyFilterState } from "@/types/filter";
 import { StudentSearchData } from "@/utils/search";
@@ -79,9 +79,10 @@ export function PartyFilterSection({
           </CollapsibleTrigger>
           <div className="flex items-center gap-1 pr-2">
             {showPresetPopover && onLoadPreset && (
-              <FilterPresetPopover
-                filters={filters}
-                onLoadPreset={onLoadPreset}
+              <PresetPopover
+                mode="filter"
+                filter={filters}
+                onLoadFilter={onLoadPreset}
               >
                 <Button
                   variant="secondary"
@@ -91,7 +92,7 @@ export function PartyFilterSection({
                 >
                   <Download className="h-4 w-4" />
                 </Button>
-              </FilterPresetPopover>
+              </PresetPopover>
             )}
             <Button
               variant="destructive"
