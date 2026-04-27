@@ -47,7 +47,7 @@ export default function GroupedPartyCard({
   const visible = [...withVideo, ...withoutVideo].slice(0, MAX_VISIBLE);
 
   return (
-    <div className="mb-4">
+    <div className="mb-8">
       <PartyCard
         rank={party.rank}
         value={party.score}
@@ -59,7 +59,7 @@ export default function GroupedPartyCard({
       />
 
       <Collapsible>
-        <div className="flex items-center justify-between mx-2 mb-2">
+        <div className="flex items-center justify-between mx-2 -mt-3 mb-2 px-2 py-1 rounded-b-md bg-muted/40">
           {visible.length > 0 ? (
             <CollapsibleTrigger className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
               <ChevronDown className="h-4 w-4" />
