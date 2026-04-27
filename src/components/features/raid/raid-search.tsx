@@ -394,7 +394,7 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
             .filter(
               (_, idx) => idx >= (Page - 1) * PageSize && idx < Page * PageSize
             )
-            .map(({ party, matchedSubPartyIndexes }, idx) => (
+            .map(({ party, matchedSubPartyIndexes, missingCodes }, idx) => (
               <PartyCard
                 key={idx}
                 rank={party.rank}
@@ -404,6 +404,7 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
                 video_id={party.video_id}
                 raid_id={party.video_id ? (party.raid_id || season) : undefined}
                 matchedSubPartyIndexes={matchedSubPartyIndexes}
+                missingCodes={missingCodes}
               />
             ))
         ) : (

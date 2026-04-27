@@ -18,6 +18,7 @@ interface StudentImageProps {
   code: number;
   size?: number;
   showModeBadge?: boolean;
+  missing?: boolean;
 }
 
 /**
@@ -25,7 +26,7 @@ interface StudentImageProps {
  * @param code Student code (5-digit or 8-digit)
  * @param name Student name (to use in tooltip)
  */
-export function StudentImage({ code, size = 40, showModeBadge = true }: StudentImageProps) {
+export function StudentImage({ code, size = 40, showModeBadge = true, missing = false }: StudentImageProps) {
   const { studentsMap } = useStudentMaps();
 
   const studentID = React.useMemo(
@@ -48,9 +49,11 @@ export function StudentImage({ code, size = 40, showModeBadge = true }: StudentI
     [code]
   );
 
-  const borderClass = isAssist
-    ? "border-2 border-sky-500"
-    : "border-2 border-transparent";
+  const borderClass = missing
+    ? "border-2 border-red-500"
+    : isAssist
+      ? "border-2 border-sky-500"
+      : "border-2 border-transparent";
 
   const modeIcon = getModeIcon(studentID);
   const modeLabel = getModeLabel(studentID);

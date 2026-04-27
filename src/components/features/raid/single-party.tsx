@@ -8,13 +8,14 @@ interface SinglePartyProps {
   /** 이 sub-party가 조합 매칭된 경우 강조 표시 (배경 틴트만) */
   highlighted?: boolean;
   showModeBadge?: boolean;
+  missingCodes?: ReadonlySet<number>;
 }
 
 /**
  * Single party component
  * @param party Student codes of the party. 0 is empty slot
  */
-export function SingleParty({ party, highlighted = false, showModeBadge }: SinglePartyProps) {
+export function SingleParty({ party, highlighted = false, showModeBadge, missingCodes }: SinglePartyProps) {
   // If party member is lower than 6, insert zero between the last 1xxxx(1xxxxxxx) and 2xxxx(2xxxxxxx)
   const finalParty = React.useMemo(() => {
     if (party.length >= 6) return party;
@@ -50,7 +51,9 @@ export function SingleParty({ party, highlighted = false, showModeBadge }: Singl
         if (student === 0)
           return <div key={key} className="w-10 h-10 sm:w-12 sm:h-12"></div>;
 
-        return <StudentImage code={student} key={key} showModeBadge={showModeBadge} />;
+        const studentCode = student < 100000 ? student : Math.floor(student / 1000);
+        const isMissing = missingCodes?.has(studentCode) ?? false;
+        return <StudentImage code={student} key={key} showModeBadge={showModeBadge} missing={isMissing} />;
       })}
     </div>
   );

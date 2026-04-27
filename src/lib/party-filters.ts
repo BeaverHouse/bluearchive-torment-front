@@ -1,7 +1,7 @@
 import { categoryMap } from "@/constants/assault";
 import { RaidData, PartyData, FilterOption } from "@/types/raid";
 import type { PoolFilterContext } from "@/types/pool";
-import { partyAgainstPool } from "@/lib/pool-filters";
+import { missingFromPool } from "@/lib/pool-filters";
 import { findMatchingSubPartyIndexes } from "@/lib/combo-filters";
 import { parseCharacterInfo } from "@/utils/character";
 import { getModeLabel } from "@/constants/student-aliases";
@@ -44,10 +44,15 @@ export type SearchModeContext =
   | { kind: "pool"; pool: PoolFilterContext }
   | { kind: "single"; codes: ReadonlySet<number> };
 
+/** 허용할 최대 미보유 캐릭터 수 */
+const MAX_MISSING = 2;
+
 export interface FilteredPartyResult {
   party: PartyData;
   /** 단일 파티 모드에서 매칭된 sub-party 인덱스 배열 (다른 모드는 빈 배열) */
   matchedSubPartyIndexes: number[];
+  /** 풀 모드에서 미보유 캐릭터 코드 (5자리). 다른 모드는 빈 Set */
+  missingCodes: ReadonlySet<number>;
 }
 
 export const filteredPartys = (
@@ -80,12 +85,15 @@ export const filteredPartys = (
     if (!commonPass) return acc;
 
     let matchedSubPartyIndexes: number[] = [];
+    let missingCodes: ReadonlySet<number> = new Set();
 
     if (searchMode.kind === "pool") {
       if (Object.keys(searchMode.pool.pool.students).length === 0) {
         // 풀 비어있으면 풀 체크 패스
-      } else if (!partyAgainstPool(students, searchMode.pool)) {
-        return acc;
+      } else {
+        const missing = missingFromPool(students, searchMode.pool);
+        if (missing.size > MAX_MISSING) return acc;
+        missingCodes = missing;
       }
     } else if (searchMode.kind === "single") {
       if (searchMode.codes.size === 0) {
@@ -108,7 +116,7 @@ export const filteredPartys = (
       if (!includeOk || !excludeOk) return acc;
     }
 
-    acc.push({ party, matchedSubPartyIndexes });
+    acc.push({ party, matchedSubPartyIndexes, missingCodes });
     return acc;
   }, []);
 };
