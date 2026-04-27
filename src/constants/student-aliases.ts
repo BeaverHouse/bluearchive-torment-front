@@ -20,10 +20,12 @@ export const STUDENT_MODE_LABELS: Readonly<Record<number, string>> = {
   10099: "공격모드",
 };
 
-/** 각 variant 코드의 모드 숫자 (PartyCard 우하단 뱃지용) */
-export const STUDENT_MODE_NUMBERS: Readonly<Record<number, number>> = {
-  10098: 1,
-  10099: 2,
+/** 각 variant 코드의 모드 아이콘 타입 */
+export type ModeIcon = "shield" | "sword";
+
+export const STUDENT_MODE_ICONS: Readonly<Record<number, ModeIcon>> = {
+  10098: "shield",
+  10099: "sword",
 };
 
 /** UI 노출에서 제외할 alias(secondary) 코드 집합 */
@@ -55,7 +57,7 @@ export function getModeLabel(code: number): string | undefined {
   return STUDENT_MODE_LABELS[code];
 }
 
-/** 모드 숫자(1/2) 반환 */
-export function getModeNumber(code: number): number | undefined {
-  return STUDENT_MODE_NUMBERS[code];
+/** 모드 아이콘 타입 반환 */
+export function getModeIcon(code: number): ModeIcon | undefined {
+  return STUDENT_MODE_ICONS[code];
 }

@@ -15,7 +15,8 @@ import Image from "next/image";
 import { useStudentMaps } from "@/hooks/use-student-maps";
 import { matchesStudentSearch } from "@/utils/search";
 import useSearchModeStore from "@/store/useSearchModeStore";
-import { ALIAS_HIDDEN_CODES } from "@/constants/student-aliases";
+import { getModeIcon } from "@/constants/student-aliases";
+import { Shield, Sword } from "lucide-react";
 
 const STRIKER_MAX = 4;
 const SPECIAL_MAX = 2;
@@ -103,8 +104,6 @@ export default function ComboSelector() {
     for (const [idStr, name] of Object.entries(studentsMap)) {
       const id = Number(idStr);
       if (!Number.isFinite(id)) continue;
-      // alias(secondary) 코드는 단일 파티 selector에서 숨김 (canonical만 노출)
-      if (ALIAS_HIDDEN_CODES.has(id)) continue;
       list.push({ id, name });
     }
     return list.sort((a, b) => a.name.localeCompare(b.name, "ko"));
@@ -141,6 +140,7 @@ export default function ComboSelector() {
             {list.map(({ id, name }) => {
               const selected = selectedSet.has(id);
               const disabled = !selected && reachedLimit;
+              const modeIcon = getModeIcon(id);
               return (
                 <button
                   key={id}
@@ -169,6 +169,15 @@ export default function ComboSelector() {
                       }`}
                       draggable={false}
                     />
+                    {modeIcon && (
+                      <div className="absolute bottom-0 right-0 bg-gray-700/90 text-white rounded-sm p-0.5">
+                        {modeIcon === "shield" ? (
+                          <Shield className="h-3 w-3" />
+                        ) : (
+                          <Sword className="h-3 w-3" />
+                        )}
+                      </div>
+                    )}
                   </div>
                   <span className="text-xs text-center w-full truncate">
                     {name}

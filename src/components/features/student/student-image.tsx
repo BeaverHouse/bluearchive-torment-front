@@ -11,10 +11,8 @@ import {
 } from "@/components/ui/custom/hybrid-tooltip";
 import { categoryMap } from "@/constants/assault";
 import { getCharacterName } from "@/utils/character";
-import {
-  getModeNumber,
-  getModeLabel,
-} from "@/constants/student-aliases";
+import { getModeIcon, getModeLabel } from "@/constants/student-aliases";
+import { Shield, Sword } from "lucide-react";
 
 interface StudentImageProps {
   code: number;
@@ -53,7 +51,7 @@ export function StudentImage({ code, size = 40 }: StudentImageProps) {
     ? "border-2 border-sky-500"
     : "border-2 border-transparent";
 
-  const modeNumber = getModeNumber(studentID);
+  const modeIcon = getModeIcon(studentID);
   const modeLabel = getModeLabel(studentID);
 
   return (
@@ -75,9 +73,13 @@ export function StudentImage({ code, size = 40 }: StudentImageProps) {
                 quality={75}
                 placeholder="empty"
               />
-              {modeNumber !== undefined && (
-                <div className="absolute bottom-0 right-0 bg-gray-700/90 text-white text-[10px] leading-none font-semibold rounded-sm px-1 py-0.5">
-                  {modeNumber}
+              {modeIcon && (
+                <div className="absolute bottom-0 right-0 bg-gray-700/90 text-white rounded-sm p-0.5">
+                  {modeIcon === "shield" ? (
+                    <Shield className="h-3 w-3" />
+                  ) : (
+                    <Sword className="h-3 w-3" />
+                  )}
                 </div>
               )}
             </div>
