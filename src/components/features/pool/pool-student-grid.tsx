@@ -4,7 +4,7 @@ import React, { useMemo } from "react";
 import PoolStudentTile from "./pool-student-tile";
 import useStudentPoolStore from "@/store/useStudentPoolStore";
 import { useStudentMaps } from "@/hooks/use-student-maps";
-import { matchesStudentSearch } from "@/utils/search";
+import { matchesStudentSearchWithAliases } from "@/utils/search";
 import type { GradeKey } from "@/types/pool";
 import { ALIAS_HIDDEN_CODES } from "@/constants/student-aliases";
 
@@ -74,7 +74,11 @@ export default function PoolStudentGrid({
 
   const matchesQuery = (id: number) => {
     if (!searchQuery.trim()) return true;
-    return matchesStudentSearch(String(id), searchQuery, studentSearchMap);
+    return matchesStudentSearchWithAliases(
+      String(id),
+      searchQuery,
+      studentSearchMap
+    );
   };
 
   const filteredOverall = highOverall.filter((s) => matchesQuery(s.id));

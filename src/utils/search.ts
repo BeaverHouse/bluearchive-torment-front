@@ -10,38 +10,42 @@ export type StudentSearchData = Record<
 >;
 
 /**
- * 학생 이름이나 동의어로 검색 매칭 여부 확인
- * @param studentId 학생 ID (문자열)
- * @param searchQuery 검색어
- * @param studentSearchMap 학생 검색 데이터 맵
- * @returns 검색어와 매칭되는지 여부
+ * 단일 학생 ID에 대해 이름/동의어 매칭 여부 확인.
+ * alias를 별도 항목으로 노출하는 surface(combo-selector, cascader, multi-select 등)에서 사용.
  */
 export function matchesStudentSearch(
   studentId: string,
   searchQuery: string,
   studentSearchMap: StudentSearchData
 ): boolean {
+  const data = studentSearchMap[studentId];
+  if (!data) return false;
+
   const query = searchQuery.toLowerCase();
+  if (data.nameKo.toLowerCase().includes(query)) return true;
+  if (data.nameJa.toLowerCase().includes(query)) return true;
+  if (data.searchKeywords) {
+    return data.searchKeywords.some((kw) =>
+      kw.toLowerCase().includes(query)
+    );
+  }
+  return false;
+}
 
-  // canonical 코드 자신 + alias 코드들 모두 검색 대상
-  const idsToCheck = [
-    studentId,
-    ...(CANONICAL_TO_ALIASES[Number(studentId)]?.map(String) ?? []),
-  ];
-
-  return idsToCheck.some((id) => {
-    const data = studentSearchMap[id];
-    if (!data) return false;
-
-    if (data.nameKo.toLowerCase().includes(query)) return true;
-    if (data.nameJa.toLowerCase().includes(query)) return true;
-    if (data.searchKeywords) {
-      return data.searchKeywords.some((kw) =>
-        kw.toLowerCase().includes(query)
-      );
-    }
-    return false;
-  });
+/**
+ * canonical 코드 자신 + 그 alias 코드들의 검색 데이터를 모두 검사.
+ * alias를 숨기고 canonical만 노출하는 surface(pool-student-grid)에서 사용.
+ */
+export function matchesStudentSearchWithAliases(
+  studentId: string,
+  searchQuery: string,
+  studentSearchMap: StudentSearchData
+): boolean {
+  const aliasIds = CANONICAL_TO_ALIASES[Number(studentId)]?.map(String) ?? [];
+  if (matchesStudentSearch(studentId, searchQuery, studentSearchMap)) return true;
+  return aliasIds.some((id) =>
+    matchesStudentSearch(id, searchQuery, studentSearchMap)
+  );
 }
 
 /**

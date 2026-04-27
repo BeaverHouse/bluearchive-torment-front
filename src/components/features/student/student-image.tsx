@@ -103,7 +103,7 @@ export function StudentImage({ code, size = 40, showModeBadge = true, missing = 
         <HybridTooltipContent side="top" sideOffset={5}>
           <p>
             {studentName}
-            {modeLabel ? ` (${modeLabel})` : ""}
+            {showModeBadge && modeLabel ? ` (${modeLabel})` : ""}
             {isAssist ? " (A)" : ""}
           </p>
         </HybridTooltipContent>
