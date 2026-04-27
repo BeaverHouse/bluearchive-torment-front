@@ -23,6 +23,7 @@ interface PartyCardProps {
   raid_id?: string;
   /** 단일 파티 매칭된 sub-party 인덱스 (배경 틴트 강조) */
   matchedSubPartyIndexes?: number[];
+  showModeBadge?: boolean;
 }
 
 const PartyCard: React.FC<PartyCardProps> = ({
@@ -33,6 +34,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
   video_id,
   raid_id,
   matchedSubPartyIndexes,
+  showModeBadge,
 }) => {
   const matchedSet = React.useMemo(
     () => new Set(matchedSubPartyIndexes ?? []),
@@ -78,6 +80,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
             party={party}
             key={"party" + partyIdx}
             highlighted={matchedSet.has(partyIdx)}
+            showModeBadge={showModeBadge}
           />
         ))}
 
@@ -94,6 +97,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
                       party={party}
                       key={"party" + partyIdx}
                       highlighted={matchedSet.has(partyIdx + 4)}
+                      showModeBadge={showModeBadge}
                     />
                   ))}
                 </AccordionContent>

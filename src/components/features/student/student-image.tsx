@@ -17,6 +17,7 @@ import { Shield, Sword } from "lucide-react";
 interface StudentImageProps {
   code: number;
   size?: number;
+  showModeBadge?: boolean;
 }
 
 /**
@@ -24,7 +25,7 @@ interface StudentImageProps {
  * @param code Student code (5-digit or 8-digit)
  * @param name Student name (to use in tooltip)
  */
-export function StudentImage({ code, size = 40 }: StudentImageProps) {
+export function StudentImage({ code, size = 40, showModeBadge = true }: StudentImageProps) {
   const { studentsMap } = useStudentMaps();
 
   const studentID = React.useMemo(
@@ -73,7 +74,7 @@ export function StudentImage({ code, size = 40 }: StudentImageProps) {
                 quality={75}
                 placeholder="empty"
               />
-              {modeIcon && (
+              {showModeBadge && modeIcon && (
                 <div className="absolute bottom-0 right-0 bg-gray-700/90 text-white rounded-sm p-0.5">
                   {modeIcon === "shield" ? (
                     <Shield className="h-3 w-3" />
