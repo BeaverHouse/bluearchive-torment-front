@@ -2,6 +2,8 @@
  * 학생 검색 유틸리티 함수
  */
 
+import { CANONICAL_TO_ALIASES } from "@/constants/student-aliases";
+
 export type StudentSearchData = Record<
   string,
   { nameJa: string; nameKo: string; searchKeywords: string[] | null }
@@ -19,29 +21,27 @@ export function matchesStudentSearch(
   searchQuery: string,
   studentSearchMap: StudentSearchData
 ): boolean {
-  const studentData = studentSearchMap[studentId];
-  if (!studentData) return false;
-
   const query = searchQuery.toLowerCase();
 
-  // 한국어 이름 매칭
-  if (studentData.nameKo.toLowerCase().includes(query)) {
-    return true;
-  }
+  // canonical 코드 자신 + alias 코드들 모두 검색 대상
+  const idsToCheck = [
+    studentId,
+    ...(CANONICAL_TO_ALIASES[Number(studentId)]?.map(String) ?? []),
+  ];
 
-  // 일본어 이름 매칭
-  if (studentData.nameJa.toLowerCase().includes(query)) {
-    return true;
-  }
+  return idsToCheck.some((id) => {
+    const data = studentSearchMap[id];
+    if (!data) return false;
 
-  // 동의어 매칭
-  if (studentData.searchKeywords) {
-    return studentData.searchKeywords.some((keyword) =>
-      keyword.toLowerCase().includes(query)
-    );
-  }
-
-  return false;
+    if (data.nameKo.toLowerCase().includes(query)) return true;
+    if (data.nameJa.toLowerCase().includes(query)) return true;
+    if (data.searchKeywords) {
+      return data.searchKeywords.some((kw) =>
+        kw.toLowerCase().includes(query)
+      );
+    }
+    return false;
+  });
 }
 
 /**

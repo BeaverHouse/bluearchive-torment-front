@@ -31,6 +31,17 @@ export const ALIAS_HIDDEN_CODES: ReadonlySet<number> = new Set(
   Object.keys(STUDENT_ALIASES).map(Number)
 );
 
+/** canonical code → alias(secondary) codes */
+export const CANONICAL_TO_ALIASES: Readonly<Record<number, number[]>> =
+  Object.entries(STUDENT_ALIASES).reduce<Record<number, number[]>>(
+    (acc, [alias, canonical]) => {
+      const key = Number(canonical);
+      (acc[key] ??= []).push(Number(alias));
+      return acc;
+    },
+    {}
+  );
+
 /**
  * 학생 코드를 canonical 코드로 정규화.
  * alias가 아니면 입력 그대로 반환.
