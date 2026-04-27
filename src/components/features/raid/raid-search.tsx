@@ -12,6 +12,7 @@ import {
   type SearchModeContext,
 } from "@/lib/party-filters";
 import { createCDNQueryOptions } from "@/lib/queries";
+import { getCanonicalCode, getModeLabel } from "@/constants/student-aliases";
 import PartyCard from "./party-card";
 import {
   RaidData,
@@ -134,6 +135,7 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
   });
 
   // 현재 시즌의 전체(파티 데이터 기준) 사용률 ≥ 10% 학생 ID 집합
+  // alias(secondary) 코드는 canonical로 합산
   const highUsageStudentIds = useMemo<ReadonlySet<number>>(() => {
     const parties = getPartyDataQuery.data?.parties ?? [];
     if (parties.length === 0) return new Set<number>();
@@ -142,7 +144,7 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
       const codeSet = new Set<number>();
       for (const num of party.partyData.flat()) {
         if (num % 10 === 1) continue;
-        codeSet.add(Math.floor(num / 1000));
+        codeSet.add(getCanonicalCode(Math.floor(num / 1000)));
       }
       for (const code of codeSet) {
         counts[code] = (counts[code] || 0) + 1;
@@ -157,16 +159,22 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
   }, [getPartyDataQuery.data?.parties]);
 
   // 루나틱 사용률 ≥ 10%
+  // alias(secondary) 코드는 canonical로 합산
   const highUsageLunaticStudentIds = useMemo<ReadonlySet<number>>(() => {
     const filters = getLunaticFilterDataQuery.data?.filters;
     const clearCount = getSummaryDataQuery.data?.lunatic?.clearCount ?? 0;
     if (!filters || clearCount === 0) return new Set<number>();
-    const result = new Set<number>();
+    const totals: Record<number, number> = {};
     for (const [code, gradeCounts] of Object.entries(filters)) {
       const total = Object.values(gradeCounts as Record<string, number>).reduce(
         (a, b) => a + b,
         0
       );
+      const canonical = getCanonicalCode(Number(code));
+      totals[canonical] = (totals[canonical] || 0) + total;
+    }
+    const result = new Set<number>();
+    for (const [code, total] of Object.entries(totals)) {
       if (total / clearCount >= 0.1) result.add(Number(code));
     }
     return result;
@@ -254,10 +262,14 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
 
   const excludeOptions = useMemo(
     () =>
-      Object.keys(combinedFilterData.filters).map((key) => ({
-        value: parseInt(key),
-        label: studentsMap[key],
-      })),
+      Object.keys(combinedFilterData.filters).map((key) => {
+        const code = parseInt(key);
+        const mode = getModeLabel(code);
+        return {
+          value: code,
+          label: mode ? `${studentsMap[key]} (${mode})` : studentsMap[key],
+        };
+      }),
     [combinedFilterData.filters, studentsMap]
   );
 

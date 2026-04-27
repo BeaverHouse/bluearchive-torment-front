@@ -1,6 +1,7 @@
 import type { PoolFilterContext } from "@/types/pool";
 import { rankOf, type GradeKey } from "@/types/pool";
 import { parseCharacterInfo } from "@/utils/character";
+import { getCanonicalCode } from "@/constants/student-aliases";
 
 /**
  * Check whether a party's students can all be satisfied by the student pool.
@@ -22,7 +23,9 @@ export function partyAgainstPool(
     // 조력자는 항상 풀 외부 허용 (게임에서 친구의 캐릭터 사용)
     if (info.assist === 1) continue;
 
-    const poolGrade = pool.students[String(info.code)];
+    // alias(secondary) 코드는 canonical로 정규화 후 풀 조회
+    const canonicalCode = getCanonicalCode(info.code);
+    const poolGrade = pool.students[String(canonicalCode)];
     if (poolGrade === undefined) return false;
 
     if (policy === "any") continue;

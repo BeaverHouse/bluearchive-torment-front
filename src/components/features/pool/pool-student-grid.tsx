@@ -6,6 +6,7 @@ import useStudentPoolStore from "@/store/useStudentPoolStore";
 import { useStudentMaps } from "@/hooks/use-student-maps";
 import { matchesStudentSearch } from "@/utils/search";
 import type { GradeKey } from "@/types/pool";
+import { ALIAS_HIDDEN_CODES } from "@/constants/student-aliases";
 
 interface PoolStudentGridProps {
   searchQuery: string;
@@ -39,6 +40,8 @@ export default function PoolStudentGrid({
     for (const [idStr, name] of Object.entries(studentsMap)) {
       const id = Number(idStr);
       if (!Number.isFinite(id)) continue;
+      // alias(secondary) 코드는 풀 selector에서 숨김 (canonical만 노출)
+      if (ALIAS_HIDDEN_CODES.has(id)) continue;
       const entry = { id, name };
       if (id >= 10000 && id < 20000) allStrikers.push(entry);
       else if (id >= 20000 && id < 30000) allSpecials.push(entry);

@@ -4,28 +4,39 @@ import type { PoolFilterContext } from "@/types/pool";
 import { partyAgainstPool } from "@/lib/pool-filters";
 import { findMatchingSubPartyIndexes } from "@/lib/combo-filters";
 import { parseCharacterInfo } from "@/utils/character";
+import { getModeLabel } from "@/constants/student-aliases";
+
+/** 학생 코드에 모드가 있으면 "이름 (모드)" 형식으로 반환 */
+function decoratedName(code: number, name: string): string {
+  const mode = getModeLabel(code);
+  return mode ? `${name} (${mode})` : name;
+}
 
 export const getFilters = (
   rawData: Record<string, Record<string, number>>,
   studentsMap: Record<string, string>
 ): FilterOption[] => {
-  return Object.keys(rawData).map((key) => ({
-    value: Number(key),
-    label: studentsMap[key],
-    children: Object.entries(rawData[key])
-      .map(([gradeKey, val]) => {
-        if (val > 0) {
-          const value = parseInt(gradeKey);
+  return Object.keys(rawData).map((key) => {
+    const code = Number(key);
+    const decorated = decoratedName(code, studentsMap[key]);
+    return {
+      value: code,
+      label: decorated,
+      children: Object.entries(rawData[key])
+        .map(([gradeKey, val]) => {
+          if (val > 0) {
+            const value = parseInt(gradeKey);
 
-          return {
-            value,
-            label: `${studentsMap[key]} ${categoryMap[gradeKey]} (${val})`,
-          };
-        }
-        return null;
-      })
-      .filter((obj) => obj != null),
-  }));
+            return {
+              value,
+              label: `${decorated} ${categoryMap[gradeKey]} (${val})`,
+            };
+          }
+          return null;
+        })
+        .filter((obj) => obj != null),
+    };
+  });
 };
 
 export type SearchModeContext =

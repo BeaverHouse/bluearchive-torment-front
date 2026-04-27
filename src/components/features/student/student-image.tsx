@@ -11,6 +11,10 @@ import {
 } from "@/components/ui/custom/hybrid-tooltip";
 import { categoryMap } from "@/constants/assault";
 import { getCharacterName } from "@/utils/character";
+import {
+  getModeNumber,
+  getModeLabel,
+} from "@/constants/student-aliases";
 
 interface StudentImageProps {
   code: number;
@@ -49,24 +53,34 @@ export function StudentImage({ code, size = 40 }: StudentImageProps) {
     ? "border-2 border-sky-500"
     : "border-2 border-transparent";
 
+  const modeNumber = getModeNumber(studentID);
+  const modeLabel = getModeLabel(studentID);
+
   return (
     <TooltipProvider>
       <HybridTooltip delayDuration={0}>
         <HybridTooltipTrigger asChild>
           <div className="flex flex-col items-center cursor-pointer select-none">
-            <Image
-              src={`${
-                process.env.NEXT_PUBLIC_CDN_URL || ""
-              }/batorment/character/${studentID}.webp`}
-              alt={studentName}
-              width={size}
-              height={size}
-              className={`object-cover rounded mb-1 ${borderClass}`}
-              draggable={false}
-              loading="lazy"
-              quality={75}
-              placeholder="empty"
-            />
+            <div className="relative">
+              <Image
+                src={`${
+                  process.env.NEXT_PUBLIC_CDN_URL || ""
+                }/batorment/character/${studentID}.webp`}
+                alt={studentName}
+                width={size}
+                height={size}
+                className={`object-cover rounded mb-1 ${borderClass}`}
+                draggable={false}
+                loading="lazy"
+                quality={75}
+                placeholder="empty"
+              />
+              {modeNumber !== undefined && (
+                <div className="absolute bottom-0 right-0 bg-gray-700/90 text-white text-[10px] leading-none font-semibold rounded-sm px-1 py-0.5">
+                  {modeNumber}
+                </div>
+              )}
+            </div>
             {gradeKey >= 10 && (
               <div
                 className={`text-xs text-center w-full ${
@@ -81,7 +95,11 @@ export function StudentImage({ code, size = 40 }: StudentImageProps) {
           </div>
         </HybridTooltipTrigger>
         <HybridTooltipContent side="top" sideOffset={5}>
-          <p>{isAssist ? `${studentName} (A)` : studentName}</p>
+          <p>
+            {studentName}
+            {modeLabel ? ` (${modeLabel})` : ""}
+            {isAssist ? " (A)" : ""}
+          </p>
         </HybridTooltipContent>
       </HybridTooltip>
     </TooltipProvider>
