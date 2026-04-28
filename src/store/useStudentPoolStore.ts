@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import type {
   GradeKey,
+  MaxMissing,
   PoolFilterState,
   StarMatchPolicy,
   StudentPool,
@@ -20,10 +21,12 @@ interface StudentPoolState {
   setAllGrade: (grade: GradeKey) => void;
 
   setPolicy: (value: StarMatchPolicy) => void;
+  setMaxMissing: (value: MaxMissing) => void;
 }
 
 const initialFilter: PoolFilterState = {
   policy: "atLeast",
+  maxMissing: 2,
 };
 
 const initialPool: StudentPool = {
@@ -92,11 +95,31 @@ const useStudentPoolStore = create(
             ...state,
             filter: { ...state.filter, policy: value },
           })),
+
+        setMaxMissing: (value) =>
+          set((state) => ({
+            ...state,
+            filter: { ...state.filter, maxMissing: value },
+          })),
       }),
       {
         name: "BA_POOL_V1",
-        version: 1,
+        version: 2,
         storage: createJSONStorage(() => localStorage),
+        migrate: (persisted, version) => {
+          const state = persisted as Partial<StudentPoolState> | undefined;
+          if (!state) return persisted as StudentPoolState;
+          if (version < 2) {
+            return {
+              ...state,
+              filter: {
+                policy: state.filter?.policy ?? "atLeast",
+                maxMissing: 2,
+              },
+            } as StudentPoolState;
+          }
+          return state as StudentPoolState;
+        },
       }
     )
   )

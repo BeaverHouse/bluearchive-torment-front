@@ -44,9 +44,6 @@ export type SearchModeContext =
   | { kind: "pool"; pool: PoolFilterContext }
   | { kind: "single"; codes: ReadonlySet<number> };
 
-/** 허용할 최대 미보유 캐릭터 수 */
-const MAX_MISSING = 2;
-
 export interface FilteredPartyResult {
   party: PartyData;
   /** 단일 파티 모드에서 매칭된 sub-party 인덱스 배열 (다른 모드는 빈 배열) */
@@ -92,7 +89,7 @@ export const filteredPartys = (
         // 풀 비어있으면 풀 체크 패스
       } else {
         const missing = missingFromPool(students, searchMode.pool);
-        if (missing.size > MAX_MISSING) return acc;
+        if (missing.size > searchMode.pool.maxMissing) return acc;
         missingCodes = missing;
       }
     } else if (searchMode.kind === "single") {

@@ -55,6 +55,7 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
 
   const poolStudents = useStudentPoolStore((state) => state.pool.students);
   const poolPolicy = useStudentPoolStore((state) => state.filter.policy);
+  const poolMaxMissing = useStudentPoolStore((state) => state.filter.maxMissing);
 
   const searchMode = useSearchModeStore((s) => s.mode);
   const comboCodes = useSearchModeStore((s) => s.comboCodes);
@@ -71,6 +72,7 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
         pool: {
           pool: { students: poolStudents },
           policy: poolPolicy,
+          maxMissing: poolMaxMissing,
         },
       };
     }
@@ -87,6 +89,7 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
     searchMode,
     poolStudents,
     poolPolicy,
+    poolMaxMissing,
     comboCodesSet,
     IncludeList,
     ExcludeList,

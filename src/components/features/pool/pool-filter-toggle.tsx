@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import useStudentPoolStore from "@/store/useStudentPoolStore";
-import type { StarMatchPolicy } from "@/types/pool";
+import type { MaxMissing, StarMatchPolicy } from "@/types/pool";
 import PoolEditorDialog from "./pool-editor-dialog";
 
 const POLICY_OPTIONS: { value: StarMatchPolicy; label: string; hint: string }[] =
@@ -26,6 +26,13 @@ const POLICY_OPTIONS: { value: StarMatchPolicy; label: string; hint: string }[] 
     },
   ];
 
+const MAX_MISSING_OPTIONS: { value: MaxMissing; label: string; hint: string }[] =
+  [
+    { value: 0, label: "0명", hint: "완전 보유 파티만 표시" },
+    { value: 1, label: "1명까지", hint: "최대 1명 미보유까지 허용" },
+    { value: 2, label: "2명까지", hint: "최대 2명 미보유까지 허용" },
+  ];
+
 interface PoolFilterToggleProps {
   highUsageStudentIds?: ReadonlySet<number>;
   highUsageLunaticStudentIds?: ReadonlySet<number>;
@@ -38,11 +45,12 @@ export default function PoolFilterToggle({
   const pool = useStudentPoolStore((state) => state.pool);
   const filter = useStudentPoolStore((state) => state.filter);
   const setPolicy = useStudentPoolStore((state) => state.setPolicy);
+  const setMaxMissing = useStudentPoolStore((state) => state.setMaxMissing);
 
   const [editorOpen, setEditorOpen] = useState(false);
 
   const ownedCount = Object.keys(pool.students).length;
-  const { policy } = filter;
+  const { policy, maxMissing } = filter;
 
   return (
     <div className="mb-4 rounded-lg border border-gray-200 dark:border-gray-700 p-3">
@@ -69,20 +77,37 @@ export default function PoolFilterToggle({
       )}
 
       {ownedCount > 0 && (
-        <div className="mt-3 flex flex-wrap justify-center gap-1">
-          {POLICY_OPTIONS.map((opt) => (
-            <Button
-              key={opt.value}
-              type="button"
-              size="sm"
-              variant={policy === opt.value ? "default" : "outline"}
-              onClick={() => setPolicy(opt.value)}
-              title={opt.hint}
-            >
-              {opt.label}
-            </Button>
-          ))}
-        </div>
+        <>
+          <div className="mt-3 flex flex-wrap justify-center gap-1">
+            {POLICY_OPTIONS.map((opt) => (
+              <Button
+                key={opt.value}
+                type="button"
+                size="sm"
+                variant={policy === opt.value ? "default" : "outline"}
+                onClick={() => setPolicy(opt.value)}
+                title={opt.hint}
+              >
+                {opt.label}
+              </Button>
+            ))}
+          </div>
+          <div className="mt-2 flex flex-wrap items-center justify-center gap-1">
+            <span className="text-xs text-muted-foreground mr-1">미보유 허용</span>
+            {MAX_MISSING_OPTIONS.map((opt) => (
+              <Button
+                key={opt.value}
+                type="button"
+                size="sm"
+                variant={maxMissing === opt.value ? "default" : "outline"}
+                onClick={() => setMaxMissing(opt.value)}
+                title={opt.hint}
+              >
+                {opt.label}
+              </Button>
+            ))}
+          </div>
+        </>
       )}
 
       <PoolEditorDialog

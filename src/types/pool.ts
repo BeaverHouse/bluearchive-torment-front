@@ -10,13 +10,17 @@ export interface StudentPool {
   students: Record<string, GradeKey>;
 }
 
+export type MaxMissing = 0 | 1 | 2;
+
 export interface PoolFilterState {
   policy: StarMatchPolicy;
+  maxMissing: MaxMissing;
 }
 
 export interface PoolFilterContext {
   pool: StudentPool;
   policy: StarMatchPolicy;
+  maxMissing: MaxMissing;
 }
 
 export function isGradeKey(value: unknown): value is GradeKey {
