@@ -1,41 +1,43 @@
 import type { PoolFilterContext } from "@/types/pool";
 import { rankOf, type GradeKey } from "@/types/pool";
 import { parseCharacterInfo } from "@/utils/character";
+import { getCanonicalCode } from "@/constants/student-aliases";
 
 /**
- * Check whether a party's students can all be satisfied by the student pool.
- *
- * @param partyStudents Flattened 8-digit student numbers across the whole party
- * @param poolFilter Pool state + policy + external-assist setting
- * @returns true if the pool covers every non-(optional external) assist slot
+ * 파티 학생 중 풀에서 커버되지 않는 학생 코드(5자리)를 반환.
+ * 빈 Set이면 풀이 파티를 완전히 커버.
  */
-export function partyAgainstPool(
+export function missingFromPool(
   partyStudents: number[],
   poolFilter: PoolFilterContext
-): boolean {
+): Set<number> {
   const { pool, policy } = poolFilter;
+  const missing = new Set<number>();
 
   for (const num of partyStudents) {
     const info = parseCharacterInfo(num);
     if (!info) continue;
 
-    // 조력자는 항상 풀 외부 허용 (게임에서 친구의 캐릭터 사용)
     if (info.assist === 1) continue;
 
-    const poolGrade = pool.students[String(info.code)];
-    if (poolGrade === undefined) return false;
+    const canonicalCode = getCanonicalCode(info.code);
+    const poolGrade = pool.students[String(canonicalCode)];
+
+    if (poolGrade === undefined) {
+      missing.add(info.code);
+      continue;
+    }
 
     if (policy === "any") continue;
 
     const partyGrade = (info.star * 10 + info.weapon) as GradeKey;
 
     if (policy === "exact") {
-      if (poolGrade !== partyGrade) return false;
+      if (poolGrade !== partyGrade) missing.add(info.code);
     } else {
-      // atLeast: 풀 성급이 파티 요구 성급 이상이어야 함
-      if (rankOf(poolGrade) < rankOf(partyGrade)) return false;
+      if (rankOf(poolGrade) < rankOf(partyGrade)) missing.add(info.code);
     }
   }
 
-  return true;
+  return missing;
 }

@@ -4,6 +4,7 @@ import { parseCharacterInfo } from "@/utils/character";
 /**
  * 한 sub-party가 모든 선택된 코드를 포함하는지 확인.
  * 코드는 학생 5자리 코드. 성급/조력자 무관.
+ * 모드 전환 캐릭터는 정확한 코드로 비교 (모드 구분 검색).
  */
 export function subPartyContainsAll(
   subParty: number[],

@@ -11,10 +11,14 @@ import {
 } from "@/components/ui/custom/hybrid-tooltip";
 import { categoryMap } from "@/constants/assault";
 import { getCharacterName } from "@/utils/character";
+import { getModeIcon, getModeLabel } from "@/constants/student-aliases";
+import { Shield, Sword } from "lucide-react";
 
 interface StudentImageProps {
   code: number;
   size?: number;
+  showModeBadge?: boolean;
+  missing?: boolean;
 }
 
 /**
@@ -22,7 +26,7 @@ interface StudentImageProps {
  * @param code Student code (5-digit or 8-digit)
  * @param name Student name (to use in tooltip)
  */
-export function StudentImage({ code, size = 40 }: StudentImageProps) {
+export function StudentImage({ code, size = 40, showModeBadge = true, missing = false }: StudentImageProps) {
   const { studentsMap } = useStudentMaps();
 
   const studentID = React.useMemo(
@@ -45,28 +49,44 @@ export function StudentImage({ code, size = 40 }: StudentImageProps) {
     [code]
   );
 
-  const borderClass = isAssist
-    ? "border-2 border-sky-500"
-    : "border-2 border-transparent";
+  const borderClass = missing
+    ? "border-2 border-red-500"
+    : isAssist
+      ? "border-2 border-sky-500"
+      : "border-2 border-transparent";
+
+  const modeIcon = getModeIcon(studentID);
+  const modeLabel = getModeLabel(studentID);
 
   return (
     <TooltipProvider>
       <HybridTooltip delayDuration={0}>
         <HybridTooltipTrigger asChild>
           <div className="flex flex-col items-center cursor-pointer select-none">
-            <Image
-              src={`${
-                process.env.NEXT_PUBLIC_CDN_URL || ""
-              }/batorment/character/${studentID}.webp`}
-              alt={studentName}
-              width={size}
-              height={size}
-              className={`object-cover rounded mb-1 ${borderClass}`}
-              draggable={false}
-              loading="lazy"
-              quality={75}
-              placeholder="empty"
-            />
+            <div className="relative">
+              <Image
+                src={`${
+                  process.env.NEXT_PUBLIC_CDN_URL || ""
+                }/batorment/character/${studentID}.webp`}
+                alt={studentName}
+                width={size}
+                height={size}
+                className={`object-cover rounded mb-1 ${borderClass}`}
+                draggable={false}
+                loading="lazy"
+                quality={75}
+                placeholder="empty"
+              />
+              {showModeBadge && modeIcon && (
+                <div className="absolute bottom-0 right-0 bg-gray-700/90 text-white rounded-sm p-0.5">
+                  {modeIcon === "shield" ? (
+                    <Shield className="h-3 w-3" />
+                  ) : (
+                    <Sword className="h-3 w-3" />
+                  )}
+                </div>
+              )}
+            </div>
             {gradeKey >= 10 && (
               <div
                 className={`text-xs text-center w-full ${
@@ -81,7 +101,11 @@ export function StudentImage({ code, size = 40 }: StudentImageProps) {
           </div>
         </HybridTooltipTrigger>
         <HybridTooltipContent side="top" sideOffset={5}>
-          <p>{isAssist ? `${studentName} (A)` : studentName}</p>
+          <p>
+            {studentName}
+            {showModeBadge && modeLabel ? ` (${modeLabel})` : ""}
+            {isAssist ? " (A)" : ""}
+          </p>
         </HybridTooltipContent>
       </HybridTooltip>
     </TooltipProvider>

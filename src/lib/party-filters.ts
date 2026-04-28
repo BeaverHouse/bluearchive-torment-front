@@ -1,31 +1,42 @@
 import { categoryMap } from "@/constants/assault";
 import { RaidData, PartyData, FilterOption } from "@/types/raid";
 import type { PoolFilterContext } from "@/types/pool";
-import { partyAgainstPool } from "@/lib/pool-filters";
+import { missingFromPool } from "@/lib/pool-filters";
 import { findMatchingSubPartyIndexes } from "@/lib/combo-filters";
 import { parseCharacterInfo } from "@/utils/character";
+import { getModeLabel } from "@/constants/student-aliases";
+
+/** 학생 코드에 모드가 있으면 "이름 (모드)" 형식으로 반환 */
+function decoratedName(code: number, name: string): string {
+  const mode = getModeLabel(code);
+  return mode ? `${name} (${mode})` : name;
+}
 
 export const getFilters = (
   rawData: Record<string, Record<string, number>>,
   studentsMap: Record<string, string>
 ): FilterOption[] => {
-  return Object.keys(rawData).map((key) => ({
-    value: Number(key),
-    label: studentsMap[key],
-    children: Object.entries(rawData[key])
-      .map(([gradeKey, val]) => {
-        if (val > 0) {
-          const value = parseInt(gradeKey);
+  return Object.keys(rawData).map((key) => {
+    const code = Number(key);
+    const decorated = decoratedName(code, studentsMap[key]);
+    return {
+      value: code,
+      label: decorated,
+      children: Object.entries(rawData[key])
+        .map(([gradeKey, val]) => {
+          if (val > 0) {
+            const value = parseInt(gradeKey);
 
-          return {
-            value,
-            label: `${studentsMap[key]} ${categoryMap[gradeKey]} (${val})`,
-          };
-        }
-        return null;
-      })
-      .filter((obj) => obj != null),
-  }));
+            return {
+              value,
+              label: `${decorated} ${categoryMap[gradeKey]} (${val})`,
+            };
+          }
+          return null;
+        })
+        .filter((obj) => obj != null),
+    };
+  });
 };
 
 export type SearchModeContext =
@@ -37,6 +48,8 @@ export interface FilteredPartyResult {
   party: PartyData;
   /** 단일 파티 모드에서 매칭된 sub-party 인덱스 배열 (다른 모드는 빈 배열) */
   matchedSubPartyIndexes: number[];
+  /** 풀 모드에서 미보유 캐릭터 코드 (5자리). 다른 모드는 빈 Set */
+  missingCodes: ReadonlySet<number>;
 }
 
 export const filteredPartys = (
@@ -69,12 +82,15 @@ export const filteredPartys = (
     if (!commonPass) return acc;
 
     let matchedSubPartyIndexes: number[] = [];
+    let missingCodes: ReadonlySet<number> = new Set();
 
     if (searchMode.kind === "pool") {
       if (Object.keys(searchMode.pool.pool.students).length === 0) {
         // 풀 비어있으면 풀 체크 패스
-      } else if (!partyAgainstPool(students, searchMode.pool)) {
-        return acc;
+      } else {
+        const missing = missingFromPool(students, searchMode.pool);
+        if (missing.size > searchMode.pool.maxMissing) return acc;
+        missingCodes = missing;
       }
     } else if (searchMode.kind === "single") {
       if (searchMode.codes.size === 0) {
@@ -97,7 +113,7 @@ export const filteredPartys = (
       if (!includeOk || !excludeOk) return acc;
     }
 
-    acc.push({ party, matchedSubPartyIndexes });
+    acc.push({ party, matchedSubPartyIndexes, missingCodes });
     return acc;
   }, []);
 };

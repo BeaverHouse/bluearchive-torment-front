@@ -20,6 +20,7 @@ export function VideoAnalysisContent({
         value={video.analysis_result.score}
         valueSuffix="점"
         parties={video.analysis_result.partyData}
+        showModeBadge={false}
       />
 
       <SkillOrderTable

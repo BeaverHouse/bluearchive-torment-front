@@ -12,7 +12,10 @@ import {
   type SearchModeContext,
 } from "@/lib/party-filters";
 import { createCDNQueryOptions } from "@/lib/queries";
+import { getCanonicalCode, getModeLabel } from "@/constants/student-aliases";
 import PartyCard from "./party-card";
+import GroupedPartyCard from "./grouped-party-card";
+import { groupByComposition } from "@/lib/composition-grouping";
 import {
   RaidData,
   FilterData,
@@ -52,6 +55,7 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
 
   const poolStudents = useStudentPoolStore((state) => state.pool.students);
   const poolPolicy = useStudentPoolStore((state) => state.filter.policy);
+  const poolMaxMissing = useStudentPoolStore((state) => state.filter.maxMissing);
 
   const searchMode = useSearchModeStore((s) => s.mode);
   const comboCodes = useSearchModeStore((s) => s.comboCodes);
@@ -68,6 +72,7 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
         pool: {
           pool: { students: poolStudents },
           policy: poolPolicy,
+          maxMissing: poolMaxMissing,
         },
       };
     }
@@ -84,6 +89,7 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
     searchMode,
     poolStudents,
     poolPolicy,
+    poolMaxMissing,
     comboCodesSet,
     IncludeList,
     ExcludeList,
@@ -134,6 +140,7 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
   });
 
   // 현재 시즌의 전체(파티 데이터 기준) 사용률 ≥ 10% 학생 ID 집합
+  // alias(secondary) 코드는 canonical로 합산
   const highUsageStudentIds = useMemo<ReadonlySet<number>>(() => {
     const parties = getPartyDataQuery.data?.parties ?? [];
     if (parties.length === 0) return new Set<number>();
@@ -142,7 +149,7 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
       const codeSet = new Set<number>();
       for (const num of party.partyData.flat()) {
         if (num % 10 === 1) continue;
-        codeSet.add(Math.floor(num / 1000));
+        codeSet.add(getCanonicalCode(Math.floor(num / 1000)));
       }
       for (const code of codeSet) {
         counts[code] = (counts[code] || 0) + 1;
@@ -157,16 +164,22 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
   }, [getPartyDataQuery.data?.parties]);
 
   // 루나틱 사용률 ≥ 10%
+  // alias(secondary) 코드는 canonical로 합산
   const highUsageLunaticStudentIds = useMemo<ReadonlySet<number>>(() => {
     const filters = getLunaticFilterDataQuery.data?.filters;
     const clearCount = getSummaryDataQuery.data?.lunatic?.clearCount ?? 0;
     if (!filters || clearCount === 0) return new Set<number>();
-    const result = new Set<number>();
+    const totals: Record<number, number> = {};
     for (const [code, gradeCounts] of Object.entries(filters)) {
       const total = Object.values(gradeCounts as Record<string, number>).reduce(
         (a, b) => a + b,
         0
       );
+      const canonical = getCanonicalCode(Number(code));
+      totals[canonical] = (totals[canonical] || 0) + total;
+    }
+    const result = new Set<number>();
+    for (const [code, total] of Object.entries(totals)) {
       if (total / clearCount >= 0.1) result.add(Number(code));
     }
     return result;
@@ -254,10 +267,14 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
 
   const excludeOptions = useMemo(
     () =>
-      Object.keys(combinedFilterData.filters).map((key) => ({
-        value: parseInt(key),
-        label: studentsMap[key],
-      })),
+      Object.keys(combinedFilterData.filters).map((key) => {
+        const code = parseInt(key);
+        const mode = getModeLabel(code);
+        return {
+          value: code,
+          label: mode ? `${studentsMap[key]} (${mode})` : studentsMap[key],
+        };
+      }),
     [combinedFilterData.filters, studentsMap]
   );
 
@@ -291,23 +308,40 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
     searchModeContext
   ), [data, ScoreRange, Assist, PartyCountRange, AllowDuplicate, YoutubeOnly, searchModeContext]);
 
+  const groupedResults = useMemo(() => {
+    if (searchModeContext.kind !== "pool") return null;
+    return groupByComposition(results);
+  }, [results, searchModeContext.kind]);
+
+  const displayCount = groupedResults?.length ?? results.length;
+
   const handleScoreJump = useCallback((targetScore: number) => {
-    if (results.length === 0) return;
-
-    let closestIndex = 0;
-    let closestDiff = Math.abs(results[0].party.score - targetScore);
-
-    results.forEach(({ party }, index) => {
-      const diff = Math.abs(party.score - targetScore);
-      if (diff < closestDiff) {
-        closestDiff = diff;
-        closestIndex = index;
-      }
-    });
-
-    const targetPage = Math.floor(closestIndex / PageSize) + 1;
-    setPage(targetPage);
-  }, [results, PageSize]);
+    if (groupedResults) {
+      if (groupedResults.length === 0) return;
+      let closestIndex = 0;
+      let closestDiff = Math.abs(groupedResults[0].representative.party.score - targetScore);
+      groupedResults.forEach((group, index) => {
+        const diff = Math.abs(group.representative.party.score - targetScore);
+        if (diff < closestDiff) {
+          closestDiff = diff;
+          closestIndex = index;
+        }
+      });
+      setPage(Math.floor(closestIndex / PageSize) + 1);
+    } else {
+      if (results.length === 0) return;
+      let closestIndex = 0;
+      let closestDiff = Math.abs(results[0].party.score - targetScore);
+      results.forEach(({ party }, index) => {
+        const diff = Math.abs(party.score - targetScore);
+        if (diff < closestDiff) {
+          closestDiff = diff;
+          closestIndex = index;
+        }
+      });
+      setPage(Math.floor(closestIndex / PageSize) + 1);
+    }
+  }, [results, groupedResults, PageSize]);
 
   const currentFilters: PartyFilterState = useMemo(() => ({
     scoreRange: ScoreRange,
@@ -364,12 +398,13 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
         hideIncludeExclude={searchMode !== "filter"}
       />
       <div className="mx-auto mb-5 w-full">
-        검색 결과: 총 {results.length}개
+        검색 결과: 총 {displayCount}개
+        {groupedResults && ` 구성 (${results.length}개 편성)`}
       </div>
       <div className="mb-5">
         <Pagination
           currentPage={Page}
-          totalItems={results.length}
+          totalItems={displayCount}
           pageSize={PageSize}
           onPageChange={setPage}
           onPageSizeChange={setPageSize}
@@ -377,23 +412,32 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
         />
       </div>
       <div className="w-full mx-auto mt-5">
-        {results.length > 0 ? (
-          results
-            .filter(
-              (_, idx) => idx >= (Page - 1) * PageSize && idx < Page * PageSize
-            )
-            .map(({ party, matchedSubPartyIndexes }, idx) => (
-              <PartyCard
-                key={idx}
-                rank={party.rank}
-                value={party.score}
-                valueSuffix="점"
-                parties={party.partyData}
-                video_id={party.video_id}
-                raid_id={party.video_id ? (party.raid_id || season) : undefined}
-                matchedSubPartyIndexes={matchedSubPartyIndexes}
-              />
-            ))
+        {displayCount > 0 ? (
+          groupedResults
+            ? groupedResults
+                .slice((Page - 1) * PageSize, Page * PageSize)
+                .map((group, idx) => (
+                  <GroupedPartyCard
+                    key={idx}
+                    group={group}
+                    season={season}
+                  />
+                ))
+            : results
+                .slice((Page - 1) * PageSize, Page * PageSize)
+                .map(({ party, matchedSubPartyIndexes, missingCodes }, idx) => (
+                  <PartyCard
+                    key={idx}
+                    rank={party.rank}
+                    value={party.score}
+                    valueSuffix="점"
+                    parties={party.partyData}
+                    video_id={party.video_id}
+                    raid_id={party.video_id ? (party.raid_id || season) : undefined}
+                    matchedSubPartyIndexes={matchedSubPartyIndexes}
+                    missingCodes={missingCodes}
+                  />
+                ))
         ) : (
           <div className="flex flex-col items-center justify-center py-12">
             <Image src="/empty.webp" alt="Empty" width={192} height={192} className="mb-4" />

@@ -3,9 +3,10 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 
-const ANNOUNCE_DATE = "26.04.25";
+const ANNOUNCE_DATE = "26.04.28";
 const ANNOUNCE_ITEMS = [
-  "이제 캐릭터 풀과 단일 파티 기반 검색이 가능해요.",
+  "1. 호시노(무장)의 표시 방식을 개선했어요.",
+  "2. 몇 가지 버그를 수정하고, 검색에 추가 옵션을 적용했어요."
 ];
 const STORAGE_KEY = "batorment_announce_dismissed";
 

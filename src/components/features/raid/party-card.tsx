@@ -23,6 +23,8 @@ interface PartyCardProps {
   raid_id?: string;
   /** 단일 파티 매칭된 sub-party 인덱스 (배경 틴트 강조) */
   matchedSubPartyIndexes?: number[];
+  showModeBadge?: boolean;
+  missingCodes?: ReadonlySet<number>;
 }
 
 const PartyCard: React.FC<PartyCardProps> = ({
@@ -33,6 +35,8 @@ const PartyCard: React.FC<PartyCardProps> = ({
   video_id,
   raid_id,
   matchedSubPartyIndexes,
+  showModeBadge,
+  missingCodes,
 }) => {
   const matchedSet = React.useMemo(
     () => new Set(matchedSubPartyIndexes ?? []),
@@ -49,11 +53,18 @@ const PartyCard: React.FC<PartyCardProps> = ({
     <Card className="relative w-full mx-auto mb-4 max-w-none">
       <CardContent className="px-2">
         <div className="flex items-center justify-between mb-3">
-          {rank > 0 && (
-            <Badge variant="outline" className="font-medium">
-              #{rank}위
-            </Badge>
-          )}
+          <div className="flex items-center gap-2">
+            {rank > 0 && (
+              <Badge variant="outline" className="font-medium">
+                #{rank}위
+              </Badge>
+            )}
+            {missingCodes && missingCodes.size > 0 && (
+              <Badge variant="destructive" className="font-medium">
+                미보유 {missingCodes.size}명
+              </Badge>
+            )}
+          </div>
           <div className="text-right flex items-center gap-2">
             <div className="flex items-center gap-1">
               <div className="text-lg font-bold text-sky-500">{value}</div>
@@ -78,6 +89,8 @@ const PartyCard: React.FC<PartyCardProps> = ({
             party={party}
             key={"party" + partyIdx}
             highlighted={matchedSet.has(partyIdx)}
+            showModeBadge={showModeBadge}
+            missingCodes={missingCodes}
           />
         ))}
 
@@ -94,6 +107,8 @@ const PartyCard: React.FC<PartyCardProps> = ({
                       party={party}
                       key={"party" + partyIdx}
                       highlighted={matchedSet.has(partyIdx + 4)}
+                      showModeBadge={showModeBadge}
+                      missingCodes={missingCodes}
                     />
                   ))}
                 </AccordionContent>
