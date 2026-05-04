@@ -6,7 +6,7 @@ import RaidSearch from "@/components/features/raid/raid-search";
 import RaidSummary from "@/components/features/raid/raid-summary";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SingleSelect } from "@/components/ui/custom/single-select";
-import { trackSummaryTabClick } from "@/utils/analytics";
+import { trackEvent } from "@/utils/analytics";
 import { useStudentMaps } from "@/hooks/use-student-maps";
 import { useRaids } from "@/hooks/use-raids";
 
@@ -107,7 +107,12 @@ export default function PartyPage() {
           <TabsTrigger value="search">파티 찾기</TabsTrigger>
           <TabsTrigger
             value="summary"
-            onClick={() => trackSummaryTabClick("summary")}
+            onClick={() =>
+              trackEvent("summary_view", {
+                season,
+                difficulty: effectiveSummaryLevel === "L" ? "lunatic" : "torment",
+              })
+            }
           >
             요약
           </TabsTrigger>
@@ -127,9 +132,10 @@ export default function PartyPage() {
               onValueChange={(v) => {
                 const next = v as "T" | "L";
                 setSummaryLevel(next);
-                trackSummaryTabClick(
-                  next === "L" ? "summary-lunatic" : "summary"
-                );
+                trackEvent("summary_view", {
+                  season,
+                  difficulty: next === "L" ? "lunatic" : "torment",
+                });
               }}
               className="w-full"
             >

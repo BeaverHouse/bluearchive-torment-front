@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -16,6 +16,7 @@ import useStudentPoolStore from "@/store/useStudentPoolStore";
 import PoolToolbar from "./pool-toolbar";
 import PoolStudentGrid from "./pool-student-grid";
 import PresetPopover from "@/components/features/preset/preset-popover";
+import { trackEvent } from "@/utils/analytics";
 
 interface PoolEditorDialogProps {
   open: boolean;
@@ -33,14 +34,31 @@ export default function PoolEditorDialog({
   const pool = useStudentPoolStore((state) => state.pool);
   const setAll = useStudentPoolStore((state) => state.setAll);
   const [searchQuery, setSearchQuery] = useState("");
+  const initialOwnedCountRef = useRef<number | null>(null);
 
   const ownedCount = useMemo(
     () => Object.keys(pool.students).length,
     [pool.students]
   );
 
+  const handleOpenChange = (next: boolean) => {
+    if (next) {
+      trackEvent("party_search_pool_open");
+      initialOwnedCountRef.current = ownedCount;
+    } else {
+      if (
+        initialOwnedCountRef.current !== null &&
+        initialOwnedCountRef.current !== ownedCount
+      ) {
+        trackEvent("party_search_pool_save");
+      }
+      initialOwnedCountRef.current = null;
+    }
+    onOpenChange(next);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-3xl max-h-[90vh] flex flex-col p-0 gap-0">
         <DialogHeader className="px-6 pt-6 pb-3">
           <DialogTitle className="flex items-center gap-2">

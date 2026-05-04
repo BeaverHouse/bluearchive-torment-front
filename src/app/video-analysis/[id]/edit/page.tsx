@@ -7,6 +7,7 @@ import { ArrowLeft } from "lucide-react";
 import { YouTubeEmbed } from "@/components/features/video/youtube-embed";
 import { EditableAnalysisResult } from "../_components/editable-analysis-result";
 import { VideoAnalysisData } from "@/types/video";
+import { trackEvent } from "@/utils/analytics";
 
 interface EditVideoData {
   videos: VideoAnalysisData[];
@@ -23,6 +24,10 @@ export default function VideoEditPage() {
 
   const [currentVideo, setCurrentVideo] = useState<VideoAnalysisData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (videoId) trackEvent("video_edit", { video_id: videoId });
+  }, [videoId]);
 
   useEffect(() => {
     if (!raidId) {

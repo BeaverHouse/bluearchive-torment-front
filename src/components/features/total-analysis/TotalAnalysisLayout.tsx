@@ -15,6 +15,24 @@ import {
 } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
+import { useSectionView } from "@/hooks/use-section-view";
+
+function AnalysisSection({
+  section,
+  className,
+  children,
+}: {
+  section: "character_analysis" | "lunatic_clear_chart" | "raid_usage_carousel";
+  className?: string;
+  children: React.ReactNode;
+}) {
+  const ref = useSectionView("total_analysis_section_view", section);
+  return (
+    <div ref={ref} className={className}>
+      {children}
+    </div>
+  );
+}
 
 export function TotalAnalysisLayout() {
   const { data, isLoading } = useTotalAnalysis();
@@ -56,17 +74,26 @@ export function TotalAnalysisLayout() {
         </p>
       </div>
 
-      <div className="w-full max-w-full md:max-w-[1200px] overflow-hidden px-2 sm:px-4 md:px-0">
+      <AnalysisSection
+        section="character_analysis"
+        className="w-full max-w-full md:max-w-[1200px] overflow-hidden px-2 sm:px-4 md:px-0"
+      >
         <CharacterAnalysis data={data} />
-      </div>
+      </AnalysisSection>
 
       <hr className="w-full max-w-full md:max-w-[1200px]" />
 
-      <div className="w-full max-w-full md:max-w-[1200px] overflow-hidden px-2 sm:px-4 md:px-0">
+      <AnalysisSection
+        section="lunatic_clear_chart"
+        className="w-full max-w-full md:max-w-[1200px] overflow-hidden px-2 sm:px-4 md:px-0"
+      >
         <LunaticClearChart data={data} />
-      </div>
+      </AnalysisSection>
 
-      <div className="w-full max-w-full md:max-w-[1200px] px-2 sm:px-12 md:px-12 overflow-hidden">
+      <AnalysisSection
+        section="raid_usage_carousel"
+        className="w-full max-w-full md:max-w-[1200px] px-2 sm:px-12 md:px-12 overflow-hidden"
+      >
         <Carousel
           opts={{
             loop: true,
@@ -116,7 +143,7 @@ export function TotalAnalysisLayout() {
             />
           ))}
         </div>
-      </div>
+      </AnalysisSection>
     </div>
   );
 }

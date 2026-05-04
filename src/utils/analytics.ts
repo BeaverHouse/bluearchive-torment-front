@@ -1,39 +1,42 @@
 import { sendGAEvent } from '@next/third-parties/google';
 
-/**
- * Google Analytics 이벤트를 전송합니다
- * @param eventName 이벤트 이름
- * @param params 이벤트 파라미터
- */
-function trackEvent(eventName: string, params?: Record<string, string | number>) {
-  if (params) {
-    sendGAEvent('event', eventName, params);
-  } else {
-    sendGAEvent('event', eventName, {});
-  }
-}
+type Difficulty = 'normal' | 'hard' | 'veryHard' | 'hardcore' | 'extreme' | 'insane' | 'torment' | 'lunatic';
+type TimeLimit = '3min' | '4min' | '4min30s';
 
-/**
- * 요약 탭 클릭 이벤트
- */
-export function trackSummaryTabClick(tabType: 'summary' | 'summary-lunatic') {
-  trackEvent('summary_tab_click', {
-    tab_type: tabType,
-  });
-}
+type SummarySection =
+  | 'platinum_stats'
+  | 'essential_chars'
+  | 'high_impact_chars'
+  | 'top_assistants'
+  | 'top_5_party'
+  | 'min_ue_clear'
+  | 'max_party_clear'
+  | 'party_composition'
+  | 'character_usage_table'
+  | 'character_growth_stats';
 
-/**
- * YouTube 영상 클릭 이벤트
- */
-export function trackVideoClick(videoId: string, raidId: string, score?: number) {
-  const params: Record<string, string | number> = {
-    video_id: videoId,
-    raid_id: raidId,
-  };
+type TotalAnalysisSection = 'character_analysis' | 'lunatic_clear_chart' | 'raid_usage_carousel';
 
-  if (score !== undefined) {
-    params.score = score;
-  }
+type VideoSource = 'party_card' | 'video_list' | 'video_detail' | 'guide' | 'home';
 
-  trackEvent('video_click', params);
+type HomeFeature = 'calculator' | 'party_search' | 'video' | 'arona' | 'guide' | 'total_analysis';
+
+export type AnalyticsEvent =
+  | { name: 'home_feature_click'; params: { feature: HomeFeature } }
+  | { name: 'calculator_use'; params: { type: 'raid_score' | 'tactical_challenge'; difficulty?: Difficulty; timeLimit?: TimeLimit } }
+  | { name: 'party_search_mode'; params: { mode: 'filter' | 'pool' | 'single' } }
+  | { name: 'party_search_pool_open'; params?: undefined }
+  | { name: 'party_search_pool_save'; params?: undefined }
+  | { name: 'summary_view'; params: { season: string; difficulty: 'torment' | 'lunatic' } }
+  | { name: 'summary_section_view'; params: { section: SummarySection } }
+  | { name: 'total_analysis_section_view'; params: { section: TotalAnalysisSection } }
+  | { name: 'video_open'; params: { source: VideoSource; video_id: string; raid_id?: string; score?: number } }
+  | { name: 'video_filter_apply'; params: { raid_filter: string } }
+  | { name: 'video_edit'; params: { video_id: string } }
+  | { name: 'arona_query_send'; params: { has_api_key: boolean } }
+  | { name: 'arona_apikey_set'; params?: undefined }
+  | { name: 'guide_video_click'; params: { video_id: string } };
+
+export function trackEvent<E extends AnalyticsEvent>(name: E['name'], params?: E['params']) {
+  sendGAEvent('event', name, (params ?? {}) as Record<string, string | number | boolean>);
 }

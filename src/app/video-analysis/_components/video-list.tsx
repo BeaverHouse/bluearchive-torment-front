@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/tooltip";
 import { VideoListItem } from "@/types/video";
 import { useRaids } from "@/hooks/use-raids";
-import { trackVideoClick } from "@/utils/analytics";
+import { trackEvent } from "@/utils/analytics";
 
 interface VideoListProps {
   videos: VideoListItem[];
@@ -84,11 +84,12 @@ export function VideoList({ videos }: VideoListProps) {
               key={video.video_id}
               href={href}
               onClick={() =>
-                trackVideoClick(
-                  video.video_id,
-                  video.raid_id || "unknown",
-                  video.score
-                )
+                trackEvent("video_open", {
+                  source: "video_list",
+                  video_id: video.video_id,
+                  raid_id: video.raid_id || "unknown",
+                  ...(video.score !== undefined ? { score: video.score } : {}),
+                })
               }
             >
               <Card className="cursor-pointer hover:shadow-lg transition-shadow bg-card border-border h-full flex flex-col overflow-hidden p-0">
