@@ -3,6 +3,7 @@
 import React from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import useSearchModeStore, { type SearchMode } from "@/store/useSearchModeStore";
+import { trackEvent } from "@/utils/analytics";
 
 const MODES: { value: SearchMode; label: string }[] = [
   { value: "filter", label: "필터" },
@@ -17,7 +18,11 @@ export default function SearchModeSelector() {
   return (
     <Tabs
       value={mode}
-      onValueChange={(v) => setMode(v as SearchMode)}
+      onValueChange={(v) => {
+        const next = v as SearchMode;
+        setMode(next);
+        trackEvent("party_search_mode", { mode: next });
+      }}
       className="w-full mb-4"
     >
       <TabsList className="grid w-full grid-cols-3">

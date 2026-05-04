@@ -5,6 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CharacterAvatar } from "@/components/common/character-image";
 import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { trackEvent } from "@/utils/analytics";
+
+function extractVideoIdFromUrl(url: string): string {
+  const m = url.match(/video-analysis\/([^?]+)/);
+  return m ? m[1] : url;
+}
 
 // 편집하기 쉽게 상수로 분리
 const ASSISTANTS = [
@@ -189,7 +195,16 @@ export default function GuidePage() {
                         <div className="flex flex-wrap gap-1 justify-center">
                           {row.extreme.map((url, i) => (
                             <Button key={i} asChild size="sm">
-                              <a href={url} target="_blank" rel="noopener noreferrer">
+                              <a
+                                href={url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={() =>
+                                  trackEvent("guide_video_click", {
+                                    video_id: extractVideoIdFromUrl(url),
+                                  })
+                                }
+                              >
                                 <ExternalLink />
                                 영상{row.extreme!.length > 1 ? ` ${i + 1}` : ""}
                               </a>
@@ -205,7 +220,16 @@ export default function GuidePage() {
                         <div className="flex flex-wrap gap-1 justify-center">
                           {row.insane.map((url, i) => (
                             <Button key={i} asChild size="sm">
-                              <a href={url} target="_blank" rel="noopener noreferrer">
+                              <a
+                                href={url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={() =>
+                                  trackEvent("guide_video_click", {
+                                    video_id: extractVideoIdFromUrl(url),
+                                  })
+                                }
+                              >
                                 <ExternalLink />
                                 영상{row.insane!.length > 1 ? ` ${i + 1}` : ""}
                               </a>

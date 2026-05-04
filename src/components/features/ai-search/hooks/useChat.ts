@@ -7,6 +7,7 @@ import type {
   StreamMessage,
 } from "@/types/ai-search";
 import { getStatusMessage, getToolResultMessage, AI_SEARCH_FALLBACK_MESSAGE } from "@/constants/ai-search";
+import { trackEvent } from "@/utils/analytics";
 
 interface UseChatProps {
   apiKey: string | null;
@@ -67,10 +68,12 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, onApiKeyRequ
     if (!input.trim() || isLoading) return;
 
     if (!apiKey) {
+      trackEvent("arona_query_send", { has_api_key: false });
       onApiKeyRequired();
       return;
     }
 
+    trackEvent("arona_query_send", { has_api_key: true });
     const question = input.trim();
     setInput("");
     setError(null);

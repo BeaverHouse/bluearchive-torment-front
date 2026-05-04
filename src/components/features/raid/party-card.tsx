@@ -12,7 +12,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import SingleParty from "./single-party";
-import { trackVideoClick } from "@/utils/analytics";
+import { trackEvent } from "@/utils/analytics";
 
 interface PartyCardProps {
   rank: number;
@@ -44,7 +44,12 @@ const PartyCard: React.FC<PartyCardProps> = ({
   );
   const handleVideoClick = React.useCallback(() => {
     if (video_id && raid_id) {
-      trackVideoClick(video_id, raid_id, value);
+      trackEvent("video_open", {
+        source: "party_card",
+        video_id,
+        raid_id,
+        score: value,
+      });
       window.open(`/video-analysis/${video_id}?raid_id=${raid_id}`, "_blank");
     }
   }, [video_id, raid_id, value]);

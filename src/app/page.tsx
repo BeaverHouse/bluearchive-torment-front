@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -10,12 +12,14 @@ import { Badge } from "@/components/ui/badge";
 import { Search, PieChart, Video, Calculator, Sprout, Heart } from "lucide-react";
 import { SupportModal } from "@/components/common/support-modal";
 import { Button } from "@/components/ui/button";
+import { trackEvent } from "@/utils/analytics";
 
 const features = [
   {
     title: "파티 찾기 & 요약",
     description: "시즌별 파티 정보와 요약을 볼 수 있어요.",
     href: "/party",
+    feature: "party_search" as const,
     icon: Search,
     color: "text-blue-500",
     bgColor: "bg-blue-500/10",
@@ -24,6 +28,7 @@ const features = [
     title: "분석",
     description: "전체 총력전 추이와 캐릭터별 통계를 볼 수 있어요.",
     href: "/analysis",
+    feature: "total_analysis" as const,
     icon: PieChart,
     color: "text-purple-500",
     bgColor: "bg-purple-500/10",
@@ -32,6 +37,7 @@ const features = [
     title: "영상",
     description: "Youtube에 올라온 클리어 영상들이에요.",
     href: "/video-analysis",
+    feature: "video" as const,
     icon: Video,
     color: "text-rose-500",
     bgColor: "bg-rose-500/10",
@@ -40,6 +46,7 @@ const features = [
     title: "ARONA",
     description: "아로나에게 궁금한 것을 물어보세요!",
     href: "/arona",
+    feature: "arona" as const,
     image: "/arona.webp",
     badge: "Beta",
   },
@@ -47,6 +54,7 @@ const features = [
     title: "점수 계산기",
     description: "총력전, 대결전, 종합전술시험 점수를 계산할 수 있어요.",
     href: "/calculator/score",
+    feature: "calculator" as const,
     icon: Calculator,
     color: "text-emerald-500",
     bgColor: "bg-emerald-500/10",
@@ -67,7 +75,13 @@ export default function Home() {
       {/* 기능 카드 그리드 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {features.map((feature) => (
-          <Link key={feature.href} href={feature.href}>
+          <Link
+            key={feature.href}
+            href={feature.href}
+            onClick={() =>
+              trackEvent("home_feature_click", { feature: feature.feature })
+            }
+          >
             <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer hover:border-primary/50">
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-3">
@@ -104,7 +118,12 @@ export default function Home() {
 
       {/* 입문 가이드 배너 */}
       <div className="mt-4">
-        <Link href="/guide">
+        <Link
+          href="/guide"
+          onClick={() =>
+            trackEvent("home_feature_click", { feature: "guide" })
+          }
+        >
           <div className="flex items-center gap-3 px-4 py-3 rounded-lg border border-[#27a567]/40 bg-[#27a567]/10 hover:bg-[#27a567]/20 transition-colors cursor-pointer">
             <Sprout className="w-5 h-5 text-[#27a567] shrink-0" />
             <span className="text-sm font-medium text-[#27a567]">총력전이 처음이신가요?</span>

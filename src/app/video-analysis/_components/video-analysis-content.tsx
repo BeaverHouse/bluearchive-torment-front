@@ -15,6 +15,7 @@ import ErrorPage from "@/components/common/error-page";
 import { generateSearchKeyword } from "@/utils/raid";
 import { PartyFilterSection } from "@/components/features/raid/party-filter-section";
 import Loading from "@/components/common/loading";
+import { trackEvent } from "@/utils/analytics";
 
 interface VideoAnalysisContentProps {
   initialRaid: string;
@@ -115,7 +116,10 @@ export function VideoAnalysisContent({
           <SingleSelect
             options={raidsSelectOptions}
             value={selectedRaid}
-            onChange={handleRaidChange}
+            onChange={(value) => {
+              handleRaidChange(value);
+              trackEvent("video_filter_apply", { raid_filter: value });
+            }}
             placeholder="총력전/대결전 선택"
           />
           {selectedRaid !== "all" && (() => {

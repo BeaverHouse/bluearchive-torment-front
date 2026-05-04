@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ExternalLink, Key, AlertTriangle } from "lucide-react";
+import { trackEvent } from "@/utils/analytics";
 
 interface ApiKeyModalProps {
   open: boolean;
@@ -41,6 +42,7 @@ export function ApiKeyModal({
     }
 
     setError("");
+    trackEvent("arona_apikey_set");
     onSubmit(apiKey.trim());
     onOpenChange(false);
   };

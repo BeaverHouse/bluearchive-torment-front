@@ -23,6 +23,28 @@ import {
   createPartyCountData,
 } from "./utils/raidDataTransform";
 import { generateSearchKeyword } from "@/utils/raid";
+import { useSectionView } from "@/hooks/use-section-view";
+
+function SummarySection({
+  section,
+  children,
+}: {
+  section:
+    | "platinum_stats"
+    | "essential_chars"
+    | "high_impact_chars"
+    | "top_assistants"
+    | "top_5_party"
+    | "min_ue_clear"
+    | "max_party_clear"
+    | "party_composition"
+    | "character_usage_table"
+    | "character_growth_stats";
+  children: React.ReactNode;
+}) {
+  const ref = useSectionView("summary_section_view", section);
+  return <div ref={ref}>{children}</div>;
+}
 
 const RaidSummary = ({
   season,
@@ -195,104 +217,126 @@ const RaidSummary = ({
         </button>
 
         {level !== "I" && (
-          <PlatinumStats
-            clearCount={data.clearCount || 0}
-            clearPercent={level === "T" ? tormentClearPercent : lunaticClearPercent}
-            platinumCuts={data.platinumCuts || []}
-            partPlatinumCuts={data.partPlatinumCuts}
-            lunaticClearPercent={
-              level === "T" && lunaticSummaryData.clearCount > 0 ? lunaticClearPercent : undefined
-            }
-          />
+          <SummarySection section="platinum_stats">
+            <PlatinumStats
+              clearCount={data.clearCount || 0}
+              clearPercent={level === "T" ? tormentClearPercent : lunaticClearPercent}
+              platinumCuts={data.platinumCuts || []}
+              partPlatinumCuts={data.partPlatinumCuts}
+              lunaticClearPercent={
+                level === "T" && lunaticSummaryData.clearCount > 0 ? lunaticClearPercent : undefined
+              }
+            />
+          </SummarySection>
         )}
       </div>
 
       <div className="space-y-6">
         {data.essentialCharacters && data.essentialCharacters.length > 0 && (
-          <EssentialCharacters data={data.essentialCharacters} studentsMap={studentsMap} />
+          <SummarySection section="essential_chars">
+            <EssentialCharacters data={data.essentialCharacters} studentsMap={studentsMap} />
+          </SummarySection>
         )}
 
         {data.highImpactCharacters && data.highImpactCharacters.length > 0 && (
-          <HighImpactCharacters data={data.highImpactCharacters} studentsMap={studentsMap} />
+          <SummarySection section="high_impact_chars">
+            <HighImpactCharacters data={data.highImpactCharacters} studentsMap={studentsMap} />
+          </SummarySection>
         )}
 
-        {assistData.length > 0 && <TopAssistants data={assistData.slice(0, 3)} />}
+        {assistData.length > 0 && (
+          <SummarySection section="top_assistants">
+            <TopAssistants data={assistData.slice(0, 3)} />
+          </SummarySection>
+        )}
 
-        <CardWrapper
-          icon={<Users className="h-5 w-5 text-sky-500" />}
-          title="Top 5 Party"
-          description="전용무기와 배치는 표시되지 않아요."
-        >
-          <div className="space-y-3">
-            {(data.top5Partys || []).map(([party_string, count], idx) => {
-              const students = party_string.split("_").map(Number);
-              const parties = [];
-              for (let i = 0; i < students.length; i += 6) {
-                parties.push(students.slice(i, i + 6));
-              }
-              return (
-                <PartyCard
-                  key={idx}
-                  rank={idx + 1}
-                  value={count}
-                  valueSuffix="명 사용"
-                  parties={parties}
-                />
-              );
-            })}
-          </div>
-        </CardWrapper>
+        <SummarySection section="top_5_party">
+          <CardWrapper
+            icon={<Users className="h-5 w-5 text-sky-500" />}
+            title="Top 5 Party"
+            description="전용무기와 배치는 표시되지 않아요."
+          >
+            <div className="space-y-3">
+              {(data.top5Partys || []).map(([party_string, count], idx) => {
+                const students = party_string.split("_").map(Number);
+                const parties = [];
+                for (let i = 0; i < students.length; i += 6) {
+                  parties.push(students.slice(i, i + 6));
+                }
+                return (
+                  <PartyCard
+                    key={idx}
+                    rank={idx + 1}
+                    value={count}
+                    valueSuffix="명 사용"
+                    parties={parties}
+                  />
+                );
+              })}
+            </div>
+          </CardWrapper>
+        </SummarySection>
 
         {data.minUEUser && (
-          <CardWrapper
-            icon={<Target className="h-5 w-5 text-sky-500" />}
-            title="최소 전용무기 클리어"
-            description={`전용무기 ${data.minUEUser.ueCount}개로 클리어했어요.`}
-          >
-            <PartyCard
-              rank={data.minUEUser.rank}
-              value={data.minUEUser.score}
-              valueSuffix="점"
-              parties={data.minUEUser.partyData}
-            />
-          </CardWrapper>
+          <SummarySection section="min_ue_clear">
+            <CardWrapper
+              icon={<Target className="h-5 w-5 text-sky-500" />}
+              title="최소 전용무기 클리어"
+              description={`전용무기 ${data.minUEUser.ueCount}개로 클리어했어요.`}
+            >
+              <PartyCard
+                rank={data.minUEUser.rank}
+                value={data.minUEUser.score}
+                valueSuffix="점"
+                parties={data.minUEUser.partyData}
+              />
+            </CardWrapper>
+          </SummarySection>
         )}
 
         {data.maxPartyUser && (
-          <CardWrapper
-            icon={<Users className="h-5 w-5 text-sky-500" />}
-            title="최다 파티 클리어"
-            description={`${data.maxPartyUser.partyData.length}파티로 클리어했어요.`}
-          >
-            <PartyCard
-              rank={data.maxPartyUser.rank}
-              value={data.maxPartyUser.score}
-              valueSuffix="점"
-              parties={data.maxPartyUser.partyData}
-            />
-          </CardWrapper>
+          <SummarySection section="max_party_clear">
+            <CardWrapper
+              icon={<Users className="h-5 w-5 text-sky-500" />}
+              title="최다 파티 클리어"
+              description={`${data.maxPartyUser.partyData.length}파티로 클리어했어요.`}
+            >
+              <PartyCard
+                rank={data.maxPartyUser.rank}
+                value={data.maxPartyUser.score}
+                valueSuffix="점"
+                parties={data.maxPartyUser.partyData}
+              />
+            </CardWrapper>
+          </SummarySection>
         )}
 
-        <PartyCompositionChart data={partyCountData} />
+        <SummarySection section="party_composition">
+          <PartyCompositionChart data={partyCountData} />
+        </SummarySection>
 
-        <CardWrapper
-          icon={<TrendingUp className="h-5 w-5 text-sky-500" />}
-          title="캐릭터 사용률"
-        >
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <CharacterUsageTable title="STRIKER" data={strikerData} />
-              <CharacterUsageTable title="SPECIAL" data={specialData} />
-              <CharacterUsageTable title="조력자" data={assistData} />
+        <SummarySection section="character_usage_table">
+          <CardWrapper
+            icon={<TrendingUp className="h-5 w-5 text-sky-500" />}
+            title="캐릭터 사용률"
+          >
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <CharacterUsageTable title="STRIKER" data={strikerData} />
+                <CharacterUsageTable title="SPECIAL" data={specialData} />
+                <CharacterUsageTable title="조력자" data={assistData} />
+              </div>
             </div>
-          </div>
-        </CardWrapper>
+          </CardWrapper>
+        </SummarySection>
 
-        <CharacterGrowthStats
-          filters={data.filters || {}}
-          studentsMap={studentsMap}
-          studentSearchMap={studentSearchMap || {}}
-        />
+        <SummarySection section="character_growth_stats">
+          <CharacterGrowthStats
+            filters={data.filters || {}}
+            studentsMap={studentsMap}
+            studentSearchMap={studentSearchMap || {}}
+          />
+        </SummarySection>
       </div>
     </div>
   );
