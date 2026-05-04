@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 
-const ANNOUNCE_DATE = "26.04.28";
+const ANNOUNCE_DATE = "26.05.04";
 const ANNOUNCE_ITEMS = [
-  "1. 호시노(무장)의 표시 방식을 개선했어요.",
-  "2. 몇 가지 버그를 수정하고, 검색에 추가 옵션을 적용했어요."
+  "1. 총력전 계산기의 계산식 오류를 수정했어요.",
+  "2. 몇 가지 통계를 추가했어요. 기능 개선 또는 정리에 사용될 예정이에요."
 ];
 const STORAGE_KEY = "batorment_announce_dismissed";
 
