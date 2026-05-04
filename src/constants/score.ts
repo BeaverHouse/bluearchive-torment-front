@@ -45,7 +45,7 @@ export const scoreInfo = {
     lunatic: {
         fourAndHalfMinuteBase: 44664000,
         fourMinuteBase: 44025000,
-        threeMinuteBase: 44025000, // Not confirmed
+        threeMinuteBase: 43235000,
         timeBonus: 2880
     }
 }
