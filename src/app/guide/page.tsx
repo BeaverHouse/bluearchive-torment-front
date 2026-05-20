@@ -59,39 +59,55 @@ const VIDEO_TABLE: {
   insane: string[] | null;
   notes?: string[];
 }[] = [
-  {
-    boss: "비나",
-    extreme: [
-      "https://bluearchive-torment.netlify.app/video-analysis/2NI_MRwoPOY?raid_id=S86-0",
-    ],
-    insane: [
-      "https://bluearchive-torment.netlify.app/video-analysis/6kJ_cSRr4AE?raid_id=S86-0",
-    ],
-    notes: ["60레벨 정도에도 클리어 가능해요", "가장 쉬워요"],
-  },
-  {
-    boss: "예로니무스",
-    extreme: [
-      "https://bluearchive-torment.netlify.app/video-analysis/n1CwzkenlY4?raid_id=3S31-2",
-      "https://bluearchive-torment.netlify.app/video-analysis/BU652VOnvsk?raid_id=3S31-3",
-      "https://bluearchive-torment.netlify.app/video-analysis/69iFSgj3Vd0?raid_id=3S31-1",
-    ],
-    insane: null,
-    notes: ["단일 힐러와 방어력 감소가 효과적이에요"],
-  },
-  {
-    boss: "고즈",
-    extreme: [
-      "https://bluearchive-torment.netlify.app/video-analysis/v5wabaK6VDk?raid_id=S87-0",
-    ],
-    insane: [
-      "https://bluearchive-torment.netlify.app/video-analysis/yhYZ9NKm2hI?raid_id=S87-0"
-    ],
-    notes: ["배포캐 전3 운스미와 수즈코를 활용하세요", "패턴 숙지가 어느 정도 필요해요"],
-  },
-  { boss: "헤세드", extreme: null, insane: null },
-  { boss: "시로쿠로", extreme: null, insane: null },
-];
+    {
+      boss: "비나",
+      extreme: [
+        "https://bluearchive-torment.netlify.app/video-analysis/2NI_MRwoPOY?raid_id=S86-0",
+      ],
+      insane: [
+        "https://bluearchive-torment.netlify.app/video-analysis/6kJ_cSRr4AE?raid_id=S86-0",
+      ],
+      notes: ["60레벨 정도에도 클리어 가능해요", "가장 쉬워요"],
+    },
+    {
+      boss: "예로니무스",
+      extreme: [
+        "https://bluearchive-torment.netlify.app/video-analysis/n1CwzkenlY4?raid_id=3S31-2",
+        "https://bluearchive-torment.netlify.app/video-analysis/BU652VOnvsk?raid_id=3S31-3",
+        "https://bluearchive-torment.netlify.app/video-analysis/69iFSgj3Vd0?raid_id=3S31-1",
+      ],
+      insane: null,
+      notes: ["단일 힐러와 방어력 감소가 효과적이에요"],
+    },
+    {
+      boss: "고즈",
+      extreme: [
+        "https://bluearchive-torment.netlify.app/video-analysis/v5wabaK6VDk?raid_id=S87-0",
+      ],
+      insane: [
+        "https://bluearchive-torment.netlify.app/video-analysis/yhYZ9NKm2hI?raid_id=S87-0"
+      ],
+      notes: ["배포캐 전3 운스미와 수즈코를 활용하세요", "패턴 숙지가 어느 정도 필요해요"],
+    },
+    {
+      boss: "페로로지라",
+      extreme: [
+        "https://bluearchive-torment.netlify.app/video-analysis/St-3KrqOLX8?raid_id=3S32-4",
+      ],
+      insane: [
+        "https://bluearchive-torment.netlify.app/video-analysis/QXSOk-ITZLk?raid_id=3S32-3"
+      ],
+      notes: ["광역 딜러를 빌리세요", "페로로의 공격을 버틸 정도의 육성은 필요해요"],
+    },
+    {
+      boss: "카이텐",
+      extreme: null,
+      insane: [
+        "https://bluearchive-torment.netlify.app/video-analysis/ShGrjmNfBmQ?raid_id=S88-0"
+      ],
+      notes: ["난이도가 낮아 인세인 도전도 무리 없어요"],
+    },
+  ];
 
 export default function GuidePage() {
   return (
