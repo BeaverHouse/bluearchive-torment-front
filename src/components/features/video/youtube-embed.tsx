@@ -30,6 +30,7 @@ export interface YouTubePlayerRef {
 }
 
 const THUMBNAIL_QUALITIES = ['maxresdefault', 'sddefault', 'hqdefault'] as const
+const MIN_VALID_THUMBNAIL_WIDTH = 320
 
 function LiteYouTubeEmbed({ videoId, title }: { videoId: string; title: string }) {
   const [activated, setActivated] = useState(false)
@@ -61,6 +62,16 @@ function LiteYouTubeEmbed({ videoId, title }: { videoId: string; title: string }
         src={thumbUrl}
         alt={title}
         className="absolute inset-0 w-full h-full object-cover"
+        onLoad={(event) => {
+          const image = event.currentTarget
+
+          if (
+            image.naturalWidth < MIN_VALID_THUMBNAIL_WIDTH &&
+            qualityIndex < THUMBNAIL_QUALITIES.length - 1
+          ) {
+            setQualityIndex(qualityIndex + 1)
+          }
+        }}
         onError={() => {
           if (qualityIndex < THUMBNAIL_QUALITIES.length - 1) {
             setQualityIndex(qualityIndex + 1)
