@@ -7,12 +7,18 @@ import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/utils/analytics";
 
+type VideoTableRow = {
+  boss: string;
+  extreme: string[] | null;
+  insane: string[] | null;
+  notes?: string[];
+};
+
 function extractVideoIdFromUrl(url: string): string {
   const m = url.match(/video-analysis\/([^?]+)/);
   return m ? m[1] : url;
 }
 
-// 편집하기 쉽게 상수로 분리
 const ASSISTANTS = [
   {
     type: "폭발",
@@ -41,24 +47,18 @@ const ASSISTANTS = [
       { id: 10122, name: "미카(수영복)" },
     ],
   },
-];
+] as const;
 
-// 속성별 색상
-const TYPE_COLORS: Record<string, string> = {
+type AssistantType = (typeof ASSISTANTS)[number]["type"];
+
+const TYPE_COLORS: Record<AssistantType, string> = {
   폭발: "text-red-500",
   관통: "text-orange-500",
   신비: "text-purple-500",
   진동: "text-blue-500",
 };
 
-// 영상 링크 테이블 데이터 (편집하기 쉽게 상수로 분리)
-// url: null 이면 해당 셀 비워둠
-const VIDEO_TABLE: {
-  boss: string;
-  extreme: string[] | null;
-  insane: string[] | null;
-  notes?: string[];
-}[] = [
+const VIDEO_TABLE: VideoTableRow[] = [
   {
     boss: "비나",
     extreme: [
@@ -85,13 +85,60 @@ const VIDEO_TABLE: {
       "https://bluearchive-torment.netlify.app/video-analysis/v5wabaK6VDk?raid_id=S87-0",
     ],
     insane: [
-      "https://bluearchive-torment.netlify.app/video-analysis/yhYZ9NKm2hI?raid_id=S87-0"
+      "https://bluearchive-torment.netlify.app/video-analysis/yhYZ9NKm2hI?raid_id=S87-0",
     ],
-    notes: ["배포캐 전3 운스미와 수즈코를 활용하세요", "패턴 숙지가 어느 정도 필요해요"],
+    notes: [
+      "배포캐 전3 운스미와 수즈코를 활용하세요",
+      "패턴 숙지가 어느 정도 필요해요",
+    ],
   },
-  { boss: "헤세드", extreme: null, insane: null },
-  { boss: "시로쿠로", extreme: null, insane: null },
+  {
+    boss: "페로로지라",
+    extreme: [
+      "https://bluearchive-torment.netlify.app/video-analysis/St-3KrqOLX8?raid_id=3S32-4",
+    ],
+    insane: [
+      "https://bluearchive-torment.netlify.app/video-analysis/QXSOk-ITZLk?raid_id=3S32-3",
+    ],
+    notes: ["광역 딜러를 빌리세요", "페로로의 공격을 버틸 정도의 육성은 필요해요"],
+  },
+  {
+    boss: "카이텐",
+    extreme: null,
+    insane: [
+      "https://bluearchive-torment.netlify.app/video-analysis/ShGrjmNfBmQ?raid_id=S88-0",
+    ],
+    notes: ["난이도가 낮아 인세인 도전도 무리 없어요"],
+  },
 ];
+
+function VideoLinks({ urls }: { urls: string[] | null }) {
+  if (!urls) {
+    return <span className="text-muted-foreground">—</span>;
+  }
+
+  return (
+    <div className="flex flex-wrap gap-1 justify-center">
+      {urls.map((url, index) => (
+        <Button key={url} asChild size="sm">
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() =>
+              trackEvent("guide_video_click", {
+                video_id: extractVideoIdFromUrl(url),
+              })
+            }
+          >
+            <ExternalLink />
+            영상{urls.length > 1 ? ` ${index + 1}` : ""}
+          </a>
+        </Button>
+      ))}
+    </div>
+  );
+}
 
 export default function GuidePage() {
   return (
@@ -101,7 +148,6 @@ export default function GuidePage() {
         총력전/대결전이 처음이신가요? 이 가이드를 참고해 시작해 보세요.
       </p>
 
-      {/* 준비하기 */}
       <Card>
         <CardHeader>
           <CardTitle>1단계: 준비하기</CardTitle>
@@ -124,7 +170,7 @@ export default function GuidePage() {
               {ASSISTANTS.map((group) => (
                 <div key={group.type} className="flex items-start gap-4">
                   <span
-                    className={`text-sm font-semibold w-8 pt-1 shrink-0 ${TYPE_COLORS[group.type] ?? ""}`}
+                    className={`text-sm font-semibold w-8 pt-1 shrink-0 ${TYPE_COLORS[group.type]}`}
                   >
                     {group.type}
                   </span>
@@ -159,7 +205,6 @@ export default function GuidePage() {
         </CardContent>
       </Card>
 
-      {/* INSANE 도전하기 */}
       <Card>
         <CardHeader>
           <CardTitle>2단계: EXTREME/INSANE 도전하기</CardTitle>
@@ -191,54 +236,10 @@ export default function GuidePage() {
                       {row.boss}
                     </td>
                     <td className="py-3 px-3 text-center whitespace-nowrap">
-                      {row.extreme ? (
-                        <div className="flex flex-wrap gap-1 justify-center">
-                          {row.extreme.map((url, i) => (
-                            <Button key={i} asChild size="sm">
-                              <a
-                                href={url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={() =>
-                                  trackEvent("guide_video_click", {
-                                    video_id: extractVideoIdFromUrl(url),
-                                  })
-                                }
-                              >
-                                <ExternalLink />
-                                영상{row.extreme!.length > 1 ? ` ${i + 1}` : ""}
-                              </a>
-                            </Button>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground">—</span>
-                      )}
+                      <VideoLinks urls={row.extreme} />
                     </td>
                     <td className="py-3 px-3 text-center whitespace-nowrap">
-                      {row.insane ? (
-                        <div className="flex flex-wrap gap-1 justify-center">
-                          {row.insane.map((url, i) => (
-                            <Button key={i} asChild size="sm">
-                              <a
-                                href={url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={() =>
-                                  trackEvent("guide_video_click", {
-                                    video_id: extractVideoIdFromUrl(url),
-                                  })
-                                }
-                              >
-                                <ExternalLink />
-                                영상{row.insane!.length > 1 ? ` ${i + 1}` : ""}
-                              </a>
-                            </Button>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground">—</span>
-                      )}
+                      <VideoLinks urls={row.insane} />
                     </td>
                     <td className="hidden sm:table-cell py-3 pl-4 text-xs text-muted-foreground">
                       {row.notes?.map((note, i) => (
@@ -253,7 +254,6 @@ export default function GuidePage() {
         </CardContent>
       </Card>
 
-      {/* 높은 난이도 도전하기 */}
       <Card>
         <CardHeader>
           <CardTitle>3단계: 높은 난이도 도전하기</CardTitle>
