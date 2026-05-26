@@ -50,6 +50,7 @@ function SummarySection({
 const RaidSummary = ({
   season,
   seasonDescription,
+  seasonNameKo,
   studentsMap,
   studentSearchMap,
   level,
@@ -59,7 +60,7 @@ const RaidSummary = ({
   const [copied, setCopied] = useState(false);
 
   const searchKeyword = generateSearchKeyword(
-    seasonDescription ?? "",
+    seasonNameKo ?? seasonDescription ?? "",
     level === "L" ? "L" : level === "T" ? "T" : ""
   );
   const youtubeSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(searchKeyword)}`;

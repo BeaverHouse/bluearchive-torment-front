@@ -53,13 +53,13 @@ export default function PartyPage() {
     ? V3Season
     : raidInfos[0].value;
 
-  const seasonDescription = raidInfos.find(
-    (raid) => raid.value === season
-  )!.label;
+  const currentRaid = raidInfos.find((raid) => raid.value === season)!;
+  const seasonDescription = currentRaid.label;
+  const seasonNameKo = raids.find((r) => r.id === season)?.name_ko
+    ?? raids.find((r) => r.id === season)?.name
+    ?? "";
 
-  const seasonTopLevel = raidInfos.find(
-    (raid) => raid.value === season
-  )!.topLevel;
+  const seasonTopLevel = currentRaid.topLevel;
 
   const hasLunatic = seasonTopLevel === "L";
   // Lunatic 미지원 시즌이면 강제로 T로 폴백
@@ -148,6 +148,7 @@ export default function PartyPage() {
               <RaidSummary
                 season={season}
                 seasonDescription={seasonDescription}
+                seasonNameKo={seasonNameKo}
                 studentsMap={studentsMap}
                 studentSearchMap={studentSearchMap}
                 level={effectiveSummaryLevel}
@@ -157,6 +158,7 @@ export default function PartyPage() {
             <RaidSummary
               season={season}
               seasonDescription={seasonDescription}
+              seasonNameKo={seasonNameKo}
               studentsMap={studentsMap}
               studentSearchMap={studentSearchMap}
               level={effectiveSummaryLevel}

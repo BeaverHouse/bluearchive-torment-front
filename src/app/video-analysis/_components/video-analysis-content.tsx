@@ -128,7 +128,7 @@ export function VideoAnalysisContent({
             const selectedRaidInfo = raids.find((r) => r.id === selectedRaid);
             if (!selectedRaidInfo) return null;
 
-            const searchKeyword = generateSearchKeyword(selectedRaidInfo.name, "");
+            const searchKeyword = generateSearchKeyword(selectedRaidInfo.name_ko ?? selectedRaidInfo.name, "");
             const youtubeSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(searchKeyword)}`;
 
             return (

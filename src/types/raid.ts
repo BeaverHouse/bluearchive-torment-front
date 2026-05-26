@@ -47,6 +47,7 @@ export interface RaidComponentProps {
   studentSearchMap?: Record<string, { nameJa: string; nameKo: string; searchKeywords: string[] | null }>;
   level: string;
   seasonDescription?: string;
+  seasonNameKo?: string;
 }
 
 // Summary 관련 타입
