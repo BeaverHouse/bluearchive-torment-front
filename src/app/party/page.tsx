@@ -16,7 +16,7 @@ export default function PartyPage() {
   const { studentsMap, studentSearchMap } = useStudentMaps();
   const { raids, isLoading } = useRaids();
   const [summaryLevel, setSummaryLevel] = useState<"T" | "L">("T");
-  const { locale } = useTranslations();
+  const { t, locale } = useTranslations();
 
   const raidInfos = raids
     .filter((raid) => raid.party_updated)
@@ -44,7 +44,7 @@ export default function PartyPage() {
           minHeight: "50vh",
         }}
       >
-        <p className="text-muted-foreground">데이터를 불러오는 중...</p>
+        <p className="text-muted-foreground">{t("common.loading")}</p>
       </div>
     );
   }
@@ -100,13 +100,13 @@ export default function PartyPage() {
           }))}
           value={season}
           onChange={setV3Season}
-          placeholder="총력전/대결전 선택"
+          placeholder={t("party.placeholder.season")}
         />
       </div>
       <br />
       <Tabs defaultValue="search" className="w-full max-w-4xl">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="search">파티 찾기</TabsTrigger>
+          <TabsTrigger value="search">{t("party.tab.search")}</TabsTrigger>
           <TabsTrigger
             value="summary"
             onClick={() =>
@@ -116,7 +116,7 @@ export default function PartyPage() {
               })
             }
           >
-            요약
+            {t("party.tab.summary")}
           </TabsTrigger>
         </TabsList>
         <TabsContent value="search">

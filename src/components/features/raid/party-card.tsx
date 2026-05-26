@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/accordion";
 import SingleParty from "./single-party";
 import { trackEvent } from "@/utils/analytics";
+import { useTranslations } from "@/lib/i18n";
 
 interface PartyCardProps {
   rank: number;
@@ -38,6 +39,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
   showModeBadge,
   missingCodes,
 }) => {
+  const { t } = useTranslations();
   const matchedSet = React.useMemo(
     () => new Set(matchedSubPartyIndexes ?? []),
     [matchedSubPartyIndexes]
@@ -61,12 +63,12 @@ const PartyCard: React.FC<PartyCardProps> = ({
           <div className="flex items-center gap-2">
             {rank > 0 && (
               <Badge variant="outline" className="font-medium">
-                #{rank}위
+                {t("party.filter.rank").replace("{n}", String(rank))}
               </Badge>
             )}
             {missingCodes && missingCodes.size > 0 && (
               <Badge variant="destructive" className="font-medium">
-                미보유 {missingCodes.size}명
+                {t("party.party.missing").replace("{n}", String(missingCodes.size))}
               </Badge>
             )}
           </div>
@@ -83,7 +85,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
                 className="h-7 gap-1 px-2 border-red-500 text-red-500 hover:bg-red-50 dark:hover:bg-red-950"
               >
                 <Youtube className="h-4 w-4" />
-                <span className="text-xs">영상</span>
+                <span className="text-xs">{t("party.party.video")}</span>
               </Button>
             )}
           </div>
@@ -104,7 +106,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
             <Accordion type="single" collapsible>
               <AccordionItem value="more-parties">
                 <AccordionTrigger className="text-sm">
-                  5파티 이후 보기
+                  {t("party.party.morePartys")}
                 </AccordionTrigger>
                 <AccordionContent>
                   {parties.slice(4).map((party, partyIdx) => (

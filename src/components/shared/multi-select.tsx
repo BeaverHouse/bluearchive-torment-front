@@ -9,6 +9,7 @@ import {
 import { cn } from "@/lib/utils";
 import { MultiSelectOption, BaseSelectProps } from "@/types/ui";
 import { matchesStudentSearch, StudentSearchData } from "@/utils/search";
+import { useTranslations } from "@/lib/i18n";
 
 interface MultiSelectProps extends BaseSelectProps {
   options: MultiSelectOption[];
@@ -21,14 +22,16 @@ export const MultiSelect = React.memo(function MultiSelect({
   options,
   value = [],
   onChange,
-  placeholder = "선택하세요",
+  placeholder,
   className,
   allowClear = true,
   showSearch = false,
   studentSearchMap,
 }: MultiSelectProps) {
+  const { t } = useTranslations();
   const [open, setOpen] = React.useState(false);
   const [searchValue, setSearchValue] = React.useState("");
+  const resolvedPlaceholder = placeholder ?? t("ui.select.placeholder");
 
   const handleSelect = React.useCallback(
     (selectedValue: string | number) => {
@@ -112,7 +115,7 @@ export const MultiSelect = React.memo(function MultiSelect({
                 })}
               </div>
             ) : (
-              <span className="text-muted-foreground">{placeholder}</span>
+              <span className="text-muted-foreground">{resolvedPlaceholder}</span>
             )}
           </div>
           <div className="flex items-center gap-1">
@@ -137,7 +140,7 @@ export const MultiSelect = React.memo(function MultiSelect({
             <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
             <input
               className="flex h-8 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-              placeholder="검색..."
+              placeholder={t("ui.search.placeholder")}
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
             />
@@ -145,9 +148,7 @@ export const MultiSelect = React.memo(function MultiSelect({
         )}
         <div className="max-h-60 overflow-y-auto p-1">
           {filteredOptions.length === 0 ? (
-            <div className="p-2 text-sm text-muted-foreground">
-              검색 결과가 없습니다.
-            </div>
+            <div className="p-2 text-sm text-muted-foreground">{t("ui.search.empty")}</div>
           ) : (
             filteredOptions.map((option) => {
               const isOptionSelected = isSelected(option.value);

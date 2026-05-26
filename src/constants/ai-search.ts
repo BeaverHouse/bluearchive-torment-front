@@ -1,76 +1,56 @@
 import type { StatusKey, ToolName } from "@/types/ai-search";
 
-/**
- * 기본 상태별 메시지
- */
-const STATUS_KEY_MESSAGES: Record<StatusKey, string> = {
-  thinking: "아로나가 생각하는 중...",
-  searching: "아로나가 수소문 하는 중...",
-  tool_execution: "아로나가 도구 사용 중...",
-  answering: "아로나가 답변 작성 중...",
-  answer_complete: "",
+// Translation keys for ARONA chat status / tool messages. The actual
+// rendering happens through useTranslations in the consumer (useChat).
+
+const STATUS_KEY_TO_TKEY: Record<StatusKey, string | null> = {
+  thinking: "arona.status.thinking",
+  searching: "arona.status.searching",
+  tool_execution: "arona.status.tool",
+  answering: "arona.status.answering",
+  answer_complete: null,
 };
 
-/**
- * MCP 도구별 메시지
- */
-const TOOL_NAME_MESSAGES: Record<ToolName, string> = {
-  search_students: "아로나가 학생 명부 찾는 중...",
-  get_student_detail: "아로나가 학생 상세 정보 확인 중...",
-  calculate_field_status: "아로나가 계산하는 중...",
-  get_stat_guide: "아로나가 가이드 확인 중...",
-  search_boss_guides: "아로나가 보스 기록 찾는 중...",
-  get_raid_list: "아로나가 총력전 목록 확인 중...",
-  search_parties: "아로나가 파티 편성 검색 중...",
-  get_raid_summary: "아로나가 총력전 통계 분석 중...",
-  get_character_analysis: "아로나가 캐릭터 출전 기록 분석 중...",
+const TOOL_NAME_TO_TKEY: Record<ToolName, string> = {
+  search_students: "arona.tool.search_students",
+  get_student_detail: "arona.tool.get_student_detail",
+  calculate_field_status: "arona.tool.calculate_field_status",
+  get_stat_guide: "arona.tool.get_stat_guide",
+  search_boss_guides: "arona.tool.search_boss_guides",
+  get_raid_list: "arona.tool.get_raid_list",
+  search_parties: "arona.tool.search_parties",
+  get_raid_summary: "arona.tool.get_raid_summary",
+  get_character_analysis: "arona.tool.get_character_analysis",
 };
 
-/**
- * 빈 응답에 대한 fallback 메시지
- */
-export const AI_SEARCH_FALLBACK_MESSAGE =
-  "선생님, 죄송해요! 아로나가 답변을 준비하지 못했어요. 다시 질문해 주시겠어요?";
-
-/**
- * MCP 도구 결과 수신 완료 메시지
- */
-const TOOL_RESULT_MESSAGES: Partial<Record<ToolName, string>> = {
-  search_students: "아로나가 학생 명부 확인 완료!",
-  get_student_detail: "아로나가 학생 상세 정보 확인 완료!",
-  calculate_field_status: "아로나가 계산 완료!",
-  get_stat_guide: "아로나가 가이드 확인 완료!",
-  search_boss_guides: "아로나가 보스 기록 확인 완료!",
-  get_raid_list: "아로나가 총력전 목록 확인 완료!",
-  search_parties: "아로나가 파티 편성 검색 완료!",
-  get_raid_summary: "아로나가 총력전 통계 분석 완료!",
-  get_character_analysis: "아로나가 캐릭터 출전 기록 분석 완료!",
+const TOOL_RESULT_TO_TKEY: Partial<Record<ToolName, string>> = {
+  search_students: "arona.toolDone.search_students",
+  get_student_detail: "arona.toolDone.get_student_detail",
+  calculate_field_status: "arona.toolDone.calculate_field_status",
+  get_stat_guide: "arona.toolDone.get_stat_guide",
+  search_boss_guides: "arona.toolDone.search_boss_guides",
+  get_raid_list: "arona.toolDone.get_raid_list",
+  search_parties: "arona.toolDone.search_parties",
+  get_raid_summary: "arona.toolDone.get_raid_summary",
+  get_character_analysis: "arona.toolDone.get_character_analysis",
 };
 
-export function getToolResultMessage(toolName?: string): string {
-  if (toolName && toolName in TOOL_RESULT_MESSAGES) {
-    return TOOL_RESULT_MESSAGES[toolName as ToolName]!;
-  }
-  return "아로나가 결과 확인 완료!";
-}
+export const AI_SEARCH_FALLBACK_KEY = "arona.fallback";
 
-/**
- * status key와 tool name에서 표시할 메시지를 반환
- */
-export function getStatusMessage(
+export function getStatusMessageKey(
   statusKey?: StatusKey,
   toolName?: ToolName
-): string {
-  // tool_execution이고 toolName이 있으면 도구별 메시지
+): string | null {
   if (statusKey === "tool_execution" && toolName) {
-    return TOOL_NAME_MESSAGES[toolName];
+    return TOOL_NAME_TO_TKEY[toolName] ?? null;
   }
+  if (statusKey) return STATUS_KEY_TO_TKEY[statusKey];
+  return STATUS_KEY_TO_TKEY.thinking;
+}
 
-  // statusKey로 찾기
-  if (statusKey) {
-    return STATUS_KEY_MESSAGES[statusKey];
+export function getToolResultMessageKey(toolName?: string): string {
+  if (toolName && toolName in TOOL_RESULT_TO_TKEY) {
+    return TOOL_RESULT_TO_TKEY[toolName as ToolName]!;
   }
-
-  // 기본 메시지
-  return STATUS_KEY_MESSAGES.thinking;
+  return "arona.toolDone.generic";
 }

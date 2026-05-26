@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/popover"
 import { ImageSelectOption, BaseSelectProps } from "@/types/ui"
 import { StudentSearchData } from "@/utils/search"
+import { useTranslations } from "@/lib/i18n"
 
 interface SearchableSelectProps extends BaseSelectProps {
   options: ImageSelectOption[]
@@ -54,13 +55,15 @@ export function SearchableSelect({
   options,
   value,
   onValueChange,
-  placeholder = "학생 선택...",
+  placeholder,
   className,
   disabled = false,
   studentSearchMap
 }: SearchableSelectProps) {
+  const { t } = useTranslations();
   const [open, setOpen] = React.useState(false)
   const selectedOption = options.find(option => option.value.toString() === value)
+  const resolvedPlaceholder = placeholder ?? t("video.skill.character");
 
   // 검색용 문자열 생성 (이름 + 동의어)
   const getSearchableValue = React.useCallback((option: ImageSelectOption) => {
@@ -85,16 +88,16 @@ export function SearchableSelect({
           {selectedOption ? (
             <OptionContent option={selectedOption} textClassName="text-xs" />
           ) : (
-            <span className="text-muted-foreground text-xs">{placeholder}</span>
+            <span className="text-muted-foreground text-xs">{resolvedPlaceholder}</span>
           )}
           <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
         <Command>
-          <CommandInput placeholder="학생 검색..." className="text-xs" />
+          <CommandInput placeholder={t("ui.search.placeholder")} className="text-xs" />
           <CommandList>
-            <CommandEmpty>학생을 찾을 수 없습니다.</CommandEmpty>
+            <CommandEmpty>{t("ui.search.empty")}</CommandEmpty>
             <CommandGroup className="max-h-48 overflow-y-auto">
               {options.map((option) => (
                 <CommandItem

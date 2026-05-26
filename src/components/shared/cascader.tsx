@@ -9,6 +9,7 @@ import {
 import { cn } from "@/lib/utils";
 import { CascaderOption, BaseSelectProps } from "@/types/ui";
 import { matchesStudentSearch, StudentSearchData } from "@/utils/search";
+import { useTranslations } from "@/lib/i18n";
 
 interface CascaderProps extends BaseSelectProps {
   options: CascaderOption[];
@@ -22,15 +23,18 @@ export const Cascader = React.memo(function Cascader({
   options,
   value = [],
   onChange,
-  placeholder = "선택하세요",
+  placeholder,
   className,
   multiple = false,
   allowClear = true,
   showSearch = false,
   studentSearchMap,
 }: CascaderProps) {
+  const { t } = useTranslations();
   const [open, setOpen] = React.useState(false);
   const [searchValue, setSearchValue] = React.useState("");
+  const resolvedPlaceholder = placeholder ?? t("ui.select.placeholder");
+  const unknownLabel = t("ui.cascader.unknown");
 
   const handleSelect = React.useCallback((selectedValue: number[]) => {
     if (!multiple) {
@@ -154,7 +158,7 @@ export const Cascader = React.memo(function Cascader({
                         const parent = options.find(
                           (opt) => opt.value === item[0]
                         );
-                        return parent?.label || "Unknown";
+                        return parent?.label || unknownLabel;
                       } else if (item.length === 2) {
                         const parent = options.find(
                           (opt) => opt.value === item[0]
@@ -162,9 +166,9 @@ export const Cascader = React.memo(function Cascader({
                         const child = parent?.children?.find(
                           (child) => child.value === item[1]
                         );
-                        return child?.label || parent?.label || "Unknown";
+                        return child?.label || parent?.label || unknownLabel;
                       }
-                      return "Unknown";
+                      return unknownLabel;
                     })();
 
                     return (
@@ -195,7 +199,7 @@ export const Cascader = React.memo(function Cascader({
                       const parent = options.find(
                         (opt) => opt.value === item[0]
                       );
-                      return parent?.label || "Unknown";
+                      return parent?.label || unknownLabel;
                     } else if (item.length === 2) {
                       const parent = options.find(
                         (opt) => opt.value === item[0]
@@ -203,14 +207,14 @@ export const Cascader = React.memo(function Cascader({
                       const child = parent?.children?.find(
                         (child) => child.value === item[1]
                       );
-                      return child?.label || parent?.label || "Unknown";
+                      return child?.label || parent?.label || unknownLabel;
                     }
-                    return "Unknown";
+                    return unknownLabel;
                   })()}
                 </span>
               )
             ) : (
-              <span className="text-muted-foreground">{placeholder}</span>
+              <span className="text-muted-foreground">{resolvedPlaceholder}</span>
             )}
           </div>
           <div className="flex items-center gap-1">
@@ -237,7 +241,7 @@ export const Cascader = React.memo(function Cascader({
           <div className="p-2 border-b">
             <input
               className="w-full px-2 py-1 text-sm border rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
-              placeholder="검색..."
+              placeholder={t("ui.search.placeholder")}
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
             />

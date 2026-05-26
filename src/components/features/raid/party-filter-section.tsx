@@ -14,6 +14,7 @@ import PresetPopover from "@/components/features/preset/preset-popover";
 import { FilterOption } from "@/types/raid";
 import { PartyFilterState } from "@/types/filter";
 import { StudentSearchData } from "@/utils/search";
+import { useTranslations } from "@/lib/i18n";
 
 interface PartyFilterSectionProps {
   // 필터 상태
@@ -57,14 +58,15 @@ export function PartyFilterSection({
   onLoadPreset,
   hideIncludeExclude = false,
 }: PartyFilterSectionProps) {
+  const { t } = useTranslations();
   const handleReset = async () => {
     const result = await Swal.fire({
-      title: "필터 초기화",
-      text: "모든 캐릭터 필터가 리셋됩니다.",
+      title: t("party.search.filter") + " " + t("common.reset"),
+      text: t("common.reset"),
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "초기화",
-      cancelButtonText: "취소",
+      confirmButtonText: t("common.reset"),
+      cancelButtonText: t("common.cancel"),
     });
     if (result.isConfirmed) onReset();
   };
@@ -74,7 +76,7 @@ export function PartyFilterSection({
       <Collapsible defaultOpen={defaultOpen}>
         <div className="flex items-center rounded-lg border border-gray-200 dark:border-gray-700">
           <CollapsibleTrigger className="flex flex-1 items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800">
-            <span className="text-sm font-medium">파티 Filter</span>
+            <span className="text-sm font-medium">{t("party.search.filter")}</span>
             <ChevronDownIcon className="h-4 w-4 transition-transform" />
           </CollapsibleTrigger>
           <div className="flex items-center gap-1 pr-2">
@@ -88,7 +90,7 @@ export function PartyFilterSection({
                   variant="secondary"
                   size="icon"
                   className="h-8 w-8"
-                  title="필터 프리셋"
+                  title={t("party.preset.title")}
                 >
                   <Download className="h-4 w-4" />
                 </Button>
@@ -99,7 +101,7 @@ export function PartyFilterSection({
               size="icon"
               className="h-8 w-8"
               onClick={handleReset}
-              title="필터 초기화"
+              title={t("common.reset")}
             >
               <RotateCcw className="h-4 w-4" />
             </Button>

@@ -18,6 +18,7 @@ import {
 import { Crosshair } from "lucide-react";
 import { RangeChip } from "@/components/ui/range-chip";
 import { ScoreChip } from "@/components/ui/score-chip";
+import { useTranslations } from "@/lib/i18n";
 
 interface PartyFilterProps {
   // 필터 상태
@@ -86,6 +87,7 @@ function PartyFilterComponent({
   onScoreJump,
   hideIncludeExclude = false,
 }: PartyFilterProps) {
+  const { t } = useTranslations();
   const [jumpScore, setJumpScore] = useState("");
   const [jumpPopoverOpen, setJumpPopoverOpen] = useState(false);
 
@@ -145,7 +147,7 @@ function PartyFilterComponent({
         {/* 점수 범위 칩 */}
         {showScoreButtons && (
           <ScoreChip
-            label="점수"
+            label={t("party.filter.scoreLabel")}
             presets={SCORE_PRESETS}
             scoreRange={filters.scoreRange}
             onChange={handleScoreRangeChange}
@@ -156,13 +158,13 @@ function PartyFilterComponent({
         {/* 파티 수 + 점수 이동 */}
         <div className="flex gap-2 items-center w-full sm:w-auto">
           <RangeChip
-            label="파티"
+            label={t("party.search.tab.filter")}
             min={minPartys}
             max={maxPartys}
             minValue={filters.partyCountRange[0]}
             maxValue={filters.partyCountRange[1]}
             onChange={handlePartyCountChange}
-            suffix="파티"
+            suffix=""
             className="flex-1 sm:flex-none"
           />
 
@@ -172,15 +174,15 @@ function PartyFilterComponent({
               <PopoverTrigger asChild>
                 <Button variant="secondary" size="sm" className="gap-1.5 h-8 flex-1 sm:flex-none">
                   <Crosshair className="h-4 w-4" />
-                  <span>점수 이동</span>
+                  <span>{t("party.filter.scoreMove")}</span>
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-64" align="end">
               <div className="space-y-3">
-                <p className="text-sm font-medium">점수로 이동</p>
+                <p className="text-sm font-medium">{t("party.filter.scoreMove")}</p>
                 <Input
                   type="number"
-                  placeholder="점수 입력"
+                  placeholder={t("party.filter.scoreLabel")}
                   value={jumpScore}
                   onChange={(e) => setJumpScore(e.target.value)}
                   onKeyDown={(e) => {
@@ -193,7 +195,7 @@ function PartyFilterComponent({
                   onClick={handleScoreJump}
                   disabled={!jumpScore}
                 >
-                  이동
+                  {t("video.add.existing.go")}
                 </Button>
               </div>
             </PopoverContent>
@@ -208,14 +210,14 @@ function PartyFilterComponent({
           {/* 포함 캐릭터 Filter */}
           <div className="mb-4">
             <label className="text-sm font-medium mb-2 block">
-              포함할 <strong>내 캐릭터</strong>
+              {t("party.filter.include")}
             </label>
             <Cascader
               multiple
               options={filterOptions}
               value={filters.includeList}
               onChange={handleIncludeChange}
-              placeholder="캐릭터를 선택하세요"
+              placeholder={t("party.filter.includePlaceholder")}
               className="w-full"
               allowClear
               showSearch
@@ -226,13 +228,13 @@ function PartyFilterComponent({
           {/* 제외 캐릭터 Filter */}
           <div className="mb-4">
             <label className="text-sm font-medium mb-2 block">
-              제외할 <strong>내 캐릭터</strong>
+              {t("party.filter.exclude")}
             </label>
             <MultiSelect
               options={excludeOptions}
               value={filters.excludeList}
               onChange={handleExcludeChange}
-              placeholder="제외할 캐릭터를 선택하세요"
+              placeholder={t("party.filter.excludePlaceholder")}
               className="w-full"
               allowClear
               showSearch
@@ -247,7 +249,7 @@ function PartyFilterComponent({
               onCheckedChange={handleHardExcludeChange}
             />
             <label htmlFor="hardExclude" className="text-sm">
-              조력자에서도 제외
+              {t("party.filter.excludeFromAssist")}
             </label>
           </div>
         </>
@@ -255,12 +257,12 @@ function PartyFilterComponent({
 
       {/* 조력자 Filter */}
       <div className="mb-4">
-        <label className="text-sm font-medium mb-2 block">조력자</label>
+        <label className="text-sm font-medium mb-2 block">{t("party.filter.assist")}</label>
         <Cascader
           options={assistOptions}
           value={assistValue}
           onChange={handleAssistChange}
-          placeholder="조력자를 선택하세요"
+          placeholder={t("party.filter.assistPlaceholder")}
           className="w-full"
           allowClear
           showSearch
@@ -276,7 +278,7 @@ function PartyFilterComponent({
           onCheckedChange={handleAllowDuplicateChange}
         />
         <label htmlFor="allowDuplicate" className="text-sm">
-          조력자 포함 중복 허용
+          {t("party.filter.allowAssistDup")}
         </label>
       </div>
 
@@ -288,7 +290,7 @@ function PartyFilterComponent({
             onCheckedChange={handleYoutubeOnlyChange}
           />
           <label htmlFor="youtubeOnly" className="text-sm">
-            Youtube 영상
+            {t("party.filter.youtubeOnly")}
           </label>
         </div>
       )}

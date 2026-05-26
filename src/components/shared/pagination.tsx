@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslations } from "@/lib/i18n";
 
 export interface PaginationProps {
   currentPage: number;
@@ -28,6 +29,7 @@ export function Pagination({
   onPageSizeChange,
   pageSizeOptions = [10, 20],
 }: PaginationProps) {
+  const { t } = useTranslations();
   const [pageInputValue, setPageInputValue] = useState(currentPage.toString());
   const [isPageInputActive, setIsPageInputActive] = useState(false);
 
@@ -110,7 +112,7 @@ export function Pagination({
           onFocus={handlePageInputFocus}
           onBlur={handlePageInputBlur}
           onKeyDown={handlePageInputKeyDown}
-          placeholder="페이지"
+          placeholder={t("ui.pagination.page").split(" / ")[0]}
           className="w-16 px-2 py-1 text-sm border rounded text-center"
         />
         <span className="text-sm">/ {totalPages}</span>
@@ -135,7 +137,7 @@ export function Pagination({
           <SelectContent>
             {pageSizeOptions.map((size) => (
               <SelectItem key={size} value={size.toString()}>
-                {size}개씩
+                {t("ui.pagination.pageSize").replace("{n}", String(size))}
               </SelectItem>
             ))}
           </SelectContent>

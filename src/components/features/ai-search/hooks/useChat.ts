@@ -6,7 +6,7 @@ import type {
   Message,
   StreamMessage,
 } from "@/types/ai-search";
-import { getStatusMessage, getToolResultMessage, AI_SEARCH_FALLBACK_MESSAGE } from "@/constants/ai-search";
+import { getStatusMessageKey, getToolResultMessageKey, AI_SEARCH_FALLBACK_KEY } from "@/constants/ai-search";
 import { trackEvent } from "@/utils/analytics";
 import { useTranslations } from "@/lib/i18n";
 
@@ -37,8 +37,8 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, language, on
       case "status": {
         const { statusKey, toolName } = message.metadata ?? {};
         if (statusKey === "answer_complete") break;
-        const displayMessage = getStatusMessage(statusKey, toolName);
-        setCurrentStatus(displayMessage);
+        const tkey = getStatusMessageKey(statusKey, toolName);
+        setCurrentStatus(tkey ? t(tkey) : "");
         break;
       }
       case "item_result": {
@@ -51,7 +51,7 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, language, on
             [id]: { tool: tool ?? "", item },
           }));
         }
-        setCurrentStatus(getToolResultMessage(tool));
+        setCurrentStatus(t(getToolResultMessageKey(tool)));
         break;
       }
       case "answer":
@@ -136,12 +136,12 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, language, on
       } else if (!error) {
         setMessages((prev) => [
           ...prev,
-          { role: "assistant", content: AI_SEARCH_FALLBACK_MESSAGE },
+          { role: "assistant", content: t(AI_SEARCH_FALLBACK_KEY) },
         ]);
       }
     }
     wasLoadingRef.current = isLoading;
-  }, [isLoading, currentAnswer, currentItemResults, error]);
+  }, [isLoading, currentAnswer, currentItemResults, error, t]);
 
   // 요청 중단
   const stopGeneration = () => {

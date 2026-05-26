@@ -29,8 +29,10 @@ import { PartyFilterState } from "@/types/filter";
 import SearchModeSelector from "./search-mode-selector";
 import PoolFilterToggle from "@/components/features/pool/pool-filter-toggle";
 import ComboSelector from "@/components/features/combo/combo-selector";
+import { useTranslations } from "@/lib/i18n";
 
 const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProps) => {
+  const { t } = useTranslations();
   const [PartyCountRange, setPartyCountRange] = useState([0, 99]);
   const [Page, setPage] = useState(1);
   const [PageSize, setPageSize] = useState(10);
@@ -398,8 +400,8 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
         hideIncludeExclude={searchMode !== "filter"}
       />
       <div className="mx-auto mb-5 w-full">
-        검색 결과: 총 {displayCount}개
-        {groupedResults && ` 구성 (${results.length}개 편성)`}
+        {t("party.filter.results").replace("{n}", String(displayCount))}
+        {groupedResults && ` (${results.length})`}
       </div>
       <div className="mb-5">
         <Pagination
@@ -430,7 +432,7 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
                     key={idx}
                     rank={party.rank}
                     value={party.score}
-                    valueSuffix="점"
+                    valueSuffix={t("party.filter.score").replace("{n}", "").trim()}
                     parties={party.partyData}
                     video_id={party.video_id}
                     raid_id={party.video_id ? (party.raid_id || season) : undefined}
@@ -441,9 +443,7 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
         ) : (
           <div className="flex flex-col items-center justify-center py-12">
             <Image src="/empty.webp" alt="Empty" width={192} height={192} className="mb-4" />
-            <p className="text-gray-500 dark:text-gray-400">
-              검색 결과가 없어요.
-            </p>
+            <p className="text-gray-500 dark:text-gray-400">{t("party.filter.noResults")}</p>
           </div>
         )}
       </div>

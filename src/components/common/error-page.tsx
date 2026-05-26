@@ -2,8 +2,10 @@
 
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "@/lib/i18n";
 
 function ErrorPage() {
+  const { t } = useTranslations();
   return (
     <div
       style={{
@@ -19,15 +21,15 @@ function ErrorPage() {
       <h1 className="text-3xl font-bold">BA Torment</h1>
       <div className="text-center py-8">
         <Image src="/error.png" alt="Error" width={192} height={192} className="mx-auto mb-4" />
-        <p className="text-muted-foreground">에러가 발생했어요..</p>
+        <p className="text-muted-foreground">{t("ui.errorPage.title")}</p>
       </div>
       <div className="space-y-2 w-96">
         <Button className="w-full" onClick={() => window.location.reload()}>
-          새로고침
+          {t("ui.errorPage.retry")}
         </Button>
         <Button className="w-full" asChild>
           <a href="mailto:haulrest@gmail.com" target="_blank">
-            오류 제보 (이메일)
+            {t("error.title")} ({t("support.line.contact.mail")})
           </a>
         </Button>
       </div>
