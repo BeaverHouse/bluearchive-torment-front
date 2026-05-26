@@ -6,7 +6,7 @@ import { CANONICAL_TO_ALIASES } from "@/constants/student-aliases";
 
 export type StudentSearchData = Record<
   string,
-  { nameJa: string; nameKo: string; searchKeywords: string[] | null }
+  { nameJa: string; nameKo: string; nameEn?: string; nameZh?: string; searchKeywords: string[] | null }
 >;
 
 /**
@@ -24,6 +24,8 @@ export function matchesStudentSearch(
   const query = searchQuery.toLowerCase();
   if (data.nameKo.toLowerCase().includes(query)) return true;
   if (data.nameJa.toLowerCase().includes(query)) return true;
+  if (data.nameEn && data.nameEn.toLowerCase().includes(query)) return true;
+  if (data.nameZh && data.nameZh.toLowerCase().includes(query)) return true;
   if (data.searchKeywords) {
     return data.searchKeywords.some((kw) =>
       kw.toLowerCase().includes(query)
@@ -49,16 +51,21 @@ export function matchesStudentSearchWithAliases(
 }
 
 /**
- * studentSearchMap에서 간단한 이름 맵(studentsMap)을 추출
+ * studentSearchMap에서 locale별 이름 맵을 추출. nameEn/nameZh이 비어 있으면 nameKo로 폴백.
  * @param studentSearchMap 학생 검색 데이터 맵
- * @returns 학생 ID를 키로, 한국어 이름을 값으로 하는 맵
+ * @param locale "ko" | "en" | "zh"
  */
 export function extractStudentsMap(
-  studentSearchMap: StudentSearchData
+  studentSearchMap: StudentSearchData,
+  locale: "ko" | "en" | "zh" = "ko"
 ): Record<string, string> {
   const nameMap: Record<string, string> = {};
   for (const [id, data] of Object.entries(studentSearchMap)) {
-    nameMap[id] = data.nameKo;
+    const localized =
+      locale === "en" ? data.nameEn
+      : locale === "zh" ? data.nameZh
+      : data.nameKo;
+    nameMap[id] = localized || data.nameKo;
   }
   return nameMap;
 }

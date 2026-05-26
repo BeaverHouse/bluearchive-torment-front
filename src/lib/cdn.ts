@@ -1,5 +1,5 @@
 // CDN에서 정적 파일 가져오기
-let studentSearchMapCache: Record<string, { nameJa: string; nameKo: string; searchKeywords: string[] | null }> | null = null
+let studentSearchMapCache: Record<string, { nameJa: string; nameKo: string; nameEn?: string; nameZh?: string; searchKeywords: string[] | null }> | null = null
 
 // CDN URL 헬퍼 함수
 function getCdnUrl(path: string): string {
@@ -14,7 +14,7 @@ export function getRaidDataUrl(type: string, raidId: string): string {
   return getCdnUrl(`/batorment/v3/${type}/${raidId}.json`);
 }
 
-export async function getStudentSearchMap(): Promise<Record<string, { nameJa: string; nameKo: string; searchKeywords: string[] | null }>> {
+export async function getStudentSearchMap(): Promise<Record<string, { nameJa: string; nameKo: string; nameEn?: string; nameZh?: string; searchKeywords: string[] | null }>> {
   if (studentSearchMapCache) {
     return studentSearchMapCache
   }
@@ -33,7 +33,7 @@ export async function getStudentSearchMap(): Promise<Record<string, { nameJa: st
       throw new Error(`Failed to fetch student search map: ${response.status}`)
     }
 
-    const data: Record<string, { nameJa: string; nameKo: string; searchKeywords: string[] | null }> = await response.json()
+    const data: Record<string, { nameJa: string; nameKo: string; nameEn?: string; nameZh?: string; searchKeywords: string[] | null }> = await response.json()
     studentSearchMapCache = data
     return data
   } catch (error) {

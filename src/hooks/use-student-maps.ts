@@ -1,39 +1,37 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getStudentSearchMap } from "@/lib/cdn";
-import { extractStudentsMap } from "@/utils/search";
+import { extractStudentsMap, type StudentSearchData } from "@/utils/search";
+import { useTranslations } from "@/lib/i18n";
 
-type StudentSearchMap = Record<string, { nameJa: string; nameKo: string; searchKeywords: string[] | null }>;
-
-// 모듈 레벨 캐시 (cdn.ts의 getStudentSearchMap()이 자체 캐싱하므로 searchMap은 캐싱 불필요)
-let studentsMapCache: Record<string, string> | null = null;
-let fetchPromise: Promise<void> | null = null;
+// cdn.ts's getStudentSearchMap() already caches the raw map; here we just
+// keep a module-level reference so the first hook user populates it for
+// everyone else.
+let searchMapCache: StudentSearchData | null = null;
+let fetchPromise: Promise<StudentSearchData> | null = null;
 
 export function useStudentMaps() {
-  const [studentsMap, setStudentsMap] = useState<Record<string, string>>(studentsMapCache || {});
-  const [studentSearchMap, setStudentSearchMap] = useState<StudentSearchMap>({});
-  const [isLoaded, setIsLoaded] = useState(!!studentsMapCache);
+  const { locale } = useTranslations();
+  const [searchMap, setSearchMap] = useState<StudentSearchData>(searchMapCache || {});
+  const [isLoaded, setIsLoaded] = useState(!!searchMapCache);
 
   useEffect(() => {
-    if (studentsMapCache) {
-      getStudentSearchMap().then(setStudentSearchMap);
+    if (searchMapCache) {
+      setSearchMap(searchMapCache);
       setIsLoaded(true);
       return;
     }
-
     if (!fetchPromise) {
-      fetchPromise = (async () => {
-        const searchMap = await getStudentSearchMap();
-        studentsMapCache = extractStudentsMap(searchMap);
-      })();
+      fetchPromise = getStudentSearchMap().then((m) => {
+        searchMapCache = m;
+        return m;
+      });
     }
-
-    fetchPromise.then(async () => {
-      const searchMap = await getStudentSearchMap();
-      setStudentSearchMap(searchMap);
-      setStudentsMap(studentsMapCache!);
+    fetchPromise.then((m) => {
+      setSearchMap(m);
       setIsLoaded(true);
     });
   }, []);
 
-  return { studentsMap, studentSearchMap, isLoaded };
+  const studentsMap = useMemo(() => extractStudentsMap(searchMap, locale), [searchMap, locale]);
+  return { studentsMap, studentSearchMap: searchMap, isLoaded };
 }
