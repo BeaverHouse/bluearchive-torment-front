@@ -1,0 +1,21 @@
+{
+  "site.tagline": "Blue Archive Raid & Eliminate Raid helper",
+  "home.party.title": "Party Finder & Summary",
+  "home.party.desc": "Browse parties and summaries per season.",
+  "home.analysis.title": "Analysis",
+  "home.analysis.desc": "Overall raid trends and per-character stats.",
+  "home.video.title": "Videos",
+  "home.video.desc": "Clear videos shared on YouTube.",
+  "home.arona.title": "ARONA",
+  "home.arona.desc": "Ask Arona anything!",
+  "home.calculator.title": "Score Calculator",
+  "home.calculator.desc": "Calculate Raid, Eliminate Raid, and Joint Firing Drill scores.",
+  "home.guide.question": "New to Raid?",
+  "home.guide.cta": "Beginner guide →",
+  "home.support": "Support",
+  "home.data.raid.prefix": "Raid / Eliminate Raid data is from ",
+  "home.data.raid.suffix": ".",
+  "home.data.ingame.prefix": "In-game data is from ",
+  "home.data.ingame.suffix": ".",
+  "language": "Language"
+}

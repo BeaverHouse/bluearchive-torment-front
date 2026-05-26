@@ -1,0 +1,21 @@
+{
+  "site.tagline": "블루 아카이브 총력전/대결전 도우미",
+  "home.party.title": "파티 찾기 & 요약",
+  "home.party.desc": "시즌별 파티 정보와 요약을 볼 수 있어요.",
+  "home.analysis.title": "분석",
+  "home.analysis.desc": "전체 총력전 추이와 캐릭터별 통계를 볼 수 있어요.",
+  "home.video.title": "영상",
+  "home.video.desc": "Youtube에 올라온 클리어 영상들이에요.",
+  "home.arona.title": "ARONA",
+  "home.arona.desc": "아로나에게 궁금한 것을 물어보세요!",
+  "home.calculator.title": "점수 계산기",
+  "home.calculator.desc": "총력전, 대결전, 종합전술시험 점수를 계산할 수 있어요.",
+  "home.guide.question": "총력전이 처음이신가요?",
+  "home.guide.cta": "입문 가이드 →",
+  "home.support": "후원하기",
+  "home.data.raid.prefix": "총력전/대결전 데이터는 ",
+  "home.data.raid.suffix": "에서 가져왔어요.",
+  "home.data.ingame.prefix": "인게임 데이터는 ",
+  "home.data.ingame.suffix": "에서 가져왔어요.",
+  "language": "언어"
+}

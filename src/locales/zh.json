@@ -1,0 +1,21 @@
+{
+  "site.tagline": "蔚蓝档案总力战 / 大决战助手",
+  "home.party.title": "队伍查找与概览",
+  "home.party.desc": "按赛季查看队伍信息和总览。",
+  "home.analysis.title": "分析",
+  "home.analysis.desc": "总力战整体趋势与各角色统计。",
+  "home.video.title": "视频",
+  "home.video.desc": "YouTube 上的通关视频集锦。",
+  "home.arona.title": "ARONA",
+  "home.arona.desc": "向阿罗娜提问吧!",
+  "home.calculator.title": "分数计算器",
+  "home.calculator.desc": "总力战、大决战、综合战术考试分数计算。",
+  "home.guide.question": "第一次玩总力战吗?",
+  "home.guide.cta": "新手指南 →",
+  "home.support": "赞助",
+  "home.data.raid.prefix": "总力战 / 大决战数据来自 ",
+  "home.data.raid.suffix": "。",
+  "home.data.ingame.prefix": "游戏内数据来自 ",
+  "home.data.ingame.suffix": "。",
+  "language": "语言"
+}
