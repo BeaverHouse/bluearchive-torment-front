@@ -21,12 +21,15 @@ import {
 import { Plus } from "lucide-react";
 import { addVideoToQueue } from "@/lib/api";
 import { RaidInfo } from "@/types/raid";
+import { getRaidName } from "@/hooks/use-raids";
+import { useTranslations } from "@/lib/i18n";
 
 interface AddVideoDialogProps {
   raids: RaidInfo[];
 }
 
 export function AddVideoDialog({ raids }: AddVideoDialogProps) {
+  const { locale } = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
   const [raidId, setRaidId] = useState<string>("");
   const [youtubeUrl, setYoutubeUrl] = useState<string>("");
@@ -112,7 +115,7 @@ export function AddVideoDialog({ raids }: AddVideoDialogProps) {
               <SelectContent className="max-h-[300px] overflow-y-auto">
                 {raids.map((raid) => (
                   <SelectItem key={raid.id} value={raid.id}>
-                    {raid.name}
+                    {getRaidName(raid, locale)}
                   </SelectItem>
                 ))}
               </SelectContent>

@@ -9,6 +9,8 @@ interface AISearchStreamOptions {
   messages?: Message[];
   personaPrompt?: string;
   instructionPrompt?: string;
+  /** BCP47-ish locale tag forwarded to llm-client; the LLM responds in this language. */
+  language?: string;
   onUpdate: (message: StreamMessage) => void;
   signal?: AbortSignal;
 }
@@ -23,23 +25,21 @@ class AISearchService {
    * /v1/call/free 엔드포인트 사용 (BYOK)
    */
   async streamSearch(options: AISearchStreamOptions): Promise<void> {
-    const { apiKey, question, messages, personaPrompt, instructionPrompt, onUpdate, signal } = options;
+    const { apiKey, question, messages, personaPrompt, instructionPrompt, language, onUpdate, signal } = options;
 
     const apiUrl = `${LLM_BASE_URL}/v1/call/free`;
 
-    // 연결 중 상태 전송
     onUpdate({
       type: "status",
-      title: "연결 중...",
+      title: "",
       title_key: "connecting",
       content: "",
       timestamp: new Date().toISOString(),
     });
 
-    // 요청 body 구성
     const requestBody: AISearchRequest = {
       question,
-      language: "ko",
+      language: language ?? "ko",
       fixed_service_ids: ["batorment"],
     };
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { RaidInfo } from "@/types/raid";
+import { Locale } from "@/lib/i18n";
 
 const RAIDS_URL =
   "https://twauaebyyujvvvusbrwe.supabase.co/storage/v1/object/public/pb7h4uvn2b6m0lyu7i6r3j8ac/batorment/v3/raids.json";
@@ -35,4 +36,13 @@ export function useRaids() {
   }, []);
 
   return { raids, isLoading };
+}
+
+/** Pick a localized raid title. Falls back to ko, then to legacy `name`. */
+export function getRaidName(raid: RaidInfo, locale: Locale): string {
+  const localized =
+    locale === "en" ? raid.name_en
+    : locale === "zh" ? raid.name_zh
+    : raid.name_ko;
+  return localized || raid.name_ko || raid.name;
 }

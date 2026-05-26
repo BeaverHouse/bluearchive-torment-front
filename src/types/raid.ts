@@ -1,6 +1,11 @@
 export interface RaidInfo {
   id: string;
+  /** Legacy single-language title; equals name_ko when produced by data-process. */
   name: string;
+  /** Per-locale titles (data-process feat/raids-multilang). May be absent on older payloads. */
+  name_ko?: string;
+  name_en?: string;
+  name_zh?: string;
   top_level: string;
   party_updated: boolean;
 }

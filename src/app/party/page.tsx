@@ -8,19 +8,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SingleSelect } from "@/components/ui/custom/single-select";
 import { trackEvent } from "@/utils/analytics";
 import { useStudentMaps } from "@/hooks/use-student-maps";
-import { useRaids } from "@/hooks/use-raids";
+import { useRaids, getRaidName } from "@/hooks/use-raids";
+import { useTranslations } from "@/lib/i18n";
 
 export default function PartyPage() {
   const { V3Season, setV3Season } = useBAStore();
   const { studentsMap, studentSearchMap } = useStudentMaps();
   const { raids, isLoading } = useRaids();
   const [summaryLevel, setSummaryLevel] = useState<"T" | "L">("T");
+  const { locale } = useTranslations();
 
   const raidInfos = raids
     .filter((raid) => raid.party_updated)
     .map((raid) => ({
       value: raid.id,
-      label: raid.name,
+      label: getRaidName(raid, locale),
       topLevel: raid.top_level,
     }));
 

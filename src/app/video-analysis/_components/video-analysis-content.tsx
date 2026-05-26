@@ -10,7 +10,8 @@ import { Pagination } from "@/components/shared/pagination";
 import { Button } from "@/components/ui/button";
 import { Youtube, RefreshCw } from "lucide-react";
 import { useStudentMaps } from "@/hooks/use-student-maps";
-import { useRaids } from "@/hooks/use-raids";
+import { useRaids, getRaidName } from "@/hooks/use-raids";
+import { useTranslations } from "@/lib/i18n";
 import ErrorPage from "@/components/common/error-page";
 import { generateSearchKeyword } from "@/utils/raid";
 import { PartyFilterSection } from "@/components/features/raid/party-filter-section";
@@ -26,6 +27,7 @@ export function VideoAnalysisContent({
 }: VideoAnalysisContentProps) {
   const { studentsMap, studentSearchMap } = useStudentMaps();
   const { raids } = useRaids();
+  const { t, locale } = useTranslations();
 
   const {
     loading,
@@ -51,13 +53,13 @@ export function VideoAnalysisContent({
 
   const raidsSelectOptions = useMemo(
     () => [
-      { value: "all", label: "전체" },
+      { value: "all", label: t("raid.all") },
       ...raids.map((raid) => ({
         value: raid.id,
-        label: raid.name,
+        label: getRaidName(raid, locale),
       })),
     ],
-    [raids]
+    [raids, locale, t]
   );
 
   if (error) {
