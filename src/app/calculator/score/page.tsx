@@ -5,8 +5,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RaidScoreCalculator } from "@/components/features/calculator/raid-score-calculator";
 import { TacticalChallengeCalculator } from "@/components/features/calculator/tactical-challenge-calculator";
 import { trackEvent } from "@/utils/analytics";
+import { useTranslations } from "@/lib/i18n";
 
 export default function ScoreCalculatorPage() {
+  const { t } = useTranslations();
+
   useEffect(() => {
     trackEvent("calculator_use", { type: "raid_score" });
   }, []);
@@ -14,10 +17,8 @@ export default function ScoreCalculatorPage() {
   return (
     <div className="container mx-auto">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">점수 계산기</h1>
-        <p className="text-muted-foreground">
-          총력전/대결전 또는 종합전술시험의 점수를 계산할 수 있어요.
-        </p>
+        <h1 className="text-3xl font-bold mb-2">{t("calc.title")}</h1>
+        <p className="text-muted-foreground">{t("calc.subtitle")}</p>
       </div>
 
       <Tabs defaultValue="raid" className="w-full">
@@ -26,13 +27,13 @@ export default function ScoreCalculatorPage() {
             value="raid"
             onClick={() => trackEvent("calculator_use", { type: "raid_score" })}
           >
-            총력전/대결전
+            {t("calc.tab.raid")}
           </TabsTrigger>
           <TabsTrigger
             value="tactical"
             onClick={() => trackEvent("calculator_use", { type: "tactical_challenge" })}
           >
-            종합전술시험
+            {t("calc.tab.tactical")}
           </TabsTrigger>
         </TabsList>
 

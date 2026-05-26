@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { scoreInfo } from "@/constants/score";
 import { parseTimeToSeconds, formatSecondsToTime } from "@/utils/time";
+import { useTranslations } from "@/lib/i18n";
 
 type Difficulty = "normal" | "hard" | "veryHard" | "hardcore" | "extreme" | "insane" | "torment" | "lunatic";
 type TimeLimit = "3min" | "4min" | "4min30s";
@@ -70,6 +71,7 @@ function calculateTimeFromScore(score: number, difficulty: Difficulty, timeLimit
 }
 
 export function RaidScoreCalculator() {
+  const { t } = useTranslations();
   const [items, setItems] = useState<CalculatorItem[]>([
     {
       id: 1,
@@ -202,14 +204,12 @@ export function RaidScoreCalculator() {
       <CardHeader>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <CardTitle>총력전/대결전 점수 계산기</CardTitle>
-            <CardDescription>
-              시간 또는 점수를 입력하면 나머지를 계산해요. (최대 3개)
-            </CardDescription>
+            <CardTitle>{t("calc.raid.cardTitle")}</CardTitle>
+            <CardDescription>{t("calc.raid.cardDesc")}</CardDescription>
           </div>
           {totalScore > 0 && (
             <div className="text-left sm:text-right">
-              <div className="text-sm text-muted-foreground">총 점수</div>
+              <div className="text-sm text-muted-foreground">{t("calc.totalScore")}</div>
               <div className="text-2xl font-bold text-primary">
                 {totalScore.toLocaleString()}
               </div>
@@ -222,7 +222,7 @@ export function RaidScoreCalculator() {
           <Card key={item.id} className="relative">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">점수 #{index + 1}</CardTitle>
+                <CardTitle className="text-lg">{t("calc.itemTitle").replace("{n}", String(index + 1))}</CardTitle>
                 {items.length > 1 && (
                   <Button
                     variant="ghost"
@@ -238,7 +238,7 @@ export function RaidScoreCalculator() {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium mb-2 block">난이도</label>
+                  <label className="text-sm font-medium mb-2 block">{t("calc.field.difficulty")}</label>
                   <Select
                     value={item.difficulty}
                     onValueChange={(value) => updateDifficulty(item.id, value as Difficulty)}
@@ -257,7 +257,7 @@ export function RaidScoreCalculator() {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium mb-2 block">시간 제한</label>
+                  <label className="text-sm font-medium mb-2 block">{t("calc.field.timeLimit")}</label>
                   <Select
                     value={item.timeLimit}
                     onValueChange={(value) => updateTimeLimit(item.id, value as TimeLimit)}
@@ -266,9 +266,9 @@ export function RaidScoreCalculator() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="3min">3분</SelectItem>
-                      <SelectItem value="4min">4분</SelectItem>
-                      <SelectItem value="4min30s">4분 30초</SelectItem>
+                      <SelectItem value="3min">{t("calc.timeLimit.3min")}</SelectItem>
+                      <SelectItem value="4min">{t("calc.timeLimit.4min")}</SelectItem>
+                      <SelectItem value="4min30s">{t("calc.timeLimit.4min30s")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -276,9 +276,9 @@ export function RaidScoreCalculator() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium mb-2 block">시간 입력</label>
+                  <label className="text-sm font-medium mb-2 block">{t("calc.field.timeInput")}</label>
                   <Input
-                    placeholder="01:23 또는 01:23.456"
+                    placeholder={t("calc.placeholder.time")}
                     value={item.timeInput}
                     onChange={(e) => updateTime(item.id, e.target.value)}
                     inputMode="text"
@@ -286,10 +286,10 @@ export function RaidScoreCalculator() {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium mb-2 block">점수</label>
+                  <label className="text-sm font-medium mb-2 block">{t("calc.field.score")}</label>
                   <Input
                     type="number"
-                    placeholder="8640000"
+                    placeholder={t("calc.placeholder.scoreRaid")}
                     value={item.scoreInput}
                     onChange={(e) => updateScore(item.id, e.target.value)}
                     inputMode="numeric"
@@ -299,10 +299,10 @@ export function RaidScoreCalculator() {
 
               <div className="pt-2 border-t space-y-1">
                 <p className="text-xs text-muted-foreground">
-                  기본 점수: {getBaseScore(item.difficulty, item.timeLimit).toLocaleString()}점
+                  {t("calc.raid.baseScore").replace("{n}", getBaseScore(item.difficulty, item.timeLimit).toLocaleString())}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  1초당 점수: {scoreInfo[item.difficulty].timeBonus.toLocaleString()}점
+                  {t("calc.raid.timeBonus").replace("{n}", scoreInfo[item.difficulty].timeBonus.toLocaleString())}
                 </p>
               </div>
             </CardContent>
@@ -312,7 +312,7 @@ export function RaidScoreCalculator() {
         {items.length < 3 && (
           <Button onClick={addItem} variant="outline" className="w-full">
             <Plus className="h-4 w-4 mr-2" />
-            계산기 추가 ({items.length}/3)
+            {t("calc.add")} ({items.length}/3)
           </Button>
         )}
       </CardContent>

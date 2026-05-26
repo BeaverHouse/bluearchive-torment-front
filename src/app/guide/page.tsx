@@ -6,12 +6,13 @@ import { CharacterAvatar } from "@/components/common/character-image";
 import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/utils/analytics";
+import { useTranslations } from "@/lib/i18n";
 
 type VideoTableRow = {
-  boss: string;
+  bossKey: string;
   extreme: string[] | null;
   insane: string[] | null;
-  notes?: string[];
+  noteKeys?: string[];
 };
 
 function extractVideoIdFromUrl(url: string): string {
@@ -21,102 +22,79 @@ function extractVideoIdFromUrl(url: string): string {
 
 const ASSISTANTS = [
   {
-    type: "폭발",
-    characters: [{ id: 10086, name: "히나(드레스)" }],
+    typeKey: "guide.assistant.type.explosive",
+    color: "text-red-500",
+    characters: [{ id: 10086, nameKey: "guide.char.hinaDress" }],
   },
   {
-    type: "관통",
+    typeKey: "guide.assistant.type.piercing",
+    color: "text-orange-500",
     characters: [
-      { id: 10059, name: "미카" },
-      { id: 10111, name: "네루(교복)" },
+      { id: 10059, nameKey: "guide.char.mika" },
+      { id: 10111, nameKey: "guide.char.neruSchool" },
     ],
   },
   {
-    type: "신비",
+    typeKey: "guide.assistant.type.mystic",
+    color: "text-purple-500",
     characters: [
-      { id: 10033, name: "와카모" },
-      { id: 10100, name: "시로코*테러" },
-      { id: 10098, name: "호시노(무장)" },
-      { id: 10134, name: "아리스(무장)" },
+      { id: 10033, nameKey: "guide.char.wakamo" },
+      { id: 10100, nameKey: "guide.char.shirokoTerror" },
+      { id: 10098, nameKey: "guide.char.hoshinoArmed" },
+      { id: 10134, nameKey: "guide.char.ariceArmed" },
     ],
   },
   {
-    type: "진동",
+    typeKey: "guide.assistant.type.vibration",
+    color: "text-blue-500",
     characters: [
-      { id: 10074, name: "하나코(수영복)" },
-      { id: 10122, name: "미카(수영복)" },
+      { id: 10074, nameKey: "guide.char.hanakoSwim" },
+      { id: 10122, nameKey: "guide.char.mikaSwim" },
     ],
   },
 ] as const;
 
-type AssistantType = (typeof ASSISTANTS)[number]["type"];
-
-const TYPE_COLORS: Record<AssistantType, string> = {
-  폭발: "text-red-500",
-  관통: "text-orange-500",
-  신비: "text-purple-500",
-  진동: "text-blue-500",
-};
-
 const VIDEO_TABLE: VideoTableRow[] = [
   {
-    boss: "비나",
-    extreme: [
-      "https://bluearchive-torment.netlify.app/video-analysis/2NI_MRwoPOY?raid_id=S86-0",
-    ],
-    insane: [
-      "https://bluearchive-torment.netlify.app/video-analysis/6kJ_cSRr4AE?raid_id=S86-0",
-    ],
-    notes: ["60레벨 정도에도 클리어 가능해요", "가장 쉬워요"],
+    bossKey: "guide.boss.binah",
+    extreme: ["https://bluearchive-torment.netlify.app/video-analysis/2NI_MRwoPOY?raid_id=S86-0"],
+    insane: ["https://bluearchive-torment.netlify.app/video-analysis/6kJ_cSRr4AE?raid_id=S86-0"],
+    noteKeys: ["guide.note.binah.1", "guide.note.binah.2"],
   },
   {
-    boss: "예로니무스",
+    bossKey: "guide.boss.hieronymus",
     extreme: [
       "https://bluearchive-torment.netlify.app/video-analysis/n1CwzkenlY4?raid_id=3S31-2",
       "https://bluearchive-torment.netlify.app/video-analysis/BU652VOnvsk?raid_id=3S31-3",
       "https://bluearchive-torment.netlify.app/video-analysis/69iFSgj3Vd0?raid_id=3S31-1",
     ],
     insane: null,
-    notes: ["단일 힐러와 방어력 감소가 효과적이에요"],
+    noteKeys: ["guide.note.hieronymus.1"],
   },
   {
-    boss: "고즈",
-    extreme: [
-      "https://bluearchive-torment.netlify.app/video-analysis/v5wabaK6VDk?raid_id=S87-0",
-    ],
-    insane: [
-      "https://bluearchive-torment.netlify.app/video-analysis/yhYZ9NKm2hI?raid_id=S87-0",
-    ],
-    notes: [
-      "배포캐 전3 운스미와 수즈코를 활용하세요",
-      "패턴 숙지가 어느 정도 필요해요",
-    ],
+    bossKey: "guide.boss.goz",
+    extreme: ["https://bluearchive-torment.netlify.app/video-analysis/v5wabaK6VDk?raid_id=S87-0"],
+    insane: ["https://bluearchive-torment.netlify.app/video-analysis/yhYZ9NKm2hI?raid_id=S87-0"],
+    noteKeys: ["guide.note.goz.1", "guide.note.goz.2"],
   },
   {
-    boss: "페로로지라",
-    extreme: [
-      "https://bluearchive-torment.netlify.app/video-analysis/St-3KrqOLX8?raid_id=3S32-4",
-    ],
-    insane: [
-      "https://bluearchive-torment.netlify.app/video-analysis/QXSOk-ITZLk?raid_id=3S32-3",
-    ],
-    notes: ["광역 딜러를 빌리세요", "페로로의 공격을 버틸 정도의 육성은 필요해요"],
+    bossKey: "guide.boss.perorodzilla",
+    extreme: ["https://bluearchive-torment.netlify.app/video-analysis/St-3KrqOLX8?raid_id=3S32-4"],
+    insane: ["https://bluearchive-torment.netlify.app/video-analysis/QXSOk-ITZLk?raid_id=3S32-3"],
+    noteKeys: ["guide.note.perorodzilla.1", "guide.note.perorodzilla.2"],
   },
   {
-    boss: "카이텐",
+    bossKey: "guide.boss.kaiten",
     extreme: null,
-    insane: [
-      "https://bluearchive-torment.netlify.app/video-analysis/ShGrjmNfBmQ?raid_id=S88-0",
-    ],
-    notes: ["난이도가 낮아 인세인 도전도 무리 없어요"],
+    insane: ["https://bluearchive-torment.netlify.app/video-analysis/ShGrjmNfBmQ?raid_id=S88-0"],
+    noteKeys: ["guide.note.kaiten.1"],
   },
 ];
 
-function VideoLinks({ urls }: { urls: string[] | null }) {
+function VideoLinks({ urls, label }: { urls: string[] | null; label: string }) {
   if (!urls) {
     return <span className="text-muted-foreground">—</span>;
   }
-
   return (
     <div className="flex flex-wrap gap-1 justify-center">
       {urls.map((url, index) => (
@@ -126,13 +104,12 @@ function VideoLinks({ urls }: { urls: string[] | null }) {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() =>
-              trackEvent("guide_video_click", {
-                video_id: extractVideoIdFromUrl(url),
-              })
+              trackEvent("guide_video_click", { video_id: extractVideoIdFromUrl(url) })
             }
           >
             <ExternalLink />
-            영상{urls.length > 1 ? ` ${index + 1}` : ""}
+            {label}
+            {urls.length > 1 ? ` ${index + 1}` : ""}
           </a>
         </Button>
       ))}
@@ -141,55 +118,46 @@ function VideoLinks({ urls }: { urls: string[] | null }) {
 }
 
 export default function GuidePage() {
+  const { t } = useTranslations();
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold">총력전/대결전 입문 가이드</h1>
-      <p className="text-muted-foreground">
-        총력전/대결전이 처음이신가요? 이 가이드를 참고해 시작해 보세요.
-      </p>
+      <h1 className="text-2xl font-bold">{t("guide.title")}</h1>
+      <p className="text-muted-foreground">{t("guide.subtitle")}</p>
 
       <Card>
         <CardHeader>
-          <CardTitle>1단계: 준비하기</CardTitle>
+          <CardTitle>{t("guide.step1.title")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-2">
-            <h3 className="font-semibold">레벨과 장비</h3>
-            <p className="text-muted-foreground text-sm">
-              우선 레벨을 올리고 지역을 해금하세요. 레벨과 장비는 매우 중요해요.
-            </p>
+            <h3 className="font-semibold">{t("guide.step1.level.title")}</h3>
+            <p className="text-muted-foreground text-sm">{t("guide.step1.level.desc")}</p>
           </div>
 
           <div className="space-y-3">
-            <h3 className="font-semibold">추천 조력자</h3>
-            <p className="text-muted-foreground text-sm">
-              친구를 통해 강력한 딜러 조력자를 구하세요. 필요하다면 다른
-              조력자를 구할 수도 있어요.
-            </p>
+            <h3 className="font-semibold">{t("guide.step1.assist.title")}</h3>
+            <p className="text-muted-foreground text-sm">{t("guide.step1.assist.desc")}</p>
             <div className="space-y-3">
               {ASSISTANTS.map((group) => (
-                <div key={group.type} className="flex items-start gap-4">
-                  <span
-                    className={`text-sm font-semibold w-8 pt-1 shrink-0 ${TYPE_COLORS[group.type]}`}
-                  >
-                    {group.type}
+                <div key={group.typeKey} className="flex items-start gap-4">
+                  <span className={`text-sm font-semibold w-12 pt-1 shrink-0 ${group.color}`}>
+                    {t(group.typeKey)}
                   </span>
                   <div className="flex flex-wrap gap-3">
-                    {group.characters.map((char) => (
-                      <div
-                        key={char.id}
-                        className="flex flex-col items-center gap-1 w-14"
-                      >
-                        <CharacterAvatar
-                          studentId={char.id}
-                          name={char.name}
-                          size="md"
-                        />
-                        <span className="text-[10px] text-center text-muted-foreground leading-tight w-full break-keep">
-                          {char.name}
-                        </span>
-                      </div>
-                    ))}
+                    {group.characters.map((char) => {
+                      const name = t(char.nameKey);
+                      return (
+                        <div
+                          key={char.id}
+                          className="flex flex-col items-center gap-1 w-14"
+                        >
+                          <CharacterAvatar studentId={char.id} name={name} size="md" />
+                          <span className="text-[10px] text-center text-muted-foreground leading-tight w-full break-keep">
+                            {name}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               ))}
@@ -197,53 +165,44 @@ export default function GuidePage() {
           </div>
 
           <div className="space-y-2">
-            <h3 className="font-semibold">기믹 & 버프 학생</h3>
-            <p className="text-muted-foreground text-sm">
-              기믹 해결을 할 수 있거나, 버프를 주는 학생을 키우세요.
-            </p>
+            <h3 className="font-semibold">{t("guide.step1.gimmick.title")}</h3>
+            <p className="text-muted-foreground text-sm">{t("guide.step1.gimmick.desc")}</p>
           </div>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>2단계: EXTREME/INSANE 도전하기</CardTitle>
+          <CardTitle>{t("guide.step2.title")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-muted-foreground text-sm">
-            준비가 끝났다면, EXTREME/INSANE 난이도를 도전해 보세요. 반복 클리어로
-            코인과 보상을 챙기는 것을 목표로 해요.
-          </p>
-          <p className="text-muted-foreground text-sm">
-            아래는 일본 서버 5주년 유입 기준 참고 영상이에요.
-          </p>
+          <p className="text-muted-foreground text-sm">{t("guide.step2.intro")}</p>
+          <p className="text-muted-foreground text-sm">{t("guide.step2.ref")}</p>
           <div className="overflow-x-auto">
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="border-b">
-                  <th className="text-left py-2 pr-3 font-semibold">보스</th>
-                  <th className="text-center py-2 px-3 font-semibold">EXTREME</th>
-                  <th className="text-center py-2 px-3 font-semibold">INSANE</th>
+                  <th className="text-left py-2 pr-3 font-semibold">{t("guide.step2.table.boss")}</th>
+                  <th className="text-center py-2 px-3 font-semibold">{t("guide.step2.table.extreme")}</th>
+                  <th className="text-center py-2 px-3 font-semibold">{t("guide.step2.table.insane")}</th>
                   <th className="hidden sm:table-cell text-left py-2 pl-4 font-semibold text-muted-foreground">
-                    비고
+                    {t("guide.step2.table.notes")}
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {VIDEO_TABLE.map((row) => (
-                  <tr key={row.boss} className="border-b last:border-0 align-top">
-                    <td className="py-3 pr-3 font-medium whitespace-nowrap">
-                      {row.boss}
+                  <tr key={row.bossKey} className="border-b last:border-0 align-top">
+                    <td className="py-3 pr-3 font-medium whitespace-nowrap">{t(row.bossKey)}</td>
+                    <td className="py-3 px-3 text-center whitespace-nowrap">
+                      <VideoLinks urls={row.extreme} label={t("guide.step2.video")} />
                     </td>
                     <td className="py-3 px-3 text-center whitespace-nowrap">
-                      <VideoLinks urls={row.extreme} />
-                    </td>
-                    <td className="py-3 px-3 text-center whitespace-nowrap">
-                      <VideoLinks urls={row.insane} />
+                      <VideoLinks urls={row.insane} label={t("guide.step2.video")} />
                     </td>
                     <td className="hidden sm:table-cell py-3 pl-4 text-xs text-muted-foreground">
-                      {row.notes?.map((note, i) => (
-                        <p key={i}>{note}</p>
+                      {row.noteKeys?.map((nk) => (
+                        <p key={nk}>{t(nk)}</p>
                       ))}
                     </td>
                   </tr>
@@ -256,26 +215,36 @@ export default function GuidePage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>3단계: 높은 난이도 도전하기</CardTitle>
+          <CardTitle>{t("guide.step3.title")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <p className="text-muted-foreground text-sm">
-            인세인을 클리어했다면, TORMENT/LUNATIC 난이도를 도전해 보세요.
-          </p>
+          <p className="text-muted-foreground text-sm">{t("guide.step3.intro")}</p>
           <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
             <li>
-              <Link href="/party" target="_blank" className="text-[#27a567] underline underline-offset-2 hover:text-[#30c77d] font-semibold">파티 구성</Link>과{" "}
-              <Link href="/video-analysis" target="_blank" className="text-[#27a567] underline underline-offset-2 hover:text-[#30c77d] font-semibold">영상</Link>을 사이트에서 찾아볼 수 있어요.
+              {t("guide.step3.line.party.before")}
+              <Link
+                href="/party"
+                target="_blank"
+                className="text-[#27a567] underline underline-offset-2 hover:text-[#30c77d] font-semibold"
+              >
+                {t("guide.step3.line.party.linkParty")}
+              </Link>
+              {t("guide.step3.line.party.middle")}
+              <Link
+                href="/video-analysis"
+                target="_blank"
+                className="text-[#27a567] underline underline-offset-2 hover:text-[#30c77d] font-semibold"
+              >
+                {t("guide.step3.line.party.linkVideo")}
+              </Link>
+              {t("guide.step3.line.party.after")}
             </li>
+            <li>{t("guide.step3.line.external")}</li>
+            <li>{t("guide.step3.line.torment")}</li>
             <li>
-              더 많은 정보가 필요하다면 Youtube나 외부 사이트도 찾아 보세요.
-            </li>
-            <li>
-              TORMENT는 보통 핵심 학생이 있다면 1-2파티로 준비할 수 있어요.
-            </li>
-            <li>
-              <strong className="text-foreground">LUNATIC 입문은 비나</strong>가
-              가장 좋아요.
+              {t("guide.step3.line.lunatic.before")}
+              <strong className="text-foreground">{t("guide.step3.line.lunatic.bold")}</strong>
+              {t("guide.step3.line.lunatic.after")}
             </li>
           </ul>
         </CardContent>

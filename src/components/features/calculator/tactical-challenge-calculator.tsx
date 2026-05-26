@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { parseTimeToSeconds, formatSecondsToTime } from "@/utils/time";
+import { useTranslations } from "@/lib/i18n";
 
 type Stage = "stage3" | "stage4";
 
@@ -72,6 +73,7 @@ interface CalculatorItem {
 }
 
 export function TacticalChallengeCalculator() {
+  const { t } = useTranslations();
   const [items, setItems] = useState<CalculatorItem[]>([
     {
       id: 1,
@@ -226,14 +228,12 @@ export function TacticalChallengeCalculator() {
       <CardHeader>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <CardTitle>종합전술시험 점수 계산기</CardTitle>
-            <CardDescription>
-              플레이 시간 또는 점수를 입력하면 나머지를 계산합니다. (최대 3개)
-            </CardDescription>
+            <CardTitle>{t("calc.tactical.cardTitle")}</CardTitle>
+            <CardDescription>{t("calc.tactical.cardDesc")}</CardDescription>
           </div>
           {totalScore > 0 && (
             <div className="text-left sm:text-right">
-              <div className="text-sm text-muted-foreground">총 점수</div>
+              <div className="text-sm text-muted-foreground">{t("calc.totalScore")}</div>
               <div className="text-2xl font-bold text-primary">
                 {totalScore.toLocaleString()}
               </div>
@@ -246,7 +246,7 @@ export function TacticalChallengeCalculator() {
           <Card key={item.id} className="relative">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">점수 #{index + 1}</CardTitle>
+                <CardTitle className="text-lg">{t("calc.itemTitle").replace("{n}", String(index + 1))}</CardTitle>
                 {items.length > 1 && (
                   <Button
                     variant="ghost"
@@ -262,7 +262,7 @@ export function TacticalChallengeCalculator() {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium mb-2 block">단계</label>
+                  <label className="text-sm font-medium mb-2 block">{t("calc.field.stage")}</label>
                   <Select
                     value={item.stage}
                     onValueChange={(value) => updateStage(item.id, value as Stage)}
@@ -271,17 +271,17 @@ export function TacticalChallengeCalculator() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="stage3">3단계</SelectItem>
-                      <SelectItem value="stage4">4단계</SelectItem>
+                      <SelectItem value="stage3">{t("calc.stage3")}</SelectItem>
+                      <SelectItem value="stage4">{t("calc.stage4")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium mb-2 block">제한 시간 (초)</label>
+                  <label className="text-sm font-medium mb-2 block">{t("calc.field.limitSeconds")}</label>
                   <Input
                     type="number"
-                    placeholder="60 이상"
+                    placeholder={t("calc.placeholder.limitSeconds")}
                     value={item.limitSeconds}
                     onChange={(e) => updateLimitSeconds(item.id, e.target.value)}
                     min={60}
@@ -289,18 +289,16 @@ export function TacticalChallengeCalculator() {
                     className="w-full"
                   />
                   {item.limitSeconds && parseInt(item.limitSeconds) < 60 && (
-                    <p className="mt-1 text-xs text-destructive">
-                      제한 시간은 60초 이상이어야 합니다.
-                    </p>
+                    <p className="mt-1 text-xs text-destructive">{t("calc.tactical.minLimit")}</p>
                   )}
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium mb-2 block">실제 플레이 시간</label>
+                  <label className="text-sm font-medium mb-2 block">{t("calc.field.playTime")}</label>
                   <Input
-                    placeholder="01:23 또는 01:23.456"
+                    placeholder={t("calc.placeholder.time")}
                     value={item.playTimeInput}
                     onChange={(e) => updatePlayTime(item.id, e.target.value)}
                     disabled={!item.limitSeconds || parseInt(item.limitSeconds) < 60}
@@ -309,10 +307,10 @@ export function TacticalChallengeCalculator() {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium mb-2 block">점수</label>
+                  <label className="text-sm font-medium mb-2 block">{t("calc.field.score")}</label>
                   <Input
                     type="number"
-                    placeholder="56000"
+                    placeholder={t("calc.placeholder.scoreTactical")}
                     value={item.scoreInput}
                     onChange={(e) => updateScore(item.id, e.target.value)}
                     disabled={!item.limitSeconds || parseInt(item.limitSeconds) < 60}
@@ -327,7 +325,7 @@ export function TacticalChallengeCalculator() {
         {items.length < 3 && (
           <Button onClick={addItem} variant="outline" className="w-full">
             <Plus className="h-4 w-4 mr-2" />
-            계산기 추가 ({items.length}/3)
+            {t("calc.add")} ({items.length}/3)
           </Button>
         )}
       </CardContent>
