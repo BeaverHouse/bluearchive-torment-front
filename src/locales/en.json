@@ -496,7 +496,7 @@
 
   "videoAnalysis.intro": "Over 1,000 raid videos are ready.",
   "videoAnalysis.searchResults": "Results: {n}",
-  "videoAnalysis.raidSelectPlaceholder": "Select a raid / eliminate raid",
+  "videoAnalysis.raidSelectPlaceholder": "Select a Total Assault / Grand Assault",
   "videoAnalysis.youtubeSearchTitle": "Search on YouTube",
   "videoAnalysis.errors.fetchList": "Failed to load the video list",
   "videoAnalysis.list.raidLabel": "Raid:",
