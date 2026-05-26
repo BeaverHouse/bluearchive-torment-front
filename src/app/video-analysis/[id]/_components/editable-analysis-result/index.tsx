@@ -12,6 +12,7 @@ import { BasicInfoEditor } from "./BasicInfoEditor";
 import { PartyEditor } from "./PartyEditor";
 import { SkillOrderList } from "./SkillOrderList";
 import { EditableAnalysisResultProps } from "./types";
+import { useTranslations } from "@/lib/i18n";
 
 export function EditableAnalysisResult({
   videoData,
@@ -25,6 +26,7 @@ export function EditableAnalysisResult({
   const [saving, setSaving] = useState(false);
   const [compactMode, setCompactMode] = useState(true);
   const { studentsMap, studentSearchMap } = useStudentMaps();
+  const { t } = useTranslations();
 
   const {
     getCharacterOptions,
@@ -39,6 +41,7 @@ export function EditableAnalysisResult({
     analysisResult,
     setAnalysisResult,
     studentsMap,
+    t,
   });
 
   const {
@@ -60,7 +63,7 @@ export function EditableAnalysisResult({
       });
     } catch (error) {
       console.error("저장 실패:", error);
-      alert("저장에 실패했습니다.");
+      alert(t("videoAnalysis.edit.saveFailed"));
     } finally {
       setSaving(false);
     }
@@ -79,11 +82,11 @@ export function EditableAnalysisResult({
       <div className="flex justify-end gap-2">
         <Button variant="outline" onClick={onCancel}>
           <X className="h-4 w-4 mr-2" />
-          취소
+          {t("videoAnalysis.edit.cancel")}
         </Button>
         <Button onClick={handleSave} disabled={saving}>
           <Save className="h-4 w-4 mr-2" />
-          {saving ? "저장 중..." : "저장"}
+          {saving ? t("videoAnalysis.edit.saving") : t("videoAnalysis.edit.save")}
         </Button>
       </div>
 

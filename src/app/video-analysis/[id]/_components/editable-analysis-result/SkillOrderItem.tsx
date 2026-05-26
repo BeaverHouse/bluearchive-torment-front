@@ -23,6 +23,7 @@ import {
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { SkillOrderItemProps, SortableSkillOrderItemProps } from "./types";
+import { useTranslations } from "@/lib/i18n";
 
 export function SortableSkillOrderItem(props: SortableSkillOrderItemProps) {
   const {
@@ -57,6 +58,7 @@ export function SkillOrderItem({
   removeSkillOrder,
   dragHandleProps,
 }: SkillOrderItemProps) {
+  const { t } = useTranslations();
   const partyCharacters = getPartyCharacters(skill.partyNumber - 1);
   const [expanded, setExpanded] = useState(false);
 
@@ -94,7 +96,7 @@ export function SkillOrderItem({
                 />
               )}
               <span className="text-sm font-medium truncate">
-                {currentCharacter?.name || "미선택"}
+                {currentCharacter?.name || t("videoAnalysis.edit.skillNotSelected")}
               </span>
             </div>
 
@@ -140,7 +142,7 @@ export function SkillOrderItem({
               <GripVertical className="h-4 w-4 text-muted-foreground" />
             </div>
             <Badge variant="outline" className="font-medium">
-              스킬 #{index + 1}
+              {t("videoAnalysis.edit.skillItemTitle").replace("{n}", String(index + 1))}
             </Badge>
             {compactMode && (
               <Button
@@ -160,14 +162,14 @@ export function SkillOrderItem({
             className="h-8 px-2"
           >
             <Trash2 className="h-4 w-4 mr-1" />
-            삭제
+            {t("videoAnalysis.edit.skillDelete")}
           </Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
           <div>
             <label className="text-xs font-medium mb-2 block text-muted-foreground">
-              파티
+              {t("videoAnalysis.edit.skillFieldParty")}
             </label>
             <Select
               value={skill.partyNumber.toString()}
@@ -195,7 +197,7 @@ export function SkillOrderItem({
               <SelectContent>
                 {partyData.map((_, partyIndex) => (
                   <SelectItem key={partyIndex} value={(partyIndex + 1).toString()}>
-                    파티 {partyIndex + 1}
+                    {t("videoAnalysis.edit.partyN").replace("{n}", String(partyIndex + 1))}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -204,7 +206,7 @@ export function SkillOrderItem({
 
           <div className="md:col-span-2">
             <label className="text-xs font-medium mb-2 block text-muted-foreground">
-              캐릭터
+              {t("videoAnalysis.edit.skillFieldCharacter")}
             </label>
             <Select
               value={`${skill.type}-${skill.order}`}
@@ -238,7 +240,7 @@ export function SkillOrderItem({
                         />
                         <span className="text-sm">{char.name}</span>
                         <span className="text-xs text-muted-foreground">
-                          ({char.type === "striker" ? "스트라이커" : "스페셜"} {char.order})
+                          ({char.type === "striker" ? t("videoAnalysis.edit.skillTypeStriker") : t("videoAnalysis.edit.skillTypeSpecial")} {char.order})
                         </span>
                       </div>
                     </SelectItem>
@@ -250,7 +252,7 @@ export function SkillOrderItem({
 
           <div>
             <label className="text-xs font-medium mb-2 block text-muted-foreground">
-              코스트
+              {t("videoAnalysis.edit.skillFieldCost")}
             </label>
             <Input
               type="number"
@@ -270,7 +272,7 @@ export function SkillOrderItem({
 
           <div>
             <label className="text-xs font-medium mb-2 block text-muted-foreground">
-              시간
+              {t("videoAnalysis.edit.skillFieldTime")}
             </label>
             <Input
               value={skill.remainingTime}
@@ -283,12 +285,12 @@ export function SkillOrderItem({
 
         <div className="mt-3">
           <label className="text-xs font-medium mb-2 block text-muted-foreground">
-            설명 (선택사항)
+            {t("videoAnalysis.edit.skillFieldDescription")}
           </label>
           <Input
             value={skill.description || ""}
             onChange={(e) => updateSkillOrder(index, { description: e.target.value })}
-            placeholder="스킬 설명을 입력하세요"
+            placeholder={t("videoAnalysis.edit.skillDescPlaceholder")}
             className="h-9 w-full"
           />
         </div>

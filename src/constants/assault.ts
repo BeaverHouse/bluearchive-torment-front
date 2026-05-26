@@ -1,13 +1,14 @@
+// values are translation keys, look up with t()
 export const categoryMap: Record<string, string> = {
-  "10": "1성",
-  "20": "2성",
-  "30": "3성",
-  "40": "4성",
-  "50": "5성",
-  "51": "전1",
-  "52": "전2",
-  "53": "전3",
-  "54": "전4",
+  "10": "assault.grade.10",
+  "20": "assault.grade.20",
+  "30": "assault.grade.30",
+  "40": "assault.grade.40",
+  "50": "assault.grade.50",
+  "51": "assault.grade.51",
+  "52": "assault.grade.52",
+  "53": "assault.grade.53",
+  "54": "assault.grade.54",
 };
 
 export const translations: Record<string, string> = {

@@ -21,6 +21,7 @@ import {
 } from "@dnd-kit/sortable";
 import { SortableSkillOrderItem } from "./SkillOrderItem";
 import { SkillOrderListProps } from "./types";
+import { useTranslations } from "@/lib/i18n";
 
 export function SkillOrderList({
   skillOrders,
@@ -33,6 +34,7 @@ export function SkillOrderList({
   onReorder,
   getPartyCharacters,
 }: SkillOrderListProps) {
+  const { t } = useTranslations();
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -55,7 +57,7 @@ export function SkillOrderList({
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <CardTitle>스킬 순서</CardTitle>
+            <CardTitle>{t("videoAnalysis.edit.skillTitle")}</CardTitle>
             <Button
               variant="outline"
               size="sm"
@@ -70,7 +72,7 @@ export function SkillOrderList({
             </Button>
           </div>
           <Badge variant="outline" className="text-xs">
-            총 {skillOrders.length}개
+            {t("videoAnalysis.edit.skillTotal").replace("{n}", String(skillOrders.length))}
           </Badge>
         </div>
       </CardHeader>
@@ -79,7 +81,7 @@ export function SkillOrderList({
           <Alert>
             <Clock className="h-4 w-4" />
             <AlertDescription>
-              스킬 순서가 없습니다. 하단의 &quot;+&quot; 버튼을 클릭하여 스킬을 추가하세요.
+              {t("videoAnalysis.edit.skillEmpty")}
             </AlertDescription>
           </Alert>
         ) : (

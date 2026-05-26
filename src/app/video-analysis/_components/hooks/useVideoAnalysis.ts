@@ -4,6 +4,7 @@ import { getVideoList } from "@/lib/api";
 import { VideoListItem } from "@/types/video";
 import { filteredPartys, getFilters } from "@/lib/party-filters";
 import { usePartyFilter } from "@/hooks/use-party-filter";
+import { useTranslations } from "@/lib/i18n";
 
 interface PaginationState {
   page: number;
@@ -35,6 +36,7 @@ const DEFAULT_PAGINATION: PaginationState = {
 
 export function useVideoAnalysis({ studentsMap, initialRaid }: UseVideoAnalysisProps) {
   const pathname = usePathname();
+  const { t } = useTranslations();
 
   const [videos, setVideos] = useState<VideoListItem[]>([]);
   const [allVideos, setAllVideos] = useState<VideoListItem[]>([]);
@@ -108,7 +110,7 @@ export function useVideoAnalysis({ studentsMap, initialRaid }: UseVideoAnalysisP
       } catch (err) {
         if (currentRequestId !== requestIdRef.current) return;
         setError(
-          err instanceof Error ? err.message : "비디오 목록을 불러오는데 실패했습니다"
+          err instanceof Error ? err.message : t("videoAnalysis.errors.fetchList")
         );
       } finally {
         if (currentRequestId !== requestIdRef.current) return;
@@ -118,7 +120,7 @@ export function useVideoAnalysis({ studentsMap, initialRaid }: UseVideoAnalysisP
     };
 
     fetchVideos();
-  }, [selectedRaid, pagination.page, isFilterMode]);
+  }, [selectedRaid, pagination.page, isFilterMode, t]);
 
   const handleRaidChange = useCallback(
     (value: string) => {
@@ -196,8 +198,8 @@ export function useVideoAnalysis({ studentsMap, initialRaid }: UseVideoAnalysisP
   }, [isFilterMode, filterData, filteredVideos, allVideos, filters]);
 
   const filterOptions = useMemo(
-    () => (filterData ? getFilters(filterData.filters, studentsMap) : []),
-    [filterData, studentsMap]
+    () => (filterData ? getFilters(filterData.filters, studentsMap, t) : []),
+    [filterData, studentsMap, t]
   );
 
   const excludeOptions = useMemo(
@@ -212,8 +214,8 @@ export function useVideoAnalysis({ studentsMap, initialRaid }: UseVideoAnalysisP
   );
 
   const assistOptions = useMemo(
-    () => (filterData ? getFilters(filterData.assistFilters, studentsMap) : []),
-    [filterData, studentsMap]
+    () => (filterData ? getFilters(filterData.assistFilters, studentsMap, t) : []),
+    [filterData, studentsMap, t]
   );
 
   const getDisplayVideos = useCallback(() => {

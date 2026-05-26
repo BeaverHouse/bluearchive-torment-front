@@ -3,6 +3,7 @@ import { CharacterAvatar } from "@/components/common/character-image";
 import { TrendingUp } from "lucide-react";
 import { HighImpactCharacter } from "@/types/raid";
 import { getCharacterName } from "@/utils/character";
+import { useTranslations } from "@/lib/i18n";
 
 interface HighImpactCharactersProps {
   data: HighImpactCharacter[];
@@ -13,11 +14,12 @@ export function HighImpactCharacters({
   data,
   studentsMap,
 }: HighImpactCharactersProps) {
+  const { t } = useTranslations();
   return (
     <CardWrapper
       icon={<TrendingUp className="h-5 w-5 text-red-500" />}
-      title="High Impact"
-      description="사용하지 않으면 점수 차가 큰 학생 3명이에요."
+      title={t("party.summary.highImpact.title")}
+      description={t("party.summary.highImpact.desc")}
     >
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {data.map((char) => (
@@ -34,9 +36,12 @@ export function HighImpactCharacters({
                 {getCharacterName(char.studentId, studentsMap)}
               </span>
               <div className="text-xs text-muted-foreground mt-1">
-                최고: {char.topRank}
+                {t("party.summary.highImpact.best").replace("{n}", String(char.topRank))}
                 <br />
-                미사용: {char.withoutBestRank === 0 ? "20000+" : char.withoutBestRank}
+                {t("party.summary.highImpact.without").replace(
+                  "{n}",
+                  char.withoutBestRank === 0 ? "20000+" : String(char.withoutBestRank)
+                )}
               </div>
             </div>
           </div>

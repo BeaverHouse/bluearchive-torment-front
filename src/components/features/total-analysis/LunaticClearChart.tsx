@@ -14,12 +14,15 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslations } from "@/lib/i18n";
+import { bossDisplayName } from "@/utils/total-analysis";
 
 interface LunaticClearChartProps {
   data: TotalAnalysisData;
 }
 
 export function LunaticClearChart({ data }: LunaticClearChartProps) {
+  const { t } = useTranslations();
   const { raids } = useRaids();
 
   const chartData = useMemo(() => {
@@ -29,19 +32,19 @@ export function LunaticClearChart({ data }: LunaticClearChartProps) {
         const { boss } = categorizeAssault(raids, raid.raidId);
         // S82 형식으로 시즌 번호 추출 (-0 같은 서브넘버 제거)
         const seasonNum = raid.raidId.replace("S", "").split("-")[0];
-        const displayName = boss ? `S${seasonNum} ${boss}` : raid.raidId;
+        const displayName = boss ? `S${seasonNum} ${bossDisplayName(boss, t)}` : raid.raidId;
         return {
           name: displayName,
           count: raid.lunaticClearCount,
           raidId: raid.raidId,
         };
       });
-  }, [data, raids]);
+  }, [data, raids, t]);
 
   return (
     <Card className="max-w-full overflow-hidden">
       <CardHeader>
-        <CardTitle className="text-sm sm:text-base">LUNATIC 클리어 수</CardTitle>
+        <CardTitle className="text-sm sm:text-base">{t("totalAnalysis.lunaticChart.title")}</CardTitle>
       </CardHeader>
       <CardContent className="h-[250px] sm:h-[400px] max-w-full overflow-hidden">
         <ResponsiveContainer width="100%" height="100%">
@@ -100,7 +103,7 @@ export function LunaticClearChart({ data }: LunaticClearChartProps) {
               stroke="hsl(var(--primary))"
               strokeWidth={2}
               fill="url(#colorCount)"
-              name="클리어 수"
+              name={t("totalAnalysis.lunaticChart.areaName")}
               dot={{ fill: "hsl(var(--primary))", r: 3, strokeWidth: 0 }}
               activeDot={{ r: 5, fill: "hsl(var(--primary))" }}
             />

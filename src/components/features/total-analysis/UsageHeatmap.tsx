@@ -2,8 +2,10 @@
 
 import { useMemo } from "react";
 import { CharacterAnalysis, RaidAnalysis } from "@/types/total-analysis";
-import { categorizeAssault, ALL_BOSSES } from "@/utils/total-analysis";
+import { categorizeAssault, ALL_BOSSES, bossDisplayName, subtypeDisplayName } from "@/utils/total-analysis";
 import { useRaids } from "@/hooks/use-raids";
+import { useTranslations } from "@/lib/i18n";
+import { getRaidName } from "@/hooks/use-raids";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Tooltip,
@@ -24,6 +26,7 @@ export function UsageHeatmap({
   characterData,
   raidAnalyses,
 }: UsageHeatmapProps) {
+  const { t, locale } = useTranslations();
   const { raids } = useRaids();
 
   // lunaticClearCount 맵 생성
@@ -52,7 +55,7 @@ export function UsageHeatmap({
       if (!boss || !subcategory) return;
 
       const raidInfo = raids.find((r) => r.id === history.raidId);
-      const raidName = raidInfo?.name || history.raidId;
+      const raidName = raidInfo ? getRaidName(raidInfo, locale) : history.raidId;
 
       // 대결전인지 총력전인지 구분
       const isRaid = history.raidId.startsWith("3S");
@@ -87,7 +90,7 @@ export function UsageHeatmap({
     });
 
     return map;
-  }, [characterData, raids]);
+  }, [characterData, raids, locale]);
 
   // 유효한 셀 확인
   const validCells = useMemo(() => {
@@ -169,7 +172,7 @@ export function UsageHeatmap({
     <Card className="max-w-full overflow-hidden">
       <CardHeader className="pb-1 px-2 sm:px-3">
         <CardTitle className="text-sm sm:text-base">
-          공격타입/보스별 사용 현황
+          {t("totalAnalysis.usageHeatmap.title")}
         </CardTitle>
       </CardHeader>
       <CardContent className="px-2 sm:px-3 py-0">
@@ -182,7 +185,7 @@ export function UsageHeatmap({
                   key={type}
                   className="w-[42px] sm:w-[72px] text-center text-[8px] sm:text-xs font-semibold"
                 >
-                  {type}
+                  {subtypeDisplayName(type, t)}
                 </div>
               ))}
             </div>
@@ -192,7 +195,7 @@ export function UsageHeatmap({
               {ALL_BOSSES.map((boss) => (
                 <div key={boss} className="flex items-center">
                   <div className="w-[45px] sm:w-[90px] text-[8px] sm:text-xs font-medium pr-0.5 sm:pr-2 text-right truncate">
-                    {boss}
+                    {bossDisplayName(boss, t)}
                   </div>
                   {COLUMN_TYPES.map((colType) => {
                     const key = `${boss}-${colType}`;
@@ -218,25 +221,25 @@ export function UsageHeatmap({
                           {isValid && data && (
                             <TooltipContent>
                               <p className="font-medium">
-                                {boss} {colType}
+                                {bossDisplayName(boss, t)} {subtypeDisplayName(colType, t)}
                               </p>
                               {colType === "LUNATIC" ? (
                                 <>
                                   <p>
-                                    사용수:{" "}
+                                    {t("totalAnalysis.usageHeatmap.usageCount")}:{" "}
                                     {data.lunaticUserCount.toLocaleString()}
                                   </p>
                                   <p>
-                                    클리어수:{" "}
+                                    {t("totalAnalysis.usageHeatmap.clearCount")}:{" "}
                                     {(
                                       lunaticClearMap.get(data.raidId) || 0
                                     ).toLocaleString()}
                                   </p>
                                 </>
                               ) : (
-                                <p>사용수: {data.userCount.toLocaleString()}</p>
+                                <p>{t("totalAnalysis.usageHeatmap.usageCount")}: {data.userCount.toLocaleString()}</p>
                               )}
-                              <p>사용률: {percent.toFixed(1)}%</p>
+                              <p>{t("totalAnalysis.usageHeatmap.usageRate")}: {percent.toFixed(1)}%</p>
                               <p className="text-xs text-muted-foreground mt-1">
                                 {data.raidName.replace(
                                   /^(총력전|대결전)\s+/,
@@ -256,7 +259,7 @@ export function UsageHeatmap({
             {/* Legend */}
             <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-3 pt-3 border-t">
               <span className="text-[10px] sm:text-[11px] text-muted-foreground">
-                사용률:
+                {t("totalAnalysis.usageHeatmap.legendLabel")}
               </span>
               {LEGEND_ITEMS.map((item) => (
                 <div key={item.label} className="flex items-center gap-0.5">

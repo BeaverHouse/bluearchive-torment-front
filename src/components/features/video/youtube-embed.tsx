@@ -83,7 +83,7 @@ function LiteYouTubeEmbed({ videoId, title }: { videoId: string; title: string }
   )
 }
 
-export function YouTubeEmbed({ videoId, title = "YouTube 비디오", onPlayStateChange }: YouTubeEmbedProps) {
+export function YouTubeEmbed({ videoId, title = "YouTube video", onPlayStateChange }: YouTubeEmbedProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const playerRef = useRef<YouTubePlayer | null>(null)
 

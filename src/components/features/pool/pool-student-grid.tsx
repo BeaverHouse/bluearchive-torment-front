@@ -7,6 +7,7 @@ import { useStudentMaps } from "@/hooks/use-student-maps";
 import { matchesStudentSearchWithAliases } from "@/utils/search";
 import type { GradeKey } from "@/types/pool";
 import { ALIAS_HIDDEN_CODES } from "@/constants/student-aliases";
+import { useTranslations } from "@/lib/i18n";
 
 interface PoolStudentGridProps {
   searchQuery: string;
@@ -28,6 +29,7 @@ export default function PoolStudentGrid({
   highUsageStudentIds,
   highUsageLunaticStudentIds,
 }: PoolStudentGridProps) {
+  const { t } = useTranslations();
   const { studentsMap, studentSearchMap, isLoaded } = useStudentMaps();
   const pool = useStudentPoolStore((state) => state.pool);
   const addStudent = useStudentPoolStore((state) => state.addStudent);
@@ -118,7 +120,7 @@ export default function PoolStudentGrid({
         </div>
       ) : (
         <div className="text-xs text-muted-foreground">
-          검색 결과가 없습니다.
+          {t("pool.grid.noSearchResults")}
         </div>
       )}
     </section>
@@ -127,7 +129,7 @@ export default function PoolStudentGrid({
   if (!isLoaded) {
     return (
       <div className="text-center text-muted-foreground py-8">
-        학생 데이터를 불러오는 중...
+        {t("pool.grid.loadingStudents")}
       </div>
     );
   }
@@ -136,18 +138,18 @@ export default function PoolStudentGrid({
     <div className="flex flex-col gap-6">
       {highOverall.length > 0 &&
         renderSection(
-          "전체 사용률 10% 이상",
+          t("pool.grid.section.highOverall"),
           filteredOverall,
           highOverall.length
         )}
       {highLunaticOnly.length > 0 &&
         renderSection(
-          "루나틱 사용률 10% 이상",
+          t("pool.grid.section.highLunatic"),
           filteredLunatic,
           highLunaticOnly.length
         )}
-      {renderSection("스트라이커", filteredStrikers, strikers.length)}
-      {renderSection("스페셜", filteredSpecials, specials.length)}
+      {renderSection(t("pool.grid.section.striker"), filteredStrikers, strikers.length)}
+      {renderSection(t("pool.grid.section.special"), filteredSpecials, specials.length)}
     </div>
   );
 }

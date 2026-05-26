@@ -6,31 +6,32 @@ import { Badge } from "@/components/ui/badge";
 import useStudentPoolStore from "@/store/useStudentPoolStore";
 import type { MaxMissing, StarMatchPolicy } from "@/types/pool";
 import PoolEditorDialog from "./pool-editor-dialog";
+import { useTranslations } from "@/lib/i18n";
 
-const POLICY_OPTIONS: { value: StarMatchPolicy; label: string; hint: string }[] =
+const POLICY_OPTIONS: { value: StarMatchPolicy; labelKey: string; hintKey: string }[] =
   [
     {
       value: "exact",
-      label: "일치",
-      hint: "풀의 성급과 파티 데이터가 정확히 같은 학생만 매칭",
+      labelKey: "pool.filter.policy.exact",
+      hintKey: "pool.filter.policy.exactHint",
     },
     {
       value: "atLeast",
-      label: "낮은 성급 허용",
-      hint: "파티 데이터보다 현재 풀의 성급이 더 좋으면 매칭",
+      labelKey: "pool.filter.policy.atLeast",
+      hintKey: "pool.filter.policy.atLeastHint",
     },
     {
       value: "any",
-      label: "보유 상태만",
-      hint: "학생 보유 상태로만 매칭",
+      labelKey: "pool.filter.policy.any",
+      hintKey: "pool.filter.policy.anyHint",
     },
   ];
 
-const MAX_MISSING_OPTIONS: { value: MaxMissing; label: string; hint: string }[] =
+const MAX_MISSING_OPTIONS: { value: MaxMissing; labelKey: string; hintKey: string }[] =
   [
-    { value: 0, label: "0명", hint: "완전 보유 파티만 표시" },
-    { value: 1, label: "1명까지", hint: "최대 1명 미보유까지 허용" },
-    { value: 2, label: "2명까지", hint: "최대 2명 미보유까지 허용" },
+    { value: 0, labelKey: "pool.filter.maxMissing.0", hintKey: "pool.filter.maxMissing.0hint" },
+    { value: 1, labelKey: "pool.filter.maxMissing.1", hintKey: "pool.filter.maxMissing.1hint" },
+    { value: 2, labelKey: "pool.filter.maxMissing.2", hintKey: "pool.filter.maxMissing.2hint" },
   ];
 
 interface PoolFilterToggleProps {
@@ -42,6 +43,7 @@ export default function PoolFilterToggle({
   highUsageStudentIds,
   highUsageLunaticStudentIds,
 }: PoolFilterToggleProps) {
+  const { t } = useTranslations();
   const pool = useStudentPoolStore((state) => state.pool);
   const filter = useStudentPoolStore((state) => state.filter);
   const setPolicy = useStudentPoolStore((state) => state.setPolicy);
@@ -56,8 +58,8 @@ export default function PoolFilterToggle({
     <div className="mb-4 rounded-lg border border-gray-200 dark:border-gray-700 p-3">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <span className="flex items-center gap-2 text-sm font-medium">
-          내 캐릭터 풀
-          <Badge variant="secondary">{ownedCount}명</Badge>
+          {t("pool.filter.title")}
+          <Badge variant="secondary">{t("pool.filter.ownedCount").replace("{n}", String(ownedCount))}</Badge>
         </span>
         <Button
           type="button"
@@ -66,13 +68,13 @@ export default function PoolFilterToggle({
           onClick={() => setEditorOpen(true)}
           className="w-full sm:w-auto"
         >
-          풀 편집
+          {t("pool.filter.edit")}
         </Button>
       </div>
 
       {ownedCount === 0 && (
         <p className="text-xs text-muted-foreground mt-2">
-          학생 풀이 비어 있습니다. &quot;풀 편집&quot;에서 보유 학생을 먼저 추가하세요.
+          {t("pool.filter.empty")}
         </p>
       )}
 
@@ -86,14 +88,14 @@ export default function PoolFilterToggle({
                 size="sm"
                 variant={policy === opt.value ? "default" : "outline"}
                 onClick={() => setPolicy(opt.value)}
-                title={opt.hint}
+                title={t(opt.hintKey)}
               >
-                {opt.label}
+                {t(opt.labelKey)}
               </Button>
             ))}
           </div>
           <div className="mt-2 flex flex-wrap items-center justify-center gap-1">
-            <span className="text-xs text-muted-foreground mr-1">미보유 허용</span>
+            <span className="text-xs text-muted-foreground mr-1">{t("pool.filter.missingAllowed")}</span>
             {MAX_MISSING_OPTIONS.map((opt) => (
               <Button
                 key={opt.value}
@@ -101,9 +103,9 @@ export default function PoolFilterToggle({
                 size="sm"
                 variant={maxMissing === opt.value ? "default" : "outline"}
                 onClick={() => setMaxMissing(opt.value)}
-                title={opt.hint}
+                title={t(opt.hintKey)}
               >
-                {opt.label}
+                {t(opt.labelKey)}
               </Button>
             ))}
           </div>

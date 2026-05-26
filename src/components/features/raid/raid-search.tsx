@@ -263,26 +263,26 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
   }), [filterData]);
 
   const filterOptions = useMemo(
-    () => getFilters(combinedFilterData.filters, studentsMap) as FilterOption[],
-    [combinedFilterData.filters, studentsMap]
+    () => getFilters(combinedFilterData.filters, studentsMap, t) as FilterOption[],
+    [combinedFilterData.filters, studentsMap, t]
   );
 
   const excludeOptions = useMemo(
     () =>
       Object.keys(combinedFilterData.filters).map((key) => {
         const code = parseInt(key);
-        const mode = getModeLabel(code);
+        const mode = getModeLabel(code, t);
         return {
           value: code,
           label: mode ? `${studentsMap[key]} (${mode})` : studentsMap[key],
         };
       }),
-    [combinedFilterData.filters, studentsMap]
+    [combinedFilterData.filters, studentsMap, t]
   );
 
   const assistOptions = useMemo(
-    () => getFilters(combinedFilterData.assistFilters, studentsMap) as FilterOption[],
-    [combinedFilterData.assistFilters, studentsMap]
+    () => getFilters(combinedFilterData.assistFilters, studentsMap, t) as FilterOption[],
+    [combinedFilterData.assistFilters, studentsMap, t]
   );
 
   const handleFilterChange = useCallback((updates: Partial<PartyFilterState>) => {

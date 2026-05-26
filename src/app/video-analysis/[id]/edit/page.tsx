@@ -8,6 +8,7 @@ import { YouTubeEmbed } from "@/components/features/video/youtube-embed";
 import { EditableAnalysisResult } from "../_components/editable-analysis-result";
 import { VideoAnalysisData } from "@/types/video";
 import { trackEvent } from "@/utils/analytics";
+import { useTranslations } from "@/lib/i18n";
 
 interface EditVideoData {
   videos: VideoAnalysisData[];
@@ -21,6 +22,7 @@ export default function VideoEditPage() {
   const searchParams = useSearchParams();
   const videoId = params.id as string;
   const raidId = searchParams.get("raid_id");
+  const { t } = useTranslations();
 
   const [currentVideo, setCurrentVideo] = useState<VideoAnalysisData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -76,11 +78,11 @@ export default function VideoEditPage() {
         <div className="flex items-center">
           <Button variant="ghost" onClick={() => router.back()}>
             <ArrowLeft className="h-4 w-4 mr-2" />
-            뒤로가기
+            {t("videoAnalysis.edit.back")}
           </Button>
         </div>
         <div className="text-center py-8">
-          <p>{isLoading ? '편집 데이터를 로드하는 중...' : '편집 데이터를 찾을 수 없습니다.'}</p>
+          <p>{isLoading ? t("videoAnalysis.edit.loading") : t("videoAnalysis.edit.notFound")}</p>
         </div>
       </div>
     );
@@ -91,7 +93,7 @@ export default function VideoEditPage() {
       <div className="flex items-center mb-4">
         <Button variant="ghost" onClick={() => router.back()}>
           <ArrowLeft className="h-4 w-4 mr-2" />
-          뒤로가기
+          {t("videoAnalysis.edit.back")}
         </Button>
       </div>
 

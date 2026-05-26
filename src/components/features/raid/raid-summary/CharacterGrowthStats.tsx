@@ -6,6 +6,7 @@ import { SearchableSelect } from "@/components/features/video/searchable-select"
 import { ChartNoAxesColumn } from "lucide-react";
 import { categoryMap } from "@/constants/assault";
 import { StudentSearchData } from "@/utils/search";
+import { useTranslations } from "@/lib/i18n";
 
 interface CharacterGrowthStatsProps {
   filters: Record<string, Record<string, number>>;
@@ -18,6 +19,7 @@ export function CharacterGrowthStats({
   studentsMap,
   studentSearchMap,
 }: CharacterGrowthStatsProps) {
+  const { t } = useTranslations();
   const [selectedCharacter, setSelectedCharacter] = useState<number | null>(null);
 
   const characterOptions = Object.keys(filters).map((key) => ({
@@ -30,14 +32,14 @@ export function CharacterGrowthStats({
   return (
     <CardWrapper
       icon={<ChartNoAxesColumn className="h-5 w-5 text-sky-500" />}
-      title="캐릭터 성장 통계"
+      title={t("party.summary.growth.title")}
     >
       <div className="mb-4">
         <SearchableSelect
           options={characterOptions}
           value={selectedCharacter?.toString() || ""}
           onValueChange={(value) => setSelectedCharacter(value ? Number(value) : null)}
-          placeholder="캐릭터를 선택하세요"
+          placeholder={t("party.summary.growth.placeholder")}
           className="w-full max-w-sm"
           studentSearchMap={studentSearchMap}
         />
@@ -58,7 +60,7 @@ export function CharacterGrowthStats({
                   <span
                     className={`font-medium text-sm ${percent > 20 ? "text-red-600" : ""}`}
                   >
-                    {categoryMap[gradeKey]}
+                    {t(categoryMap[gradeKey])}
                   </span>
                   <span
                     className={`text-xs ${

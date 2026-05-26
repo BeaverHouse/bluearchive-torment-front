@@ -17,6 +17,7 @@ import PoolToolbar from "./pool-toolbar";
 import PoolStudentGrid from "./pool-student-grid";
 import PresetPopover from "@/components/features/preset/preset-popover";
 import { trackEvent } from "@/utils/analytics";
+import { useTranslations } from "@/lib/i18n";
 
 interface PoolEditorDialogProps {
   open: boolean;
@@ -31,6 +32,7 @@ export default function PoolEditorDialog({
   highUsageStudentIds,
   highUsageLunaticStudentIds,
 }: PoolEditorDialogProps) {
+  const { t } = useTranslations();
   const pool = useStudentPoolStore((state) => state.pool);
   const setAll = useStudentPoolStore((state) => state.setAll);
   const [searchQuery, setSearchQuery] = useState("");
@@ -62,18 +64,18 @@ export default function PoolEditorDialog({
       <DialogContent className="sm:max-w-3xl max-h-[90vh] flex flex-col p-0 gap-0">
         <DialogHeader className="px-6 pt-6 pb-3">
           <DialogTitle className="flex items-center gap-2">
-            내 캐릭터 풀
-            <Badge variant="secondary">{ownedCount}명 보유</Badge>
+            {t("pool.editor.title")}
+            <Badge variant="secondary">{t("pool.editor.ownedBadge").replace("{n}", String(ownedCount))}</Badge>
           </DialogTitle>
           <DialogDescription>
-            보유 중인 학생을 선택해 두면, 파티 찾기에서 본인이 편성 가능한 파티만 볼 수 있습니다.
+            {t("pool.editor.description")}
           </DialogDescription>
         </DialogHeader>
 
         <div className="px-6 pb-3 flex flex-col sm:flex-row gap-2 sm:items-center">
           <Input
             type="text"
-            placeholder="학생 이름 검색 (한/일/별명)"
+            placeholder={t("pool.editor.searchPlaceholder")}
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.target.value)}
             className="sm:flex-1"
@@ -84,7 +86,7 @@ export default function PoolEditorDialog({
                 variant="secondary"
                 size="icon"
                 className="h-8 w-8"
-                title="풀 프리셋"
+                title={t("pool.editor.presetTooltip")}
               >
                 <Download className="h-4 w-4" />
               </Button>

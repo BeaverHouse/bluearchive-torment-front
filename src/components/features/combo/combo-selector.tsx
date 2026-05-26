@@ -17,6 +17,7 @@ import { matchesStudentSearch } from "@/utils/search";
 import useSearchModeStore from "@/store/useSearchModeStore";
 import { getModeIcon } from "@/constants/student-aliases";
 import { Shield, Sword } from "lucide-react";
+import { useTranslations } from "@/lib/i18n";
 
 const STRIKER_MAX = 4;
 const SPECIAL_MAX = 2;
@@ -40,13 +41,14 @@ function StudentSlot({
   onClick: () => void;
   onClear?: () => void;
 }) {
+  const { t } = useTranslations();
   if (code === null) {
     return (
       <button
         type="button"
         onClick={onClick}
         className="w-10 h-10 sm:w-12 sm:h-12 rounded border border-dashed border-muted-foreground/40 hover:border-primary hover:bg-primary/5 transition-colors flex items-center justify-center text-muted-foreground"
-        aria-label="학생 추가"
+        aria-label={t("combo.slot.addAria")}
       >
         +
       </button>
@@ -69,7 +71,7 @@ function StudentSlot({
           type="button"
           onClick={onClear}
           className="absolute -top-1 -right-1 rounded-full bg-background border p-0.5 hover:bg-destructive hover:text-destructive-foreground transition-colors"
-          aria-label="제거"
+          aria-label={t("combo.slot.removeAria")}
         >
           <X className="h-3 w-3" />
         </button>
@@ -79,6 +81,7 @@ function StudentSlot({
 }
 
 export default function ComboSelector() {
+  const { t } = useTranslations();
   const { studentsMap, studentSearchMap, isLoaded } = useStudentMaps();
   const comboCodes = useSearchModeStore((s) => s.comboCodes);
   const toggleComboCode = useSearchModeStore((s) => s.toggleComboCode);
@@ -188,7 +191,7 @@ export default function ComboSelector() {
           </div>
         ) : (
           <div className="text-xs text-muted-foreground">
-            검색 결과가 없습니다.
+            {t("combo.dialog.noSearchResults")}
           </div>
         )}
       </section>
@@ -226,7 +229,7 @@ export default function ComboSelector() {
           variant="outline"
           onClick={() => setOpen(true)}
         >
-          학생 선택
+          {t("combo.selectButton")}
         </Button>
         {comboCodes.length > 0 && (
           <Button
@@ -235,30 +238,31 @@ export default function ComboSelector() {
             variant="ghost"
             onClick={clearCombo}
           >
-            전체 해제
+            {t("combo.clearAll")}
           </Button>
         )}
       </div>
 
       {comboCodes.length === 0 && (
         <p className="text-xs text-muted-foreground">
-          학생을 선택하면 그 학생들이 같은 파티에 함께 들어간 결과만 표시됩니다.
+          {t("combo.helpText")}
         </p>
       )}
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-3xl max-h-[90vh] flex flex-col p-0 gap-0">
           <DialogHeader className="px-6 pt-6 pb-3">
-            <DialogTitle>학생 선택</DialogTitle>
+            <DialogTitle>{t("combo.dialog.title")}</DialogTitle>
             <DialogDescription>
-              스트라이커 최대 {STRIKER_MAX}명, 스페셜 최대 {SPECIAL_MAX}명까지
-              선택할 수 있습니다.
+              {t("combo.dialog.description")
+                .replace("{striker}", String(STRIKER_MAX))
+                .replace("{special}", String(SPECIAL_MAX))}
             </DialogDescription>
           </DialogHeader>
           <div className="px-6 pb-3">
             <Input
               type="text"
-              placeholder="학생 이름 검색 (한/일/별명)"
+              placeholder={t("combo.dialog.searchPlaceholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -266,17 +270,21 @@ export default function ComboSelector() {
           <div className="overflow-y-auto px-6 pb-6 flex-1">
             {!isLoaded ? (
               <div className="text-center text-muted-foreground py-8">
-                학생 데이터를 불러오는 중...
+                {t("combo.dialog.loadingStudents")}
               </div>
             ) : (
               <div className="flex flex-col gap-6">
                 {renderRoleSection(
-                  `스트라이커 (${strikers.length}/${STRIKER_MAX})`,
+                  t("combo.dialog.section.striker")
+                    .replace("{current}", String(strikers.length))
+                    .replace("{max}", String(STRIKER_MAX)),
                   filteredStrikers,
                   "striker"
                 )}
                 {renderRoleSection(
-                  `스페셜 (${specials.length}/${SPECIAL_MAX})`,
+                  t("combo.dialog.section.special")
+                    .replace("{current}", String(specials.length))
+                    .replace("{max}", String(SPECIAL_MAX)),
                   filteredSpecials,
                   "special"
                 )}

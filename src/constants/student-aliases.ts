@@ -14,10 +14,13 @@ export const STUDENT_ALIASES: Readonly<Record<number, number>> = {
   10099: 10098,
 };
 
-/** 각 variant 코드의 모드 라벨 */
-export const STUDENT_MODE_LABELS: Readonly<Record<number, string>> = {
-  10098: "방어모드",
-  10099: "공격모드",
+/**
+ * 각 variant 코드의 모드 라벨 i18n 키.
+ * UI에서는 `t(getModeLabelKey(code))`로 표시.
+ */
+export const STUDENT_MODE_LABEL_KEYS: Readonly<Record<number, string>> = {
+  10098: "mode.shield",
+  10099: "mode.sword",
 };
 
 /** 각 variant 코드의 모드 아이콘 타입 */
@@ -52,9 +55,22 @@ export function getCanonicalCode(code: number): number {
   return STUDENT_ALIASES[code] ?? code;
 }
 
-/** 모드 라벨이 있으면 반환 */
-export function getModeLabel(code: number): string | undefined {
-  return STUDENT_MODE_LABELS[code];
+/** 모드 라벨의 i18n 키가 있으면 반환 */
+export function getModeLabelKey(code: number): string | undefined {
+  return STUDENT_MODE_LABEL_KEYS[code];
+}
+
+/**
+ * 모드 라벨을 반환.
+ * t가 주어지면 번역해서 반환, 없으면 i18n 키를 그대로 반환 (legacy).
+ */
+export function getModeLabel(
+  code: number,
+  t?: (key: string) => string
+): string | undefined {
+  const key = STUDENT_MODE_LABEL_KEYS[code];
+  if (!key) return undefined;
+  return t ? t(key) : key;
 }
 
 /** 모드 아이콘 타입 반환 */

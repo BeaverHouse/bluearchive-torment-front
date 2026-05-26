@@ -26,6 +26,7 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useTranslations } from "@/lib/i18n";
 
 function SortableSlot({
   slotId,
@@ -48,6 +49,7 @@ function SortableSlot({
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: slotId });
+  const { t } = useTranslations();
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -72,7 +74,7 @@ function SortableSlot({
         options={getCharacterOptions(charIndex)}
         value={charInfo?.code?.toString() || ""}
         onValueChange={(value) => onUpdateParty(partyIndex, charIndex, parseInt(value))}
-        placeholder={charIndex < 4 ? "스트라이커" : "스페셜"}
+        placeholder={charIndex < 4 ? t("videoAnalysis.edit.slotStriker") : t("videoAnalysis.edit.slotSpecial")}
         className="w-full"
         studentSearchMap={studentSearchMap}
       />
@@ -102,7 +104,7 @@ function SortableSlot({
               className="w-3 h-3 rounded border-gray-300"
             />
             <label htmlFor={`assist-${partyIndex}-${charIndex}`} className="text-xs select-none">
-              조력자
+              {t("videoAnalysis.edit.slotAssist")}
             </label>
           </div>
 
@@ -112,7 +114,7 @@ function SortableSlot({
             className="w-full h-7 text-xs"
             onClick={() => onUpdateParty(partyIndex, charIndex, 0)}
           >
-            비우기
+            {t("videoAnalysis.edit.slotClear")}
           </Button>
         </>
       )}
@@ -143,6 +145,7 @@ function SortableParty({
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: `party-${partyIndex}` });
+  const { t } = useTranslations();
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -190,7 +193,7 @@ function SortableParty({
             >
               <GripVertical className="h-4 w-4 text-muted-foreground" />
             </button>
-            <Badge variant="outline" className="font-medium">파티 {partyIndex + 1}</Badge>
+            <Badge variant="outline" className="font-medium">{t("videoAnalysis.edit.partyN").replace("{n}", String(partyIndex + 1))}</Badge>
           </div>
           <Button
             size="sm"
@@ -200,7 +203,7 @@ function SortableParty({
             className="h-8 px-2"
           >
             <Trash2 className="h-4 w-4 mr-1" />
-            삭제
+            {t("videoAnalysis.edit.partyDelete")}
           </Button>
         </div>
 
@@ -267,6 +270,7 @@ export function PartyEditor({
   onSwapCharacter,
   studentSearchMap,
 }: PartyEditorProps & { getCharacterOptions: (slotIndex?: number) => CharacterOption[] }) {
+  const { t } = useTranslations();
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -284,10 +288,10 @@ export function PartyEditor({
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle>파티 구성</CardTitle>
+          <CardTitle>{t("videoAnalysis.edit.partyTitle")}</CardTitle>
           <Button size="sm" onClick={onAddParty}>
             <Plus className="h-4 w-4 mr-2" />
-            파티 추가
+            {t("videoAnalysis.edit.partyAdd")}
           </Button>
         </div>
       </CardHeader>

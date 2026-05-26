@@ -3,6 +3,7 @@ import { CharacterAvatar } from "@/components/common/character-image";
 import { CheckCircle } from "lucide-react";
 import { EssentialCharacter } from "@/types/raid";
 import { getCharacterName } from "@/utils/character";
+import { useTranslations } from "@/lib/i18n";
 
 interface EssentialCharactersProps {
   data: EssentialCharacter[];
@@ -13,11 +14,12 @@ export function EssentialCharacters({
   data,
   studentsMap,
 }: EssentialCharactersProps) {
+  const { t } = useTranslations();
   return (
     <CardWrapper
       icon={<CheckCircle className="h-5 w-5 text-sky-500" />}
-      title="필수 보유 학생"
-      description="70% 이상의 플래티넘 유저가 본인 캐릭터를 사용했어요. 없으면 클리어나 경쟁이 힘들 수 있어요."
+      title={t("party.summary.essential.title")}
+      description={t("party.summary.essential.desc")}
     >
       <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
         {data.map((char) => (

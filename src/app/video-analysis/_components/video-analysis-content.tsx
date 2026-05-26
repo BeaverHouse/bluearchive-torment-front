@@ -70,7 +70,7 @@ export function VideoAnalysisContent({
     <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
       <div className="mb-8 flex items-center gap-2">
         <p className="text-muted-foreground">
-          1000개 이상의 총력전 영상이 준비되어 있어요.
+          {t("videoAnalysis.intro")}
         </p>
         {isRefreshing && (
           <RefreshCw className="h-4 w-4 animate-spin text-muted-foreground" />
@@ -93,7 +93,7 @@ export function VideoAnalysisContent({
       )}
 
       <div className="mx-auto mb-5 w-full">
-        검색 결과: 총 {filterModePagination.total}개
+        {t("videoAnalysis.searchResults").replace("{n}", String(filterModePagination.total))}
       </div>
 
       {/* 페이지네이션 */}
@@ -122,7 +122,7 @@ export function VideoAnalysisContent({
               handleRaidChange(value);
               trackEvent("video_filter_apply", { raid_filter: value });
             }}
-            placeholder="총력전/대결전 선택"
+            placeholder={t("videoAnalysis.raidSelectPlaceholder")}
           />
           {selectedRaid !== "all" && (() => {
             const selectedRaidInfo = raids.find((r) => r.id === selectedRaid);
@@ -136,7 +136,7 @@ export function VideoAnalysisContent({
                 href={youtubeSearchUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                title="YouTube에서 검색"
+                title={t("videoAnalysis.youtubeSearchTitle")}
               >
                 <Button size="sm" className="gap-1.5 h-9 bg-red-500 hover:bg-red-600">
                   <Youtube className="h-4 w-4" />

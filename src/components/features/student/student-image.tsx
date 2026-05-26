@@ -11,8 +11,9 @@ import {
 } from "@/components/ui/custom/hybrid-tooltip";
 import { categoryMap } from "@/constants/assault";
 import { getCharacterName } from "@/utils/character";
-import { getModeIcon, getModeLabel } from "@/constants/student-aliases";
+import { getModeIcon, getModeLabelKey } from "@/constants/student-aliases";
 import { Shield, Sword } from "lucide-react";
+import { useTranslations } from "@/lib/i18n";
 
 interface StudentImageProps {
   code: number;
@@ -27,6 +28,7 @@ interface StudentImageProps {
  * @param name Student name (to use in tooltip)
  */
 export function StudentImage({ code, size = 40, showModeBadge = true, missing = false }: StudentImageProps) {
+  const { t } = useTranslations();
   const { studentsMap } = useStudentMaps();
 
   const studentID = React.useMemo(
@@ -35,8 +37,8 @@ export function StudentImage({ code, size = 40, showModeBadge = true, missing = 
   );
 
   const studentName = React.useMemo(
-    () => getCharacterName(studentID, studentsMap),
-    [studentID, studentsMap]
+    () => getCharacterName(studentID, studentsMap, t),
+    [studentID, studentsMap, t]
   );
 
   const gradeKey = React.useMemo(
@@ -56,7 +58,8 @@ export function StudentImage({ code, size = 40, showModeBadge = true, missing = 
       : "border-2 border-transparent";
 
   const modeIcon = getModeIcon(studentID);
-  const modeLabel = getModeLabel(studentID);
+  const modeLabelKey = getModeLabelKey(studentID);
+  const modeLabel = modeLabelKey ? t(modeLabelKey) : undefined;
 
   return (
     <TooltipProvider>
@@ -95,7 +98,7 @@ export function StudentImage({ code, size = 40, showModeBadge = true, missing = 
                     : "text-muted-foreground"
                 }`}
               >
-                {categoryMap[gradeKey]}
+                {t(categoryMap[gradeKey])}
               </div>
             )}
           </div>

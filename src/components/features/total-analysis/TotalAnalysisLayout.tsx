@@ -16,6 +16,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import { useSectionView } from "@/hooks/use-section-view";
+import { useTranslations } from "@/lib/i18n";
 
 function AnalysisSection({
   section,
@@ -35,6 +36,7 @@ function AnalysisSection({
 }
 
 export function TotalAnalysisLayout() {
+  const { t } = useTranslations();
   const { data, isLoading } = useTotalAnalysis();
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
@@ -70,7 +72,7 @@ export function TotalAnalysisLayout() {
     <div className="w-full max-w-[1200px] mx-auto overflow-x-hidden flex flex-col items-center gap-6">
       <div className="w-full max-w-full md:max-w-[1200px] overflow-hidden px-2 sm:px-4 md:px-0">
         <p className="text-muted-foreground text-sm sm:text-base">
-          전용무기 4성 + LUNATIC 난이도 이후의 통계에요.
+          {t("totalAnalysis.intro")}
         </p>
       </div>
 
@@ -107,21 +109,21 @@ export function TotalAnalysisLayout() {
               <RaidUsageTable
                 data={data}
                 type="striker"
-                title="STRIKER 사용률 TOP 5"
+                title={t("totalAnalysis.raidUsage.strikerTitle")}
               />
             </CarouselItem>
             <CarouselItem className="pl-2 sm:pl-4 basis-full md:basis-1/2">
               <RaidUsageTable
                 data={data}
                 type="special"
-                title="SPECIAL 사용률 TOP 5"
+                title={t("totalAnalysis.raidUsage.specialTitle")}
               />
             </CarouselItem>
             <CarouselItem className="pl-2 sm:pl-4 basis-full md:basis-1/2">
               <RaidUsageTable
                 data={data}
                 type="assist"
-                title="조력자 사용률 TOP 3"
+                title={t("totalAnalysis.raidUsage.assistTitle")}
                 limit={3}
               />
             </CarouselItem>

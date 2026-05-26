@@ -5,12 +5,14 @@ import Swal from "sweetalert2";
 import { RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import useStudentPoolStore from "@/store/useStudentPoolStore";
+import { useTranslations } from "@/lib/i18n";
 
 interface PoolToolbarProps {
   ownedCount: number;
 }
 
 export default function PoolToolbar({ ownedCount }: PoolToolbarProps) {
+  const { t } = useTranslations();
   const clearPool = useStudentPoolStore((state) => state.clearPool);
 
   const confirmClear = async () => {
@@ -21,12 +23,12 @@ export default function PoolToolbar({ ownedCount }: PoolToolbarProps) {
       '[data-slot="dialog-content"]'
     ) as HTMLElement | null;
     const result = await Swal.fire({
-      title: "풀 전체 해제",
-      text: `학생 풀(${ownedCount}명)을 모두 비웁니다.`,
+      title: t("pool.toolbar.clearTitle"),
+      text: t("pool.toolbar.clearText").replace("{n}", String(ownedCount)),
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "해제",
-      cancelButtonText: "취소",
+      confirmButtonText: t("pool.toolbar.confirmClear"),
+      cancelButtonText: t("pool.toolbar.cancel"),
       target: dialogContent || document.body,
       heightAuto: false,
     });
@@ -41,7 +43,7 @@ export default function PoolToolbar({ ownedCount }: PoolToolbarProps) {
       className="h-8 w-8"
       onClick={confirmClear}
       disabled={ownedCount === 0}
-      title="풀 전체 해제"
+      title={t("pool.toolbar.tooltip")}
     >
       <RotateCcw className="h-4 w-4" />
     </Button>

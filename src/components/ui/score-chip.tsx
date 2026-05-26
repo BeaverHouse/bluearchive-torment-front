@@ -60,8 +60,8 @@ function ScoreChipComponent({
   const displayText = useMemo(() => activePreset
     ? activePreset.label
     : scoreRange
-      ? `${scoreRange[0].toLocaleString()} ~ ${scoreRange[1] >= 999999999 ? "최대" : scoreRange[1].toLocaleString()}`
-      : "전체", [activePreset, scoreRange]);
+      ? `${scoreRange[0].toLocaleString()} ~ ${scoreRange[1] >= 999999999 ? t("ui.scoreChip.max") : scoreRange[1].toLocaleString()}`
+      : t("ui.scoreChip.all"), [activePreset, scoreRange, t]);
 
   const isDefault = !scoreRange;
 

@@ -12,6 +12,7 @@ import { Download, Upload, Copy, Check } from "lucide-react";
 import type { PartyFilterState } from "@/types/filter";
 import type { GradeKey, StudentPool } from "@/types/pool";
 import { isGradeKey } from "@/types/pool";
+import { useTranslations } from "@/lib/i18n";
 
 const SCHEMA_TYPE = "ba-torment-preset";
 const SCHEMA_VERSION = 1;
@@ -78,63 +79,74 @@ function buildExport(
   return payload;
 }
 
+/** Error with a translation key + optional placeholder values. */
+class PresetError extends Error {
+  constructor(public key: string, public values?: Record<string, string>) {
+    super(key);
+  }
+}
+
 function parseFilterPreset(raw: unknown): Partial<PartyFilterState> {
   if (!raw || typeof raw !== "object") {
-    throw new Error("올바른 JSON 형식이 아닙니다.");
+    throw new PresetError("preset.error.invalidJson");
   }
   const obj = raw as Record<string, unknown>;
 
   // 새 통합 포맷
   if (obj.type === SCHEMA_TYPE) {
     if (obj.schemaVersion !== SCHEMA_VERSION) {
-      throw new Error(`지원하지 않는 schemaVersion: ${obj.schemaVersion}`);
+      throw new PresetError("preset.error.unsupportedVersion", {
+        version: String(obj.schemaVersion),
+      });
     }
     const filter = extractFilter(obj.filter);
-    if (!filter) throw new Error("이 프리셋에 필터 데이터가 없습니다.");
+    if (!filter) throw new PresetError("preset.error.noFilterData");
     return filter;
   }
 
   // 레거시 풀 포맷 → 필터 진입점에서는 거부
   if (obj.type === LEGACY_POOL_TYPE) {
-    throw new Error("이 프리셋은 캐릭터 풀 전용입니다.");
+    throw new PresetError("preset.error.poolOnly");
   }
 
   // 레거시 필터 raw 포맷
   const filter = extractFilter(obj);
-  if (!filter) throw new Error("BA Torment 필터 프리셋이 아닙니다.");
+  if (!filter) throw new PresetError("preset.error.notFilterPreset");
   return filter;
 }
 
 function parsePoolPreset(raw: unknown): StudentPool {
   if (!raw || typeof raw !== "object") {
-    throw new Error("올바른 JSON 형식이 아닙니다.");
+    throw new PresetError("preset.error.invalidJson");
   }
   const obj = raw as Record<string, unknown>;
 
   // 새 통합 포맷
   if (obj.type === SCHEMA_TYPE) {
     if (obj.schemaVersion !== SCHEMA_VERSION) {
-      throw new Error(`지원하지 않는 schemaVersion: ${obj.schemaVersion}`);
+      throw new PresetError("preset.error.unsupportedVersion", {
+        version: String(obj.schemaVersion),
+      });
     }
     const pool = extractPool(obj.pool);
-    if (!pool) throw new Error("이 프리셋에 캐릭터 풀 데이터가 없습니다.");
+    if (!pool) throw new PresetError("preset.error.noPoolData");
     return pool;
   }
 
   // 레거시 풀 포맷
   if (obj.type === LEGACY_POOL_TYPE) {
     const pool = extractPool(obj.pool);
-    if (!pool) throw new Error("이 프리셋이 비어 있습니다.");
+    if (!pool) throw new PresetError("preset.error.emptyPreset");
     return pool;
   }
 
   // 레거시 필터 raw 포맷 → 풀 진입점에서는 거부
   const filterKeys = FILTER_KEYS.some((k) => k in obj);
   if (filterKeys) {
-    throw new Error("이 프리셋은 필터 전용입니다.");
+    throw new PresetError("preset.error.filterOnly");
   }
 
-  throw new Error("BA Torment 캐릭터 풀 프리셋이 아닙니다.");
+  throw new PresetError("preset.error.notPoolPreset");
 }
 
 function formatDate(): string {
@@ -163,6 +175,7 @@ type PresetPopoverProps = (FilterMode | PoolMode) & {
 
 export default function PresetPopover(props: PresetPopoverProps) {
   const { mode, children } = props;
+  const { t } = useTranslations();
   const [open, setOpen] = useState(false);
   const [presetText, setPresetText] = useState("");
   const [copied, setCopied] = useState(false);
@@ -170,7 +183,7 @@ export default function PresetPopover(props: PresetPopoverProps) {
   const [container, setContainer] = useState<HTMLElement | null>(null);
 
   const isFilterMode = mode === "filter";
-  const headerText = isFilterMode ? "필터 프리셋" : "캐릭터 풀 프리셋";
+  const headerText = isFilterMode ? t("preset.filter.header") : t("preset.pool.header");
   const filename = isFilterMode
     ? `ba-torment-filter-${formatDate()}.json`
     : `ba-torment-pool-${formatDate()}.json`;
@@ -201,7 +214,7 @@ export default function PresetPopover(props: PresetPopoverProps) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      setError("클립보드 복사에 실패했습니다.");
+      setError(t("preset.error.copy"));
     }
   };
 
@@ -230,7 +243,17 @@ export default function PresetPopover(props: PresetPopoverProps) {
       setOpen(false);
       setError(null);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "JSON 파싱에 실패했습니다.");
+      if (e instanceof PresetError) {
+        let msg = t(e.key);
+        if (e.values) {
+          for (const [k, v] of Object.entries(e.values)) {
+            msg = msg.replace(`{${k}}`, v);
+          }
+        }
+        setError(msg);
+      } else {
+        setError(t("preset.error.parseFail"));
+      }
     }
   };
 
@@ -241,7 +264,7 @@ export default function PresetPopover(props: PresetPopoverProps) {
         <div className="space-y-3">
           <p className="text-sm font-medium">{headerText}</p>
           <p className="text-xs text-muted-foreground">
-            현재 설정을 복사하거나, 저장된 프리셋을 붙여넣어 불러올 수 있습니다.
+            {t("preset.description")}
           </p>
           <Textarea
             rows={8}
@@ -251,7 +274,7 @@ export default function PresetPopover(props: PresetPopoverProps) {
               setPresetText(e.target.value);
               setError(null);
             }}
-            placeholder="JSON 프리셋을 붙여넣으세요..."
+            placeholder={t("preset.placeholder")}
           />
           {error && <p className="text-xs text-destructive">{error}</p>}
           <div className="flex gap-2">
@@ -266,7 +289,7 @@ export default function PresetPopover(props: PresetPopoverProps) {
               ) : (
                 <Copy className="h-4 w-4" />
               )}
-              <span>{copied ? "복사됨" : "복사"}</span>
+              <span>{copied ? t("preset.copied") : t("preset.copy")}</span>
             </Button>
             <Button
               variant="outline"
@@ -275,12 +298,12 @@ export default function PresetPopover(props: PresetPopoverProps) {
               onClick={handleDownload}
             >
               <Download className="h-4 w-4" />
-              <span>다운로드</span>
+              <span>{t("preset.download")}</span>
             </Button>
           </div>
           <Button size="sm" className="w-full gap-1" onClick={handleLoad}>
             <Upload className="h-4 w-4" />
-            <span>불러오기</span>
+            <span>{t("preset.load")}</span>
           </Button>
         </div>
       </PopoverContent>
