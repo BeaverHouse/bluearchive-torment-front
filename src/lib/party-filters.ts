@@ -15,12 +15,14 @@ function decoratedName(code: number, name: string, t?: (key: string) => string):
 export const getFilters = (
   rawData: Record<string, Record<string, number>>,
   studentsMap: Record<string, string>,
-  t?: (key: string) => string
+  t?: (key: string) => string,
+  options?: { skipModeLabel?: boolean }
 ): FilterOption[] => {
   const tr = t ?? ((k: string) => k);
   return Object.keys(rawData).map((key) => {
     const code = Number(key);
-    const decorated = decoratedName(code, studentsMap[key], t);
+    const name = studentsMap[key] ?? key;
+    const decorated = options?.skipModeLabel ? name : decoratedName(code, name, t);
     return {
       value: code,
       label: decorated,

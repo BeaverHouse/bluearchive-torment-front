@@ -5,6 +5,7 @@ import { VideoListItem } from "@/types/video";
 import { filteredPartys, getFilters } from "@/lib/party-filters";
 import { usePartyFilter } from "@/hooks/use-party-filter";
 import { useTranslations } from "@/lib/i18n";
+import { mergeAliasFilters } from "@/constants/student-aliases";
 
 interface PaginationState {
   page: number;
@@ -197,25 +198,35 @@ export function useVideoAnalysis({ studentsMap, initialRaid }: UseVideoAnalysisP
     return allVideos.filter((video) => filteredScores.has(video.score));
   }, [isFilterMode, filterData, filteredVideos, allVideos, filters]);
 
+  // 비디오 분석에서는 모드 구분 불가 → alias를 canonical로 병합
+  const mergedFilters = useMemo(
+    () => filterData ? mergeAliasFilters(filterData.filters) : null,
+    [filterData]
+  );
+  const mergedAssistFilters = useMemo(
+    () => filterData ? mergeAliasFilters(filterData.assistFilters) : null,
+    [filterData]
+  );
+
   const filterOptions = useMemo(
-    () => (filterData ? getFilters(filterData.filters, studentsMap, t) : []),
-    [filterData, studentsMap, t]
+    () => (mergedFilters ? getFilters(mergedFilters, studentsMap, t, { skipModeLabel: true }) : []),
+    [mergedFilters, studentsMap, t]
   );
 
   const excludeOptions = useMemo(
     () =>
-      filterData
-        ? Object.keys(filterData.filters).map((key) => ({
+      mergedFilters
+        ? Object.keys(mergedFilters).map((key) => ({
             value: parseInt(key),
             label: studentsMap[key],
           }))
         : [],
-    [filterData, studentsMap]
+    [mergedFilters, studentsMap]
   );
 
   const assistOptions = useMemo(
-    () => (filterData ? getFilters(filterData.assistFilters, studentsMap, t) : []),
-    [filterData, studentsMap, t]
+    () => (mergedAssistFilters ? getFilters(mergedAssistFilters, studentsMap, t, { skipModeLabel: true }) : []),
+    [mergedAssistFilters, studentsMap, t]
   );
 
   const getDisplayVideos = useCallback(() => {
