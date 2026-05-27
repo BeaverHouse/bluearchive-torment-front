@@ -488,6 +488,7 @@
   "ui.rangeChip.min": "Min",
   "ui.rangeChip.max": "Max",
   "ui.cascader.unknown": "Unknown",
+  "ui.cascader.parentHint": "※ To see all star levels, select the parent item.",
   "ui.pagination.pageSize": "{n} per page",
   "ui.pagination.page": "{current} / {total}",
   "ui.scrollTop.label": "Back to top",

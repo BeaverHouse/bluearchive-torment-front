@@ -316,7 +316,7 @@ export const Cascader = React.memo(function Cascader({
         </div>
         {showSearch && (
           <div className="p-2 border-t text-xs text-muted-foreground">
-            ※ 성급 관계없이 보고 싶다면 부모 항목을 선택하세요.
+            {t("ui.cascader.parentHint")}
           </div>
         )}
       </PopoverContent>

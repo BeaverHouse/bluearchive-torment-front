@@ -488,6 +488,7 @@
   "ui.rangeChip.min": "最小",
   "ui.rangeChip.max": "最大",
   "ui.cascader.unknown": "未知",
+  "ui.cascader.parentHint": "※ 若要查看所有星级，请选择父级项目。",
   "ui.pagination.pageSize": "每页 {n} 个",
   "ui.pagination.page": "{current} / {total}",
   "ui.scrollTop.label": "回到顶部",
