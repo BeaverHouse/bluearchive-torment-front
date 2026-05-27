@@ -8,19 +8,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SingleSelect } from "@/components/ui/custom/single-select";
 import { trackEvent } from "@/utils/analytics";
 import { useStudentMaps } from "@/hooks/use-student-maps";
-import { useRaids } from "@/hooks/use-raids";
+import { useRaids, getRaidName } from "@/hooks/use-raids";
+import { useTranslations } from "@/lib/i18n";
 
 export default function PartyPage() {
   const { V3Season, setV3Season } = useBAStore();
   const { studentsMap, studentSearchMap } = useStudentMaps();
   const { raids, isLoading } = useRaids();
   const [summaryLevel, setSummaryLevel] = useState<"T" | "L">("T");
+  const { t, locale } = useTranslations();
 
   const raidInfos = raids
     .filter((raid) => raid.party_updated)
     .map((raid) => ({
       value: raid.id,
-      label: raid.name,
+      label: getRaidName(raid, locale),
       topLevel: raid.top_level,
     }));
 
@@ -42,7 +44,7 @@ export default function PartyPage() {
           minHeight: "50vh",
         }}
       >
-        <p className="text-muted-foreground">데이터를 불러오는 중...</p>
+        <p className="text-muted-foreground">{t("common.loading")}</p>
       </div>
     );
   }
@@ -51,13 +53,13 @@ export default function PartyPage() {
     ? V3Season
     : raidInfos[0].value;
 
-  const seasonDescription = raidInfos.find(
-    (raid) => raid.value === season
-  )!.label;
+  const currentRaid = raidInfos.find((raid) => raid.value === season)!;
+  const seasonDescription = currentRaid.label;
+  const seasonNameKo = raids.find((r) => r.id === season)?.name_ko
+    ?? raids.find((r) => r.id === season)?.name
+    ?? "";
 
-  const seasonTopLevel = raidInfos.find(
-    (raid) => raid.value === season
-  )!.topLevel;
+  const seasonTopLevel = currentRaid.topLevel;
 
   const hasLunatic = seasonTopLevel === "L";
   // Lunatic 미지원 시즌이면 강제로 T로 폴백
@@ -98,13 +100,13 @@ export default function PartyPage() {
           }))}
           value={season}
           onChange={setV3Season}
-          placeholder="총력전/대결전 선택"
+          placeholder={t("party.placeholder.season")}
         />
       </div>
       <br />
       <Tabs defaultValue="search" className="w-full max-w-4xl">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="search">파티 찾기</TabsTrigger>
+          <TabsTrigger value="search">{t("party.tab.search")}</TabsTrigger>
           <TabsTrigger
             value="summary"
             onClick={() =>
@@ -114,7 +116,7 @@ export default function PartyPage() {
               })
             }
           >
-            요약
+            {t("party.tab.summary")}
           </TabsTrigger>
         </TabsList>
         <TabsContent value="search">
@@ -146,6 +148,7 @@ export default function PartyPage() {
               <RaidSummary
                 season={season}
                 seasonDescription={seasonDescription}
+                seasonNameKo={seasonNameKo}
                 studentsMap={studentsMap}
                 studentSearchMap={studentSearchMap}
                 level={effectiveSummaryLevel}
@@ -155,6 +158,7 @@ export default function PartyPage() {
             <RaidSummary
               season={season}
               seasonDescription={seasonDescription}
+              seasonNameKo={seasonNameKo}
               studentsMap={studentsMap}
               studentSearchMap={studentSearchMap}
               level={effectiveSummaryLevel}

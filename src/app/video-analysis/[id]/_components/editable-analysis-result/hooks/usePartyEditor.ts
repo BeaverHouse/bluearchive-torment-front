@@ -7,12 +7,14 @@ interface UsePartyEditorProps {
   analysisResult: AnalysisResult;
   setAnalysisResult: React.Dispatch<React.SetStateAction<AnalysisResult>>;
   studentsMap: Record<string, string>;
+  t?: (key: string) => string;
 }
 
 export function usePartyEditor({
   analysisResult,
   setAnalysisResult,
   studentsMap,
+  t,
 }: UsePartyEditorProps) {
   const getCharacterOptions = useCallback(
     (slotIndex?: number): CharacterOption[] => {
@@ -125,7 +127,7 @@ export function usePartyEditor({
   const removeParty = useCallback(
     (partyIndex: number) => {
       if (analysisResult.partyData.length <= 1) {
-        alert("최소 1개의 파티는 있어야 합니다.");
+        alert(t ? t("videoAnalysis.edit.minPartyAlert") : "videoAnalysis.edit.minPartyAlert");
         return;
       }
 
@@ -134,7 +136,7 @@ export function usePartyEditor({
         partyData: prev.partyData.filter((_, index) => index !== partyIndex),
       }));
     },
-    [analysisResult.partyData.length, setAnalysisResult]
+    [analysisResult.partyData.length, setAnalysisResult, t]
   );
 
   const reorderParty = useCallback(

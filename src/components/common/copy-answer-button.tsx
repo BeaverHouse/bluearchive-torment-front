@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "@/lib/i18n";
 
 interface CopyAnswerButtonProps {
   text: string;
@@ -36,18 +37,19 @@ function stripInlineTags(raw: string): string {
     .trim();
 }
 
-const ATTRIBUTION = "🌸 — A.R.O.N.A (https://bluearchive-torment.netlify.app)";
-
 export function CopyAnswerButton({
   text,
-  label = "답변 복사",
-  copiedLabel = "복사됨!",
+  label,
+  copiedLabel,
 }: CopyAnswerButtonProps) {
+  const { t } = useTranslations();
   const [copied, setCopied] = useState(false);
+  const resolvedLabel = label ?? t("arona.copy.label");
+  const resolvedCopiedLabel = copiedLabel ?? t("arona.copy.copied");
 
   const handleCopy = () => {
     const cleaned = stripInlineTags(text);
-    const textWithAttribution = `${cleaned}\n\n${ATTRIBUTION}`;
+    const textWithAttribution = `${cleaned}\n\n${t("arona.copy.attribution")}`;
     navigator.clipboard.writeText(textWithAttribution);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -59,7 +61,7 @@ export function CopyAnswerButton({
       size="icon"
       className="h-7 w-7"
       onClick={handleCopy}
-      title={copied ? copiedLabel : label}
+      title={copied ? resolvedCopiedLabel : resolvedLabel}
     >
       {copied ? (
         <Check className="w-4 h-4 text-green-500" />

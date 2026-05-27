@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import PartyCard from "@/components/features/raid/party-card";
+import { useTranslations } from "@/lib/i18n";
 
 /**
  * Registry maps an MCP tool name to a render function for a single item payload.
@@ -90,31 +91,34 @@ function extractYoutubeId(url?: string): string | undefined {
   return undefined;
 }
 
+function SearchPartiesCard({ item }: { item: unknown }) {
+  const { t } = useTranslations();
+  if (!isRecord(item)) return null;
+  const raidId = typeof item.RaidID === "string" ? item.RaidID : undefined;
+  const parties = asArray<PartyComposition>(item.Parties).map(flattenParty);
+  if (parties.length === 0) return null;
+  const videoId = extractYoutubeId(typeof item.YoutubeURL === "string" ? item.YoutubeURL : undefined);
+  const rank = typeof item.Rank === "number" ? item.Rank : 0;
+  const score = typeof item.Score === "number" ? item.Score : 0;
+  return (
+    <PartyCard
+      rank={rank}
+      value={score}
+      valueSuffix={t("party.summary.points")}
+      parties={parties}
+      video_id={videoId}
+      raid_id={raidId}
+    />
+  );
+}
+
 export const itemCardRegistry: Record<string, ItemCardRenderer> = {
   /**
    * search_parties item schema (one PartyResult from the outer Results array,
    * with RaidID injected by the server from the outer response):
    *   { Rank, Score, Parties: [{Strikers, Specials, Assist?}], YoutubeURL?, RaidID }
    */
-  search_parties: (item) => {
-    if (!isRecord(item)) return null;
-    const raidId = typeof item.RaidID === "string" ? item.RaidID : undefined;
-    const parties = asArray<PartyComposition>(item.Parties).map(flattenParty);
-    if (parties.length === 0) return null;
-    const videoId = extractYoutubeId(typeof item.YoutubeURL === "string" ? item.YoutubeURL : undefined);
-    const rank = typeof item.Rank === "number" ? item.Rank : 0;
-    const score = typeof item.Score === "number" ? item.Score : 0;
-    return (
-      <PartyCard
-        rank={rank}
-        value={score}
-        valueSuffix="점"
-        parties={parties}
-        video_id={videoId}
-        raid_id={raidId}
-      />
-    );
-  },
+  search_parties: (item) => <SearchPartiesCard item={item} />,
 };
 
 export function resolveItemCard(tool: string): ItemCardRenderer | null {

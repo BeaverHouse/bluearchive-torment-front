@@ -3,16 +3,18 @@
 import { PartyTableType } from "@/types/raid";
 import CardWrapper from "@/components/common/card-wrapper";
 import { Target } from "lucide-react";
+import { useTranslations } from "@/lib/i18n";
 
 interface PartyCompositionChartProps {
   data: PartyTableType[];
 }
 
 export function PartyCompositionChart({ data }: PartyCompositionChartProps) {
+  const { t } = useTranslations();
   if (data.length === 0) return null;
 
   return (
-    <CardWrapper icon={<Target className="h-5 w-5 text-sky-500" />} title="파티 비율">
+    <CardWrapper icon={<Target className="h-5 w-5 text-sky-500" />} title={t("party.summary.partyRatio.title")}>
       <div className="space-y-4 mx-1">
         {data.map((row) => (
           <div key={row.key} className="space-y-2">

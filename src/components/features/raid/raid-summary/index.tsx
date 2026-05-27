@@ -24,6 +24,7 @@ import {
 } from "./utils/raidDataTransform";
 import { generateSearchKeyword } from "@/utils/raid";
 import { useSectionView } from "@/hooks/use-section-view";
+import { useTranslations } from "@/lib/i18n";
 
 function SummarySection({
   section,
@@ -49,15 +50,17 @@ function SummarySection({
 const RaidSummary = ({
   season,
   seasonDescription,
+  seasonNameKo,
   studentsMap,
   studentSearchMap,
   level,
 }: RaidComponentProps) => {
   const router = useRouter();
+  const { t } = useTranslations();
   const [copied, setCopied] = useState(false);
 
   const searchKeyword = generateSearchKeyword(
-    seasonDescription ?? "",
+    seasonNameKo ?? seasonDescription ?? "",
     level === "L" ? "L" : level === "T" ? "T" : ""
   );
   const youtubeSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(searchKeyword)}`;
@@ -134,7 +137,7 @@ const RaidSummary = ({
     return (
       <div className="flex flex-col items-center justify-center py-24">
         <Image src="/empty.webp" alt="Empty" width={192} height={192} className="mb-4" />
-        <p className="text-muted-foreground text-lg">클리어 데이터가 없어요.</p>
+        <p className="text-muted-foreground text-lg">{t("party.summary.empty")}</p>
       </div>
     );
   }
@@ -156,7 +159,7 @@ const RaidSummary = ({
           <div className="mb-4 rounded-lg border border-gray-200 dark:border-gray-700 p-3">
             <div className="flex items-center gap-2 mb-2">
               <Search className="h-4 w-4 text-sky-500" />
-              <span className="text-sm font-medium">검색어</span>
+              <span className="text-sm font-medium">{t("party.summary.search")}</span>
             </div>
             <code
               className="block w-full rounded bg-muted px-2 py-1.5 text-sm truncate mb-2"
@@ -177,7 +180,7 @@ const RaidSummary = ({
                 ) : (
                   <Copy className="h-4 w-4" />
                 )}
-                <span>{copied ? "복사됨" : "복사"}</span>
+                <span>{copied ? t("party.summary.copied") : t("party.summary.copy")}</span>
               </Button>
               <a
                 href={youtubeSearchUrl}
@@ -207,10 +210,10 @@ const RaidSummary = ({
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-base font-semibold text-sky-700 dark:text-sky-300">
-              영상 분석 페이지로 이동
+              {t("party.summary.videoLink")}
             </div>
             <div className="text-xs text-muted-foreground mt-0.5">
-              파티 구성과 점수가 분석되어 있어요
+              {t("party.summary.videoLinkDesc")}
             </div>
           </div>
           <ChevronRight className="h-5 w-5 text-sky-500 shrink-0 group-hover:translate-x-1 transition-transform" />
@@ -253,8 +256,8 @@ const RaidSummary = ({
         <SummarySection section="top_5_party">
           <CardWrapper
             icon={<Users className="h-5 w-5 text-sky-500" />}
-            title="Top 5 Party"
-            description="전용무기와 배치는 표시되지 않아요."
+            title={t("party.summary.top5")}
+            description={t("party.summary.charNoteWeapon")}
           >
             <div className="space-y-3">
               {(data.top5Partys || []).map(([party_string, count], idx) => {
@@ -268,7 +271,7 @@ const RaidSummary = ({
                     key={idx}
                     rank={idx + 1}
                     value={count}
-                    valueSuffix="명 사용"
+                    valueSuffix={t("party.summary.users")}
                     parties={parties}
                   />
                 );
@@ -281,13 +284,13 @@ const RaidSummary = ({
           <SummarySection section="min_ue_clear">
             <CardWrapper
               icon={<Target className="h-5 w-5 text-sky-500" />}
-              title="최소 전용무기 클리어"
-              description={`전용무기 ${data.minUEUser.ueCount}개로 클리어했어요.`}
+              title={t("party.summary.minUe.title")}
+              description={t("party.summary.minUe.desc").replace("{n}", String(data.minUEUser.ueCount))}
             >
               <PartyCard
                 rank={data.minUEUser.rank}
                 value={data.minUEUser.score}
-                valueSuffix="점"
+                valueSuffix={t("party.summary.points")}
                 parties={data.minUEUser.partyData}
               />
             </CardWrapper>
@@ -298,13 +301,13 @@ const RaidSummary = ({
           <SummarySection section="max_party_clear">
             <CardWrapper
               icon={<Users className="h-5 w-5 text-sky-500" />}
-              title="최다 파티 클리어"
-              description={`${data.maxPartyUser.partyData.length}파티로 클리어했어요.`}
+              title={t("party.summary.maxParty.title")}
+              description={t("party.summary.maxParty.desc").replace("{n}", String(data.maxPartyUser.partyData.length))}
             >
               <PartyCard
                 rank={data.maxPartyUser.rank}
                 value={data.maxPartyUser.score}
-                valueSuffix="점"
+                valueSuffix={t("party.summary.points")}
                 parties={data.maxPartyUser.partyData}
               />
             </CardWrapper>
@@ -318,13 +321,13 @@ const RaidSummary = ({
         <SummarySection section="character_usage_table">
           <CardWrapper
             icon={<TrendingUp className="h-5 w-5 text-sky-500" />}
-            title="캐릭터 사용률"
+            title={t("party.summary.usage.title")}
           >
             <div className="space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 <CharacterUsageTable title="STRIKER" data={strikerData} />
                 <CharacterUsageTable title="SPECIAL" data={specialData} />
-                <CharacterUsageTable title="조력자" data={assistData} />
+                <CharacterUsageTable title={t("party.summary.assistTab")} data={assistData} />
               </div>
             </div>
           </CardWrapper>

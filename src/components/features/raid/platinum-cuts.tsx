@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTranslations } from "@/lib/i18n";
 
 interface PlatinumStatsProps {
   clearCount: number;
@@ -28,6 +29,7 @@ export function PlatinumStats({
   partPlatinumCuts,
   lunaticClearPercent,
 }: PlatinumStatsProps) {
+  const { t } = useTranslations();
   // 사용 가능한 rank 목록
   const rankOptions = useMemo(
     () => platinumCuts.map((cut) => cut.rank).sort((a, b) => a - b),
@@ -58,7 +60,7 @@ export function PlatinumStats({
         {/* 클리어 비율 */}
         <div className="grid grid-cols-[auto_1fr] items-start gap-x-4">
           <span className="text-sm text-muted-foreground leading-7">
-            클리어
+            {t("party.summary.platinum.cleared")}
           </span>
           <div className="text-right">
             <div
@@ -71,7 +73,7 @@ export function PlatinumStats({
             </div>
             {lunaticClearPercent !== undefined && lunaticClearPercent > 0 && (
               <div className="text-xs text-muted-foreground">
-                루나틱: {lunaticClearPercent.toFixed(2)}%
+                {t("party.summary.platinum.lunatic")}: {lunaticClearPercent.toFixed(2)}%
               </div>
             )}
           </div>
@@ -90,7 +92,7 @@ export function PlatinumStats({
               <SelectContent className="min-w-0 w-[115px]">
                 {rankOptions.map((rank) => (
                   <SelectItem key={rank} value={rank.toString()}>
-                    {rank.toLocaleString()}등
+                    {t("party.summary.platinum.rank").replace("{n}", rank.toLocaleString())}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -104,7 +106,7 @@ export function PlatinumStats({
               )}
               {selectedPartCut && (
                 <div className="text-xs font-semibold text-amber-600 dark:text-amber-500">
-                  속성: {selectedPartCut.score.toLocaleString()}
+                  {t("party.summary.platinum.subscore")}: {selectedPartCut.score.toLocaleString()}
                 </div>
               )}
             </div>

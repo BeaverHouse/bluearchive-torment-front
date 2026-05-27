@@ -7,18 +7,20 @@ import { parseCharacterInfo } from "@/utils/character";
 import { getModeLabel } from "@/constants/student-aliases";
 
 /** 학생 코드에 모드가 있으면 "이름 (모드)" 형식으로 반환 */
-function decoratedName(code: number, name: string): string {
-  const mode = getModeLabel(code);
+function decoratedName(code: number, name: string, t?: (key: string) => string): string {
+  const mode = getModeLabel(code, t);
   return mode ? `${name} (${mode})` : name;
 }
 
 export const getFilters = (
   rawData: Record<string, Record<string, number>>,
-  studentsMap: Record<string, string>
+  studentsMap: Record<string, string>,
+  t?: (key: string) => string
 ): FilterOption[] => {
+  const tr = t ?? ((k: string) => k);
   return Object.keys(rawData).map((key) => {
     const code = Number(key);
-    const decorated = decoratedName(code, studentsMap[key]);
+    const decorated = decoratedName(code, studentsMap[key], t);
     return {
       value: code,
       label: decorated,
@@ -29,7 +31,7 @@ export const getFilters = (
 
             return {
               value,
-              label: `${decorated} ${categoryMap[gradeKey]} (${val})`,
+              label: `${decorated} ${tr(categoryMap[gradeKey])} (${val})`,
             };
           }
           return null;

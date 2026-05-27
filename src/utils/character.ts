@@ -27,14 +27,19 @@ export function parseCharacterInfo(charValue: number): CharacterInfo | null {
  * 캐릭터 코드로 캐릭터 이름을 반환
  * @param code 캐릭터 코드
  * @param studentsMap 학생 데이터 맵
+ * @param t Optional translator. When provided, falls back to the "character.unknown" key.
  * @returns 캐릭터 이름
  */
 export function getCharacterName(
   code: number,
-  studentsMap?: Record<string, string>
+  studentsMap?: Record<string, string>,
+  t?: (key: string) => string
 ): string {
+  const fallback = t
+    ? t("character.unknown").replace("{n}", String(code))
+    : `캐릭터 ${code}`;
   if (!studentsMap) {
-    return `캐릭터 ${code}`;
+    return fallback;
   }
-  return studentsMap[code.toString()] || `캐릭터 ${code}`;
+  return studentsMap[code.toString()] || fallback;
 }

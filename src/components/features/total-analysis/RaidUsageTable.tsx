@@ -3,7 +3,8 @@
 import { useMemo } from "react";
 import { TotalAnalysisData } from "@/types/total-analysis";
 import { StudentImage } from "@/components/features/student/student-image";
-import { useRaids } from "@/hooks/use-raids";
+import { useRaids, getRaidName } from "@/hooks/use-raids";
+import { useTranslations } from "@/lib/i18n";
 import {
   Table,
   TableBody,
@@ -27,6 +28,7 @@ export function RaidUsageTable({
   title,
   limit = 5,
 }: RaidUsageTableProps) {
+  const { t, locale } = useTranslations();
   const { raids } = useRaids();
 
   const processedData = useMemo(() => {
@@ -36,8 +38,8 @@ export function RaidUsageTable({
     return reversedAnalyses.map((raid) => {
       // raids.json에서 name을 가져와서 축약
       const raidInfo = raids.find((r) => r.id === raid.raidId);
-      const fullName = raidInfo?.name || raid.raidId;
-      // 총력전/대결전 SXX 제거
+      const fullName = raidInfo ? getRaidName(raidInfo, locale) : raid.raidId;
+      // 총력전/대결전 SXX 제거 (ko 데이터의 prefix만 매칭)
       const displayName = fullName.replace(/^(총력전|대결전)\s+S\d+\s+/, "");
 
       // 대결전: 괄호 앞에서 줄바꿈 (2줄로 분리)
@@ -63,7 +65,7 @@ export function RaidUsageTable({
         students: topItems,
       };
     });
-  }, [data, raids, type, limit]);
+  }, [data, raids, type, limit, locale]);
 
   return (
     <Card className="h-[400px] sm:h-[500px] flex flex-col max-w-full overflow-hidden">
@@ -76,14 +78,14 @@ export function RaidUsageTable({
             <TableHeader className="sticky top-0 z-10">
               <TableRow className="bg-card hover:bg-card">
                 <TableHead className="w-[90px] sm:w-[140px] text-[9px] sm:text-xs bg-card pl-1 pr-1">
-                  총력전
+                  {t("totalAnalysis.raidUsage.headerRaid")}
                 </TableHead>
                 {Array.from({ length: limit }).map((_, i) => (
                   <TableHead
                     key={i}
                     className="w-[36px] sm:w-[48px] text-center text-[9px] sm:text-xs px-0.5 bg-card"
                   >
-                    {i + 1}위
+                    {t("totalAnalysis.raidUsage.rank").replace("{n}", String(i + 1))}
                   </TableHead>
                 ))}
               </TableRow>

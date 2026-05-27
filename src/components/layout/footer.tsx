@@ -1,13 +1,16 @@
+"use client";
+
 import Link from "next/link";
 import { Github, Mail } from "lucide-react";
 import { SupportButton } from "@/components/common/support-modal";
+import { useTranslations } from "@/lib/i18n";
 
 export function Footer() {
+  const { t } = useTranslations();
   return (
     <footer className="border-t mt-auto">
       <div className="max-w-4xl mx-auto px-4 py-6">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          {/* 링크들 */}
           <div className="flex items-center gap-4">
             <Link
               href="https://github.com/BeaverHouse/bluearchive-torment-front"
@@ -27,27 +30,25 @@ export function Footer() {
             <SupportButton />
           </div>
 
-          {/* 법적 링크 */}
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
             <Link
               href="/legal/privacy"
               className="hover:text-foreground transition-colors"
             >
-              개인정보처리방침
+              {t("footer.privacy")}
             </Link>
             <span>|</span>
             <Link
               href="/legal/terms"
               className="hover:text-foreground transition-colors"
             >
-              이용약관
+              {t("footer.terms")}
             </Link>
           </div>
 
-          {/* Copyright */}
           <div className="text-xs text-muted-foreground text-center sm:text-right">
             <p>Blue Archive copyrighted by NEXON GAMES & YOSTAR</p>
-            <p>This is an unofficial fan site.</p>
+            <p>{t("footer.unofficial")}</p>
             <p>2023-2026, powered by Austin</p>
           </div>
         </div>

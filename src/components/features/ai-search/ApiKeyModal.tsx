@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ExternalLink, Key, AlertTriangle } from "lucide-react";
 import { trackEvent } from "@/utils/analytics";
+import { useTranslations } from "@/lib/i18n";
 
 interface ApiKeyModalProps {
   open: boolean;
@@ -26,18 +27,18 @@ export function ApiKeyModal({
 }: ApiKeyModalProps) {
   const [apiKey, setApiKey] = useState("");
   const [error, setError] = useState("");
+  const { t } = useTranslations();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!apiKey.trim()) {
-      setError("API 키를 입력해주세요.");
+      setError(t("apiKey.required"));
       return;
     }
 
-    // Gemini API 키 형식 검증 (AI로 시작)
     if (!apiKey.startsWith("AI")) {
-      setError("올바른 Gemini API 키 형식이 아닙니다.");
+      setError(t("apiKey.invalid"));
       return;
     }
 
@@ -53,19 +54,19 @@ export function ApiKeyModal({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Key className="h-5 w-5" />
-            Gemini API 키 입력
+            {t("apiKey.title")}
           </DialogTitle>
           <DialogDescription>
-            아로나와 대화하려면 Google Gemini API 키가 필요해요.
+            {t("apiKey.desc.line1")}
             <br />
-            API 키는 서버에 저장되지 않고, 10분간 유지돼요. (대화하면 자동 연장)
+            {t("apiKey.desc.line2")}
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <label htmlFor="apiKey" className="text-sm font-medium">
-              API Key
+              {t("apiKey.label")}
             </label>
             <Input
               id="apiKey"
@@ -86,32 +87,30 @@ export function ApiKeyModal({
               rel="noopener noreferrer"
               className="hover:underline"
             >
-              Google AI Studio에서 무료 API 키 발급받기
+              {t("apiKey.studio")}
             </a>
           </div>
 
-          {/* 주의사항 */}
           <div className="rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 p-3">
             <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400 font-medium text-sm mb-2">
               <AlertTriangle className="h-4 w-4" />
-              주의사항
+              {t("apiKey.notice.title")}
             </div>
             <ul className="text-xs text-amber-700 dark:text-amber-400/80 space-y-1 list-disc list-inside">
-              <li>현재 베타 기능으로 제대로 동작하지 않을 수 있어요.</li>
-              <li>AI는 잘못된 답변을 할 수 있어요.</li>
-              <li>질문한 내용과 답변이 기능 개선에 사용될 수 있어요.</li>
-              <li>Google에 의해 호출 제한이 걸릴 수 있어요.</li>
+              <li>{t("apiKey.notice.beta")}</li>
+              <li>{t("apiKey.notice.wrong")}</li>
+              <li>{t("apiKey.notice.feedback")}</li>
+              <li>{t("apiKey.notice.limit")}</li>
             </ul>
           </div>
 
-          {/* 검색 기능 안내 (옵션) */}
           <div className="rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 p-3">
             <div className="flex items-center gap-2 text-blue-700 dark:text-blue-400 font-medium text-sm mb-2">
-              🔍 검색 기능 안내
+              {t("apiKey.search.title")}
             </div>
             <ul className="text-xs text-blue-700 dark:text-blue-400/80 space-y-1 list-disc list-inside">
-              <li>무료 API 키는 검색이 제한되어 일부 답변이 정확하지 않을 수 있어요.</li>
-              <li>프로젝트에 결제 수단을 등록하면 검색이 켜지지만, 본인 카드로 사용량만큼 요금이 청구돼요.</li>
+              <li>{t("apiKey.search.line1")}</li>
+              <li>{t("apiKey.search.line2")}</li>
             </ul>
           </div>
 
@@ -121,9 +120,9 @@ export function ApiKeyModal({
               variant="outline"
               onClick={() => onOpenChange(false)}
             >
-              취소
+              {t("common.cancel")}
             </Button>
-            <Button type="submit">확인</Button>
+            <Button type="submit">{t("common.confirm")}</Button>
           </div>
         </form>
       </DialogContent>

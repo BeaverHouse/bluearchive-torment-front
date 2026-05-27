@@ -11,6 +11,7 @@ import Link from "next/link";
 import { useStudentMaps } from "@/hooks/use-student-maps";
 import { VideoAnalysisContent } from "./VideoAnalysisContent";
 import { generateHTML } from "./utils/generateHTML";
+import { useTranslations } from "@/lib/i18n";
 
 interface VideoDetailProps {
   videos: VideoAnalysisData[];
@@ -28,6 +29,7 @@ export function VideoDetail({
   const [copiedId, setCopiedId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState(currentVideo.id.toString());
   const { studentsMap } = useStudentMaps();
+  const { t } = useTranslations();
 
   const sortedVideos = [...videos].sort((a, b) => {
     if (a.analysis_type !== "ai" && b.analysis_type === "ai") return -1;
@@ -39,9 +41,9 @@ export function VideoDetail({
     if (window.innerWidth < 1024) {
       Swal.fire({
         icon: "warning",
-        title: "PC에서만 편집 가능",
-        text: "파티 구성 편집 화면은 넓은 화면이 필요해요.",
-        confirmButtonText: "확인",
+        title: t("videoAnalysis.detail.editPcOnlyTitle"),
+        text: t("videoAnalysis.detail.editPcOnlyText"),
+        confirmButtonText: t("videoAnalysis.detail.confirm"),
       });
       return;
     }
@@ -71,13 +73,13 @@ export function VideoDetail({
 
   const copyToClipboard = async (video: VideoAnalysisData) => {
     try {
-      const html = generateHTML(video, studentsMap);
+      const html = generateHTML(video, studentsMap, t);
       await navigator.clipboard.writeText(html);
       setCopiedId(video.id);
       setTimeout(() => setCopiedId(null), 2000);
     } catch (error) {
       console.error("복사 실패:", error);
-      alert("복사에 실패했습니다.");
+      alert(t("videoAnalysis.detail.copyFailed"));
     }
   };
 
@@ -94,11 +96,11 @@ export function VideoDetail({
         ) : (
           <Copy className="h-4 w-4 mr-2" />
         )}
-        {copiedId === video.id ? "복사됨" : "HTML 복사"}
+        {copiedId === video.id ? t("videoAnalysis.detail.copied") : t("videoAnalysis.detail.htmlCopy")}
       </Button>
       <Button onClick={handleStartEdit} size="sm">
         <Edit3 className="h-4 w-4 mr-2" />
-        편집
+        {t("videoAnalysis.detail.edit")}
       </Button>
     </div>
   );
@@ -109,7 +111,7 @@ export function VideoDetail({
         <Link href="/video-analysis">
           <Button variant="ghost">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            목록으로
+            {t("videoAnalysis.detail.back")}
           </Button>
         </Link>
       </div>
@@ -126,8 +128,8 @@ export function VideoDetail({
               {sortedVideos.map((video) => (
                 <TabsTrigger key={video.id} value={video.id.toString()}>
                   {video.analysis_type === "ai"
-                    ? "AI 분석"
-                    : `사용자 분석 v${video.version}`}
+                    ? t("videoAnalysis.detail.tabAi")
+                    : t("videoAnalysis.detail.tabUser").replace("{n}", String(video.version))}
                 </TabsTrigger>
               ))}
             </TabsList>

@@ -6,6 +6,7 @@ import { X } from "lucide-react";
 import { StarRating } from "@/components/features/student/star-rating";
 import type { GradeKey } from "@/types/pool";
 import { isGradeKey } from "@/types/pool";
+import { useTranslations } from "@/lib/i18n";
 
 interface PoolStudentTileProps {
   code: number;
@@ -24,6 +25,7 @@ function PoolStudentTileInner({
   onGradeChange,
   onRemove,
 }: PoolStudentTileProps) {
+  const { t } = useTranslations();
   const owned = grade !== undefined;
 
   const handleGradeChange = (newValue: number) => {
@@ -46,7 +48,7 @@ function PoolStudentTileInner({
           onToggle();
         }
       }}
-      aria-label={owned ? `${name} (보유)` : `${name} (미보유)`}
+      aria-label={owned ? `${name} (${t("pool.tile.owned")})` : `${name} (${t("pool.tile.missing")})`}
     >
       {owned && (
         <button
@@ -56,7 +58,7 @@ function PoolStudentTileInner({
             onRemove();
           }}
           className="absolute top-1 right-1 rounded-full bg-background p-0.5 hover:bg-destructive hover:text-destructive-foreground transition-colors"
-          aria-label={`${name} 풀에서 제거`}
+          aria-label={t("pool.tile.remove").replace("{name}", name)}
         >
           <X className="w-3 h-3" />
         </button>

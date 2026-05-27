@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTranslations } from "@/lib/i18n";
 
 export interface SingleSelectOption {
   value: string;
@@ -24,12 +25,13 @@ export function SingleSelect({
   options,
   value,
   onChange,
-  placeholder = "선택하세요",
+  placeholder,
 }: SingleSelectProps) {
+  const { t } = useTranslations();
   return (
     <Select value={value} onValueChange={onChange}>
       <SelectTrigger className="w-full sm:w-72">
-        <SelectValue placeholder={placeholder} />
+        <SelectValue placeholder={placeholder ?? t("ui.select.placeholder")} />
       </SelectTrigger>
       <SelectContent className="max-h-[300px] overflow-y-auto">
         {options.map((option) => (

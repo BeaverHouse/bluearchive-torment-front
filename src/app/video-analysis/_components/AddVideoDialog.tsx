@@ -21,12 +21,15 @@ import {
 import { Plus } from "lucide-react";
 import { addVideoToQueue } from "@/lib/api";
 import { RaidInfo } from "@/types/raid";
+import { getRaidName } from "@/hooks/use-raids";
+import { useTranslations } from "@/lib/i18n";
 
 interface AddVideoDialogProps {
   raids: RaidInfo[];
 }
 
 export function AddVideoDialog({ raids }: AddVideoDialogProps) {
+  const { t, locale } = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
   const [raidId, setRaidId] = useState<string>("");
   const [youtubeUrl, setYoutubeUrl] = useState<string>("");
@@ -35,10 +38,10 @@ export function AddVideoDialog({ raids }: AddVideoDialogProps) {
   const handleAddToQueue = async () => {
     if (!raidId || !youtubeUrl) {
       await Swal.fire({
-        title: "입력 오류",
-        text: "레이드와 YouTube URL을 모두 입력해주세요.",
+        title: t("video.add.error.input"),
+        text: t("video.add.error.inputBody"),
         icon: "warning",
-        confirmButtonText: "확인",
+        confirmButtonText: t("common.confirm"),
       });
       return;
     }
@@ -48,19 +51,18 @@ export function AddVideoDialog({ raids }: AddVideoDialogProps) {
       const result = await addVideoToQueue(raidId, youtubeUrl);
 
       if (result.existingVideo) {
-        // Video already processed - close dialog first, then show swal
         const { videoId, raidId: existingRaidId } = result.existingVideo;
         setIsOpen(false);
         setRaidId("");
         setYoutubeUrl("");
 
         const swalResult = await Swal.fire({
-          title: "이미 분석된 영상",
-          text: "해당 영상 페이지로 이동할까요?",
+          title: t("video.add.existing.title"),
+          text: t("video.add.existing.body"),
           icon: "info",
           showCancelButton: true,
-          confirmButtonText: "이동",
-          cancelButtonText: "취소",
+          confirmButtonText: t("video.add.existing.go"),
+          cancelButtonText: t("video.add.existing.cancel"),
         });
         if (swalResult.isConfirmed) {
           window.location.href = `/video-analysis/${videoId}?raid_id=${existingRaidId}`;
@@ -73,17 +75,17 @@ export function AddVideoDialog({ raids }: AddVideoDialogProps) {
       setYoutubeUrl("");
 
       await Swal.fire({
-        title: "추가 완료",
-        text: "영상이 분석 큐에 추가되었습니다.",
+        title: t("video.add.success"),
+        text: t("video.add.successBody"),
         icon: "success",
-        confirmButtonText: "확인",
+        confirmButtonText: t("common.confirm"),
       });
     } catch (error) {
       await Swal.fire({
-        title: "오류",
-        text: error instanceof Error ? error.message : "큐 추가에 실패했습니다.",
+        title: t("video.add.failure"),
+        text: error instanceof Error ? error.message : t("video.add.failure"),
         icon: "error",
-        confirmButtonText: "확인",
+        confirmButtonText: t("common.confirm"),
       });
     } finally {
       setSubmitting(false);
@@ -95,35 +97,35 @@ export function AddVideoDialog({ raids }: AddVideoDialogProps) {
       <DialogTrigger asChild>
         <Button className="bg-sky-500 hover:bg-sky-600 w-full sm:w-auto">
           <Plus className="h-4 w-4 mr-2" />
-          영상 분석 추가
+          {t("video.add.button")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>영상 분석 큐에 추가</DialogTitle>
+          <DialogTitle>{t("video.add.title")}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div>
-            <label className="text-sm font-medium mb-2 block">레이드</label>
+            <label className="text-sm font-medium mb-2 block">{t("video.add.raidLabel")}</label>
             <Select value={raidId} onValueChange={setRaidId}>
               <SelectTrigger>
-                <SelectValue placeholder="레이드를 선택하세요" />
+                <SelectValue placeholder={t("video.add.raidPlaceholder")} />
               </SelectTrigger>
               <SelectContent className="max-h-[300px] overflow-y-auto">
                 {raids.map((raid) => (
                   <SelectItem key={raid.id} value={raid.id}>
-                    {raid.name}
+                    {getRaidName(raid, locale)}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
           <div>
-            <label className="text-sm font-medium mb-2 block">YouTube URL</label>
+            <label className="text-sm font-medium mb-2 block">{t("video.add.urlLabel")}</label>
             <Input
               value={youtubeUrl}
               onChange={(e) => setYoutubeUrl(e.target.value)}
-              placeholder="https://www.youtube.com/watch?v=..."
+              placeholder={t("video.add.urlPlaceholder")}
             />
           </div>
           <div className="flex gap-2 justify-end">
@@ -132,13 +134,13 @@ export function AddVideoDialog({ raids }: AddVideoDialogProps) {
               onClick={() => setIsOpen(false)}
               disabled={submitting}
             >
-              취소
+              {t("common.cancel")}
             </Button>
             <Button
               onClick={handleAddToQueue}
               disabled={submitting || !raidId || !youtubeUrl}
             >
-              {submitting ? "추가 중..." : "큐에 추가"}
+              {submitting ? t("video.edit.saving") : t("video.add.submit")}
             </Button>
           </div>
         </div>

@@ -13,8 +13,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { VideoListItem } from "@/types/video";
-import { useRaids } from "@/hooks/use-raids";
+import { useRaids, getRaidName as getLocalizedRaidName } from "@/hooks/use-raids";
 import { trackEvent } from "@/utils/analytics";
+import { useTranslations } from "@/lib/i18n";
 
 interface VideoListProps {
   videos: VideoListItem[];
@@ -65,11 +66,12 @@ function YouTubeThumbnail({ videoId, title }: { videoId: string; title: string }
 
 export function VideoList({ videos }: VideoListProps) {
   const { raids } = useRaids();
+  const { t, locale } = useTranslations();
 
   const getRaidName = (raidId: string | null): string | null => {
     if (!raidId) return null;
     const raid = raids.find((r) => r.id === raidId);
-    return raid?.name || null;
+    return raid ? getLocalizedRaidName(raid, locale) : null;
   };
 
   return (
@@ -121,7 +123,7 @@ export function VideoList({ videos }: VideoListProps) {
                     {video.raid_id && (
                       <div className="text-xs">
                         <span className="font-medium text-card-foreground">
-                          레이드:
+                          {t("videoAnalysis.list.raidLabel")}
                         </span>
                         <span className="text-muted-foreground ml-1">
                           {getRaidName(video.raid_id)}
@@ -151,8 +153,8 @@ export function VideoList({ videos }: VideoListProps) {
                           <TooltipContent>
                             <p>
                               {video.verify_level === 1
-                                ? "파티 정보가 정확합니다"
-                                : "모든 분석이 검증되었습니다"}
+                                ? t("videoAnalysis.list.verifyPartyOk")
+                                : t("videoAnalysis.list.verifyAllOk")}
                             </p>
                           </TooltipContent>
                         </Tooltip>

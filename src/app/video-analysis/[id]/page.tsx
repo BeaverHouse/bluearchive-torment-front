@@ -5,9 +5,10 @@ import { getVideoDetail } from "@/lib/api";
 import { VideoAnalysisData, VideoDetailResponse } from "@/types/video";
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
-import { useRaids } from "@/hooks/use-raids";
+import { useRaids, getRaidName as getLocalizedRaidName } from "@/hooks/use-raids";
 import ErrorPage from "@/components/common/error-page";
 import Loading from "@/components/common/loading";
+import { useTranslations } from "@/lib/i18n";
 
 export default function VideoDetailPage() {
   const params = useParams();
@@ -15,6 +16,7 @@ export default function VideoDetailPage() {
   const videoId = params.id as string;
   const raidId = searchParams.get("raid_id");
   const { raids } = useRaids();
+  const { t, locale } = useTranslations();
   const [videoDetail, setVideoDetail] = useState<
     VideoDetailResponse["data"] | null
   >(null);
@@ -27,7 +29,7 @@ export default function VideoDetailPage() {
   const getRaidName = (raidIdParam: string | null): string | null => {
     if (!raidIdParam) return null;
     const raid = raids.find((r) => r.id === raidIdParam);
-    return raid?.name || null;
+    return raid ? getLocalizedRaidName(raid, locale) : null;
   };
 
   useEffect(() => {
@@ -76,13 +78,13 @@ export default function VideoDetailPage() {
           );
           setCurrentVideo(userAnalysis || response.data.data[0]);
         } else {
-          setError("비디오를 찾을 수 없습니다");
+          setError(t("videoAnalysis.detail.notFound"));
         }
       } catch (err) {
         setError(
           err instanceof Error
             ? err.message
-            : "비디오 상세 정보를 불러오는데 실패했습니다"
+            : t("videoAnalysis.detail.fetchError")
         );
       } finally {
         setLoading(false);
@@ -92,7 +94,7 @@ export default function VideoDetailPage() {
     if (videoId) {
       fetchVideo();
     }
-  }, [videoId, raidId]);
+  }, [videoId, raidId, t]);
 
   if (loading) {
     return <Loading />;
@@ -113,7 +115,7 @@ export default function VideoDetailPage() {
           <h1 className="text-2xl font-bold mb-2">{videoDetail.title}</h1>
           {videoDetail.raid_id && (
             <p className="text-muted-foreground">
-              <span className="font-medium">레이드:</span>{" "}
+              <span className="font-medium">{t("videoAnalysis.detail.raidLabel")}</span>{" "}
               {getRaidName(videoDetail.raid_id)}
             </p>
           )}

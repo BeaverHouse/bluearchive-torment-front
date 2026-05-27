@@ -12,11 +12,26 @@ import { ChatInput } from "./ChatInput";
 import { EmptyState } from "./EmptyState";
 import { useApiKey } from "./hooks/useApiKey";
 import { useChat } from "./hooks/useChat";
+import { useTranslations, DEFAULT_LOCALE } from "@/lib/i18n";
 
-const PERSONA_PROMPT_URL = "/data/persona_ko.md";
-const INSTRUCTION_PROMPT_URL = "/data/instruction_ko.md";
+// Persona/instruction MDs are only authored in Korean for now. en/zh prompts
+// will be added later — until then we fall back so non-ko sessions still work.
+async function fetchPrompt(kind: "persona" | "instruction", locale: string): Promise<string> {
+  const tryFetch = async (lang: string) => {
+    const res = await fetch(`/data/${kind}_${lang}.md`);
+    return res.ok ? res.text() : null;
+  };
+  const localized = await tryFetch(locale);
+  if (localized) return localized;
+  if (locale !== DEFAULT_LOCALE) {
+    const fallback = await tryFetch(DEFAULT_LOCALE);
+    if (fallback) return fallback;
+  }
+  return "";
+}
 
 export function AISearchChat() {
+  const { t, locale } = useTranslations();
   const [personaPrompt, setPersonaPrompt] = useState<string>("");
   const [instructionPrompt, setInstructionPrompt] = useState<string>("");
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -46,22 +61,19 @@ export function AISearchChat() {
     apiKey,
     personaPrompt,
     instructionPrompt,
+    language: locale,
     onApiKeyRequired: openApiKeyModal,
   });
 
   useEffect(() => {
-    Promise.all([
-      fetch(PERSONA_PROMPT_URL).then((res) => res.text()),
-      fetch(INSTRUCTION_PROMPT_URL).then((res) => res.text()),
-    ])
+    Promise.all([fetchPrompt("persona", locale), fetchPrompt("instruction", locale)])
       .then(([persona, instruction]) => {
         setPersonaPrompt(persona);
         setInstructionPrompt(instruction);
       })
       .catch((err) => console.error("Failed to load prompts:", err));
-  }, []);
+  }, [locale]);
 
-  // 스크롤 맨 아래로
   const scrollToBottom = useCallback(() => {
     if (scrollAreaRef.current) {
       scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
@@ -81,7 +93,6 @@ export function AISearchChat() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-200px)] max-w-4xl mx-auto">
-      {/* 헤더 */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <Image
@@ -105,18 +116,17 @@ export function AISearchChat() {
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={openApiKeyModal}>
             <Key className="h-4 w-4 mr-1" />
-            {apiKey ? "키 변경" : "키 설정"}
+            {apiKey ? t("arona.keyChange") : t("arona.keySet")}
           </Button>
           {messages.length > 0 && (
             <Button variant="outline" size="sm" onClick={clearChat}>
               <Trash2 className="h-4 w-4 mr-1" />
-              초기화
+              {t("arona.reset")}
             </Button>
           )}
         </div>
       </div>
 
-      {/* 메시지 영역 */}
       <Card className="flex-1 mb-4 overflow-hidden">
         <CardContent className="p-0 h-full">
           <div className="h-full overflow-y-auto p-4" ref={scrollAreaRef}>
@@ -135,7 +145,6 @@ export function AISearchChat() {
         </CardContent>
       </Card>
 
-      {/* 입력 영역 */}
       <ChatInput
         input={input}
         onInputChange={setInput}
@@ -143,10 +152,9 @@ export function AISearchChat() {
         onStop={stopGeneration}
         isLoading={isLoading}
         disabled={!apiKey}
-        placeholder={apiKey ? "질문을 입력하세요..." : "API 키를 먼저 설정해주세요"}
+        placeholder={apiKey ? t("arona.placeholder.ready") : t("arona.placeholder.noKey")}
       />
 
-      {/* Powered by */}
       <div className="mt-2 text-center text-xs text-muted-foreground">
         Powered by{" "}
         <a
@@ -159,7 +167,6 @@ export function AISearchChat() {
         </a>
       </div>
 
-      {/* API 키 모달 */}
       <ApiKeyModal
         open={showApiKeyModal}
         onOpenChange={setShowApiKeyModal}

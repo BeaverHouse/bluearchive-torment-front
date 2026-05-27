@@ -1,6 +1,7 @@
 import React from "react";
 import { CharacterImage } from "@/components/common/character-image";
 import { CharTableType } from "@/types/raid";
+import { useTranslations } from "@/lib/i18n";
 
 interface CharacterUsageTableProps {
   title: string;
@@ -9,6 +10,7 @@ interface CharacterUsageTableProps {
 
 export const CharacterUsageTable = React.memo(
   ({ title, data }: CharacterUsageTableProps) => {
+    const { t } = useTranslations();
     return (
       <div className="min-w-0">
         <h4 className="font-bold mb-2 text-left text-sm sm:text-base">
@@ -18,8 +20,8 @@ export const CharacterUsageTable = React.memo(
           <table className="w-full text-sm">
             <thead className="sticky top-0 bg-background">
               <tr className="border-b">
-                <th className="text-left p-1 sm:p-2">이름</th>
-                <th className="text-right p-1 sm:p-2">사용률 (%)</th>
+                <th className="text-left p-1 sm:p-2">{t("party.summary.charUsage.colName")}</th>
+                <th className="text-right p-1 sm:p-2">{t("party.summary.charUsage.colRate")}</th>
               </tr>
             </thead>
             <tbody>

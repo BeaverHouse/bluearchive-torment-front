@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Heart, Mail } from "lucide-react";
+import { useTranslations } from "@/lib/i18n";
 
 function KakaoIcon({ className }: { className?: string }) {
   return (
@@ -29,34 +30,33 @@ interface SupportModalProps {
 }
 
 export function SupportModal({ children }: SupportModalProps) {
+  const { t } = useTranslations();
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="max-w-sm">
         <DialogHeader>
-          <DialogTitle>후원하기</DialogTitle>
+          <DialogTitle>{t("support.title")}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 pt-1">
-          {/* 안내 문구 */}
           <ul className="space-y-1 text-sm text-muted-foreground">
-            <li>BA Torment는 광고 없이 운영됩니다.</li>
-            <li>서버비는 사비 + 100% 자율 후원으로만 운영됩니다.</li>
-            <li>오픈채팅은 기프티콘 후원용으로만 사용해 주세요.</li>
+            <li>{t("support.line.adFree")}</li>
+            <li>{t("support.line.serverCost")}</li>
+            <li>{t("support.line.openChat")}</li>
             <li className="flex items-center gap-1">
-              문의는 가능하면
+              {t("support.line.contact.prefix")}
               <a
                 href="mailto:haulrest@gmail.com"
                 className="inline-flex items-center gap-1 text-foreground underline underline-offset-2 hover:text-primary"
               >
                 <Mail className="w-3 h-3" />
-                메일
+                {t("support.line.contact.mail")}
               </a>
-              로 부탁드립니다.
+              {t("support.line.contact.suffix")}
             </li>
           </ul>
 
-          {/* 후원 버튼 */}
           <div className="flex items-center justify-center gap-4 pt-2">
             <a
               href="https://buymeacoffee.com/haulrest"
@@ -78,7 +78,7 @@ export function SupportModal({ children }: SupportModalProps) {
               target="_blank"
               rel="noreferrer"
               className="w-12 h-12 rounded-full bg-[#FEE500] hover:bg-[#F5DC00] flex items-center justify-center transition-colors"
-              title="카카오 오픈채팅"
+              title="KakaoTalk OpenChat"
             >
               <KakaoIcon className="w-7 h-7 text-[#391B1B]" />
             </a>
@@ -90,11 +90,12 @@ export function SupportModal({ children }: SupportModalProps) {
 }
 
 export function SupportButton() {
+  const { t } = useTranslations();
   return (
     <SupportModal>
       <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground hover:text-foreground">
         <Heart className="w-4 h-4 text-red-500" />
-        후원하기
+        {t("home.support")}
       </Button>
     </SupportModal>
   );

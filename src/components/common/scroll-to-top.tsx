@@ -4,9 +4,11 @@ import { useState, useEffect } from "react";
 import { ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "@/lib/i18n";
 
 export function ScrollToTop() {
   const [isVisible, setIsVisible] = useState(false);
+  const { t } = useTranslations();
 
   useEffect(() => {
     const toggleVisibility = () => {
@@ -38,7 +40,7 @@ export function ScrollToTop() {
         isVisible ? "opacity-100" : "opacity-0 pointer-events-none"
       )}
       onClick={scrollToTop}
-      aria-label="맨 위로 스크롤"
+      aria-label={t("ui.scrollTop.label")}
     >
       <ArrowUp className="h-4 w-4" />
     </Button>

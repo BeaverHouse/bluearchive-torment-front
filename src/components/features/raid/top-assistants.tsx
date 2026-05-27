@@ -2,17 +2,19 @@ import CardWrapper from "@/components/common/card-wrapper";
 import { CharacterAvatar } from "@/components/common/character-image";
 import { Users } from "lucide-react";
 import { Assistant } from "@/types/raid";
+import { useTranslations } from "@/lib/i18n";
 
 interface TopAssistantsProps {
   data: Assistant[];
 }
 
 export function TopAssistants({ data }: TopAssistantsProps) {
+  const { t } = useTranslations();
   return (
     <CardWrapper
       icon={<Users className="h-5 w-5 text-sky-500" />}
-      title="Top 3 조력자"
-      description="가장 많이 빌린 학생 3명이에요."
+      title={t("party.summary.topAssist.title")}
+      description={t("party.summary.topAssist.desc")}
     >
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {data.map((char) => (

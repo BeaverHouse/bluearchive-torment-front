@@ -10,7 +10,8 @@ import { Pagination } from "@/components/shared/pagination";
 import { Button } from "@/components/ui/button";
 import { Youtube, RefreshCw } from "lucide-react";
 import { useStudentMaps } from "@/hooks/use-student-maps";
-import { useRaids } from "@/hooks/use-raids";
+import { useRaids, getRaidName } from "@/hooks/use-raids";
+import { useTranslations } from "@/lib/i18n";
 import ErrorPage from "@/components/common/error-page";
 import { generateSearchKeyword } from "@/utils/raid";
 import { PartyFilterSection } from "@/components/features/raid/party-filter-section";
@@ -26,6 +27,7 @@ export function VideoAnalysisContent({
 }: VideoAnalysisContentProps) {
   const { studentsMap, studentSearchMap } = useStudentMaps();
   const { raids } = useRaids();
+  const { t, locale } = useTranslations();
 
   const {
     loading,
@@ -51,13 +53,13 @@ export function VideoAnalysisContent({
 
   const raidsSelectOptions = useMemo(
     () => [
-      { value: "all", label: "전체" },
+      { value: "all", label: t("raid.all") },
       ...raids.map((raid) => ({
         value: raid.id,
-        label: raid.name,
+        label: getRaidName(raid, locale),
       })),
     ],
-    [raids]
+    [raids, locale, t]
   );
 
   if (error) {
@@ -68,7 +70,7 @@ export function VideoAnalysisContent({
     <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
       <div className="mb-8 flex items-center gap-2">
         <p className="text-muted-foreground">
-          1000개 이상의 총력전 영상이 준비되어 있어요.
+          {t("videoAnalysis.intro")}
         </p>
         {isRefreshing && (
           <RefreshCw className="h-4 w-4 animate-spin text-muted-foreground" />
@@ -91,7 +93,7 @@ export function VideoAnalysisContent({
       )}
 
       <div className="mx-auto mb-5 w-full">
-        검색 결과: 총 {filterModePagination.total}개
+        {t("videoAnalysis.searchResults").replace("{n}", String(filterModePagination.total))}
       </div>
 
       {/* 페이지네이션 */}
@@ -120,13 +122,13 @@ export function VideoAnalysisContent({
               handleRaidChange(value);
               trackEvent("video_filter_apply", { raid_filter: value });
             }}
-            placeholder="총력전/대결전 선택"
+            placeholder={t("videoAnalysis.raidSelectPlaceholder")}
           />
           {selectedRaid !== "all" && (() => {
             const selectedRaidInfo = raids.find((r) => r.id === selectedRaid);
             if (!selectedRaidInfo) return null;
 
-            const searchKeyword = generateSearchKeyword(selectedRaidInfo.name, "");
+            const searchKeyword = generateSearchKeyword(selectedRaidInfo.name_ko ?? selectedRaidInfo.name, "");
             const youtubeSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(searchKeyword)}`;
 
             return (
@@ -134,7 +136,7 @@ export function VideoAnalysisContent({
                 href={youtubeSearchUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                title="YouTube에서 검색"
+                title={t("videoAnalysis.youtubeSearchTitle")}
               >
                 <Button size="sm" className="gap-1.5 h-9 bg-red-500 hover:bg-red-600">
                   <Youtube className="h-4 w-4" />

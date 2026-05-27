@@ -5,26 +5,28 @@ import { CharacterAnalysis } from "@/types/total-analysis";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { categoryMap } from "@/constants/assault";
+import { useTranslations } from "@/lib/i18n";
 
 interface StarDistChartProps {
   characterData: CharacterAnalysis;
 }
 
-// 성급별 색상
+// 성급(키) 별 색상
 const STAR_COLORS: Record<string, string> = {
-  "3성": "#dc2626",
-  "4성": "#ea580c",
-  "5성": "#ca8a04",
-  전1: "#65a30d",
-  전2: "#16a34a",
-  전3: "#0d9488",
-  전4: "#2563eb",
+  "30": "#dc2626",
+  "40": "#ea580c",
+  "50": "#ca8a04",
+  "51": "#65a30d",
+  "52": "#16a34a",
+  "53": "#0d9488",
+  "54": "#2563eb",
 };
 
-// 성급 순서 정의
-const STAR_ORDER = ["3성", "4성", "5성", "전1", "전2", "전3", "전4"];
+// 성급 키 순서
+const STAR_ORDER = ["30", "40", "50", "51", "52", "53", "54"];
 
 export function StarDistChart({ characterData }: StarDistChartProps) {
+  const { t } = useTranslations();
   const { chartData, latestRaidName } = useMemo(() => {
     if (!characterData.starDistribution) {
       return { chartData: [], latestRaidName: "" };
@@ -41,9 +43,9 @@ export function StarDistChart({ characterData }: StarDistChartProps) {
     let raidName: string;
     if (starDist.raidId.startsWith("3S")) {
       const num = starDist.raidId.replace("3S", "");
-      raidName = `대결전 S${num}`;
+      raidName = `${t("raid.eliminate")} S${num}`;
     } else {
-      raidName = `총력전 ${starDist.raidId}`;
+      raidName = `${t("raid.total")} ${starDist.raidId}`;
     }
 
     // 합계 계산
@@ -55,9 +57,10 @@ export function StarDistChart({ characterData }: StarDistChartProps) {
     // 파이 차트 데이터 생성
     const data = Object.entries(starDist.distribution)
       .map(([key, count]) => {
-        const label = categoryMap[key] || key;
+        const label = categoryMap[key] ? t(categoryMap[key]) : key;
         const percent = total > 0 ? (count / total) * 100 : 0;
         return {
+          key,
           name: label,
           value: Math.round(percent * 10) / 10,
           count,
@@ -65,23 +68,23 @@ export function StarDistChart({ characterData }: StarDistChartProps) {
       })
       .filter((d) => d.value > 0)
       .sort((a, b) => {
-        const aIdx = STAR_ORDER.indexOf(a.name);
-        const bIdx = STAR_ORDER.indexOf(b.name);
+        const aIdx = STAR_ORDER.indexOf(a.key);
+        const bIdx = STAR_ORDER.indexOf(b.key);
         return aIdx - bIdx;
       });
 
     return { chartData: data, latestRaidName: raidName };
-  }, [characterData]);
+  }, [characterData, t]);
 
   if (chartData.length === 0) {
     return (
       <Card className="md:flex-1 flex flex-col w-full max-w-full overflow-hidden">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm">성급 분포</CardTitle>
+          <CardTitle className="text-sm">{t("totalAnalysis.starDist.title")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center h-[200px] text-muted-foreground">
-            데이터가 없습니다.
+            {t("totalAnalysis.starDist.empty")}
           </div>
         </CardContent>
       </Card>
@@ -92,9 +95,9 @@ export function StarDistChart({ characterData }: StarDistChartProps) {
     <Card className="md:flex-1 flex flex-col max-w-full overflow-hidden">
       <CardHeader className="pb-1 px-3">
         <CardTitle className="text-sm flex items-center justify-between">
-          <span>성급 분포</span>
+          <span>{t("totalAnalysis.starDist.title")}</span>
           <span className="text-xs font-normal text-muted-foreground">
-            {latestRaidName} 기준
+            {t("totalAnalysis.starDist.basis").replace("{n}", latestRaidName)}
           </span>
         </CardTitle>
       </CardHeader>
@@ -119,7 +122,7 @@ export function StarDistChart({ characterData }: StarDistChartProps) {
                   {chartData.map((entry) => (
                     <Cell
                       key={entry.name}
-                      fill={STAR_COLORS[entry.name] || "#888"}
+                      fill={STAR_COLORS[entry.key] || "#888"}
                       stroke="transparent"
                     />
                   ))}
@@ -135,7 +138,7 @@ export function StarDistChart({ characterData }: StarDistChartProps) {
                           {data.name}
                         </p>
                         <p className="text-popover-foreground">
-                          {data.value}% ({data.count.toLocaleString()}명)
+                          {data.value}% ({t("totalAnalysis.starDist.persons").replace("{n}", data.count.toLocaleString())})
                         </p>
                       </div>
                     );
@@ -152,7 +155,7 @@ export function StarDistChart({ characterData }: StarDistChartProps) {
                 <div
                   className="w-3 h-3 rounded-full flex-shrink-0"
                   style={{
-                    backgroundColor: STAR_COLORS[entry.name] || "#888",
+                    backgroundColor: STAR_COLORS[entry.key] || "#888",
                   }}
                 />
                 <span className="text-xs">{entry.name}</span>

@@ -11,6 +11,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { ChevronDown } from "lucide-react";
+import { useTranslations } from "@/lib/i18n";
 
 interface ScorePreset {
   label: string;
@@ -32,7 +33,8 @@ function ScoreChipComponent({
   scoreRange,
   onChange,
   className,
-}: ScoreChipProps) {
+}: ScoreChipProps): React.ReactElement {
+  const { t } = useTranslations();
   const [open, setOpen] = useState(false);
 
   // 로컬 상태 (Popover 내부에서 사용)
@@ -58,8 +60,8 @@ function ScoreChipComponent({
   const displayText = useMemo(() => activePreset
     ? activePreset.label
     : scoreRange
-      ? `${scoreRange[0].toLocaleString()} ~ ${scoreRange[1] >= 999999999 ? "최대" : scoreRange[1].toLocaleString()}`
-      : "전체", [activePreset, scoreRange]);
+      ? `${scoreRange[0].toLocaleString()} ~ ${scoreRange[1] >= 999999999 ? t("ui.scoreChip.max") : scoreRange[1].toLocaleString()}`
+      : t("ui.scoreChip.all"), [activePreset, scoreRange, t]);
 
   const isDefault = !scoreRange;
 
@@ -125,7 +127,7 @@ function ScoreChipComponent({
       </PopoverTrigger>
       <PopoverContent className="w-72 p-3" align="start">
         <div className="space-y-3">
-          <p className="text-sm font-medium">{label} 범위</p>
+          <p className="text-sm font-medium">{t("ui.scoreChip.range").replace("{label}", label)}</p>
 
           {/* 프리셋 버튼 */}
           <div className="flex gap-2 flex-wrap">
@@ -150,7 +152,7 @@ function ScoreChipComponent({
           <div className="flex items-center gap-2">
             <Input
               type="number"
-              placeholder="최소"
+              placeholder={t("ui.scoreChip.min")}
               value={localMin}
               onChange={(e) => setLocalMin(e.target.value)}
               className="flex-1"
@@ -158,7 +160,7 @@ function ScoreChipComponent({
             <span className="text-sm text-muted-foreground">~</span>
             <Input
               type="number"
-              placeholder="최대"
+              placeholder={t("ui.scoreChip.max")}
               value={localMax}
               onChange={(e) => setLocalMax(e.target.value)}
               className="flex-1"
@@ -173,14 +175,14 @@ function ScoreChipComponent({
               onClick={handleReset}
               className="flex-1"
             >
-              초기화
+              {t("common.reset")}
             </Button>
             <Button
               size="sm"
               onClick={handleApply}
               className="flex-1"
             >
-              적용
+              {t("common.apply")}
             </Button>
           </div>
         </div>

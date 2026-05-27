@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ChevronDown } from "lucide-react";
+import { useTranslations } from "@/lib/i18n";
 
 interface RangeChipProps {
   label: string;
@@ -39,6 +40,7 @@ function RangeChipComponent({
   suffix = "",
   className,
 }: RangeChipProps) {
+  const { t } = useTranslations();
   const [open, setOpen] = useState(false);
 
   // 로컬 상태 (Popover 내부에서 사용)
@@ -55,11 +57,11 @@ function RangeChipComponent({
 
   const displayText = useMemo(() =>
     minValue === min && maxValue === max
-      ? "전체"
+      ? t("raid.all")
       : minValue === maxValue
         ? `${minValue}${suffix}`
         : `${minValue}~${maxValue}${suffix}`,
-    [minValue, maxValue, min, max, suffix]
+    [minValue, maxValue, min, max, suffix, t]
   );
 
   const isDefault = minValue === min && maxValue === max;
@@ -116,7 +118,7 @@ function RangeChipComponent({
       </PopoverTrigger>
       <PopoverContent className="w-auto p-3" align="start">
         <div className="space-y-3">
-          <p className="text-sm font-medium">{label} 범위</p>
+          <p className="text-sm font-medium">{t("ui.scoreChip.range").replace("{label}", label)}</p>
           <div className="flex items-center gap-2">
             <Select
               value={localMin.toString()}
@@ -160,14 +162,14 @@ function RangeChipComponent({
               onClick={handleReset}
               className="flex-1"
             >
-              초기화
+              {t("common.reset")}
             </Button>
             <Button
               size="sm"
               onClick={handleApply}
               className="flex-1"
             >
-              적용
+              {t("common.apply")}
             </Button>
           </div>
         </div>

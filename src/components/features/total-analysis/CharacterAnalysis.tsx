@@ -8,12 +8,14 @@ import { StarDistChart } from "./StarDistChart";
 import { UsageHeatmap } from "./UsageHeatmap";
 import { StudentImage } from "@/components/features/student/student-image";
 import { Card, CardContent } from "@/components/ui/card";
+import { useTranslations } from "@/lib/i18n";
 
 interface CharacterAnalysisProps {
   data: TotalAnalysisData;
 }
 
 export function CharacterAnalysis({ data }: CharacterAnalysisProps) {
+  const { t } = useTranslations();
   const { studentsMap, studentSearchMap } = useStudentMaps();
   const [selectedStudentId, setSelectedStudentId] = useState<string>(() => {
     const random = data.characterAnalyses[Math.floor(Math.random() * data.characterAnalyses.length)];
@@ -28,10 +30,11 @@ export function CharacterAnalysis({ data }: CharacterAnalysisProps) {
       .map((char) => ({
         value: char.studentId,
         label:
-          studentsMap[char.studentId.toString()] || `학생 ${char.studentId}`,
+          studentsMap[char.studentId.toString()] ||
+          t("totalAnalysis.character.unknownStudent").replace("{n}", String(char.studentId)),
       }))
       .sort((a, b) => a.label.localeCompare(b.label, "ko"));
-  }, [data.characterAnalyses, studentsMap, isLoaded]);
+  }, [data.characterAnalyses, studentsMap, isLoaded, t]);
 
   const selectedCharData = useMemo(() => {
     if (!selectedStudentId) return null;
@@ -44,13 +47,13 @@ export function CharacterAnalysis({ data }: CharacterAnalysisProps) {
     <div className="space-y-4">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center justify-between">
         <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
-          캐릭터 상세 분석
+          {t("totalAnalysis.character.title")}
         </h2>
         <SearchableSelect
           options={characterOptions}
           value={selectedStudentId}
           onValueChange={setSelectedStudentId}
-          placeholder={isLoaded ? "학생을 선택하세요" : "로딩 중..."}
+          placeholder={isLoaded ? t("totalAnalysis.character.selectPlaceholder") : t("totalAnalysis.character.loadingPlaceholder")}
           className="w-full sm:w-[200px]"
           studentSearchMap={studentSearchMap}
           disabled={!isLoaded}
@@ -77,10 +80,10 @@ export function CharacterAnalysis({ data }: CharacterAnalysisProps) {
                   {/* 통계 그리드 - 모바일: 다음 줄, PC: 인라인 */}
                   <div className="w-full sm:w-auto sm:flex-1 grid grid-cols-4 gap-2 sm:gap-x-6 text-center">
                     {[
-                      { label: "종합", value: `${selectedCharData.overallRank}위` },
-                      { label: selectedCharData.studentId < 20000 ? "STRIKER 내" : "SPECIAL 내", value: `${selectedCharData.categoryRank}위` },
-                      { label: "사용", value: selectedCharData.totalUsage.toLocaleString() },
-                      { label: "조력자", value: `${(selectedCharData.assistStats.assistRatio * 100).toFixed(1)}%` },
+                      { label: t("totalAnalysis.character.statOverall"), value: t("totalAnalysis.character.rankSuffix").replace("{n}", String(selectedCharData.overallRank)) },
+                      { label: selectedCharData.studentId < 20000 ? t("totalAnalysis.character.statStrikerIn") : t("totalAnalysis.character.statSpecialIn"), value: t("totalAnalysis.character.rankSuffix").replace("{n}", String(selectedCharData.categoryRank)) },
+                      { label: t("totalAnalysis.character.statUsage"), value: selectedCharData.totalUsage.toLocaleString() },
+                      { label: t("totalAnalysis.character.statAssist"), value: `${(selectedCharData.assistStats.assistRatio * 100).toFixed(1)}%` },
                     ].map((stat, i) => (
                       <div key={i} className="flex flex-col">
                         <span className="text-[10px] sm:text-xs text-muted-foreground">{stat.label}</span>
@@ -95,7 +98,7 @@ export function CharacterAnalysis({ data }: CharacterAnalysisProps) {
             {/* Synergy Characters */}
             <Card className="max-w-full overflow-hidden">
               <CardContent className="px-3 py-0 max-w-full overflow-hidden">
-                <div className="text-sm font-semibold mb-2">시너지 TOP 3</div>
+                <div className="text-sm font-semibold mb-2">{t("totalAnalysis.character.synergyTitle")}</div>
                 <div className="space-y-2">
                   {selectedCharData.topSynergyChars
                     .slice(0, 3)
@@ -113,7 +116,7 @@ export function CharacterAnalysis({ data }: CharacterAnalysisProps) {
                         <div className="flex-1 min-w-0">
                           <div className="text-sm truncate">
                             {studentsMap[synergy.studentId.toString()] ||
-                              `학생 ${synergy.studentId}`}
+                              t("totalAnalysis.character.unknownStudent").replace("{n}", String(synergy.studentId))}
                           </div>
                         </div>
                         <span className="text-sm text-muted-foreground">
@@ -123,7 +126,7 @@ export function CharacterAnalysis({ data }: CharacterAnalysisProps) {
                     ))}
                   {selectedCharData.topSynergyChars.length === 0 && (
                     <div className="text-sm text-muted-foreground text-center py-2">
-                      데이터 없음
+                      {t("totalAnalysis.character.noData")}
                     </div>
                   )}
                 </div>
@@ -145,7 +148,7 @@ export function CharacterAnalysis({ data }: CharacterAnalysisProps) {
       ) : (
         <Card className="max-w-full overflow-hidden">
           <CardContent className="flex items-center justify-center h-[120px] sm:h-[150px] text-muted-foreground text-sm">
-            분석할 캐릭터를 선택해주세요.
+            {t("totalAnalysis.character.emptyState")}
           </CardContent>
         </Card>
       )}

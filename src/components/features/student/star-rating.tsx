@@ -1,5 +1,8 @@
+"use client";
+
 import React from "react";
 import { Star } from "lucide-react";
+import { useTranslations } from "@/lib/i18n";
 
 interface StarRatingProps {
   value: number; // 1-9 (10, 20, 30, 40, 50, 51, 52, 53, 54에 매핑)
@@ -9,9 +12,20 @@ interface StarRatingProps {
 
 // gradeKey 매핑: 1성~5성(10,20,30,40,50), 전무1~4(51,52,53,54)
 const gradeKeyMap = [10, 20, 30, 40, 50, 51, 52, 53, 54];
-const gradeLabels = ["1성", "2성", "3성", "4성", "5성", "전무1", "전무2", "전무3", "전무4"];
+const gradeLabelKeys = [
+  "starRating.label.1star",
+  "starRating.label.2star",
+  "starRating.label.3star",
+  "starRating.label.4star",
+  "starRating.label.5star",
+  "starRating.label.weapon1",
+  "starRating.label.weapon2",
+  "starRating.label.weapon3",
+  "starRating.label.weapon4",
+];
 
 export function StarRating({ value, onChange, className = "" }: StarRatingProps) {
+  const { t } = useTranslations();
   // gradeKey를 1-9 인덱스로 변환
   const starIndex = gradeKeyMap.indexOf(value);
   const activeStars = starIndex >= 0 ? starIndex + 1 : 1; // 최소 1개
@@ -34,7 +48,7 @@ export function StarRating({ value, onChange, className = "" }: StarRatingProps)
             type="button"
             onClick={() => handleStarClick(index)}
             className="p-0 hover:scale-110 transition-transform focus:outline-none"
-            title={gradeLabels[index]}
+            title={t(gradeLabelKeys[index])}
           >
             <Star
               className={`w-4 h-4 ${

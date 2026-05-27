@@ -29,53 +29,34 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { useTranslations } from "@/lib/i18n";
 
-const menuItems = [
+type MenuItem = {
+  titleKey: string;
+  url?: string;
+  icon?: typeof Home;
+  image?: string;
+  subItems?: { titleKey: string; url: string }[];
+};
+
+const menuItems: MenuItem[] = [
+  { titleKey: "nav.home", url: "/", icon: Home },
+  { titleKey: "nav.guide", url: "/guide", icon: Sprout },
+  { titleKey: "nav.party", url: "/party", icon: Search },
+  { titleKey: "nav.analysis", url: "/analysis", icon: PieChart },
+  { titleKey: "nav.video", url: "/video-analysis", icon: Video },
+  { titleKey: "nav.arona", url: "/arona", image: "/arona.webp" },
   {
-    title: "홈",
-    url: "/",
-    icon: Home,
-  },
-  {
-    title: "입문 가이드",
-    url: "/guide",
-    icon: Sprout,
-  },
-  {
-    title: "파티 찾기 & 요약",
-    url: "/party",
-    icon: Search,
-  },
-  {
-    title: "분석",
-    url: "/analysis",
-    icon: PieChart,
-  },
-  {
-    title: "영상",
-    url: "/video-analysis",
-    icon: Video,
-  },
-  {
-    title: "ARONA",
-    url: "/arona",
-    image: "/arona.webp",
-  },
-  {
-    title: "계산기",
+    titleKey: "nav.calculator",
     icon: Calculator,
-    subItems: [
-      {
-        title: "점수 계산기",
-        url: "/calculator/score",
-      },
-    ],
+    subItems: [{ titleKey: "nav.calculator.score", url: "/calculator/score" }],
   },
 ];
 
 export function AppSidebar() {
   const pathname = usePathname();
   const { setOpen, setOpenMobile, isMobile } = useSidebar();
+  const { t } = useTranslations();
 
   const handleMenuClick = () => {
     if (isMobile) {
@@ -90,29 +71,29 @@ export function AppSidebar() {
       <SidebarHeader>
         <div className="p-4">
           <h2 className="text-lg font-semibold">BA Torment</h2>
-          <p className="text-sm text-muted-foreground">
-            블루 아카이브 총력전/대결전 도우미
-          </p>
+          <p className="text-sm text-muted-foreground">{t("site.tagline")}</p>
         </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>메뉴</SidebarGroupLabel>
+          <SidebarGroupLabel>{t("nav.menu")}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => {
+                const title = t(item.titleKey);
                 if (item.subItems) {
+                  const Icon = item.icon;
                   return (
                     <Collapsible
-                      key={item.title}
+                      key={item.titleKey}
                       defaultOpen
                       className="group/collapsible"
                     >
                       <SidebarMenuItem>
                         <CollapsibleTrigger asChild>
                           <SidebarMenuButton>
-                            <item.icon />
-                            <span>{item.title}</span>
+                            {Icon && <Icon />}
+                            <span>{title}</span>
                             <ChevronDown className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
                           </SidebarMenuButton>
                         </CollapsibleTrigger>
@@ -120,7 +101,7 @@ export function AppSidebar() {
                           <div className="ml-4 mt-1">
                             {item.subItems.map((subItem) => (
                               <SidebarMenuButton
-                                key={subItem.title}
+                                key={subItem.titleKey}
                                 asChild
                                 isActive={pathname === subItem.url}
                                 className="pl-8"
@@ -129,7 +110,7 @@ export function AppSidebar() {
                                   href={subItem.url}
                                   onClick={handleMenuClick}
                                 >
-                                  <span>{subItem.title}</span>
+                                  <span>{t(subItem.titleKey)}</span>
                                 </Link>
                               </SidebarMenuButton>
                             ))}
@@ -139,22 +120,23 @@ export function AppSidebar() {
                     </Collapsible>
                   );
                 }
+                const Icon = item.icon;
                 return (
-                  <SidebarMenuItem key={item.title}>
+                  <SidebarMenuItem key={item.titleKey}>
                     <SidebarMenuButton asChild isActive={pathname === item.url}>
-                      <Link href={item.url} onClick={handleMenuClick}>
-                        {"image" in item ? (
+                      <Link href={item.url!} onClick={handleMenuClick}>
+                        {item.image ? (
                           <Image
-                            src={item.image as string}
-                            alt={item.title}
+                            src={item.image}
+                            alt={title}
                             width={16}
                             height={16}
                             className="rounded-full object-cover"
                           />
                         ) : (
-                          <item.icon />
+                          Icon && <Icon />
                         )}
-                        <span>{item.title}</span>
+                        <span>{title}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

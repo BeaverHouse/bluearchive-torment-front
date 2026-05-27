@@ -4,14 +4,16 @@ import React from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import useSearchModeStore, { type SearchMode } from "@/store/useSearchModeStore";
 import { trackEvent } from "@/utils/analytics";
+import { useTranslations } from "@/lib/i18n";
 
-const MODES: { value: SearchMode; label: string }[] = [
-  { value: "filter", label: "필터" },
-  { value: "pool", label: "캐릭터 풀" },
-  { value: "single", label: "단일 파티" },
+const MODES: { value: SearchMode; tkey: string }[] = [
+  { value: "filter", tkey: "party.search.tab.filter" },
+  { value: "pool", tkey: "party.search.tab.pool" },
+  { value: "single", tkey: "party.search.tab.single" },
 ];
 
 export default function SearchModeSelector() {
+  const { t } = useTranslations();
   const mode = useSearchModeStore((s) => s.mode);
   const setMode = useSearchModeStore((s) => s.setMode);
 
@@ -28,7 +30,7 @@ export default function SearchModeSelector() {
       <TabsList className="grid w-full grid-cols-3">
         {MODES.map((m) => (
           <TabsTrigger key={m.value} value={m.value}>
-            {m.label}
+            {t(m.tkey)}
           </TabsTrigger>
         ))}
       </TabsList>

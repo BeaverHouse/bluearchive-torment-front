@@ -92,7 +92,8 @@ export type StreamMessage =
 // AI Search 요청 body
 export interface AISearchRequest {
   question: string;
-  language: "ko";
+  /** BCP47-ish locale tag. llm-client expects max 5 chars; "ko" | "en" | "zh" today. */
+  language: string;
   fixed_service_ids: string[];
   messages?: Message[];
   persona_prompt?: string;

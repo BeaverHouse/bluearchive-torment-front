@@ -6,17 +6,20 @@ import type {
   Message,
   StreamMessage,
 } from "@/types/ai-search";
-import { getStatusMessage, getToolResultMessage, AI_SEARCH_FALLBACK_MESSAGE } from "@/constants/ai-search";
+import { getStatusMessageKey, getToolResultMessageKey, AI_SEARCH_FALLBACK_KEY } from "@/constants/ai-search";
 import { trackEvent } from "@/utils/analytics";
+import { useTranslations } from "@/lib/i18n";
 
 interface UseChatProps {
   apiKey: string | null;
   personaPrompt: string;
   instructionPrompt: string;
+  language: string;
   onApiKeyRequired: () => void;
 }
 
-export function useChat({ apiKey, personaPrompt, instructionPrompt, onApiKeyRequired }: UseChatProps) {
+export function useChat({ apiKey, personaPrompt, instructionPrompt, language, onApiKeyRequired }: UseChatProps) {
+  const { t } = useTranslations();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -34,8 +37,8 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, onApiKeyRequ
       case "status": {
         const { statusKey, toolName } = message.metadata ?? {};
         if (statusKey === "answer_complete") break;
-        const displayMessage = getStatusMessage(statusKey, toolName);
-        setCurrentStatus(displayMessage);
+        const tkey = getStatusMessageKey(statusKey, toolName);
+        setCurrentStatus(tkey ? t(tkey) : "");
         break;
       }
       case "item_result": {
@@ -48,7 +51,7 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, onApiKeyRequ
             [id]: { tool: tool ?? "", item },
           }));
         }
-        setCurrentStatus(getToolResultMessage(tool));
+        setCurrentStatus(t(getToolResultMessageKey(tool)));
         break;
       }
       case "answer":
@@ -56,10 +59,10 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, onApiKeyRequ
         setCurrentStatus("");
         break;
       case "error":
-        setError(message.content || message.title || "오류가 발생했습니다.");
+        setError(message.content || message.title || t("arona.error.generic"));
         break;
     }
-  }, []);
+  }, [t]);
 
   // 메시지 전송
   const sendMessage = async (e?: React.FormEvent) => {
@@ -99,14 +102,15 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, onApiKeyRequ
         messages: previousMessages,
         personaPrompt: personaPrompt || undefined,
         instructionPrompt: instructionPrompt || undefined,
+        language,
         onUpdate: handleStreamUpdate,
         signal: abortControllerRef.current.signal,
       });
     } catch (err) {
       if ((err as Error).name === "AbortError") {
-        setCurrentAnswer((prev) => (prev ? prev + "\n\n(중단됨)" : ""));
+        setCurrentAnswer((prev) => (prev ? prev + `\n\n${t("arona.error.aborted")}` : ""));
       } else {
-        setError((err as Error).message || "오류가 발생했습니다.");
+        setError((err as Error).message || t("arona.error.generic"));
       }
     } finally {
       setIsLoading(false);
@@ -132,12 +136,12 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, onApiKeyRequ
       } else if (!error) {
         setMessages((prev) => [
           ...prev,
-          { role: "assistant", content: AI_SEARCH_FALLBACK_MESSAGE },
+          { role: "assistant", content: t(AI_SEARCH_FALLBACK_KEY) },
         ]);
       }
     }
     wasLoadingRef.current = isLoading;
-  }, [isLoading, currentAnswer, currentItemResults, error]);
+  }, [isLoading, currentAnswer, currentItemResults, error, t]);
 
   // 요청 중단
   const stopGeneration = () => {
