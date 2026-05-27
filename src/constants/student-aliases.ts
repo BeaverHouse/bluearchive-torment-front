@@ -36,6 +36,26 @@ export const ALIAS_HIDDEN_CODES: ReadonlySet<number> = new Set(
   Object.keys(STUDENT_ALIASES).map(Number)
 );
 
+/**
+ * 필터 데이터에서 alias 코드를 canonical로 병합.
+ * 비디오 필터처럼 모드 구분이 불가능한 컨텍스트에서 사용.
+ */
+export function mergeAliasFilters(
+  filters: Record<string, Record<string, number>>
+): Record<string, Record<string, number>> {
+  const merged = { ...filters };
+  for (const [aliasStr, canonicalCode] of Object.entries(STUDENT_ALIASES)) {
+    if (!(aliasStr in merged)) continue;
+    const canonicalStr = String(canonicalCode);
+    if (!merged[canonicalStr]) merged[canonicalStr] = {};
+    for (const [grade, count] of Object.entries(merged[aliasStr])) {
+      merged[canonicalStr][grade] = (merged[canonicalStr][grade] || 0) + count;
+    }
+    delete merged[aliasStr];
+  }
+  return merged;
+}
+
 /** canonical code → alias(secondary) codes */
 export const CANONICAL_TO_ALIASES: Readonly<Record<number, number[]>> =
   Object.entries(STUDENT_ALIASES).reduce<Record<number, number[]>>(
