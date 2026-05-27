@@ -90,12 +90,16 @@ function SummaryNav({ sections, t }: { sections: SectionId[]; t: (k: string) => 
   }, [sections]);
 
   useEffect(() => {
-    btnRefs.current.get(active)?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    const btn = btnRefs.current.get(active);
+    const nav = navRef.current;
+    if (!btn || !nav) return;
+    const left = btn.offsetLeft - nav.offsetWidth / 2 + btn.offsetWidth / 2;
+    nav.scrollTo({ left, behavior: "smooth" });
   }, [active]);
 
   return (
     <nav className="sticky top-0 z-20 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b -mx-4 px-4 mb-4">
-      <div ref={navRef} className="flex gap-1.5 overflow-x-auto py-2" style={{ scrollbarWidth: "none" }}>
+      <div ref={navRef} className="flex gap-1.5 overflow-x-auto py-2" style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch" }}>
         {sections.map((id) => (
           <button
             key={id}
