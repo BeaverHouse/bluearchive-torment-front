@@ -1,5 +1,3 @@
-import { sendGAEvent } from '@next/third-parties/google';
-
 type Difficulty = 'normal' | 'hard' | 'veryHard' | 'hardcore' | 'extreme' | 'insane' | 'torment' | 'lunatic';
 type TimeLimit = '3min' | '4min' | '4min30s';
 
@@ -38,5 +36,7 @@ export type AnalyticsEvent =
   | { name: 'guide_video_click'; params: { video_id: string } };
 
 export function trackEvent<E extends AnalyticsEvent>(name: E['name'], params?: E['params']) {
-  sendGAEvent('event', name, (params ?? {}) as Record<string, string | number | boolean>);
+  if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+    window.gtag('event', name, params ?? {});
+  }
 }
