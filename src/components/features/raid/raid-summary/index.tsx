@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -26,25 +26,91 @@ import { generateSearchKeyword } from "@/utils/raid";
 import { useSectionView } from "@/hooks/use-section-view";
 import { useTranslations } from "@/lib/i18n";
 
+type SectionId =
+  | "platinum_stats"
+  | "essential_chars"
+  | "high_impact_chars"
+  | "top_assistants"
+  | "top_5_party"
+  | "min_ue_clear"
+  | "max_party_clear"
+  | "party_composition"
+  | "character_usage_table"
+  | "character_growth_stats";
+
 function SummarySection({
   section,
   children,
 }: {
-  section:
-    | "platinum_stats"
-    | "essential_chars"
-    | "high_impact_chars"
-    | "top_assistants"
-    | "top_5_party"
-    | "min_ue_clear"
-    | "max_party_clear"
-    | "party_composition"
-    | "character_usage_table"
-    | "character_growth_stats";
+  section: SectionId;
   children: React.ReactNode;
 }) {
   const ref = useSectionView("summary_section_view", section);
-  return <div ref={ref}>{children}</div>;
+  return <div id={section} className="scroll-mt-12" ref={ref}>{children}</div>;
+}
+
+const SECTION_LABELS: Record<SectionId, string> = {
+  platinum_stats: "party.summary.platinum",
+  essential_chars: "party.summary.essential",
+  high_impact_chars: "party.summary.highImpact",
+  top_assistants: "party.summary.topAssist.title",
+  top_5_party: "party.summary.top5",
+  min_ue_clear: "party.summary.minUe",
+  max_party_clear: "party.summary.maxParty",
+  party_composition: "party.summary.partyRatio.title",
+  character_usage_table: "party.summary.usage.title",
+  character_growth_stats: "party.summary.growth.title",
+};
+
+function SummaryNav({ sections, t }: { sections: SectionId[]; t: (k: string) => string }) {
+  const [active, setActive] = useState<SectionId>(sections[0]);
+  const navRef = useRef<HTMLDivElement>(null);
+  const btnRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+
+  useEffect(() => {
+    const els = sections.map(id => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+    if (els.length === 0) return;
+
+    const ratios = new Map<string, number>();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) ratios.set(entry.target.id, entry.intersectionRatio);
+        let best = sections[0];
+        let bestRatio = 0;
+        for (const id of sections) {
+          const r = ratios.get(id) ?? 0;
+          if (r > bestRatio) { bestRatio = r; best = id; }
+        }
+        if (bestRatio > 0) setActive(best);
+      },
+      { threshold: [0, 0.1, 0.5, 1] },
+    );
+    els.forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, [sections]);
+
+  useEffect(() => {
+    btnRefs.current.get(active)?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+  }, [active]);
+
+  return (
+    <nav className="sticky top-0 z-20 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b -mx-4 px-4 mb-4">
+      <div ref={navRef} className="flex gap-1.5 overflow-x-auto py-2" style={{ scrollbarWidth: "none" }}>
+        {sections.map((id) => (
+          <button
+            key={id}
+            ref={el => { if (el) btnRefs.current.set(id, el); }}
+            onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+            className={`shrink-0 px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+              id === active ? "bg-sky-500 text-white" : "bg-muted text-muted-foreground hover:bg-muted/80"
+            }`}
+          >
+            {t(SECTION_LABELS[id])}
+          </button>
+        ))}
+      </div>
+    </nav>
+  );
 }
 
 const RaidSummary = ({
@@ -152,8 +218,19 @@ const RaidSummary = ({
   const tormentClearPercent = Number(Math.min(tormentSummaryData.clearCount, 20000) / 20000) * 100;
   const lunaticClearPercent = Number(Math.min(lunaticSummaryData.clearCount, 20000) / 20000) * 100;
 
+  const visibleSections: SectionId[] = [];
+  if (level !== "I") visibleSections.push("platinum_stats");
+  if (data.essentialCharacters?.length) visibleSections.push("essential_chars");
+  if (data.highImpactCharacters?.length) visibleSections.push("high_impact_chars");
+  if (assistData.length > 0) visibleSections.push("top_assistants");
+  visibleSections.push("top_5_party");
+  if (data.minUEUser) visibleSections.push("min_ue_clear");
+  if (data.maxPartyUser) visibleSections.push("max_party_clear");
+  visibleSections.push("party_composition", "character_usage_table", "character_growth_stats");
+
   return (
     <div className="container mx-auto py-4 sm:py-8 max-w-7xl">
+      <SummaryNav sections={visibleSections} t={t} />
       <div className="mb-6 sm:mb-8">
         {searchKeyword && (
           <div className="mb-4 rounded-lg border border-gray-200 dark:border-gray-700 p-3">
