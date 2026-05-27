@@ -13,7 +13,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { VideoListItem } from "@/types/video";
-import { useRaids } from "@/hooks/use-raids";
+import { useRaids, getRaidName as getLocalizedRaidName } from "@/hooks/use-raids";
 import { trackEvent } from "@/utils/analytics";
 import { useTranslations } from "@/lib/i18n";
 
@@ -66,12 +66,12 @@ function YouTubeThumbnail({ videoId, title }: { videoId: string; title: string }
 
 export function VideoList({ videos }: VideoListProps) {
   const { raids } = useRaids();
-  const { t } = useTranslations();
+  const { t, locale } = useTranslations();
 
   const getRaidName = (raidId: string | null): string | null => {
     if (!raidId) return null;
     const raid = raids.find((r) => r.id === raidId);
-    return raid?.name || null;
+    return raid ? getLocalizedRaidName(raid, locale) : null;
   };
 
   return (

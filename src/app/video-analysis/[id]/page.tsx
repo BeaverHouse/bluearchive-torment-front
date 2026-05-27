@@ -5,7 +5,7 @@ import { getVideoDetail } from "@/lib/api";
 import { VideoAnalysisData, VideoDetailResponse } from "@/types/video";
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
-import { useRaids } from "@/hooks/use-raids";
+import { useRaids, getRaidName as getLocalizedRaidName } from "@/hooks/use-raids";
 import ErrorPage from "@/components/common/error-page";
 import Loading from "@/components/common/loading";
 import { useTranslations } from "@/lib/i18n";
@@ -16,7 +16,7 @@ export default function VideoDetailPage() {
   const videoId = params.id as string;
   const raidId = searchParams.get("raid_id");
   const { raids } = useRaids();
-  const { t } = useTranslations();
+  const { t, locale } = useTranslations();
   const [videoDetail, setVideoDetail] = useState<
     VideoDetailResponse["data"] | null
   >(null);
@@ -29,7 +29,7 @@ export default function VideoDetailPage() {
   const getRaidName = (raidIdParam: string | null): string | null => {
     if (!raidIdParam) return null;
     const raid = raids.find((r) => r.id === raidIdParam);
-    return raid?.name || null;
+    return raid ? getLocalizedRaidName(raid, locale) : null;
   };
 
   useEffect(() => {

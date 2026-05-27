@@ -13,6 +13,7 @@ import {
 import { Clock, RefreshCw } from "lucide-react";
 import { getQueueStatus, QueueItem } from "@/lib/api";
 import { RaidInfo } from "@/types/raid";
+import { getRaidName as getLocalizedRaidName } from "@/hooks/use-raids";
 import { useTranslations } from "@/lib/i18n";
 
 interface VideoQueueDialogProps {
@@ -20,7 +21,7 @@ interface VideoQueueDialogProps {
 }
 
 export function VideoQueueDialog({ raids }: VideoQueueDialogProps) {
-  const { t } = useTranslations();
+  const { t, locale } = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
   const [queueItems, setQueueItems] = useState<QueueItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -39,7 +40,7 @@ export function VideoQueueDialog({ raids }: VideoQueueDialogProps) {
 
   const getRaidName = (raidId: string) => {
     const raid = raids.find((r) => r.id === raidId);
-    return raid?.name || raidId;
+    return raid ? getLocalizedRaidName(raid, locale) : raidId;
   };
 
   const getStatusBadge = (status: string) => {
