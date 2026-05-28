@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -120,8 +121,13 @@ function SummaryNav({
   t: (k: string) => string;
 }) {
   const [active, setActive] = useState<SectionId>(sections[0]);
+  const [portal, setPortal] = useState<HTMLElement | null>(null);
   const navRef = useRef<HTMLDivElement>(null);
   const btnRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+
+  useEffect(() => {
+    setPortal(document.getElementById("sub-nav-mount"));
+  }, []);
 
   useEffect(() => {
     const els = sections
@@ -159,35 +165,40 @@ function SummaryNav({
     nav.scrollTo({ left, behavior: "smooth" });
   }, [active]);
 
-  return (
-    <nav className="sticky top-14 z-30 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b -mx-4 px-4 mb-4">
-      <div
-        ref={navRef}
-        className="flex gap-1.5 overflow-x-auto py-2"
-        style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch" }}
-      >
-        {sections.map((id) => (
-          <button
-            key={id}
-            ref={(el) => {
-              if (el) btnRefs.current.set(id, el);
-            }}
-            onClick={() =>
-              document
-                .getElementById(id)
-                ?.scrollIntoView({ behavior: "smooth", block: "start" })
-            }
-            className={`shrink-0 px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-              id === active
-                ? "bg-sky-500 text-white"
-                : "bg-muted text-muted-foreground hover:bg-muted/80"
-            }`}
-          >
-            {t(SECTION_LABELS[id])}
-          </button>
-        ))}
+  if (!portal) return null;
+
+  return createPortal(
+    <nav className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b">
+      <div className="max-w-[800px] mx-auto px-4">
+        <div
+          ref={navRef}
+          className="flex gap-1.5 overflow-x-auto py-2"
+          style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch" }}
+        >
+          {sections.map((id) => (
+            <button
+              key={id}
+              ref={(el) => {
+                if (el) btnRefs.current.set(id, el);
+              }}
+              onClick={() =>
+                document
+                  .getElementById(id)
+                  ?.scrollIntoView({ behavior: "smooth", block: "start" })
+              }
+              className={`shrink-0 px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                id === active
+                  ? "bg-sky-500 text-white"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80"
+              }`}
+            >
+              {t(SECTION_LABELS[id])}
+            </button>
+          ))}
+        </div>
       </div>
-    </nav>
+    </nav>,
+    portal,
   );
 }
 
