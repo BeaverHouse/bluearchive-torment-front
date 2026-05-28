@@ -345,7 +345,7 @@ const RaidSummary = ({
   const charTabs: { value: string; label: string }[] = [];
   if (hasEssential) charTabs.push({ value: "essential", label: t("party.summary.essential") });
   if (hasHighImpact) charTabs.push({ value: "high_impact", label: t("party.summary.highImpact") });
-  if (hasAssists) charTabs.push({ value: "assistants", label: t("party.summary.topAssist.title") });
+  if (hasAssists) charTabs.push({ value: "assistants", label: t("party.summary.assistTab") });
   const gridColsClass =
     charTabs.length === 3
       ? "grid-cols-3"
@@ -537,7 +537,7 @@ const RaidSummary = ({
                 <Tabs defaultValue={charTabs[0].value} className="w-full">
                   <TabsList className={`grid w-full ${gridColsClass} mb-3`}>
                     {charTabs.map((tab) => (
-                      <TabsTrigger key={tab.value} value={tab.value}>
+                      <TabsTrigger key={tab.value} value={tab.value} className="text-xs sm:text-sm">
                         {tab.label}
                       </TabsTrigger>
                     ))}
