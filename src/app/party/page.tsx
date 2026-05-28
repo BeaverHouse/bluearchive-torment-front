@@ -12,7 +12,7 @@ import { useRaids, getRaidName } from "@/hooks/use-raids";
 import { useTranslations } from "@/lib/i18n";
 
 export default function PartyPage() {
-  const { V3Season, setV3Season } = useBAStore();
+  const { V3Season, setV3Season, PartyTab, setPartyTab } = useBAStore();
   const { studentsMap, studentSearchMap } = useStudentMaps();
   const { raids, isLoading } = useRaids();
   const [summaryLevel, setSummaryLevel] = useState<"T" | "L">("T");
@@ -104,20 +104,23 @@ export default function PartyPage() {
         />
       </div>
       <br />
-      <Tabs defaultValue="search" className="w-full max-w-4xl">
+      <Tabs
+        value={PartyTab}
+        onValueChange={(v) => {
+          const tab = v as "search" | "summary";
+          setPartyTab(tab);
+          if (tab === "summary") {
+            trackEvent("summary_view", {
+              season,
+              difficulty: effectiveSummaryLevel === "L" ? "lunatic" : "torment",
+            });
+          }
+        }}
+        className="w-full max-w-4xl"
+      >
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="search">{t("party.tab.search")}</TabsTrigger>
-          <TabsTrigger
-            value="summary"
-            onClick={() =>
-              trackEvent("summary_view", {
-                season,
-                difficulty: effectiveSummaryLevel === "L" ? "lunatic" : "torment",
-              })
-            }
-          >
-            {t("party.tab.summary")}
-          </TabsTrigger>
+          <TabsTrigger value="summary">{t("party.tab.summary")}</TabsTrigger>
         </TabsList>
         <TabsContent value="search">
           <RaidSearch

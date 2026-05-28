@@ -4,6 +4,7 @@ import { immer } from "zustand/middleware/immer";
 
 interface V3BAState {
   V3Season: string;
+  PartyTab: "search" | "summary";
   ScoreRange: [number, number] | undefined;
   IncludeList: Array<number[]>;
   ExcludeList: Array<number>;
@@ -13,6 +14,7 @@ interface V3BAState {
   YoutubeOnly: boolean;
 
   setV3Season: (val: string) => void;
+  setPartyTab: (val: "search" | "summary") => void;
   setScoreRange: (val: [number, number] | undefined) => void;
   setIncludeList: (val: Array<number[]>) => void;
   setExcludeList: (val: Array<number>) => void;
@@ -40,8 +42,10 @@ const useBAStore = create(
       (set) => ({
         ...initialState,
         V3Season: "S00",
+        PartyTab: "search" as const,
 
         setV3Season: (val) => set((state) => ({ ...state, V3Season: val })),
+        setPartyTab: (val) => set((state) => ({ ...state, PartyTab: val })),
         setScoreRange: (val) => set((state) => ({ ...state, ScoreRange: val })),
         setIncludeList: (val) =>
           set((state) => ({ ...state, IncludeList: val })),
