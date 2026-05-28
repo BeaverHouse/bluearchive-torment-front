@@ -41,7 +41,6 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
                   <DarkModeToggle />
                 </div>
               </header>
-              <div id="sub-nav-mount" className="sticky top-14 z-30" />
               <main className="flex-1 space-y-4 p-4 pt-6">{children}</main>
               <Footer />
               <ScrollToTop />

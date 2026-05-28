@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { createPortal } from "react-dom";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -121,13 +120,8 @@ function SummaryNav({
   t: (k: string) => string;
 }) {
   const [active, setActive] = useState<SectionId>(sections[0]);
-  const [portal, setPortal] = useState<HTMLElement | null>(null);
   const navRef = useRef<HTMLDivElement>(null);
   const btnRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
-
-  useEffect(() => {
-    setPortal(document.getElementById("sub-nav-mount"));
-  }, []);
 
   useEffect(() => {
     const els = sections
@@ -165,10 +159,8 @@ function SummaryNav({
     nav.scrollTo({ left, behavior: "smooth" });
   }, [active]);
 
-  if (!portal) return null;
-
-  return createPortal(
-    <nav className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b">
+  return (
+    <nav className="sticky top-14 z-30 -mx-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b">
       <div className="max-w-[800px] mx-auto px-4">
         <div
           ref={navRef}
@@ -197,8 +189,7 @@ function SummaryNav({
           ))}
         </div>
       </div>
-    </nav>,
-    portal,
+    </nav>
   );
 }
 
