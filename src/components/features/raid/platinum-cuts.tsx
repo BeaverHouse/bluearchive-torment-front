@@ -73,7 +73,7 @@ export function PlatinumStats({
             </div>
             {lunaticClearPercent !== undefined && lunaticClearPercent > 0 && (
               <div className="text-xs text-muted-foreground">
-                {t("party.summary.platinum.lunatic")}: {lunaticClearPercent.toFixed(2)}%
+                {t("party.summary.platinum.lunatic").replace("{n}", lunaticClearPercent.toFixed(2))}
               </div>
             )}
           </div>
@@ -106,7 +106,7 @@ export function PlatinumStats({
               )}
               {selectedPartCut && (
                 <div className="text-xs font-semibold text-amber-600 dark:text-amber-500">
-                  {t("party.summary.platinum.subscore")}: {selectedPartCut.score.toLocaleString()}
+                  {t("party.summary.platinum.subscore").replace("{n}", selectedPartCut.score.toLocaleString())}
                 </div>
               )}
             </div>

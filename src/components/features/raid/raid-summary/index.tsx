@@ -332,10 +332,11 @@ const RaidSummary = ({
   const hasAssists = assistData.length > 0;
   const hasAnyCharData = hasEssential || hasHighImpact || hasAssists;
   const hasSpecialClears = !!data.minUEUser || !!data.maxPartyUser;
+  const hasPlatinum = (data.platinumCuts?.length ?? 0) > 0;
 
   /* ---- nav sections ---- */
   const visibleSections: SectionId[] = [];
-  if (level !== "I") visibleSections.push("platinum_stats");
+  if (hasPlatinum) visibleSections.push("platinum_stats");
   if (hasAnyCharData) visibleSections.push("key_characters");
   visibleSections.push("top_5_party", "party_composition");
   if (hasSpecialClears) visibleSections.push("special_clears");
@@ -509,17 +510,20 @@ const RaidSummary = ({
       <div className="space-y-4">
         {/* ═══ TIER 1: At a Glance ═══ */}
 
-        {level !== "I" && (
+        {hasPlatinum && (
           <SummarySection section="platinum_stats">
             <PlatinumStats
               clearCount={data.clearCount || 0}
               clearPercent={
-                level === "T" ? tormentClearPercent : lunaticClearPercent
+                level === "T" || level === "I"
+                  ? tormentClearPercent
+                  : lunaticClearPercent
               }
               platinumCuts={data.platinumCuts || []}
               partPlatinumCuts={data.partPlatinumCuts}
               lunaticClearPercent={
-                level === "T" && lunaticSummaryData.clearCount > 0
+                (level === "T" || level === "I") &&
+                lunaticSummaryData.clearCount > 0
                   ? lunaticClearPercent
                   : undefined
               }
