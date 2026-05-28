@@ -3,15 +3,11 @@ type TimeLimit = '3min' | '4min' | '4min30s';
 
 type SummarySection =
   | 'platinum_stats'
-  | 'essential_chars'
-  | 'high_impact_chars'
-  | 'top_assistants'
+  | 'key_characters'
   | 'top_5_party'
-  | 'min_ue_clear'
-  | 'max_party_clear'
   | 'party_composition'
-  | 'character_usage_table'
-  | 'character_growth_stats';
+  | 'special_clears'
+  | 'character_details';
 
 type TotalAnalysisSection = 'character_analysis' | 'lunatic_clear_chart' | 'raid_usage_carousel';
 
