@@ -343,9 +343,9 @@ const RaidSummary = ({
 
   /* ---- key characters tab config ---- */
   const charTabs: { value: string; label: string }[] = [];
-  if (hasEssential) charTabs.push({ value: "essential", label: t("party.summary.essential") });
-  if (hasHighImpact) charTabs.push({ value: "high_impact", label: t("party.summary.highImpact") });
-  if (hasAssists) charTabs.push({ value: "assistants", label: t("party.summary.assistTab") });
+  if (hasEssential) charTabs.push({ value: "essential", label: "Must-Have" });
+  if (hasHighImpact) charTabs.push({ value: "high_impact", label: "High Impact" });
+  if (hasAssists) charTabs.push({ value: "assistants", label: "Assist" });
   const gridColsClass =
     charTabs.length === 3
       ? "grid-cols-3"
