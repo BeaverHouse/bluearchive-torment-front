@@ -28,6 +28,14 @@ const YOUTUBE_THUMBNAIL_QUALITIES = [
   'hqdefault',     // 480x360 - 거의 항상 존재
 ] as const;
 
+function ThumbnailFallback() {
+  return (
+    <div className="w-full h-full flex items-center justify-center bg-gray-300 dark:bg-gray-700">
+      <Play className="h-16 w-16 text-gray-400" />
+    </div>
+  );
+}
+
 function YouTubeThumbnail({ videoId, title }: { videoId: string; title: string }) {
   const [qualityIndex, setQualityIndex] = useState(0);
   const [error, setError] = useState(false);
@@ -45,11 +53,7 @@ function YouTubeThumbnail({ videoId, title }: { videoId: string; title: string }
   };
 
   if (error) {
-    return (
-      <div className="w-full h-full flex items-center justify-center bg-gray-300 dark:bg-gray-700">
-        <Play className="h-16 w-16 text-gray-400" />
-      </div>
-    );
+    return <ThumbnailFallback />;
   }
 
   return (
@@ -62,6 +66,35 @@ function YouTubeThumbnail({ videoId, title }: { videoId: string; title: string }
       onError={handleError}
     />
   );
+}
+
+// Bilibili thumbnails live on i0.hdslb.com behind referer-based hotlink
+// protection, so we load them with a plain <img referrerPolicy="no-referrer">
+// (next/image can't set that) and fall back to a placeholder on error.
+function BilibiliThumbnail({ url, title }: { url: string; title: string }) {
+  const [error, setError] = useState(false);
+
+  if (error || !url) {
+    return <ThumbnailFallback />;
+  }
+
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={url}
+      alt={title}
+      referrerPolicy="no-referrer"
+      className="absolute inset-0 w-full h-full object-cover"
+      onError={() => setError(true)}
+    />
+  );
+}
+
+function VideoThumbnail({ video }: { video: VideoListItem }) {
+  if (video.platform === "bilibili") {
+    return <BilibiliThumbnail url={video.thumbnail_url ?? ""} title={video.title} />;
+  }
+  return <YouTubeThumbnail videoId={video.video_id} title={video.title} />;
 }
 
 export function VideoList({ videos }: VideoListProps) {
@@ -96,7 +129,7 @@ export function VideoList({ videos }: VideoListProps) {
             >
               <Card className="cursor-pointer hover:shadow-lg transition-shadow bg-card border-border h-full flex flex-col overflow-hidden p-0">
                 <div className="relative aspect-video bg-gray-200 overflow-hidden">
-                  <YouTubeThumbnail videoId={video.video_id} title={video.title} />
+                  <VideoThumbnail video={video} />
                   <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                     <Play className="h-10 w-10 text-white" />
                   </div>

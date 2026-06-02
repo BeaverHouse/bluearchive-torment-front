@@ -55,6 +55,8 @@ export default function VideoDetailPage() {
               data: updatedVideos, // 편집된 데이터 사용
               title: response.data.title,
               raid_id: response.data.raid_id,
+              platform: response.data.platform,
+              thumbnail_url: response.data.thumbnail_url,
             });
             setCurrentVideo(updatedCurrentVideo);
 
@@ -126,6 +128,7 @@ export default function VideoDetailPage() {
         currentVideo={currentVideo}
         onVideoChange={setCurrentVideo}
         raidId={raidId}
+        platform={videoDetail?.platform}
       />
     </div>
   );

@@ -4,9 +4,9 @@ import { useState, useCallback, useEffect } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { YouTubeEmbed } from "@/components/features/video/youtube-embed";
+import { VideoEmbed } from "@/components/features/video/video-embed";
 import { EditableAnalysisResult } from "../_components/editable-analysis-result";
-import { VideoAnalysisData } from "@/types/video";
+import { VideoAnalysisData, platformFromVideoId } from "@/types/video";
 import { trackEvent } from "@/utils/analytics";
 import { useTranslations } from "@/lib/i18n";
 
@@ -100,10 +100,11 @@ export default function VideoEditPage() {
       {/* 영상 플레이어 (fixed) */}
       <div className="hidden lg:flex lg:items-center fixed top-[4.5rem] bottom-0 left-4 w-[38%] z-10">
         <div className="w-full rounded-lg overflow-hidden bg-black shadow-lg">
-          <YouTubeEmbed
+          <VideoEmbed
             videoId={videoId}
             title={`Video ${videoId}`}
             onPlayStateChange={handleVideoPlayStateChange}
+            platform={platformFromVideoId(videoId)}
           />
         </div>
       </div>
