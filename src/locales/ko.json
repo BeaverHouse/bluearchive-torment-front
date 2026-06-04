@@ -35,8 +35,8 @@
 
   "announce.update": "Update",
   "announce.close": "닫기",
-  "announce.item.1": "총력전 계산기의 계산식 오류를 수정했어요.",
-  "announce.item.2": "몇 가지 통계를 추가했어요. 기능 개선 또는 정리에 사용될 예정이에요.",
+  "announce.item.1": "요약 탭 가시성을 개선했어요.",
+  "announce.item.2": "이제 Bilibili 영상을 부분적으로 지원해요. 기능이 불안정할 수 있어요.",
 
   "support.title": "후원하기",
   "support.line.adFree": "BA Torment는 광고 없이 운영됩니다.",

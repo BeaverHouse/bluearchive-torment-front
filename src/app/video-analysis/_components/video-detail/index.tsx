@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ArrowLeft, Edit3, Copy, Check } from "lucide-react";
 import Swal from "sweetalert2";
-import { YouTubeEmbed } from "@/components/features/video/youtube-embed";
-import { VideoAnalysisData } from "@/types/video";
+import { VideoEmbed } from "@/components/features/video/video-embed";
+import { VideoAnalysisData, VideoPlatform } from "@/types/video";
 import Link from "next/link";
 import { useStudentMaps } from "@/hooks/use-student-maps";
 import { VideoAnalysisContent } from "./VideoAnalysisContent";
@@ -18,6 +18,7 @@ interface VideoDetailProps {
   currentVideo: VideoAnalysisData;
   onVideoChange: (video: VideoAnalysisData) => void;
   raidId: string | null;
+  platform?: VideoPlatform;
 }
 
 export function VideoDetail({
@@ -25,6 +26,7 @@ export function VideoDetail({
   currentVideo,
   onVideoChange,
   raidId,
+  platform,
 }: VideoDetailProps) {
   const [copiedId, setCopiedId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState(currentVideo.id.toString());
@@ -116,9 +118,10 @@ export function VideoDetail({
         </Link>
       </div>
 
-      <YouTubeEmbed
+      <VideoEmbed
         videoId={currentVideo.video_id}
         title={`Video ${currentVideo.id}`}
+        platform={platform}
       />
 
       {videos.length > 1 ? (

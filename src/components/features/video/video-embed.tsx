@@ -18,10 +18,29 @@ interface YouTubeAPI {
   }
 }
 
-interface YouTubeEmbedProps {
+interface VideoEmbedProps {
   videoId: string
   title?: string
   onPlayStateChange?: (isPlaying: boolean) => void
+  platform?: "youtube" | "bilibili"
+}
+
+// BilibiliEmbed renders Bilibili's official iframe player. Bilibili exposes no
+// JS play-state API like YouTube, so this is a plain iframe (no
+// onPlayStateChange). high_quality=1 requests the best available stream.
+function BilibiliEmbed({ videoId, title }: { videoId: string; title: string }) {
+  return (
+    <div className="relative w-full aspect-video rounded-lg overflow-hidden">
+      <iframe
+        src={`https://player.bilibili.com/player.html?bvid=${videoId}&high_quality=1&autoplay=0`}
+        title={title}
+        allow="fullscreen"
+        allowFullScreen
+        scrolling="no"
+        className="absolute inset-0 w-full h-full border-0"
+      />
+    </div>
+  )
 }
 
 const THUMBNAIL_QUALITIES = ['maxresdefault', 'sddefault', 'hqdefault'] as const
@@ -83,11 +102,14 @@ function LiteYouTubeEmbed({ videoId, title }: { videoId: string; title: string }
   )
 }
 
-export function YouTubeEmbed({ videoId, title = "YouTube video", onPlayStateChange }: YouTubeEmbedProps) {
+export function VideoEmbed({ videoId, title = "Video", onPlayStateChange, platform = "youtube" }: VideoEmbedProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const playerRef = useRef<YouTubePlayer | null>(null)
 
+  const isBilibili = platform === "bilibili"
+
   useEffect(() => {
+    if (isBilibili) return
     if (!onPlayStateChange) return
 
     const container = containerRef.current
@@ -152,7 +174,11 @@ export function YouTubeEmbed({ videoId, title = "YouTube video", onPlayStateChan
       playerRef.current = null
       container.replaceChildren()
     }
-  }, [videoId, onPlayStateChange])
+  }, [videoId, onPlayStateChange, isBilibili])
+
+  if (isBilibili) {
+    return <BilibiliEmbed videoId={videoId} title={title} />
+  }
 
   if (!onPlayStateChange) {
     return <LiteYouTubeEmbed videoId={videoId} title={title} />

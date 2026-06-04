@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { useTranslations } from "@/lib/i18n";
 
-const ANNOUNCE_DATE = "26.05.04";
+const ANNOUNCE_DATE = "26.06.04";
 const ANNOUNCE_ITEM_KEYS = ["announce.item.1", "announce.item.2"];
 const STORAGE_KEY = "batorment_announce_dismissed";
 
