@@ -5,14 +5,14 @@ import Link from "next/link";
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Play, Calendar, Star, Award } from "lucide-react";
+import { Play, Calendar, Star, Award, Youtube, Tv } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { VideoListItem } from "@/types/video";
+import { VideoListItem, platformFromVideoId } from "@/types/video";
 import { useRaids, getRaidName as getLocalizedRaidName } from "@/hooks/use-raids";
 import { trackEvent } from "@/utils/analytics";
 import { useTranslations } from "@/lib/i18n";
@@ -90,11 +90,35 @@ function BilibiliThumbnail({ url, title }: { url: string; title: string }) {
   );
 }
 
+// Prefer the backend platform field, but fall back to the id shape (BV-prefixed
+// = Bilibili) so a missing/legacy platform field can't make a Bilibili video try
+// to load a YouTube thumbnail.
 function VideoThumbnail({ video }: { video: VideoListItem }) {
-  if (video.platform === "bilibili") {
+  const platform = video.platform ?? platformFromVideoId(video.video_id);
+  if (platform === "bilibili") {
     return <BilibiliThumbnail url={video.thumbnail_url ?? ""} title={video.title} />;
   }
   return <YouTubeThumbnail videoId={video.video_id} title={video.title} />;
+}
+
+// PlatformBadge marks each card as YouTube or Bilibili.
+function PlatformBadge({ video }: { video: VideoListItem }) {
+  const isBilibili =
+    (video.platform ?? platformFromVideoId(video.video_id)) === "bilibili";
+  return (
+    <div
+      className={`absolute top-1 left-1 z-10 rounded p-1 ${
+        isBilibili ? "bg-[#FB7299]" : "bg-red-600"
+      }`}
+      title={isBilibili ? "Bilibili" : "YouTube"}
+    >
+      {isBilibili ? (
+        <Tv className="h-3 w-3 text-white" />
+      ) : (
+        <Youtube className="h-3 w-3 text-white" />
+      )}
+    </div>
+  );
 }
 
 export function VideoList({ videos }: VideoListProps) {
@@ -130,6 +154,7 @@ export function VideoList({ videos }: VideoListProps) {
               <Card className="cursor-pointer hover:shadow-lg transition-shadow bg-card border-border h-full flex flex-col overflow-hidden p-0">
                 <div className="relative aspect-video bg-gray-200 overflow-hidden">
                   <VideoThumbnail video={video} />
+                  <PlatformBadge video={video} />
                   <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                     <Play className="h-10 w-10 text-white" />
                   </div>
