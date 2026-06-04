@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Play, Calendar, Star, Award, Youtube, Tv } from "lucide-react";
+import { Play, Calendar, Star, Award } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -101,23 +101,16 @@ function VideoThumbnail({ video }: { video: VideoListItem }) {
   return <YouTubeThumbnail videoId={video.video_id} title={video.title} />;
 }
 
-// PlatformBadge marks each card as YouTube or Bilibili.
+// PlatformBadge marks each card as YouTube or Bilibili using the brand icons in
+// /public. It sits on the white card beside the title (not over the thumbnail).
 function PlatformBadge({ video }: { video: VideoListItem }) {
   const isBilibili =
     (video.platform ?? platformFromVideoId(video.video_id)) === "bilibili";
+  const src = isBilibili ? "/bilibili_icon.png" : "/youtube_icon.png";
+  const label = isBilibili ? "Bilibili" : "YouTube";
   return (
-    <div
-      className={`absolute top-1 left-1 z-10 rounded p-1 ${
-        isBilibili ? "bg-[#FB7299]" : "bg-red-600"
-      }`}
-      title={isBilibili ? "Bilibili" : "YouTube"}
-    >
-      {isBilibili ? (
-        <Tv className="h-3 w-3 text-white" />
-      ) : (
-        <Youtube className="h-3 w-3 text-white" />
-      )}
-    </div>
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={src} alt={label} title={label} className="h-4 w-auto shrink-0" />
   );
 }
 
@@ -154,13 +147,13 @@ export function VideoList({ videos }: VideoListProps) {
               <Card className="cursor-pointer hover:shadow-lg transition-shadow bg-card border-border h-full flex flex-col overflow-hidden p-0">
                 <div className="relative aspect-video bg-gray-200 overflow-hidden">
                   <VideoThumbnail video={video} />
-                  <PlatformBadge video={video} />
                   <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                     <Play className="h-10 w-10 text-white" />
                   </div>
                 </div>
                 <div className="p-3 flex-1 flex flex-col justify-between relative">
-                  <div>
+                  <div className="flex items-center gap-1.5">
+                    <PlatformBadge video={video} />
                     <h3 className="font-semibold text-card-foreground text-sm leading-tight line-clamp-1">
                       {video.title}
                     </h3>
