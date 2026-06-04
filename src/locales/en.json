@@ -35,8 +35,8 @@
 
   "announce.update": "Update",
   "announce.close": "Close",
-  "announce.item.1": "Fixed a formula bug in the Total Assault calculator.",
-  "announce.item.2": "Added a few new stats; we'll use them to refine or trim features.",
+  "announce.item.1": "Improved the visibility of the summary tab.",
+  "announce.item.2": "Partially supports Bilibili videos. The feature may be unstable.",
 
   "support.title": "Support BA Torment",
   "support.line.adFree": "BA Torment runs without ads.",

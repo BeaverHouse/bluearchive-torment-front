@@ -35,8 +35,8 @@
 
   "announce.update": "更新",
   "announce.close": "关闭",
-  "announce.item.1": "修复了总力战计算器的公式错误。",
-  "announce.item.2": "新增了一些统计,用于后续功能调整或精简。",
+  "announce.item.1": "Improved the visibility of the summary tab.",
+  "announce.item.2": "Partially supports Bilibili videos. The feature may be unstable.",
 
   "support.title": "赞助",
   "support.line.adFree": "BA Torment 无广告运营。",
