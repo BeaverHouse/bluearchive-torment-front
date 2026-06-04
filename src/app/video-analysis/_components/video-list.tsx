@@ -102,7 +102,7 @@ function VideoThumbnail({ video }: { video: VideoListItem }) {
 }
 
 // PlatformBadge marks each card as YouTube or Bilibili using the brand icons in
-// /public. It sits on the white card beside the title (not over the thumbnail).
+// /public. It sits in the top-right corner of the white card body.
 function PlatformBadge({ video }: { video: VideoListItem }) {
   const isBilibili =
     (video.platform ?? platformFromVideoId(video.video_id)) === "bilibili";
@@ -110,7 +110,12 @@ function PlatformBadge({ video }: { video: VideoListItem }) {
   const label = isBilibili ? "Bilibili" : "YouTube";
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={src} alt={label} title={label} className="h-4 w-auto shrink-0" />
+    <img
+      src={src}
+      alt={label}
+      title={label}
+      className="absolute top-2 right-2 z-10 h-6 w-auto"
+    />
   );
 }
 
@@ -152,8 +157,8 @@ export function VideoList({ videos }: VideoListProps) {
                   </div>
                 </div>
                 <div className="p-3 flex-1 flex flex-col justify-between relative">
-                  <div className="flex items-center gap-1.5">
-                    <PlatformBadge video={video} />
+                  <PlatformBadge video={video} />
+                  <div className="pr-7">
                     <h3 className="font-semibold text-card-foreground text-sm leading-tight line-clamp-1">
                       {video.title}
                     </h3>
