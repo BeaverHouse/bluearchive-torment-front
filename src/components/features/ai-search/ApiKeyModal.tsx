@@ -32,19 +32,23 @@ export function ApiKeyModal({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!apiKey.trim()) {
+    const key = apiKey.trim();
+
+    if (!key) {
       setError(t("apiKey.required"));
       return;
     }
 
-    if (!apiKey.startsWith("AI")) {
+    // Accept both the legacy "AIza..." format and the new Google AI Studio
+    // "AQ." format (rolled out 2026). Either prefix is a valid Gemini key.
+    if (!key.startsWith("AI") && !key.startsWith("AQ.")) {
       setError(t("apiKey.invalid"));
       return;
     }
 
     setError("");
     trackEvent("arona_apikey_set");
-    onSubmit(apiKey.trim());
+    onSubmit(key);
     onOpenChange(false);
   };
 
@@ -71,7 +75,7 @@ export function ApiKeyModal({
             <Input
               id="apiKey"
               type="password"
-              placeholder="AIza..."
+              placeholder="AIza... / AQ...."
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
               autoComplete="off"

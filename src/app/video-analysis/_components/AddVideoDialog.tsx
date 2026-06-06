@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Plus } from "lucide-react";
 import { addVideoToQueue } from "@/lib/api";
+import { detectVideoPlatform } from "@/types/video";
 import { RaidInfo } from "@/types/raid";
 import { getRaidName } from "@/hooks/use-raids";
 import { useTranslations } from "@/lib/i18n";
@@ -46,9 +47,20 @@ export function AddVideoDialog({ raids }: AddVideoDialogProps) {
       return;
     }
 
+    const platform = detectVideoPlatform(youtubeUrl);
+    if (!platform) {
+      await Swal.fire({
+        title: t("video.add.error.url"),
+        text: t("video.add.error.urlBody"),
+        icon: "warning",
+        confirmButtonText: t("common.confirm"),
+      });
+      return;
+    }
+
     try {
       setSubmitting(true);
-      const result = await addVideoToQueue(raidId, youtubeUrl);
+      const result = await addVideoToQueue(raidId, youtubeUrl, platform);
 
       if (result.existingVideo) {
         const { videoId, raidId: existingRaidId } = result.existingVideo;

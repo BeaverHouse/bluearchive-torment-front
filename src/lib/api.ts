@@ -1,4 +1,4 @@
-import { VideoListResponse, VideoDetailResponse, AnalysisResult } from '@/types/video'
+import { VideoListResponse, VideoDetailResponse, AnalysisResult, VideoPlatform } from '@/types/video'
 
 const BASE_URL = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8085'}/ba-analyzer/v1`
 
@@ -82,10 +82,12 @@ interface AddVideoToQueueResult {
   }
 }
 
-export async function addVideoToQueue(raidId: string, youtubeUrl: string): Promise<AddVideoToQueueResult> {
+export async function addVideoToQueue(raidId: string, videoUrl: string, platform?: VideoPlatform): Promise<AddVideoToQueueResult> {
   const response = await fetchAPI<Response>('/video/analysis/queue', {
     method: 'POST',
-    body: { raid_id: raidId, youtube_url: youtubeUrl },
+    // youtube_url is the backend's field name for the video URL on every
+    // platform; platform is optional and defaults to "youtube" server-side.
+    body: { raid_id: raidId, youtube_url: videoUrl, ...(platform ? { platform } : {}) },
     rawResponse: true,
   })
 

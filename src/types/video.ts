@@ -52,6 +52,17 @@ export function platformFromVideoId(videoId: string): VideoPlatform {
   return videoId.startsWith("BV") ? "bilibili" : "youtube"
 }
 
+// Detects the platform from a user-supplied video URL, or null when the URL is
+// neither YouTube nor Bilibili (so callers can reject unsupported input and let
+// the backend skip parsing). Mirrors the backend extractors: YouTube is matched
+// by host, Bilibili by its bilibili.com / b23.tv host or a BV id anywhere in the
+// URL (logic_youtube / logic_bilibili ExtractVideoID).
+export function detectVideoPlatform(url: string): VideoPlatform | null {
+  if (/youtube\.com|youtu\.be/i.test(url)) return "youtube"
+  if (/bilibili\.com|b23\.tv/i.test(url) || /BV[a-zA-Z0-9]+/.test(url)) return "bilibili"
+  return null
+}
+
 // API 응답 타입
 export interface VideoListItem {
   video_id: string
