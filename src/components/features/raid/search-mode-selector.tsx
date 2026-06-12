@@ -17,6 +17,11 @@ export default function SearchModeSelector() {
   const mode = useSearchModeStore((s) => s.mode);
   const setMode = useSearchModeStore((s) => s.setMode);
 
+  // 전환 클릭만 잡으면 localStorage로 복원된 초기 모드가 누락되므로 진입 시 1회 발화
+  React.useEffect(() => {
+    trackEvent("party_search_mode", { mode: useSearchModeStore.getState().mode });
+  }, []);
+
   return (
     <Tabs
       value={mode}
