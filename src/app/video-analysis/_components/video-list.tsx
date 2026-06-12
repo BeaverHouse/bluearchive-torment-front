@@ -142,7 +142,7 @@ export function VideoList({ videos }: VideoListProps) {
               href={href}
               onClick={() =>
                 trackEvent("video_open", {
-                  source: "video_list",
+                  video_source: "video_list",
                   video_id: video.video_id,
                   raid_id: video.raid_id || "unknown",
                   ...(video.score !== undefined ? { score: video.score } : {}),
