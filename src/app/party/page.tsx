@@ -6,7 +6,6 @@ import RaidSearch from "@/components/features/raid/raid-search";
 import RaidSummary from "@/components/features/raid/raid-summary";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SingleSelect } from "@/components/ui/custom/single-select";
-import { trackEvent } from "@/utils/analytics";
 import { useStudentMaps } from "@/hooks/use-student-maps";
 import { useRaids, getRaidName } from "@/hooks/use-raids";
 import { useTranslations } from "@/lib/i18n";
@@ -106,16 +105,7 @@ export default function PartyPage() {
       <br />
       <Tabs
         value={PartyTab}
-        onValueChange={(v) => {
-          const tab = v as "search" | "summary";
-          setPartyTab(tab);
-          if (tab === "summary") {
-            trackEvent("summary_view", {
-              season,
-              difficulty: effectiveSummaryLevel === "L" ? "lunatic" : "torment",
-            });
-          }
-        }}
+        onValueChange={(v) => setPartyTab(v as "search" | "summary")}
         className="w-full max-w-4xl"
       >
         <TabsList className="grid w-full grid-cols-2">
@@ -134,14 +124,7 @@ export default function PartyPage() {
           {hasLunatic ? (
             <Tabs
               value={summaryLevel}
-              onValueChange={(v) => {
-                const next = v as "T" | "L";
-                setSummaryLevel(next);
-                trackEvent("summary_view", {
-                  season,
-                  difficulty: next === "L" ? "lunatic" : "torment",
-                });
-              }}
+              onValueChange={(v) => setSummaryLevel(v as "T" | "L")}
               className="w-full"
             >
               <TabsList className="grid w-full grid-cols-2 mb-4">

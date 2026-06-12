@@ -30,6 +30,7 @@ import {
 } from "./utils/raidDataTransform";
 import { generateSearchKeyword } from "@/utils/raid";
 import { useSectionView } from "@/hooks/use-section-view";
+import { trackEvent } from "@/utils/analytics";
 import { useTranslations } from "@/lib/i18n";
 
 /* ------------------------------------------------------------------ */
@@ -209,6 +210,15 @@ const RaidSummary = ({
   const { t } = useTranslations();
   const [copied, setCopied] = useState(false);
   const [showAllAssists, setShowAllAssists] = useState(false);
+
+  // 탭 클릭이 아니라 요약 노출 기준으로 발화 — localStorage로 복원된 진입과
+  // 요약을 보는 중의 시즌/난이도 변경까지 모두 집계된다.
+  useEffect(() => {
+    trackEvent("summary_view", {
+      season,
+      difficulty: level === "L" ? "lunatic" : "torment",
+    });
+  }, [season, level]);
 
   const searchKeyword = generateSearchKeyword(
     seasonNameKo ?? seasonDescription ?? "",
