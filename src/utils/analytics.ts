@@ -24,7 +24,8 @@ export type AnalyticsEvent =
   | { name: 'summary_view'; params: { season: string; difficulty: 'torment' | 'lunatic' } }
   | { name: 'summary_section_view'; params: { section: SummarySection } }
   | { name: 'total_analysis_section_view'; params: { section: TotalAnalysisSection } }
-  | { name: 'video_open'; params: { source: VideoSource; video_id: string; raid_id?: string; score?: number } }
+  // GA가 자동 수집하는 트래픽 소스 파라미터 `source`와 충돌하므로 `video_source` 사용
+  | { name: 'video_open'; params: { video_source: VideoSource; video_id: string; raid_id?: string; score?: number } }
   | { name: 'video_filter_apply'; params: { raid_filter: string } }
   | { name: 'video_edit'; params: { video_id: string } }
   | { name: 'arona_query_send'; params: { has_api_key: boolean } }

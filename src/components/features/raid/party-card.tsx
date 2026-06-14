@@ -47,7 +47,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
   const handleVideoClick = React.useCallback(() => {
     if (video_id && raid_id) {
       trackEvent("video_open", {
-        source: "party_card",
+        video_source: "party_card",
         video_id,
         raid_id,
         score: value,
