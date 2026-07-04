@@ -1,25 +1,26 @@
-import { VideoAnalysisData } from "@/types/video";
+import { buildVideoEmbedUrl, platformFromVideoId, VideoAnalysisData, VideoPlatform } from "@/types/video";
 import { getCharacterName, parseCharacterInfo } from "@/utils/character";
 
 export function generateHTML(
   video: VideoAnalysisData,
   studentsMap: Record<string, string>,
-  t?: (key: string) => string
+  t?: (key: string) => string,
+  platform?: VideoPlatform
 ): string {
   const tr = t ?? ((k: string) => k);
   const { analysis_result } = video;
+  const videoPlatform = platform ?? platformFromVideoId(video.video_id);
 
   let html = `
 <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px;">
   <p style="color: #6b7280; margin-bottom: 20px;">${tr("videoAnalysis.html.totalScore")}: ${analysis_result.score.toLocaleString()}</p>
 
-  <!-- YouTube 임베드 -->
   <div style="margin-bottom: 30px;">
     <iframe
       width="100%"
       height="450"
-      src="https://www.youtube.com/embed/${video.video_id}"
-      title="YouTube video player"
+      src="${buildVideoEmbedUrl(videoPlatform, video.video_id)}"
+      title="Video player"
       frameborder="0"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
       allowfullscreen

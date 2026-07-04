@@ -13,6 +13,7 @@ import {
 import { Clock, RefreshCw } from "lucide-react";
 import { getQueueStatus, QueueItem } from "@/lib/api";
 import { RaidInfo } from "@/types/raid";
+import { buildVideoUrl } from "@/types/video";
 import { getRaidName as getLocalizedRaidName } from "@/hooks/use-raids";
 import { useTranslations } from "@/lib/i18n";
 
@@ -119,7 +120,7 @@ export function VideoQueueDialog({ raids }: VideoQueueDialogProps) {
                         {t("videoAnalysis.queue.raidLabel").replace("{n}", getRaidName(item.raid_id))}
                       </div>
                       <div className="text-xs text-muted-foreground truncate">
-                        {t("videoAnalysis.queue.urlLabel").replace("{n}", item.youtube_url)}
+                        {t("videoAnalysis.queue.urlLabel").replace("{n}", buildVideoUrl(item.platform, item.video_id))}
                       </div>
                     </div>
                     <div className="text-xs text-muted-foreground ml-4">
