@@ -27,7 +27,6 @@ export interface AnalysisResult {
   partyData: number[][]
   score: number
   skillOrders: SkillOrder[]
-  url: string
   description?: string
   validation_errors?: string[]
 }
@@ -52,14 +51,51 @@ export function platformFromVideoId(videoId: string): VideoPlatform {
   return videoId.startsWith("BV") ? "bilibili" : "youtube"
 }
 
-// Detects the platform from a user-supplied video URL, or null when the URL is
-// neither YouTube nor Bilibili (so callers can reject unsupported input and let
-// the backend skip parsing). Mirrors the backend extractors: YouTube is matched
-// by host, Bilibili by its bilibili.com / b23.tv host or a BV id anywhere in the
-// URL (logic_youtube / logic_bilibili ExtractVideoID).
-export function detectVideoPlatform(url: string): VideoPlatform | null {
-  if (/youtube\.com|youtu\.be/i.test(url)) return "youtube"
-  if (/bilibili\.com|b23\.tv/i.test(url) || /BV[a-zA-Z0-9]+/.test(url)) return "bilibili"
+export function buildVideoUrl(platform: VideoPlatform, videoId: string): string {
+  if (platform === "bilibili") return `https://www.bilibili.com/video/${videoId}`
+  return `https://www.youtube.com/watch?v=${videoId}`
+}
+
+export function buildVideoEmbedUrl(platform: VideoPlatform, videoId: string): string {
+  if (platform === "bilibili") return `https://player.bilibili.com/player.html?bvid=${videoId}&high_quality=1&autoplay=0`
+  return `https://www.youtube.com/embed/${videoId}`
+}
+
+export interface VideoReference {
+  video_id: string
+  platform: VideoPlatform
+}
+
+export function parseVideoReference(input: string): VideoReference | null {
+  const trimmed = input.trim()
+  const bilibiliMatch = trimmed.match(/BV[a-zA-Z0-9]+/)
+  if (bilibiliMatch) return { video_id: bilibiliMatch[0], platform: "bilibili" }
+
+  const youtubeId = extractYouTubeVideoId(trimmed)
+  if (youtubeId) return { video_id: youtubeId, platform: "youtube" }
+
+  return null
+}
+
+function extractYouTubeVideoId(input: string): string | null {
+  if (/^[a-zA-Z0-9_-]{11}$/.test(input)) return input
+
+  try {
+    const parsed = new URL(input)
+    if (/youtu\.be$/i.test(parsed.hostname)) {
+      const id = parsed.pathname.split("/").filter(Boolean)[0]
+      return id && /^[a-zA-Z0-9_-]{11}$/.test(id) ? id : null
+    }
+    if (/youtube\.com$/i.test(parsed.hostname) || /youtube-nocookie\.com$/i.test(parsed.hostname)) {
+      const queryID = parsed.searchParams.get("v")
+      if (queryID && /^[a-zA-Z0-9_-]{11}$/.test(queryID)) return queryID
+      const pathID = parsed.pathname.match(/\/(?:embed|v)\/([a-zA-Z0-9_-]{11})/)
+      return pathID ? pathID[1] : null
+    }
+  } catch {
+    return null
+  }
+
   return null
 }
 
@@ -107,4 +143,3 @@ export interface VideoDetailResponse {
     thumbnail_url?: string
   }
 }
-

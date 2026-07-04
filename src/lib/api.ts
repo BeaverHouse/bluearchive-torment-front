@@ -82,12 +82,10 @@ interface AddVideoToQueueResult {
   }
 }
 
-export async function addVideoToQueue(raidId: string, videoUrl: string, platform?: VideoPlatform): Promise<AddVideoToQueueResult> {
+export async function addVideoToQueue(raidId: string, videoId: string, platform: VideoPlatform): Promise<AddVideoToQueueResult> {
   const response = await fetchAPI<Response>('/video/analysis/queue', {
     method: 'POST',
-    // youtube_url is the backend's field name for the video URL on every
-    // platform; platform is optional and defaults to "youtube" server-side.
-    body: { raid_id: raidId, youtube_url: videoUrl, ...(platform ? { platform } : {}) },
+    body: { raid_id: raidId, video_id: videoId, platform },
     rawResponse: true,
   })
 
@@ -114,7 +112,8 @@ export async function addVideoToQueue(raidId: string, videoUrl: string, platform
 
 export interface QueueItem {
   id: number
-  youtube_url: string
+  video_id: string
+  platform: VideoPlatform
   raid_id: string
   status: 'pending' | 'failed'
   created_at: string

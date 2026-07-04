@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Plus } from "lucide-react";
 import { addVideoToQueue } from "@/lib/api";
-import { detectVideoPlatform } from "@/types/video";
+import { parseVideoReference } from "@/types/video";
 import { RaidInfo } from "@/types/raid";
 import { getRaidName } from "@/hooks/use-raids";
 import { useTranslations } from "@/lib/i18n";
@@ -33,11 +33,11 @@ export function AddVideoDialog({ raids }: AddVideoDialogProps) {
   const { t, locale } = useTranslations();
   const [isOpen, setIsOpen] = useState(false);
   const [raidId, setRaidId] = useState<string>("");
-  const [youtubeUrl, setYoutubeUrl] = useState<string>("");
+  const [videoInput, setVideoInput] = useState<string>("");
   const [submitting, setSubmitting] = useState(false);
 
   const handleAddToQueue = async () => {
-    if (!raidId || !youtubeUrl) {
+    if (!raidId || !videoInput) {
       await Swal.fire({
         title: t("video.add.error.input"),
         text: t("video.add.error.inputBody"),
@@ -47,8 +47,8 @@ export function AddVideoDialog({ raids }: AddVideoDialogProps) {
       return;
     }
 
-    const platform = detectVideoPlatform(youtubeUrl);
-    if (!platform) {
+    const videoReference = parseVideoReference(videoInput);
+    if (!videoReference) {
       await Swal.fire({
         title: t("video.add.error.url"),
         text: t("video.add.error.urlBody"),
@@ -60,13 +60,13 @@ export function AddVideoDialog({ raids }: AddVideoDialogProps) {
 
     try {
       setSubmitting(true);
-      const result = await addVideoToQueue(raidId, youtubeUrl, platform);
+      const result = await addVideoToQueue(raidId, videoReference.video_id, videoReference.platform);
 
       if (result.existingVideo) {
         const { videoId, raidId: existingRaidId } = result.existingVideo;
         setIsOpen(false);
         setRaidId("");
-        setYoutubeUrl("");
+        setVideoInput("");
 
         const swalResult = await Swal.fire({
           title: t("video.add.existing.title"),
@@ -84,7 +84,7 @@ export function AddVideoDialog({ raids }: AddVideoDialogProps) {
 
       setIsOpen(false);
       setRaidId("");
-      setYoutubeUrl("");
+      setVideoInput("");
 
       await Swal.fire({
         title: t("video.add.success"),
@@ -135,8 +135,8 @@ export function AddVideoDialog({ raids }: AddVideoDialogProps) {
           <div>
             <label className="text-sm font-medium mb-2 block">{t("video.add.urlLabel")}</label>
             <Input
-              value={youtubeUrl}
-              onChange={(e) => setYoutubeUrl(e.target.value)}
+              value={videoInput}
+              onChange={(e) => setVideoInput(e.target.value)}
               placeholder={t("video.add.urlPlaceholder")}
             />
           </div>
@@ -150,7 +150,7 @@ export function AddVideoDialog({ raids }: AddVideoDialogProps) {
             </Button>
             <Button
               onClick={handleAddToQueue}
-              disabled={submitting || !raidId || !youtubeUrl}
+              disabled={submitting || !raidId || !videoInput}
             >
               {submitting ? t("video.edit.saving") : t("video.add.submit")}
             </Button>

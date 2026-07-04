@@ -75,7 +75,7 @@ export function VideoDetail({
 
   const copyToClipboard = async (video: VideoAnalysisData) => {
     try {
-      const html = generateHTML(video, studentsMap, t);
+      const html = generateHTML(video, studentsMap, t, platform);
       await navigator.clipboard.writeText(html);
       setCopiedId(video.id);
       setTimeout(() => setCopiedId(null), 2000);
