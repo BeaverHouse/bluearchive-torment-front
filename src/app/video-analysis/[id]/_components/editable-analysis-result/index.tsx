@@ -1,16 +1,14 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Save, X } from "lucide-react";
 import { AnalysisResult } from "@/types/video";
 import { updateVideoAnalysis } from "@/lib/api";
 import { useStudentMaps } from "@/hooks/use-student-maps";
 import { usePartyEditor } from "./hooks/usePartyEditor";
-import { useSkillOrders } from "./hooks/useSkillOrders";
 import { BasicInfoEditor } from "./BasicInfoEditor";
 import { PartyEditor } from "./PartyEditor";
-import { SkillOrderList } from "./SkillOrderList";
 import { EditableAnalysisResultProps } from "./types";
 import { useTranslations } from "@/lib/i18n";
 
@@ -24,7 +22,6 @@ export function EditableAnalysisResult({
     videoData.analysis_result
   );
   const [saving, setSaving] = useState(false);
-  const [compactMode, setCompactMode] = useState(true);
   const { studentsMap, studentSearchMap } = useStudentMaps();
   const { t } = useTranslations();
 
@@ -36,21 +33,11 @@ export function EditableAnalysisResult({
     removeParty,
     reorderParty,
     swapCharacter,
-    getPartyCharacters,
   } = usePartyEditor({
     analysisResult,
     setAnalysisResult,
     studentsMap,
     t,
-  });
-
-  const {
-    addSkillOrder,
-    removeSkillOrder,
-    updateSkillOrder,
-    reorderSkillOrders,
-  } = useSkillOrders({
-    setAnalysisResult,
   });
 
   const handleSave = async () => {
@@ -109,17 +96,6 @@ export function EditableAnalysisResult({
         studentSearchMap={studentSearchMap}
       />
 
-      <SkillOrderList
-        skillOrders={analysisResult.skillOrders}
-        partyData={analysisResult.partyData}
-        compactMode={compactMode}
-        onToggleCompactMode={() => setCompactMode(!compactMode)}
-        onAddSkillOrder={addSkillOrder}
-        onRemoveSkillOrder={removeSkillOrder}
-        onUpdateSkillOrder={updateSkillOrder}
-        onReorder={reorderSkillOrders}
-        getPartyCharacters={getPartyCharacters}
-      />
     </div>
   );
 }

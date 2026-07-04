@@ -13,20 +13,9 @@ export interface PartyComposition {
   specials: Character[]
 }
 
-export interface SkillOrder {
-  partyNumber: number
-  cost: number
-  remainingTime: string
-  type: string
-  order: number
-  description?: string
-  character_code?: number
-}
-
 export interface AnalysisResult {
   partyData: number[][]
   score: number
-  skillOrders: SkillOrder[]
   description?: string
   validation_errors?: string[]
 }

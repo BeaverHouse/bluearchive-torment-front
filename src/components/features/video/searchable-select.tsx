@@ -63,7 +63,7 @@ export function SearchableSelect({
   const { t } = useTranslations();
   const [open, setOpen] = React.useState(false)
   const selectedOption = options.find(option => option.value.toString() === value)
-  const resolvedPlaceholder = placeholder ?? t("video.skill.character");
+  const resolvedPlaceholder = placeholder ?? t("ui.select.placeholder");
 
   // 검색용 문자열 생성 (이름 + 동의어)
   const getSearchableValue = React.useCallback((option: ImageSelectOption) => {

@@ -1,4 +1,4 @@
-import { AnalysisResult, VideoAnalysisData, SkillOrder } from "@/types/video";
+import { AnalysisResult, VideoAnalysisData } from "@/types/video";
 import { StudentSearchData } from "@/utils/search";
 
 export interface EditableAnalysisResultProps {
@@ -21,21 +21,6 @@ export interface PartyCharacter {
   order: number;
 }
 
-export interface SkillOrderItemProps {
-  skill: SkillOrder;
-  index: number;
-  compactMode: boolean;
-  partyData: number[][];
-  getPartyCharacters: (partyIndex: number) => (PartyCharacter | null)[];
-  updateSkillOrder: (index: number, updates: Partial<SkillOrder>) => void;
-  removeSkillOrder: (index: number) => void;
-  dragHandleProps?: Record<string, unknown>;
-}
-
-export interface SortableSkillOrderItemProps extends SkillOrderItemProps {
-  id: string;
-}
-
 export interface PartyEditorProps {
   partyData: number[][];
   onUpdateParty: (partyIndex: number, characterIndex: number, newCharacterCode: number) => void;
@@ -52,18 +37,6 @@ export interface PartyEditorProps {
   studentSearchMap: StudentSearchData;
 }
 
-export interface SkillOrderListProps {
-  skillOrders: SkillOrder[];
-  partyData: number[][];
-  compactMode: boolean;
-  onToggleCompactMode: () => void;
-  onAddSkillOrder: () => void;
-  onRemoveSkillOrder: (index: number) => void;
-  onUpdateSkillOrder: (index: number, updates: Partial<SkillOrder>) => void;
-  onReorder: (oldIndex: number, newIndex: number) => void;
-  getPartyCharacters: (partyIndex: number) => (PartyCharacter | null)[];
-}
-
 export interface BasicInfoEditorProps {
   score: number;
   description: string;
@@ -71,4 +44,4 @@ export interface BasicInfoEditorProps {
   onUpdateDescription: (description: string) => void;
 }
 
-export type { AnalysisResult, VideoAnalysisData, SkillOrder };
+export type { AnalysisResult, VideoAnalysisData };

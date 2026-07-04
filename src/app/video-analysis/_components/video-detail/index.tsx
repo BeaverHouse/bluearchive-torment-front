@@ -141,7 +141,7 @@ export function VideoDetail({
 
           {sortedVideos.map((video) => (
             <TabsContent key={video.id} value={video.id.toString()}>
-              <VideoAnalysisContent video={video} studentsMap={studentsMap} />
+              <VideoAnalysisContent video={video} />
             </TabsContent>
           ))}
         </Tabs>
@@ -150,7 +150,7 @@ export function VideoDetail({
           <div className="flex gap-2 justify-end">
             {renderActionButtons(currentVideo)}
           </div>
-          <VideoAnalysisContent video={currentVideo} studentsMap={studentsMap} />
+          <VideoAnalysisContent video={currentVideo} />
         </div>
       )}
     </div>
