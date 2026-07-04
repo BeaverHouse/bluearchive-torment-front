@@ -2,18 +2,13 @@
 
 import { VideoAnalysisData } from "@/types/video";
 import PartyCard from "@/components/features/raid/party-card";
-import { SkillOrderTable } from "./SkillOrderTable";
 import { useTranslations } from "@/lib/i18n";
 
 interface VideoAnalysisContentProps {
   video: VideoAnalysisData;
-  studentsMap: Record<string, string>;
 }
 
-export function VideoAnalysisContent({
-  video,
-  studentsMap,
-}: VideoAnalysisContentProps) {
+export function VideoAnalysisContent({ video }: VideoAnalysisContentProps) {
   const { t } = useTranslations();
   return (
     <div className="space-y-6 min-w-0">
@@ -23,12 +18,6 @@ export function VideoAnalysisContent({
         valueSuffix={t("videoAnalysis.detail.scoreSuffix")}
         parties={video.analysis_result.partyData}
         showModeBadge={false}
-      />
-
-      <SkillOrderTable
-        skillOrders={video.analysis_result.skillOrders}
-        partyData={video.analysis_result.partyData}
-        studentsMap={studentsMap}
       />
 
       {video.analysis_result.description && (
