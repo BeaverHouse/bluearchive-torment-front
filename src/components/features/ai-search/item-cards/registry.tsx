@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { Component } from "react";
 import PartyCard from "@/components/features/raid/party-card";
 import { useTranslations } from "@/lib/i18n";
 
@@ -121,6 +122,61 @@ export const itemCardRegistry: Record<string, ItemCardRenderer> = {
   search_parties: (item) => <SearchPartiesCard item={item} />,
 };
 
+// 근거 항목이 많을 때(임계값 이상) 카드 대신 쓰는 한 줄 요약.
+export interface ItemSummary {
+  title: string;
+}
+
+export function resolveItemSummary(tool: string, item: unknown): ItemSummary | null {
+  if (!isRecord(item)) return null;
+  if (tool === "search_parties") {
+    const rank = typeof item.Rank === "number" ? `#${item.Rank}` : "";
+    const score = typeof item.Score === "number" ? item.Score.toLocaleString() : "";
+    const title = [rank, score].filter(Boolean).join(" · ");
+    return { title };
+  }
+  const s = (v: unknown) => (typeof v === "string" && v ? v : undefined);
+  // 학생 항목은 NameKo/Name 계열 필드를 쓴다 (search_students 등).
+  return {
+    title: s(item.NameKo) ?? s(item.Name) ?? s(item.name) ?? s(item.title) ?? "",
+  };
+}
+
+// 계약 밖 payload(필수 필드 누락 등)가 카드 렌더 중 예외를 던져도 답변 UI
+// 전체가 깨지지 않게 하는 공통 가드: 요소 생성 단계는 try/catch, React
+// 렌더 단계는 ErrorBoundary가 잡아 해당 카드만 조용히 생략한다(답변
+// 프로즈는 유지).
+class ItemCardBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  // failed는 리셋되지 않는다 — item payload는 턴 내 불변이라 재시도 경로가 없다.
+  // item_result에 "같은 id 재수신 = 갱신" 계약이 확장되면 componentDidUpdate에서
+  // children 변경 시 리셋이 필요해진다.
+  state = { failed: false };
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  componentDidCatch(error: unknown) {
+    console.warn("item card render failed; skipping card", error);
+  }
+
+  render() {
+    return this.state.failed ? null : this.props.children;
+  }
+}
+
 export function resolveItemCard(tool: string): ItemCardRenderer | null {
-  return itemCardRegistry[tool] ?? null;
+  const render = itemCardRegistry[tool];
+  if (!render) return null;
+  return function guardedItemCard(item: unknown) {
+    let child: ReactNode = null;
+    try {
+      child = render(item);
+    } catch (error) {
+      console.warn("item card build failed; skipping card", { tool, error });
+      return null;
+    }
+    if (child === null || child === undefined) return null;
+    return <ItemCardBoundary>{child}</ItemCardBoundary>;
+  };
 }

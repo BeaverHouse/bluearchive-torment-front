@@ -10,7 +10,7 @@ export interface Message {
 }
 
 // SSE 스트림 메시지 타입
-export type StreamMessageType = "status" | "answer" | "item_result" | "error";
+export type StreamMessageType = "status" | "answer" | "item_result" | "source_result" | "error";
 
 // 기본 스트림 메시지
 interface BaseStreamMessage {
@@ -71,6 +71,31 @@ export interface ItemCardData {
   item: unknown;
 }
 
+// 웹 출처 메시지 (B3 출처 계약 — <source-ref id=".."/> 각주 / 출처 목록).
+// 같은 id 재수신 = 갱신(교체).
+export interface SourceResultMessage extends BaseStreamMessage {
+  type: "source_result";
+  content?: string;
+  metadata?: {
+    id?: string;
+    tool?: string;
+    origin?: string; // "tool" | "grounding"
+    title?: string;
+    url?: string;
+    snippet?: string;
+    segments?: Array<{ start_index: number; end_index: number; text: string }>;
+  };
+}
+
+// 웹 출처 데이터
+export interface SourceData {
+  tool: string;
+  origin: string;
+  title: string;
+  url: string;
+  snippet: string;
+}
+
 // 에러 메시지
 export interface ErrorMessage extends BaseStreamMessage {
   type: "error";
@@ -87,6 +112,7 @@ export type StreamMessage =
   | StatusMessage
   | AnswerMessage
   | ItemResultMessage
+  | SourceResultMessage
   | ErrorMessage;
 
 // AI Search 요청 body
@@ -105,6 +131,9 @@ export interface ChatMessage {
   role: "user" | "assistant";
   content: string;
   itemResults?: Record<string, ItemCardData>;
+  sourceResults?: Record<string, SourceData>;
+  // 완료된 답변 아래 접힌 "진행 과정"으로 보존하는 단계 문구들 (표시됐던 그대로).
+  steps?: string[];
 }
 
 // 채팅 상태
