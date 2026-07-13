@@ -4,6 +4,7 @@ import type {
   ChatMessage,
   ItemCardData,
   Message,
+  SourceData,
   StreamMessage,
 } from "@/types/ai-search";
 import { getStatusMessageKey, getToolResultMessageKey, AI_SEARCH_FALLBACK_KEY } from "@/constants/ai-search";
@@ -25,7 +26,11 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, language, on
   const [isLoading, setIsLoading] = useState(false);
   const [currentAnswer, setCurrentAnswer] = useState("");
   const [currentItemResults, setCurrentItemResults] = useState<Record<string, ItemCardData>>({});
+  const [currentSourceResults, setCurrentSourceResults] = useState<Record<string, SourceData>>({});
   const [currentStatus, setCurrentStatus] = useState("");
+  // 표시됐던 진행 단계 문구를 순서대로 누적 — 완료된 답변에 접힌 "진행
+  // 과정"으로 붙인다.
+  const [currentSteps, setCurrentSteps] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -38,7 +43,9 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, language, on
         const { statusKey, toolName } = message.metadata ?? {};
         if (statusKey === "answer_complete") break;
         const tkey = getStatusMessageKey(statusKey, toolName);
-        setCurrentStatus(tkey ? t(tkey) : "");
+        const label = tkey ? t(tkey) : "";
+        setCurrentStatus(label);
+        if (label) setCurrentSteps((prev) => [...prev, label]);
         break;
       }
       case "item_result": {
@@ -52,6 +59,24 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, language, on
           }));
         }
         setCurrentStatus(t(getToolResultMessageKey(tool)));
+        break;
+      }
+      case "source_result": {
+        // 웹 출처 payload (B3). 같은 id 재수신 = 갱신(교체).
+        const meta = message.metadata ?? {};
+        if (meta.id) {
+          const id = meta.id;
+          setCurrentSourceResults((prev) => ({
+            ...prev,
+            [id]: {
+              tool: meta.tool ?? "",
+              origin: meta.origin ?? "tool",
+              title: meta.title ?? "",
+              url: meta.url ?? "",
+              snippet: meta.snippet ?? "",
+            },
+          }));
+        }
         break;
       }
       case "answer":
@@ -82,7 +107,9 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, language, on
     setError(null);
     setCurrentAnswer("");
     setCurrentItemResults({});
+    setCurrentSourceResults({});
     setCurrentStatus("");
+    setCurrentSteps([]);
     setIsLoading(true);
 
     const newUserMessage: ChatMessage = { role: "user", content: question };
@@ -129,10 +156,14 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, language, on
             role: "assistant",
             content: currentAnswer,
             itemResults: Object.keys(currentItemResults).length > 0 ? currentItemResults : undefined,
+            sourceResults: Object.keys(currentSourceResults).length > 0 ? currentSourceResults : undefined,
+            steps: currentSteps.length > 0 ? currentSteps : undefined,
           },
         ]);
         setCurrentAnswer("");
         setCurrentItemResults({});
+        setCurrentSourceResults({});
+        setCurrentSteps([]);
       } else if (!error) {
         setMessages((prev) => [
           ...prev,
@@ -141,7 +172,7 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, language, on
       }
     }
     wasLoadingRef.current = isLoading;
-  }, [isLoading, currentAnswer, currentItemResults, error, t]);
+  }, [isLoading, currentAnswer, currentItemResults, currentSourceResults, currentSteps, error, t]);
 
   // 요청 중단
   const stopGeneration = () => {
@@ -155,7 +186,9 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, language, on
     setMessages([]);
     setCurrentAnswer("");
     setCurrentItemResults({});
+    setCurrentSourceResults({});
     setCurrentStatus("");
+    setCurrentSteps([]);
     setError(null);
   };
 
@@ -166,6 +199,7 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, language, on
     isLoading,
     currentAnswer,
     currentItemResults,
+    currentSourceResults,
     currentStatus,
     error,
     sendMessage,

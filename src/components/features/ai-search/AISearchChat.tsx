@@ -52,6 +52,7 @@ export function AISearchChat() {
     isLoading,
     currentAnswer,
     currentItemResults,
+    currentSourceResults,
     currentStatus,
     error,
     sendMessage,
@@ -137,6 +138,7 @@ export function AISearchChat() {
                 messages={messages}
                 currentAnswer={currentAnswer}
                 currentItemResults={currentItemResults}
+                currentSourceResults={currentSourceResults}
                 currentStatus={currentStatus}
                 error={error}
               />
