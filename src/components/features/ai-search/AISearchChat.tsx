@@ -16,10 +16,17 @@ import { useTranslations, DEFAULT_LOCALE } from "@/lib/i18n";
 
 // Persona/instruction MDs are only authored in Korean for now. en/zh prompts
 // will be added later — until then we fall back so non-ko sessions still work.
+//
+// HTML comments in those files are authoring notes (design rationale, source
+// links, which phase the file is injected into). They are for maintainers, not
+// the model, so they are stripped before the prompt is sent — otherwise they
+// burn tokens and feed the model instructions meant for us.
 async function fetchPrompt(kind: "persona" | "instruction", locale: string): Promise<string> {
   const tryFetch = async (lang: string) => {
     const res = await fetch(`/data/${kind}_${lang}.md`);
-    return res.ok ? res.text() : null;
+    if (!res.ok) return null;
+    const text = await res.text();
+    return text.replace(/<!--[\s\S]*?-->\s*/g, "").trim();
   };
   const localized = await tryFetch(locale);
   if (localized) return localized;
