@@ -40,7 +40,7 @@ class AISearchService {
     const requestBody: AISearchRequest = {
       question,
       language: language ?? "ko",
-      fixed_service_ids: ["batorment"],
+      fixed_service_ids: ["batorment", "gamewiki"],
     };
 
     // 이전 대화가 있으면 포함
