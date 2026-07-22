@@ -26,17 +26,8 @@ export function SeasonTrends() {
     );
   }
 
-  const title =
-    type === "striker"
-      ? t("totalAnalysis.raidUsage.strikerTitle")
-      : type === "special"
-        ? t("totalAnalysis.raidUsage.specialTitle")
-        : t("totalAnalysis.raidUsage.assistTitle");
-
   return (
     <div className="flex w-full flex-col gap-4 overflow-x-hidden">
-      <p className="text-sm text-muted-foreground">{t("totalAnalysis.intro")}</p>
-
       <LunaticClearChart data={data} />
 
       <button
@@ -57,7 +48,7 @@ export function SeasonTrends() {
               <TabsTrigger value="assist">{t("totalAnalysis.raidUsage.assistTitle")}</TabsTrigger>
             </TabsList>
           </Tabs>
-          <RaidUsageTable data={data} type={type} title={title} limit={type === "assist" ? 3 : 5} />
+          <RaidUsageTable data={data} type={type} limit={type === "assist" ? 3 : 5} />
         </>
       )}
     </div>
