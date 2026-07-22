@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ import { CharacterAvatar } from "@/components/common/character-image";
 import { getCharacterName } from "@/utils/character";
 import { PartyCompositionChart } from "./PartyCompositionChart";
 import { CharacterGrowthStats } from "./CharacterGrowthStats";
+import { AronaCardComment } from "@/components/features/wiki/arona-card-comment";
 import {
   createCharTableData,
   createPartyCountData,
@@ -369,7 +371,9 @@ const RaidSummary = ({
     <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
       {data.essentialCharacters!.map((char) => (
         <div key={char.studentId} className="flex flex-col items-center gap-1 p-1">
-          <CharacterAvatar studentId={char.studentId} name={getCharacterName(char.studentId, studentsMap)} />
+          <Link href={`/students/${char.studentId}`}>
+            <CharacterAvatar studentId={char.studentId} name={getCharacterName(char.studentId, studentsMap)} />
+          </Link>
           <span className="text-xs font-medium truncate w-full text-center">
             {getCharacterName(char.studentId, studentsMap)}
           </span>
@@ -383,7 +387,9 @@ const RaidSummary = ({
 
   const renderCharRow = (char: { studentId: string; name: string; percent: number }) => (
     <div key={char.studentId} className="flex items-center gap-3 p-2 rounded-lg">
-      <CharacterAvatar studentId={char.studentId} name={char.name} />
+      <Link href={`/students/${char.studentId}`}>
+        <CharacterAvatar studentId={char.studentId} name={char.name} />
+      </Link>
       <div className="flex-1 min-w-0">
         <div className="font-bold text-sm truncate">{char.name}</div>
         <div className="text-sm font-bold text-sky-600 dark:text-sky-400">
@@ -397,7 +403,9 @@ const RaidSummary = ({
     <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
       {data.highImpactCharacters!.map((char) => (
         <div key={char.studentId} className="flex items-center gap-3 p-2 rounded-lg">
-          <CharacterAvatar studentId={char.studentId} name={getCharacterName(char.studentId, studentsMap)} />
+          <Link href={`/students/${char.studentId}`}>
+            <CharacterAvatar studentId={char.studentId} name={getCharacterName(char.studentId, studentsMap)} />
+          </Link>
           <div className="flex-1 min-w-0">
             <div className="font-bold text-sm truncate">
               {getCharacterName(char.studentId, studentsMap)}
@@ -411,6 +419,11 @@ const RaidSummary = ({
         </div>
       ))}
     </div>
+  );
+
+  const isLunatic = level === "L";
+  const aronaStrip = (section: SectionId) => (
+    <AronaCardComment raidId={season} section={section} lunatic={isLunatic} />
   );
 
   const renderAssistsList = () => (
@@ -538,6 +551,7 @@ const RaidSummary = ({
                   : undefined
               }
             />
+            {aronaStrip("platinum_stats")}
           </SummarySection>
         )}
 
@@ -589,6 +603,7 @@ const RaidSummary = ({
                     : renderAssistsList()
               )}
             </CardWrapper>
+            {aronaStrip("key_characters")}
           </SummarySection>
         )}
 
@@ -620,10 +635,12 @@ const RaidSummary = ({
               )}
             </div>
           </CardWrapper>
+          {aronaStrip("top_5_party")}
         </SummarySection>
 
         <SummarySection section="party_composition">
           <PartyCompositionChart data={partyCountData} />
+          {aronaStrip("party_composition")}
         </SummarySection>
 
         {/* ═══ TIER 3: Deep Dive (collapsed) ═══ */}
@@ -677,6 +694,7 @@ const RaidSummary = ({
                 )}
               </div>
             </CollapsibleCard>
+            {aronaStrip("special_clears")}
           </SummarySection>
         )}
 
@@ -697,6 +715,7 @@ const RaidSummary = ({
               />
             </div>
           </CollapsibleCard>
+          {aronaStrip("character_details")}
         </SummarySection>
       </div>
     </div>

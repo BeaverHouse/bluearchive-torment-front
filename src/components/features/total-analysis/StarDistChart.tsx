@@ -78,7 +78,7 @@ export function StarDistChart({ characterData }: StarDistChartProps) {
 
   if (chartData.length === 0) {
     return (
-      <Card className="md:flex-1 flex flex-col w-full max-w-full overflow-hidden">
+      <Card className="md:flex-1 flex flex-col w-full max-w-full overflow-hidden rounded-2xl shadow-sm h-full">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm">{t("totalAnalysis.starDist.title")}</CardTitle>
         </CardHeader>
@@ -92,7 +92,7 @@ export function StarDistChart({ characterData }: StarDistChartProps) {
   }
 
   return (
-    <Card className="md:flex-1 flex flex-col max-w-full overflow-hidden">
+    <Card className="md:flex-1 flex flex-col max-w-full overflow-hidden rounded-2xl shadow-sm h-full">
       <CardHeader className="pb-1 px-3">
         <CardTitle className="text-sm flex items-center justify-between">
           <span>{t("totalAnalysis.starDist.title")}</span>

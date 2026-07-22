@@ -30,7 +30,11 @@ export type AnalyticsEvent =
   | { name: 'video_edit'; params: { video_id: string } }
   | { name: 'arona_query_send'; params: { has_api_key: boolean } }
   | { name: 'arona_apikey_set'; params?: undefined }
-  | { name: 'guide_video_click'; params: { video_id: string } };
+  | { name: 'guide_video_click'; params: { video_id: string } }
+  | { name: 'wiki_note_view'; params: { context: 'party' | 'student'; slug: string } }
+  | { name: 'wiki_note_expand'; params: { context: 'party' | 'student'; slug: string } }
+  | { name: 'wiki_doc_view'; params: { slug: string } }
+  | { name: 'student_page_view'; params: { student_id: number } };
 
 export function trackEvent<E extends AnalyticsEvent>(name: E['name'], params?: E['params']) {
   if (typeof window !== 'undefined' && typeof window.gtag === 'function') {

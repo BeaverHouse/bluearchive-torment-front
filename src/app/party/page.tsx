@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useBAStore from "@/store/useBAStore";
 import RaidSearch from "@/components/features/raid/raid-search";
 import RaidSummary from "@/components/features/raid/raid-summary";
+import { SeasonTrends } from "@/components/features/raid/season-trends";
+import { SeasonNoteCard } from "@/components/features/wiki/season-note-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SingleSelect } from "@/components/ui/custom/single-select";
 import { useStudentMaps } from "@/hooks/use-student-maps";
@@ -16,6 +18,19 @@ export default function PartyPage() {
   const { raids, isLoading } = useRaids();
   const [summaryLevel, setSummaryLevel] = useState<"T" | "L">("T");
   const { t, locale } = useTranslations();
+
+  // Deep-link from a student's related records: /party?season=S89-0 opens the
+  // summary tab for that season. Read from location (client-only) to avoid the
+  // useSearchParams Suspense requirement at build time.
+  useEffect(() => {
+    const season = new URLSearchParams(window.location.search).get("season");
+    if (season) {
+      setV3Season(season);
+      setPartyTab("summary");
+    }
+    // run once on mount for the incoming link
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const raidInfos = raids
     .filter((raid) => raid.party_updated)
@@ -105,12 +120,13 @@ export default function PartyPage() {
       <br />
       <Tabs
         value={PartyTab}
-        onValueChange={(v) => setPartyTab(v as "search" | "summary")}
+        onValueChange={(v) => setPartyTab(v as "search" | "summary" | "trends")}
         className="w-full max-w-4xl"
       >
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="search">{t("party.tab.search")}</TabsTrigger>
           <TabsTrigger value="summary">{t("party.tab.summary")}</TabsTrigger>
+          <TabsTrigger value="trends">{t("party.tab.trends")}</TabsTrigger>
         </TabsList>
         <TabsContent value="search">
           <RaidSearch
@@ -120,7 +136,11 @@ export default function PartyPage() {
             level="NOUSE"
           />
         </TabsContent>
+        <TabsContent value="trends">
+          <SeasonTrends />
+        </TabsContent>
         <TabsContent value="summary">
+          <SeasonNoteCard raidId={season} />
           {hasLunatic ? (
             <Tabs
               value={summaryLevel}

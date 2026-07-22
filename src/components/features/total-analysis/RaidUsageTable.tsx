@@ -68,7 +68,7 @@ export function RaidUsageTable({
   }, [data, raids, type, limit, locale]);
 
   return (
-    <Card className="h-[400px] sm:h-[500px] flex flex-col max-w-full overflow-hidden">
+    <Card className="h-[480px] sm:h-[620px] flex flex-col max-w-full overflow-hidden">
       <CardHeader className="pb-3">
         <CardTitle className="text-sm sm:text-base">{title}</CardTitle>
       </CardHeader>

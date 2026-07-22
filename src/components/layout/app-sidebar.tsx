@@ -8,9 +8,8 @@ import {
   Video,
   Calculator,
   ChevronDown,
-  PieChart,
+  Users,
   Search,
-  Sprout,
 } from "lucide-react";
 import {
   Sidebar,
@@ -41,11 +40,10 @@ type MenuItem = {
 
 const menuItems: MenuItem[] = [
   { titleKey: "nav.home", url: "/", icon: Home },
-  { titleKey: "nav.guide", url: "/guide", icon: Sprout },
+  { titleKey: "nav.guide", url: "/guide", image: "/arona.webp" },
   { titleKey: "nav.party", url: "/party", icon: Search },
-  { titleKey: "nav.analysis", url: "/analysis", icon: PieChart },
+  { titleKey: "nav.students", url: "/students", icon: Users },
   { titleKey: "nav.video", url: "/video-analysis", icon: Video },
-  { titleKey: "nav.arona", url: "/arona", image: "/arona.webp" },
   {
     titleKey: "nav.calculator",
     icon: Calculator,

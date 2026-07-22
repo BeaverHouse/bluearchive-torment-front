@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, PieChart, Video, Calculator, Sprout, Heart } from "lucide-react";
+import { Search, Users, Video, Calculator, Sprout, Heart } from "lucide-react";
 import { SupportModal } from "@/components/common/support-modal";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/utils/analytics";
@@ -19,7 +19,7 @@ type Feature = {
   titleKey: string;
   descKey: string;
   href: string;
-  feature: "party_search" | "total_analysis" | "video" | "arona" | "calculator";
+  feature: "party_search" | "total_analysis" | "video" | "arona" | "calculator" | "guide";
 } & (
   | { icon: typeof Search; color: string; bgColor: string }
   | { image: string; badge: string }
@@ -36,13 +36,21 @@ const features: Feature[] = [
     bgColor: "bg-blue-500/10",
   },
   {
-    titleKey: "home.analysis.title",
-    descKey: "home.analysis.desc",
-    href: "/analysis",
+    titleKey: "home.students.title",
+    descKey: "home.students.desc",
+    href: "/students",
     feature: "total_analysis",
-    icon: PieChart,
+    icon: Users,
     color: "text-purple-500",
     bgColor: "bg-purple-500/10",
+  },
+  {
+    titleKey: "home.archive.title",
+    descKey: "home.archive.desc",
+    href: "/guide",
+    feature: "guide",
+    image: "/arona.webp",
+    badge: "Beta",
   },
   {
     titleKey: "home.video.title",
@@ -52,14 +60,6 @@ const features: Feature[] = [
     icon: Video,
     color: "text-rose-500",
     bgColor: "bg-rose-500/10",
-  },
-  {
-    titleKey: "home.arona.title",
-    descKey: "home.arona.desc",
-    href: "/arona",
-    feature: "arona",
-    image: "/arona.webp",
-    badge: "Beta",
   },
   {
     titleKey: "home.calculator.title",
@@ -130,7 +130,7 @@ export default function Home() {
 
       <div className="mt-4">
         <Link
-          href="/guide"
+          href="/guide/guides/beginner"
           onClick={() => trackEvent("home_feature_click", { feature: "guide" })}
         >
           <div className="flex items-center gap-3 px-4 py-3 rounded-lg border border-[#27a567]/40 bg-[#27a567]/10 hover:bg-[#27a567]/20 transition-colors cursor-pointer">

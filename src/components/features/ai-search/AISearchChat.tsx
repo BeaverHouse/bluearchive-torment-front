@@ -37,7 +37,7 @@ async function fetchPrompt(kind: "persona" | "instruction", locale: string): Pro
   return "";
 }
 
-export function AISearchChat() {
+export function AISearchChat({ embedded = false }: { embedded?: boolean } = {}) {
   const { t, locale } = useTranslations();
   const [personaPrompt, setPersonaPrompt] = useState<string>("");
   const [instructionPrompt, setInstructionPrompt] = useState<string>("");
@@ -100,26 +100,52 @@ export function AISearchChat() {
   const isEmpty = messages.length === 0 && !currentAnswer && !isLoading;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-200px)] max-w-4xl mx-auto">
+    <div
+      className={
+        embedded
+          ? "flex flex-col h-[calc(100dvh-330px)] min-h-[420px]"
+          : "flex flex-col h-[calc(100vh-200px)] max-w-4xl mx-auto"
+      }
+    >
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <Image
-            src="/arona.webp"
-            alt="ARONA"
-            width={48}
-            height={48}
-            className="rounded-full object-cover"
-          />
-          <div>
+          {embedded ? (
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold text-sky-600 dark:text-sky-400">
-                A.R.O.N.A
-              </h1>
+              <span className="flex items-center gap-1.5 text-sm font-semibold text-sky-600 dark:text-sky-400">
+                <Image
+                  src="/arona.webp"
+                  alt="ARONA"
+                  width={22}
+                  height={22}
+                  className="rounded-full object-cover"
+                />
+                {t("arona.embedded.title")}
+              </span>
               <Badge variant="secondary" className="text-xs">
                 Beta
               </Badge>
             </div>
-          </div>
+          ) : (
+            <>
+              <Image
+                src="/arona.webp"
+                alt="ARONA"
+                width={48}
+                height={48}
+                className="rounded-full object-cover"
+              />
+              <div>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-2xl font-bold text-sky-600 dark:text-sky-400">
+                    A.R.O.N.A
+                  </h1>
+                  <Badge variant="secondary" className="text-xs">
+                    Beta
+                  </Badge>
+                </div>
+              </div>
+            </>
+          )}
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={openApiKeyModal}>

@@ -14,6 +14,7 @@ export const ALL_BOSSES = [
     "쿠로카게",
     "게부라",
     "예소드",
+    "드럼통 게",
 ]
 
 const subcategories = {
@@ -59,6 +60,7 @@ const BOSS_KEY: Record<string, string> = {
   "쿠로카게": "boss.kurokage",
   "게부라": "boss.geburah",
   "예소드": "boss.yesod",
+  "드럼통 게": "boss.drumbarka",
 };
 
 /** Map of canonical Korean subtype/subcategory → i18n key. */
