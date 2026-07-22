@@ -72,11 +72,6 @@ export function AronaNoteCard({
           <span className="block text-sm font-semibold text-sky-900 dark:text-sky-100">
             {t("wiki.note.title")}
           </span>
-          {subtitle && (
-            <span className="block truncate text-xs text-sky-700/70 dark:text-sky-300/60">
-              {subtitle}
-            </span>
-          )}
         </span>
         <ChevronDown
           className={cn(
