@@ -18,8 +18,6 @@ import { Card, CardContent } from "@/components/ui/card";
 interface RaidUsageTableProps {
   data: TotalAnalysisData;
   type: "striker" | "special" | "assist";
-  /** Unused since the header was removed; kept optional for legacy callers. */
-  title?: string;
   limit?: number;
 }
 

@@ -13,7 +13,7 @@ interface EmptyStateProps {
 export function EmptyState({ hasApiKey, onSetupApiKey }: EmptyStateProps) {
   const { t } = useTranslations();
   return (
-    <div className="flex flex-col items-center justify-center h-full text-center">
+    <div className="flex min-h-full flex-col items-center justify-center text-center">
       <Image
         src="/arona.webp"
         alt="ARONA"

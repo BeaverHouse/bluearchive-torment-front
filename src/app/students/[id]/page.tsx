@@ -81,7 +81,7 @@ export default function StudentDetailPage({
     : [];
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-6">
+    <div className="mx-auto max-w-3xl py-4 sm:px-4 sm:py-6">
       <Link
         href="/students"
         className="mb-4 inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
@@ -92,14 +92,14 @@ export default function StudentDetailPage({
 
       {/* Header */}
       <div className="rounded-2xl border bg-card p-5 shadow-sm">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex min-w-0 items-center gap-3 sm:gap-4">
             <div className="shrink-0 overflow-hidden rounded-2xl ring-1 ring-border">
               <StudentImage code={studentId} size={72} />
             </div>
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-2xl font-bold">{name}</h1>
+                <h1 className="break-keep text-xl font-bold sm:text-2xl">{name}</h1>
                 <Badge variant="secondary" className="rounded-full">
                   {isStriker ? "STRIKER" : "SPECIAL"}
                 </Badge>

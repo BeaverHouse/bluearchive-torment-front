@@ -107,7 +107,7 @@ export function AddVideoDialog({ raids }: AddVideoDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-sky-500 hover:bg-sky-600 w-full sm:w-auto">
+        <Button variant="secondary" size="sm">
           <Plus className="h-4 w-4 mr-2" />
           {t("video.add.button")}
         </Button>

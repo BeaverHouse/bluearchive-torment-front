@@ -1,8 +1,39 @@
 "use client";
 
+import { Children, isValidElement, type ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type { Components } from "react-markdown";
+import { VideoEmbed } from "@/components/features/video/video-embed";
+import { parseVideoReference } from "@/types/video";
+
+interface MarkdownLinkProps {
+  href?: string;
+  children?: ReactNode;
+}
+
+function nodeText(node: ReactNode): string {
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(nodeText).join("");
+  if (isValidElement<{ children?: ReactNode }>(node)) return nodeText(node.props.children);
+  return "";
+}
+
+function singleVideo(children: ReactNode) {
+  const nodes = Children.toArray(children);
+  if (nodes.length !== 1 || !isValidElement<MarkdownLinkProps>(nodes[0])) return null;
+
+  const href = nodes[0].props.href;
+  if (!href) return null;
+  const video = parseVideoReference(href);
+  if (!video) return null;
+
+  return {
+    link: nodes[0],
+    title: nodeText(nodes[0].props.children) || "Video",
+    ...video,
+  };
+}
 
 // Shared renderer for wiki markdown. Explicit element overrides keep the output
 // styled regardless of a typography plugin and match the site's look. HTML
@@ -21,7 +52,24 @@ const components: Components = {
     <h3 className="mt-6 mb-2 text-base font-semibold text-foreground/90">{children}</h3>
   ),
   h4: ({ children }) => <h4 className="mt-4 mb-1.5 text-sm font-semibold">{children}</h4>,
-  p: ({ children }) => <p className="my-3 text-[15px] leading-7 text-foreground/85">{children}</p>,
+  p: ({ children }) => {
+    const video = singleVideo(children);
+    if (video) {
+      return (
+        <figure className="my-5 overflow-hidden rounded-2xl border bg-card shadow-sm">
+          <VideoEmbed
+            videoId={video.video_id}
+            platform={video.platform}
+            title={video.title}
+          />
+          <figcaption className="border-t bg-muted/25 px-4 py-3 text-sm font-medium leading-6">
+            {video.link}
+          </figcaption>
+        </figure>
+      );
+    }
+    return <p className="my-3 text-[15px] leading-7 text-foreground/85">{children}</p>;
+  },
   strong: ({ children }) => <strong className="font-semibold text-foreground">{children}</strong>,
   ul: ({ children }) => <ul className="my-3 space-y-1.5 pl-1">{children}</ul>,
   ol: ({ children }) => <ol className="my-3 list-decimal space-y-1.5 pl-5">{children}</ol>,

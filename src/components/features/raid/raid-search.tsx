@@ -316,6 +316,7 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
   }, [results, searchModeContext.kind]);
 
   const displayCount = groupedResults?.length ?? results.length;
+  const resultSummary = `${t("party.filter.results").replace("{n}", String(displayCount))}${groupedResults ? ` (${results.length})` : ""}`;
 
   const handleScoreJump = useCallback((targetScore: number) => {
     if (groupedResults) {
@@ -398,10 +399,10 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
         onScoreJump={handleScoreJump}
         onLoadPreset={handleLoadPreset}
         hideIncludeExclude={searchMode !== "filter"}
+        resultSummary={resultSummary}
       />
-      <div className="mx-auto mb-5 w-full">
-        {t("party.filter.results").replace("{n}", String(displayCount))}
-        {groupedResults && ` (${results.length})`}
+      <div className="mx-auto mb-5 hidden w-full sm:block">
+        {resultSummary}
       </div>
       <div className="mb-5">
         <Pagination

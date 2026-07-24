@@ -41,7 +41,7 @@ const TAB_META: { key: Cat; icon: typeof Sprout }[] = [
   { key: "builds", icon: Wrench },
 ];
 
-export function WikiHub() {
+export function WikiHub({ compact = false }: { compact?: boolean }) {
   const { t } = useTranslations();
   const [entries, setEntries] = useState<HubEntry[]>([]);
   const [tab, setTab] = useState<Cat | "all">("all");
@@ -82,7 +82,12 @@ export function WikiHub() {
 
   return (
     <div>
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div
+        className={cn(
+          "mb-4 flex flex-col gap-3",
+          !compact && "sm:flex-row sm:items-center sm:justify-between"
+        )}
+      >
         <div className="flex flex-wrap gap-1.5">
           <TabButton active={tab === "all"} onClick={() => setTab("all")} count={counts.all}>
             {t("guide.tab.all")}
@@ -94,7 +99,7 @@ export function WikiHub() {
             </TabButton>
           ))}
         </div>
-        <div className="relative sm:w-56">
+        <div className={cn("relative", !compact && "sm:w-56")}>
           <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={query}
@@ -108,7 +113,7 @@ export function WikiHub() {
       {filtered.length === 0 ? (
         <p className="py-16 text-center text-sm text-muted-foreground">{t("guide.empty")}</p>
       ) : (
-        <ul className="grid gap-2 sm:grid-cols-2">
+        <ul className={cn("grid gap-2", !compact && "sm:grid-cols-2")}>
           {filtered.map((e) => (
             <li key={e.slug}>
               <Link
@@ -148,6 +153,8 @@ function TabButton({
 }) {
   return (
     <button
+      type="button"
+      aria-pressed={active}
       onClick={onClick}
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-colors",

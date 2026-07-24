@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, Megaphone } from "lucide-react";
+import { Loader2, Megaphone, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { submitWikiFeedback, type BuildSlot, type StudentBuild } from "@/lib/wiki";
 import { useTranslations } from "@/lib/i18n";
@@ -155,6 +155,21 @@ export function BuildNote({
       </div>
       {reason && (
         <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">{reason}</p>
+      )}
+      {build.kind === "low-invest" && build.weaponEffect && (
+        <div className="flex gap-2.5 rounded-xl border border-amber-200 bg-amber-50/80 px-3 py-2.5 text-amber-950 dark:border-amber-900 dark:bg-amber-950/35 dark:text-amber-100">
+          <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
+          <div className="space-y-0.5">
+            <p className="text-xs font-semibold">{t("students.build.weaponTitle")}</p>
+            <p className="text-xs leading-relaxed">
+              {t(
+                build.weaponEffect === "beneficial"
+                  ? "students.build.weaponBeneficial"
+                  : "students.build.weaponHarmful",
+              )}
+            </p>
+          </div>
+        </div>
       )}
     </div>
   );

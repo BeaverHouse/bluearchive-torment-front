@@ -21,7 +21,7 @@ type Feature = {
   href: string;
   feature: "party_search" | "total_analysis" | "video" | "arona" | "calculator" | "guide";
 } & (
-  | { icon: typeof Search; color: string; bgColor: string }
+  | { icon: typeof Search }
   | { image: string; badge: string }
 );
 
@@ -32,8 +32,6 @@ const features: Feature[] = [
     href: "/party",
     feature: "party_search",
     icon: Search,
-    color: "text-blue-500",
-    bgColor: "bg-blue-500/10",
   },
   {
     titleKey: "home.students.title",
@@ -41,8 +39,6 @@ const features: Feature[] = [
     href: "/students",
     feature: "total_analysis",
     icon: Users,
-    color: "text-purple-500",
-    bgColor: "bg-purple-500/10",
   },
   {
     titleKey: "home.archive.title",
@@ -58,8 +54,6 @@ const features: Feature[] = [
     href: "/video-analysis",
     feature: "video",
     icon: Video,
-    color: "text-rose-500",
-    bgColor: "bg-rose-500/10",
   },
   {
     titleKey: "home.calculator.title",
@@ -67,8 +61,6 @@ const features: Feature[] = [
     href: "/calculator/score",
     feature: "calculator",
     icon: Calculator,
-    color: "text-emerald-500",
-    bgColor: "bg-emerald-500/10",
   },
 ];
 
@@ -106,9 +98,9 @@ export default function Home() {
                       />
                     ) : (
                       <div
-                        className={`w-10 h-10 rounded-lg ${feature.bgColor} flex items-center justify-center flex-shrink-0`}
+                        className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10"
                       >
-                        <feature.icon className={`w-5 h-5 ${feature.color}`} />
+                        <feature.icon className="h-5 w-5 text-primary" />
                       </div>
                     )}
                     <CardTitle className="text-lg flex items-center gap-2">
@@ -133,10 +125,10 @@ export default function Home() {
           href="/guide/guides/beginner"
           onClick={() => trackEvent("home_feature_click", { feature: "guide" })}
         >
-          <div className="flex items-center gap-3 px-4 py-3 rounded-lg border border-[#27a567]/40 bg-[#27a567]/10 hover:bg-[#27a567]/20 transition-colors cursor-pointer">
-            <Sprout className="w-5 h-5 text-[#27a567] shrink-0" />
-            <span className="text-sm font-medium text-[#27a567]">{t("home.guide.question")}</span>
-            <span className="text-xs text-[#27a567]/80 ml-auto">{t("home.guide.cta")}</span>
+          <div className="flex cursor-pointer items-center gap-3 rounded-lg border border-primary/30 bg-primary/10 px-4 py-3 transition-colors hover:bg-primary/15">
+            <Sprout className="h-5 w-5 shrink-0 text-primary" />
+            <span className="text-sm font-medium text-primary">{t("home.guide.question")}</span>
+            <span className="ml-auto text-xs text-primary/80">{t("home.guide.cta")}</span>
           </div>
         </Link>
       </div>

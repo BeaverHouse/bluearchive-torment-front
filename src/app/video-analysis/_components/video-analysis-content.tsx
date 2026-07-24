@@ -68,7 +68,8 @@ export function VideoAnalysisContent({
 
   return (
     <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
-      <div className="mb-8 flex items-center gap-2">
+      <h1 className="text-2xl font-bold">{t("nav.video")}</h1>
+      <div className="mt-1 mb-8 flex items-center gap-2">
         <p className="text-muted-foreground">
           {t("videoAnalysis.intro")}
         </p>
@@ -92,6 +93,46 @@ export function VideoAnalysisContent({
         />
       )}
 
+      <div className="mb-6 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+        <div className="flex gap-2 items-center">
+          <SingleSelect
+            options={raidsSelectOptions}
+            value={selectedRaid}
+            onChange={(value) => {
+              handleRaidChange(value);
+              trackEvent("video_filter_apply", { raid_filter: value });
+            }}
+            placeholder={t("videoAnalysis.raidSelectPlaceholder")}
+          />
+          {selectedRaid !== "all" && (() => {
+            const selectedRaidInfo = raids.find((r) => r.id === selectedRaid);
+            if (!selectedRaidInfo) return null;
+
+            const searchKeyword = generateSearchKeyword(selectedRaidInfo.name_ko ?? selectedRaidInfo.name, "");
+            const youtubeSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(searchKeyword)}`;
+
+            return (
+              <Button asChild size="sm" className="gap-1.5 h-9 bg-red-500 hover:bg-red-600">
+                <a
+                  href={youtubeSearchUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={t("videoAnalysis.youtubeSearchTitle")}
+                >
+                  <Youtube className="h-4 w-4" />
+                  <span className="text-xs">YouTube</span>
+                </a>
+              </Button>
+            );
+          })()}
+        </div>
+
+        <div className="flex w-full justify-end gap-2 sm:w-auto">
+          <VideoQueueDialog raids={raids} />
+          <AddVideoDialog raids={raids} />
+        </div>
+      </div>
+
       <div className="mx-auto mb-5 w-full">
         {t("videoAnalysis.searchResults").replace("{n}", String(filterModePagination.total))}
       </div>
@@ -112,46 +153,6 @@ export function VideoAnalysisContent({
           />
         </div>
       )}
-
-      <div className="mb-6 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
-        <div className="flex gap-2 items-center">
-          <SingleSelect
-            options={raidsSelectOptions}
-            value={selectedRaid}
-            onChange={(value) => {
-              handleRaidChange(value);
-              trackEvent("video_filter_apply", { raid_filter: value });
-            }}
-            placeholder={t("videoAnalysis.raidSelectPlaceholder")}
-          />
-          {selectedRaid !== "all" && (() => {
-            const selectedRaidInfo = raids.find((r) => r.id === selectedRaid);
-            if (!selectedRaidInfo) return null;
-
-            const searchKeyword = generateSearchKeyword(selectedRaidInfo.name_ko ?? selectedRaidInfo.name, "");
-            const youtubeSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(searchKeyword)}`;
-
-            return (
-              <a
-                href={youtubeSearchUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                title={t("videoAnalysis.youtubeSearchTitle")}
-              >
-                <Button size="sm" className="gap-1.5 h-9 bg-red-500 hover:bg-red-600">
-                  <Youtube className="h-4 w-4" />
-                  <span className="text-xs">YouTube</span>
-                </Button>
-              </a>
-            );
-          })()}
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-          <VideoQueueDialog raids={raids} />
-          <AddVideoDialog raids={raids} />
-        </div>
-      </div>
 
       {loading ? (
         <Loading />

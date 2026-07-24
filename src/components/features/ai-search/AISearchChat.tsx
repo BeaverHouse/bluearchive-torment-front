@@ -89,7 +89,7 @@ export function AISearchChat({ embedded = false }: { embedded?: boolean } = {}) 
   }, []);
 
   useEffect(() => {
-    scrollToBottom();
+    if (messages.length > 0 || currentAnswer) scrollToBottom();
   }, [messages, currentAnswer, scrollToBottom]);
 
   const handleSendMessage = useCallback((e?: React.FormEvent) => {

@@ -121,7 +121,7 @@ export function AppSidebar() {
                 const Icon = item.icon;
                 return (
                   <SidebarMenuItem key={item.titleKey}>
-                    <SidebarMenuButton asChild isActive={pathname === item.url}>
+                    <SidebarMenuButton asChild isActive={item.url === "/" ? pathname === "/" : pathname === item.url || pathname.startsWith(`${item.url}/`)}>
                       <Link href={item.url!} onClick={handleMenuClick}>
                         {item.image ? (
                           <Image

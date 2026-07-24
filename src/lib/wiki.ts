@@ -339,7 +339,13 @@ export interface BuildSlot {
 }
 
 export type StudentBuild =
-  | { kind: "low-invest"; slots: BuildSlot[]; freq?: string; reason: string; weapon: boolean }
+  | {
+      kind: "low-invest";
+      slots: BuildSlot[];
+      freq?: string;
+      reason: string;
+      weaponEffect?: "beneficial" | "harmful";
+    }
   | { kind: "compromise"; role: string; slot: string }
   | { kind: "full-invest"; group: "dealer" | "healer" }
   | null;
@@ -349,6 +355,29 @@ const SLOT_KEYS = ["ex", "basic", "enhanced", "sub"] as const;
 // Strip markdown emphasis markers so table-cell prose renders as plain text.
 function stripEmphasis(s: string): string {
   return s.replace(/\*\*/g, "").replace(/(^|[^*])\*([^*]+)\*/g, "$1$2").trim();
+}
+
+function parseBuildReason(
+  cell: string,
+  hasWeaponCaveat: boolean,
+): { reason: string; weaponEffect?: "beneficial" | "harmful" } {
+  const plain = stripEmphasis(cell);
+  if (!hasWeaponCaveat) return { reason: plain };
+
+  const caveatAt = plain.indexOf("전무2+는");
+  const caveat = caveatAt >= 0 ? plain.slice(caveatAt) : plain;
+  const effect = caveat.match(/(이로운|해로운) 효과 유지력/)?.[1];
+  if (!effect) return { reason: plain };
+
+  const reason = caveatAt >= 0
+    ? plain.slice(0, caveatAt).replace(/[.\s]+$/, "")
+    : plain;
+
+  return {
+    reason,
+    weaponEffect:
+      effect === "이로운" ? "beneficial" : effect === "해로운" ? "harmful" : undefined,
+  };
 }
 
 // Parse a 4-char M-notation spec ("MM7M") into slots. Digits mark low slots.
@@ -403,12 +432,12 @@ export async function getStudentBuild(name: string): Promise<StudentBuild> {
       const slots = parseSpec(specToken);
       if (!slots) continue;
       const freq = buildCell.match(/(\d+%)/)?.[1];
+      const parsedReason = parseBuildReason(cells[3] ?? "", nameCell.includes("★"));
       return {
         kind: "low-invest",
         slots,
         freq,
-        reason: stripEmphasis(cells[3] ?? ""),
-        weapon: nameCell.includes("★"),
+        ...parsedReason,
       };
     }
     if (section === "compromise") {

@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Download, RotateCcw } from "lucide-react";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
@@ -39,6 +41,7 @@ interface PartyFilterSectionProps {
 
   // 다른 검색 모드(풀/조합) 활성 시 include/exclude/hardExclude UI 숨김
   hideIncludeExclude?: boolean;
+  resultSummary?: string;
 }
 
 export function PartyFilterSection({
@@ -57,8 +60,31 @@ export function PartyFilterSection({
   onScoreJump,
   onLoadPreset,
   hideIncludeExclude = false,
+  resultSummary,
 }: PartyFilterSectionProps) {
   const { t } = useTranslations();
+  const [isOpen, setIsOpen] = useState(false);
+  const activeFilterCount = [
+    filters.scoreRange !== undefined,
+    !hideIncludeExclude && filters.includeList.length > 0,
+    !hideIncludeExclude && filters.excludeList.length > 0,
+    filters.assist !== undefined,
+    (filters.partyCountRange[0] !== minPartys ||
+      filters.partyCountRange[1] !== maxPartys) &&
+      !(filters.partyCountRange[0] === 0 && filters.partyCountRange[1] === 99),
+    !hideIncludeExclude && filters.hardExclude,
+    !filters.allowDuplicate,
+    filters.youtubeOnly,
+  ].filter(Boolean).length;
+
+  useEffect(() => {
+    const desktopQuery = window.matchMedia("(min-width: 640px)");
+    const syncOpenState = () => setIsOpen(defaultOpen && desktopQuery.matches);
+    syncOpenState();
+    desktopQuery.addEventListener("change", syncOpenState);
+    return () => desktopQuery.removeEventListener("change", syncOpenState);
+  }, [defaultOpen]);
+
   const handleReset = async () => {
     const result = await Swal.fire({
       title: t("party.search.filter") + " " + t("common.reset"),
@@ -73,11 +99,23 @@ export function PartyFilterSection({
 
   return (
     <div className="mx-auto mb-5 w-full">
-      <Collapsible defaultOpen={defaultOpen}>
+      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <div className="flex items-center rounded-lg border border-gray-200 dark:border-gray-700">
-          <CollapsibleTrigger className="flex flex-1 items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800">
-            <span className="text-sm font-medium">{t("party.search.filter")}</span>
-            <ChevronDownIcon className="h-4 w-4 transition-transform" />
+          <CollapsibleTrigger className="group flex min-w-0 flex-1 items-center justify-between p-4 text-left hover:bg-gray-50 dark:hover:bg-gray-800">
+            <span className="flex min-w-0 flex-col gap-1">
+              <span className="text-sm font-medium">{t("party.search.filter")}</span>
+              {resultSummary && (
+                <span className="flex items-center gap-2 text-xs font-normal text-muted-foreground sm:hidden">
+                  {resultSummary}
+                  {activeFilterCount > 0 && (
+                    <Badge variant="secondary">
+                      {t("party.filter.appliedCount").replace("{n}", String(activeFilterCount))}
+                    </Badge>
+                  )}
+                </span>
+              )}
+            </span>
+            <ChevronDownIcon className="h-4 w-4 shrink-0 transition-transform group-data-[state=open]:rotate-180" />
           </CollapsibleTrigger>
           <div className="flex items-center gap-1 pr-2">
             {showPresetPopover && onLoadPreset && (
