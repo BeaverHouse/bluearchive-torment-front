@@ -136,6 +136,9 @@ export function BuildNote({
   }
 
   const hasLow = slots.some((s) => s.low);
+  const enhancedNeedsInvestment = slots.some(
+    (slot) => slot.key === "enhanced" && slot.low,
+  );
 
   return (
     <div className="space-y-3">
@@ -156,7 +159,9 @@ export function BuildNote({
       {reason && (
         <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">{reason}</p>
       )}
-      {build.kind === "low-invest" && build.weaponEffect && (
+      {(build.kind === "low-invest" || build.kind === "compromise") &&
+        build.weaponEffect &&
+        enhancedNeedsInvestment && (
         <div className="flex gap-2.5 rounded-xl border border-amber-200 bg-amber-50/80 px-3 py-2.5 text-amber-950 dark:border-amber-900 dark:bg-amber-950/35 dark:text-amber-100">
           <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
           <div className="space-y-0.5">

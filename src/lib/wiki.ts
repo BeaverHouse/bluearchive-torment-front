@@ -234,6 +234,12 @@ export function firstParagraph(body: string): string {
   return "";
 }
 
+/** The concise boss identity authored in a raid guide's basic-information list. */
+export function raidGuideSummary(body: string): string {
+  const feature = body.match(/^-\s+\*\*특징\*\*:\s*(.+)$/m);
+  return feature?.[1].replace(/\*+/g, "").replace(/\s+/g, " ").trim() ?? "";
+}
+
 /* ── Arona card comments ────────────────────────────────────────────── */
 
 /**
@@ -261,14 +267,27 @@ const ARONA_CARD_LABELS: [RegExp, AronaCardSection][] = [
 interface AronaCommentEntry {
   section: AronaCardSection | "season_line";
   difficulty?: "T" | "L";
+  armor?: "light" | "heavy" | "special" | "elastic";
   text: string;
 }
 
+const ARONA_ARMOR_SCOPES: Record<string, AronaCommentEntry["armor"]> = {
+  경장갑: "light",
+  중장갑: "heavy",
+  특수장갑: "special",
+  탄력장갑: "elastic",
+};
+const ARONA_ARMOR_BY_RAID_SUFFIX: Record<string, AronaCommentEntry["armor"]> = {
+  "1": "light",
+  "2": "heavy",
+  "3": "special",
+  "4": "elastic",
+};
+
 /**
  * Parse the report's "## 아로나 코멘트" section: one bullet per summary card,
- * written in Arona's voice, optionally scoped "(토먼트)"/"(루나틱)". The site
- * renders only what the report authored — no bullet, no strip — so the wiki
- * stays the single source of analysis and the UI never invents commentary.
+ * written in Arona's voice, optionally scoped by difficulty or Grand Assault
+ * armor. The site renders only what the report authored — no bullet, no strip.
  */
 function parseAronaComments(body: string): AronaCommentEntry[] {
   // Walk lines instead of a lazy /m regex — with /m, `$` matches every line
@@ -280,12 +299,14 @@ function parseAronaComments(body: string): AronaCommentEntry[] {
   for (const line of lines) {
     if (/^##\s/.test(line)) break; // next section
     const b = line.match(
-      /^\s*-\s*([^:：()]+?)\s*(?:\((토먼트|루나틱)\))?\s*[:：]\s*(.+)$/,
+      /^\s*-\s*([^:：()]+?)\s*(?:\((토먼트|루나틱|경장갑|중장갑|특수장갑|탄력장갑)\))?\s*[:：]\s*(.+)$/,
     );
     if (!b) continue;
     const label = b[1].trim();
+    const scope = b[2];
     const difficulty =
-      b[2] === "토먼트" ? "T" : b[2] === "루나틱" ? "L" : undefined;
+      scope === "토먼트" ? "T" : scope === "루나틱" ? "L" : undefined;
+    const armor = ARONA_ARMOR_SCOPES[scope];
     // Strip bold markers but keep escaped literals (시로코\*테러 → 시로코*테러).
     const text = b[3]
       .replace(/\*\*/g, "")
@@ -298,7 +319,7 @@ function parseAronaComments(body: string): AronaCommentEntry[] {
     }
     for (const [re, section] of ARONA_CARD_LABELS) {
       if (re.test(label)) {
-        out.push({ section, difficulty, text });
+        out.push({ section, difficulty, armor, text });
         break;
       }
     }
@@ -307,19 +328,32 @@ function parseAronaComments(body: string): AronaCommentEntry[] {
 }
 
 /**
- * Arona's comment for one summary card at one difficulty. A bullet scoped to
- * the exact difficulty wins over an unscoped one; a bullet scoped to the
- * *other* difficulty never leaks across tabs.
+ * Arona's comment for one summary card. Armor-specific comments win in Grand
+ * Assault, then difficulty-specific comments, then the unscoped fallback.
  */
 export function aronaCardComment(
   body: string,
   section: AronaCardSection,
   level: "T" | "L",
+  raidId?: string,
 ): string {
   const entries = parseAronaComments(body).filter((e) => e.section === section);
-  const exact = entries.find((e) => e.difficulty === level);
-  if (exact) return exact.text;
-  return entries.find((e) => !e.difficulty)?.text ?? "";
+  const suffix = raidId?.match(/-(\d)$/)?.[1];
+  const armor = suffix ? ARONA_ARMOR_BY_RAID_SUFFIX[suffix] : undefined;
+  const eligible = entries.filter(
+    (e) =>
+      (!e.armor || e.armor === armor) &&
+      (!e.difficulty || e.difficulty === level),
+  );
+  const armorSpecific = armor
+    ? eligible.find((e) => e.armor === armor)
+    : undefined;
+  return (
+    armorSpecific?.text ??
+    eligible.find((e) => e.difficulty === level)?.text ??
+    eligible.find((e) => !e.armor && !e.difficulty)?.text ??
+    ""
+  );
 }
 
 /** The report's season headline in Arona's voice (`- 시즌 한 줄:` bullet). */
@@ -346,7 +380,12 @@ export type StudentBuild =
       reason: string;
       weaponEffect?: "beneficial" | "harmful";
     }
-  | { kind: "compromise"; role: string; slot: string }
+  | {
+      kind: "compromise";
+      role: string;
+      slot: string;
+      weaponEffect?: "beneficial" | "harmful";
+    }
   | { kind: "full-invest"; group: "dealer" | "healer" }
   | null;
 
@@ -442,7 +481,13 @@ export async function getStudentBuild(name: string): Promise<StudentBuild> {
     }
     if (section === "compromise") {
       // 학생 | 역할 | 타협 가능 슬롯
-      return { kind: "compromise", role: cells[1] ?? "", slot: cells[2] ?? "" };
+      const parsedSlot = parseBuildReason(cells[2] ?? "", nameCell.includes("★"));
+      return {
+        kind: "compromise",
+        role: cells[1] ?? "",
+        slot: parsedSlot.reason,
+        weaponEffect: parsedSlot.weaponEffect,
+      };
     }
   }
 

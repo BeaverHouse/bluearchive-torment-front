@@ -17,7 +17,7 @@ export default function GuidePage() {
   const [view, setView] = useState<"ask" | "records">("ask");
 
   return (
-    <div className="mx-auto max-w-6xl py-2 sm:px-2 sm:py-4 lg:px-4">
+    <div className="mx-auto max-w-7xl py-2 sm:px-2 sm:py-4 lg:px-4">
       <div className="flex items-center gap-3 rounded-t-2xl border border-primary/25 bg-gradient-to-r from-primary/15 to-primary/5 p-3 sm:gap-4 sm:p-4">
         <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white shadow ring-2 ring-sky-200 dark:bg-sky-950 dark:ring-sky-800 sm:h-14 sm:w-14">
           <Image src="/arona.webp" alt="ARONA" width={44} height={44} className="rounded-full" />
@@ -68,7 +68,7 @@ export default function GuidePage() {
           </button>
         </div>
 
-        <div className="lg:grid lg:grid-cols-[20rem_minmax(0,1fr)]">
+        <div className="lg:grid lg:grid-cols-[17rem_minmax(0,1fr)]">
           <aside
             role="tabpanel"
             className={cn(

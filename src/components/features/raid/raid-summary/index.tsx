@@ -501,7 +501,7 @@ const RaidSummary = ({
                 <Button
                   type="button"
                   size="sm"
-                  className="w-full gap-1 bg-red-500 hover:bg-red-600"
+                  className="w-full gap-1 border border-rose-300 bg-rose-50 text-rose-700 hover:bg-rose-100 dark:border-rose-900 dark:bg-rose-950/45 dark:text-rose-200 dark:hover:bg-rose-950/70"
                 >
                   <Youtube className="h-4 w-4" />
                   <span>YouTube</span>

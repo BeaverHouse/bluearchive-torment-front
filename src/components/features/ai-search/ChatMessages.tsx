@@ -387,7 +387,7 @@ export function ChatMessages({
           <div
             className={`max-w-[85%] rounded-2xl px-4 py-2.5 ${
               msg.role === "user"
-                ? "rounded-br-md bg-primary text-primary-foreground"
+                ? "rounded-br-md border border-border bg-muted text-foreground shadow-sm"
                 : "rounded-bl-md border border-primary/15 bg-card shadow-sm"
             }`}
           >

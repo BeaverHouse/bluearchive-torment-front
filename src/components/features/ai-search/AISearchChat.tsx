@@ -107,45 +107,25 @@ export function AISearchChat({ embedded = false }: { embedded?: boolean } = {}) 
           : "flex flex-col h-[calc(100vh-200px)] max-w-4xl mx-auto"
       }
     >
-      <div className="flex items-center justify-between mb-4">
+      {!embedded && <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          {embedded ? (
+          <Image
+            src="/arona.webp"
+            alt="ARONA"
+            width={48}
+            height={48}
+            className="rounded-full object-cover"
+          />
+          <div>
             <div className="flex items-center gap-2">
-              <span className="flex items-center gap-1.5 text-sm font-semibold text-sky-600 dark:text-sky-400">
-                <Image
-                  src="/arona.webp"
-                  alt="ARONA"
-                  width={22}
-                  height={22}
-                  className="rounded-full object-cover"
-                />
-                {t("arona.embedded.title")}
-              </span>
+              <h1 className="text-2xl font-bold text-sky-600 dark:text-sky-400">
+                A.R.O.N.A
+              </h1>
               <Badge variant="secondary" className="text-xs">
                 Beta
               </Badge>
             </div>
-          ) : (
-            <>
-              <Image
-                src="/arona.webp"
-                alt="ARONA"
-                width={48}
-                height={48}
-                className="rounded-full object-cover"
-              />
-              <div>
-                <div className="flex items-center gap-2">
-                  <h1 className="text-2xl font-bold text-sky-600 dark:text-sky-400">
-                    A.R.O.N.A
-                  </h1>
-                  <Badge variant="secondary" className="text-xs">
-                    Beta
-                  </Badge>
-                </div>
               </div>
-            </>
-          )}
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={openApiKeyModal}>
@@ -159,13 +139,17 @@ export function AISearchChat({ embedded = false }: { embedded?: boolean } = {}) 
             </Button>
           )}
         </div>
-      </div>
+      </div>}
 
       <Card className="flex-1 mb-4 overflow-hidden">
         <CardContent className="p-0 h-full">
           <div className="h-full overflow-y-auto p-4" ref={scrollAreaRef}>
             {isEmpty ? (
-              <EmptyState hasApiKey={!!apiKey} onSetupApiKey={openApiKeyModal} />
+              <EmptyState
+                hasApiKey={!!apiKey}
+                onSetupApiKey={openApiKeyModal}
+                showSetupAction={!embedded}
+              />
             ) : (
               <ChatMessages
                 messages={messages}
@@ -190,16 +174,32 @@ export function AISearchChat({ embedded = false }: { embedded?: boolean } = {}) 
         placeholder={apiKey ? t("arona.placeholder.ready") : t("arona.placeholder.noKey")}
       />
 
-      <div className="mt-2 text-center text-xs text-muted-foreground">
-        Powered by{" "}
-        <a
-          href="https://tinyclover.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline underline-offset-2 hover:text-foreground transition-colors"
-        >
-          🍀 Tiny Clover
-        </a>
+      <div className="mt-2 flex min-h-8 items-center justify-between gap-3 text-xs text-muted-foreground">
+        {embedded ? (
+          <div className="flex gap-2">
+            <Button variant="ghost" size="sm" onClick={openApiKeyModal}>
+              <Key className="mr-1 h-4 w-4" />
+              {apiKey ? t("arona.keyChange") : t("arona.keySet")}
+            </Button>
+            {messages.length > 0 && (
+              <Button variant="ghost" size="sm" onClick={clearChat}>
+                <Trash2 className="mr-1 h-4 w-4" />
+                {t("arona.reset")}
+              </Button>
+            )}
+          </div>
+        ) : <span />}
+        <span>
+          Powered by{" "}
+          <a
+            href="https://tinyclover.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2 transition-colors hover:text-foreground"
+          >
+            🍀 Tiny Clover
+          </a>
+        </span>
       </div>
 
       <ApiKeyModal

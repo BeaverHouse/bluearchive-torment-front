@@ -8,9 +8,14 @@ import { useTranslations } from "@/lib/i18n";
 interface EmptyStateProps {
   hasApiKey: boolean;
   onSetupApiKey: () => void;
+  showSetupAction?: boolean;
 }
 
-export function EmptyState({ hasApiKey, onSetupApiKey }: EmptyStateProps) {
+export function EmptyState({
+  hasApiKey,
+  onSetupApiKey,
+  showSetupAction = true,
+}: EmptyStateProps) {
   const { t } = useTranslations();
   return (
     <div className="flex min-h-full flex-col items-center justify-center text-center">
@@ -33,7 +38,7 @@ export function EmptyState({ hasApiKey, onSetupApiKey }: EmptyStateProps) {
           ⚔️ <strong>{t("arona.empty.damage.label")}</strong> - {t("arona.empty.damage.desc")}
         </p>
       </div>
-      {!hasApiKey && (
+      {showSetupAction && !hasApiKey && (
         <Button className="mt-2" onClick={onSetupApiKey}>
           <Key className="h-4 w-4 mr-2" />
           {t("arona.empty.setupKey")}

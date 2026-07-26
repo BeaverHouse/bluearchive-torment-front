@@ -73,7 +73,7 @@ export const HybridTooltipContent = (
   if (isTouch) {
     return (
       <PopoverContent
-        className={`bg-primary text-primary-foreground z-50 w-fit rounded-md px-3 py-1.5 text-xs ${
+        className={`w-fit px-3 py-1.5 text-xs ${
           className || ""
         }`}
         {...rest}

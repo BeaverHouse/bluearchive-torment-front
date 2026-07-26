@@ -4,7 +4,9 @@ import { Children, isValidElement, type ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type { Components } from "react-markdown";
+import { CharacterImage } from "@/components/common/character-image";
 import { VideoEmbed } from "@/components/features/video/video-embed";
+import { useStudentMaps } from "@/hooks/use-student-maps";
 import { parseVideoReference } from "@/types/video";
 
 interface MarkdownLinkProps {
@@ -33,6 +35,80 @@ function singleVideo(children: ReactNode) {
     title: nodeText(nodes[0].props.children) || "Video",
     ...video,
   };
+}
+
+function normalizedStudentName(name: string): string {
+  return name
+    .replace(/\\?\*/g, "＊")
+    .replace(/\s+/g, "")
+    .trim();
+}
+
+function PartyBlockquote({ children }: { children?: ReactNode }) {
+  const { studentSearchMap, isLoaded } = useStudentMaps();
+  const text = nodeText(children).trim();
+  const partyLines = text.split(/\n+/).map((line) =>
+    line
+      .split(/[·/]/)
+      .map((name) => name.trim())
+      .filter(Boolean),
+  );
+
+  const studentIdByName = new Map(
+    Object.entries(studentSearchMap).map(([id, student]) => [
+      normalizedStudentName(student.nameKo),
+      id,
+    ]),
+  );
+  const parties = partyLines.map((names) =>
+    names.map((name) => ({
+      id: studentIdByName.get(normalizedStudentName(name)),
+      name,
+    })),
+  );
+  const isParty =
+    isLoaded &&
+    parties.length > 0 &&
+    parties.every(
+      (students) =>
+        students.length === 6 &&
+        students.every((student) => student.id !== undefined),
+    );
+
+  if (!isParty) {
+    return (
+      <blockquote className="my-4 whitespace-normal break-words rounded-r-lg border-l-4 border-primary/50 bg-muted/50 px-4 py-2 text-[15px] text-muted-foreground [&>p]:my-1">
+        {children}
+      </blockquote>
+    );
+  }
+
+  return (
+    <blockquote className="my-4 space-y-2 rounded-xl border border-primary/15 bg-muted/35 p-2 sm:p-3">
+      {parties.map((students, partyIndex) => (
+        <div key={partyIndex} className="grid grid-cols-6 gap-1.5 sm:gap-2">
+          {students.map((student, index) => (
+            <div
+              key={`${student.id}-${index}`}
+              className="min-w-0 text-center"
+            >
+              <div className="relative mx-auto aspect-square w-full max-w-14 overflow-hidden rounded-lg bg-background">
+                <CharacterImage
+                  studentId={student.id!}
+                  alt={student.name}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <span className="mt-1 block break-keep text-[10px] leading-tight text-foreground/80 sm:text-xs">
+                {student.name}
+              </span>
+            </div>
+          ))}
+        </div>
+      ))}
+    </blockquote>
+  );
 }
 
 // Shared renderer for wiki markdown. Explicit element overrides keep the output
@@ -78,11 +154,7 @@ const components: Components = {
       {children}
     </li>
   ),
-  blockquote: ({ children }) => (
-    <blockquote className="my-4 rounded-r-lg border-l-4 border-primary/50 bg-muted/50 px-4 py-2 text-[15px] text-muted-foreground [&>p]:my-1">
-      {children}
-    </blockquote>
-  ),
+  blockquote: ({ children }) => <PartyBlockquote>{children}</PartyBlockquote>,
   a: ({ href, children }) => (
     <a
       href={href}

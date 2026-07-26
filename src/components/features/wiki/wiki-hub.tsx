@@ -8,6 +8,9 @@ import { cn } from "@/lib/utils";
 import {
   getWikiIndexEntries,
   getWikiDoc,
+  aronaSeasonLine,
+  firstParagraph,
+  raidGuideSummary,
   isRaidGuide,
   isSeasonReport,
   isBuildNote,
@@ -31,9 +34,6 @@ function categorize(slug: string): Cat | null {
   return null;
 }
 
-const looksLikeFilename = (title: string, slug: string) =>
-  title.endsWith(".md") || title === slug.split("/").pop();
-
 const TAB_META: { key: Cat; icon: typeof Sprout }[] = [
   { key: "basics", icon: Sprout },
   { key: "raids", icon: Swords },
@@ -53,9 +53,18 @@ export function WikiHub({ compact = false }: { compact?: boolean }) {
       const resolved = await Promise.all(
         list.map(async (e) => {
           const cat = categorize(e.slug)!;
-          if (!looksLikeFilename(e.title, e.slug)) return { ...e, cat };
           const doc = await getWikiDoc(e.slug);
-          return { ...e, cat, title: doc?.frontmatter.title ?? e.title.replace(/\.md$/, "") };
+          const title = doc?.frontmatter.title ?? e.title.replace(/\.md$/, "");
+          const reportSummary =
+            doc && isSeasonReport(e.slug)
+              ? aronaSeasonLine(doc.body) || firstParagraph(doc.body)
+              : "";
+          const summary =
+            reportSummary ||
+            (doc && cat === "raids" ? raidGuideSummary(doc.body) : "") ||
+            (doc && (cat === "basics" || cat === "builds") ? firstParagraph(doc.body) : "") ||
+            e.summary;
+          return { ...e, cat, title, summary };
         })
       );
       if (alive) setEntries(resolved);

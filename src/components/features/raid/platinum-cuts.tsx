@@ -51,7 +51,9 @@ export function PlatinumStats({
   return (
     <CardWrapper
       className={`border-l-4 mx-0 gap-3 ${
-        isHighClearRate ? "border-l-red-500" : "border-l-sky-500"
+        isHighClearRate
+          ? "border-l-amber-400 dark:border-l-amber-700/70"
+          : "border-l-sky-500"
       }`}
       icon={<Trophy className="h-5 w-5 text-sky-500" />}
       title="Platinum"
@@ -65,7 +67,9 @@ export function PlatinumStats({
           <div className="text-right">
             <div
               className={`text-lg font-bold ${
-                isHighClearRate ? "text-red-600" : ""
+                isHighClearRate
+                  ? "text-amber-600 dark:text-amber-300"
+                  : ""
               }`}
             >
               {Math.min(clearCount, 20000).toLocaleString()} (
