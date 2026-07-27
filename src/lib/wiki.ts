@@ -2,7 +2,7 @@
 // snapshot of the curated knowledge repo — the same documents ARONA reads. The
 // source repo stays server-side; the browser only ever talks to this API.
 
-const BASE_URL = `${process.env.NEXT_PUBLIC_DATA_AGGREGATOR_URL || "http://localhost:8082"}/data-aggregator/v1`;
+const BASE_URL = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8082"}/data-aggregator/v1`;
 
 export const WIKI_DOMAIN = "bluearchive";
 
