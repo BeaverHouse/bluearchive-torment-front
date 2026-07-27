@@ -120,7 +120,7 @@ export default function PoolStudentGrid({
         </div>
       ) : (
         <div className="text-xs text-muted-foreground">
-          {t("common.noSearchResults")}
+          {t("common.noResults")}
         </div>
       )}
     </section>

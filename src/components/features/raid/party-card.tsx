@@ -14,6 +14,7 @@ import {
 import SingleParty from "./single-party";
 import { trackEvent } from "@/utils/analytics";
 import { useTranslations } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
 
 interface PartyCardProps {
   rank: number;
@@ -26,6 +27,7 @@ interface PartyCardProps {
   matchedSubPartyIndexes?: number[];
   showModeBadge?: boolean;
   missingCodes?: ReadonlySet<number>;
+  embedded?: boolean;
 }
 
 const PartyCard: React.FC<PartyCardProps> = ({
@@ -38,6 +40,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
   matchedSubPartyIndexes,
   showModeBadge,
   missingCodes,
+  embedded = false,
 }) => {
   const { t } = useTranslations();
   const matchedSet = React.useMemo(
@@ -57,8 +60,15 @@ const PartyCard: React.FC<PartyCardProps> = ({
   }, [video_id, raid_id, value]);
 
   return (
-    <Card className="relative w-full mx-auto mb-4 max-w-none">
-      <CardContent className="px-2">
+    <Card
+      className={cn(
+        "relative w-full max-w-none",
+        embedded
+          ? "gap-3 border-0 bg-transparent py-0 shadow-none"
+          : "mx-auto mb-4",
+      )}
+    >
+      <CardContent className={embedded ? "px-0" : "px-2"}>
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             {rank > 0 && (

@@ -43,13 +43,13 @@ export function FeedbackForm({ slug }: { slug: string }) {
   };
 
   return (
-    <div className="space-y-2">
+    <div className="w-full max-w-2xl space-y-2">
       <Textarea
         value={comment}
         onChange={(e) => setComment(e.target.value.slice(0, MAX_LEN))}
         placeholder={t("feedback.wikiPlaceholder")}
         rows={3}
-        className="text-sm"
+        className="min-h-24 resize-y text-sm"
       />
       {/* honeypot — visually hidden, off-screen, not announced to AT */}
       <input

@@ -52,12 +52,12 @@ export function TrustFooter({
         </div>
       )}
 
-      <div className="flex flex-wrap items-center gap-3 border-t pt-4">
+      <div className="grid gap-3 border-t pt-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
         <FeedbackForm slug={slug} />
         {askAronaQuery && (
           <Link
             href={`/arona?q=${encodeURIComponent(askAronaQuery)}`}
-            className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3.5 py-1.5 font-medium text-primary transition hover:bg-primary/15"
+            className="inline-flex w-fit items-center gap-1.5 rounded-full bg-primary/10 px-3.5 py-1.5 font-medium text-primary transition hover:bg-primary/15"
           >
             <MessageCircle className="h-4 w-4" />
             {t("common.askArona")}

@@ -8,13 +8,11 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Users, Target, TrendingUp, Search, Copy, Check, Youtube,
-  ChevronRight, ChevronDown, Star,
+  ChevronRight, ChevronDown, Star, Award,
 } from "lucide-react";
 import { VideoIcon } from "@radix-ui/react-icons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Card, CardHeader, CardTitle, CardContent,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RaidComponentProps, RaidSummaryData } from "@/types/raid";
 import PartyCard from "../party-card";
 import Loading from "@/components/common/loading";
@@ -81,19 +79,20 @@ function CollapsibleCard({
   children,
   defaultOpen = false,
 }: {
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
   title: string;
   children: React.ReactNode;
   defaultOpen?: boolean;
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <Card className="my-2 mx-0 gap-3">
-      <CardHeader>
+    <Card className="mx-0 my-2 gap-3">
+      <CardHeader className="px-3 sm:px-6">
         <button
           type="button"
           onClick={() => setOpen(!open)}
-          className="flex items-center justify-between w-full"
+          aria-expanded={open}
+          className="flex w-full items-center justify-between text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
         >
           <CardTitle className="flex items-center gap-2">
             {icon}
@@ -106,7 +105,9 @@ function CollapsibleCard({
           />
         </button>
       </CardHeader>
-      {open && <CardContent className="px-2 py-1">{children}</CardContent>}
+      {open && (
+        <CardContent className="px-3 py-1 sm:px-6">{children}</CardContent>
+      )}
     </Card>
   );
 }
@@ -625,6 +626,7 @@ const RaidSummary = ({
                   return (
                     <PartyCard
                       key={idx}
+                      embedded
                       rank={idx + 1}
                       value={count}
                       valueSuffix={t("party.summary.users")}
@@ -648,7 +650,7 @@ const RaidSummary = ({
         {hasSpecialClears && (
           <SummarySection section="special_clears">
             <CollapsibleCard
-              icon={<Target className="h-5 w-5 text-sky-500" />}
+              icon={<Award className="h-5 w-5 text-sky-500" />}
               title={t("party.summary.specialClears")}
             >
               <div className="space-y-4">
@@ -665,6 +667,7 @@ const RaidSummary = ({
                       </span>
                     </h4>
                     <PartyCard
+                      embedded
                       rank={data.minUEUser.rank}
                       value={data.minUEUser.score}
                       valueSuffix={t("common.points")}
@@ -685,6 +688,7 @@ const RaidSummary = ({
                       </span>
                     </h4>
                     <PartyCard
+                      embedded
                       rank={data.maxPartyUser.rank}
                       value={data.maxPartyUser.score}
                       valueSuffix={t("common.points")}

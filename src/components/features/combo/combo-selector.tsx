@@ -191,7 +191,7 @@ export default function ComboSelector() {
           </div>
         ) : (
           <div className="text-xs text-muted-foreground">
-            {t("common.noSearchResults")}
+            {t("common.noResults")}
           </div>
         )}
       </section>
