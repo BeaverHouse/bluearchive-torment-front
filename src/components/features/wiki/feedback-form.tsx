@@ -20,7 +20,7 @@ export function FeedbackForm({ slug }: { slug: string }) {
   const [state, setState] = useState<"idle" | "sending" | "done" | "error">("idle");
 
   if (state === "done") {
-    return <p className="text-sm text-muted-foreground">{t("wiki.feedback.thanks")}</p>;
+    return <p className="text-sm text-muted-foreground">{t("feedback.thanks")}</p>;
   }
 
   if (!open) {
@@ -30,7 +30,7 @@ export function FeedbackForm({ slug }: { slug: string }) {
         className="inline-flex items-center gap-1.5 rounded-full bg-background px-3.5 py-1.5 text-sm font-medium text-muted-foreground ring-1 ring-border transition hover:text-foreground hover:ring-foreground/30"
       >
         <Flag className="h-3.5 w-3.5" />
-        {t("wiki.feedback.open")}
+        {t("feedback.open")}
       </button>
     );
   }
@@ -47,7 +47,7 @@ export function FeedbackForm({ slug }: { slug: string }) {
       <Textarea
         value={comment}
         onChange={(e) => setComment(e.target.value.slice(0, MAX_LEN))}
-        placeholder={t("wiki.feedback.placeholder")}
+        placeholder={t("feedback.wikiPlaceholder")}
         rows={3}
         className="text-sm"
       />
@@ -63,7 +63,7 @@ export function FeedbackForm({ slug }: { slug: string }) {
       />
       <div className="flex items-center gap-2">
         <Button size="sm" onClick={submit} disabled={state === "sending" || !comment.trim()}>
-          {state === "sending" ? t("wiki.feedback.sending") : t("wiki.feedback.submit")}
+          {state === "sending" ? t("feedback.sending") : t("feedback.submit")}
         </Button>
         <button
           onClick={() => setOpen(false)}
@@ -72,7 +72,7 @@ export function FeedbackForm({ slug }: { slug: string }) {
           {t("common.cancel")}
         </button>
         {state === "error" && (
-          <span className="text-sm text-destructive">{t("wiki.feedback.error")}</span>
+          <span className="text-sm text-destructive">{t("feedback.error")}</span>
         )}
       </div>
     </div>

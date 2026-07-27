@@ -488,8 +488,8 @@ const RaidSummary = ({
                 )}
                 <span>
                   {copied
-                    ? t("party.summary.copied")
-                    : t("party.summary.copy")}
+                    ? t("common.copied")
+                    : t("common.copy")}
                 </span>
               </Button>
               <a
@@ -667,7 +667,7 @@ const RaidSummary = ({
                     <PartyCard
                       rank={data.minUEUser.rank}
                       value={data.minUEUser.score}
-                      valueSuffix={t("party.summary.points")}
+                      valueSuffix={t("common.points")}
                       parties={data.minUEUser.partyData}
                     />
                   </div>
@@ -687,7 +687,7 @@ const RaidSummary = ({
                     <PartyCard
                       rank={data.maxPartyUser.rank}
                       value={data.maxPartyUser.score}
-                      valueSuffix={t("party.summary.points")}
+                      valueSuffix={t("common.points")}
                       parties={data.maxPartyUser.partyData}
                     />
                   </div>

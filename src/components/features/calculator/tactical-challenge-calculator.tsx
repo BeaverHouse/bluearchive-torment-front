@@ -307,7 +307,7 @@ export function TacticalChallengeCalculator() {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium mb-2 block">{t("calc.field.score")}</label>
+                  <label className="text-sm font-medium mb-2 block">{t("common.score")}</label>
                   <Input
                     type="number"
                     placeholder={t("calc.placeholder.scoreTactical")}

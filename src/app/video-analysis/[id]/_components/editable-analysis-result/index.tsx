@@ -69,11 +69,11 @@ export function EditableAnalysisResult({
       <div className="flex justify-end gap-2">
         <Button variant="outline" onClick={onCancel}>
           <X className="h-4 w-4 mr-2" />
-          {t("videoAnalysis.edit.cancel")}
+          {t("common.cancel")}
         </Button>
         <Button onClick={handleSave} disabled={saving}>
           <Save className="h-4 w-4 mr-2" />
-          {saving ? t("videoAnalysis.edit.saving") : t("videoAnalysis.edit.save")}
+          {saving ? t("common.saving") : t("videoAnalysis.edit.save")}
         </Button>
       </div>
 

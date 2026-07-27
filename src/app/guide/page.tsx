@@ -24,7 +24,7 @@ export default function GuidePage() {
         </span>
         <div className="min-w-0 flex-1">
           <h1 className="text-xl font-bold text-sky-900 dark:text-sky-100 sm:text-2xl">
-            {t("guide.hero.title")}
+            {t("common.aronaArchive")}
           </h1>
           <p className="mt-1 text-sm text-sky-700/80 dark:text-sky-300/70">
             {t("guide.hero.subtitle")}
@@ -35,7 +35,7 @@ export default function GuidePage() {
       <div className="overflow-hidden rounded-b-2xl border-x border-b border-border bg-card shadow-sm">
         <div
           role="tablist"
-          aria-label={t("guide.hero.title")}
+          aria-label={t("common.aronaArchive")}
           className="m-2 grid grid-cols-2 rounded-lg bg-muted p-1 lg:hidden"
         >
           <button

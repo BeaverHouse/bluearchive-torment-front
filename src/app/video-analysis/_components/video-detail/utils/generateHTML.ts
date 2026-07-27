@@ -28,12 +28,12 @@ export function generateHTML(
     </iframe>
   </div>
 
-  <h3 style="color: #374151; margin: 30px 0 15px 0;">${tr("videoAnalysis.html.partyComposition")}</h3>`;
+  <h3 style="color: #374151; margin: 30px 0 15px 0;">${tr("common.partyComposition")}</h3>`;
 
   analysis_result.partyData.forEach((party, index) => {
     html += `
   <div style="border: 1px solid #d1d5db; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
-    <h4 style="color: #111827; margin: 0 0 15px 0;">${tr("videoAnalysis.html.partyN").replace("{n}", String(index + 1))}</h4>
+    <h4 style="color: #111827; margin: 0 0 15px 0;">${tr("common.partyN").replace("{n}", String(index + 1))}</h4>
     <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;">`;
 
     party.forEach((char) => {
@@ -60,7 +60,7 @@ export function generateHTML(
         <div style="text-align: center; border: 1px solid #d1d5db; border-radius: 4px; padding: 8px;">
           <div style="font-weight: bold; font-size: 12px; margin-bottom: 4px;">${name}</div>
           <div style="font-size: 10px; color: #6b7280;">${starWeaponText}</div>
-          ${assist ? `<div style="color: #10b981; font-size: 10px;">${tr("videoAnalysis.html.assist")}</div>` : ""}
+          ${assist ? `<div style="color: #10b981; font-size: 10px;">${tr("common.assist")}</div>` : ""}
         </div>`;
     });
 
@@ -71,7 +71,7 @@ export function generateHTML(
 
   if (analysis_result.description) {
     html += `
-  <h3 style="color: #374151; margin: 30px 0 15px 0;">${tr("videoAnalysis.detail.description")}</h3>
+  <h3 style="color: #374151; margin: 30px 0 15px 0;">${tr("common.description")}</h3>
   <div style="border: 1px solid #d1d5db; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
     <p style="color: #6b7280; font-size: 14px; white-space: pre-wrap; margin: 0;">${analysis_result.description}</p>
   </div>`;

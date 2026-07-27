@@ -105,7 +105,7 @@ function SearchPartiesCard({ item }: { item: unknown }) {
     <PartyCard
       rank={rank}
       value={score}
-      valueSuffix={t("party.summary.points")}
+      valueSuffix={t("common.points")}
       parties={parties}
       video_id={videoId}
       raid_id={raidId}

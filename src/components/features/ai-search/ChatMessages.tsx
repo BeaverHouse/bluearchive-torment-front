@@ -276,7 +276,7 @@ function AssistantMarkdown({
     return (
       <section className="not-prose mt-4 border-t border-border/60 pt-3">
         <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          {t("arona.sources.title")}
+          {t("common.sources")}
         </h4>
         {cited.length > 0 && <ol className="space-y-1.5">{cited.map(renderSourceEntry)}</ol>}
         {uncited.length > 0 && (

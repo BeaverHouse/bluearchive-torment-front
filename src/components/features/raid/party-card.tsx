@@ -63,7 +63,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
           <div className="flex items-center gap-2">
             {rank > 0 && (
               <Badge variant="outline" className="font-medium">
-                {t("party.filter.rank").replace("{n}", String(rank))}
+                {t("common.rank").replace("{n}", String(rank))}
               </Badge>
             )}
             {missingCodes && missingCodes.size > 0 && (

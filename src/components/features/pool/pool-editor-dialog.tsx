@@ -64,7 +64,7 @@ export default function PoolEditorDialog({
       <DialogContent className="sm:max-w-3xl max-h-[90vh] flex flex-col p-0 gap-0">
         <DialogHeader className="px-6 pt-6 pb-3">
           <DialogTitle className="flex items-center gap-2">
-            {t("pool.editor.title")}
+            {t("pool.title")}
             <Badge variant="secondary">{t("pool.editor.ownedBadge").replace("{n}", String(ownedCount))}</Badge>
           </DialogTitle>
           <DialogDescription>
@@ -75,7 +75,7 @@ export default function PoolEditorDialog({
         <div className="px-6 pb-3 flex flex-col sm:flex-row gap-2 sm:items-center">
           <Input
             type="text"
-            placeholder={t("pool.editor.searchPlaceholder")}
+            placeholder={t("common.studentSearchPlaceholder")}
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.target.value)}
             className="sm:flex-1"

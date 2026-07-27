@@ -191,7 +191,7 @@ export default function ComboSelector() {
           </div>
         ) : (
           <div className="text-xs text-muted-foreground">
-            {t("combo.dialog.noSearchResults")}
+            {t("common.noSearchResults")}
           </div>
         )}
       </section>
@@ -229,7 +229,7 @@ export default function ComboSelector() {
           variant="outline"
           onClick={() => setOpen(true)}
         >
-          {t("combo.selectButton")}
+          {t("common.selectStudents")}
         </Button>
         {comboCodes.length > 0 && (
           <Button
@@ -252,7 +252,7 @@ export default function ComboSelector() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-3xl max-h-[90vh] flex flex-col p-0 gap-0">
           <DialogHeader className="px-6 pt-6 pb-3">
-            <DialogTitle>{t("combo.dialog.title")}</DialogTitle>
+            <DialogTitle>{t("common.selectStudents")}</DialogTitle>
             <DialogDescription>
               {t("combo.dialog.description")
                 .replace("{striker}", String(STRIKER_MAX))
@@ -262,7 +262,7 @@ export default function ComboSelector() {
           <div className="px-6 pb-3">
             <Input
               type="text"
-              placeholder={t("combo.dialog.searchPlaceholder")}
+              placeholder={t("common.studentSearchPlaceholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -270,7 +270,7 @@ export default function ComboSelector() {
           <div className="overflow-y-auto px-6 pb-6 flex-1">
             {!isLoaded ? (
               <div className="text-center text-muted-foreground py-8">
-                {t("combo.dialog.loadingStudents")}
+                {t("common.loadingStudents")}
               </div>
             ) : (
               <div className="flex flex-col gap-6">

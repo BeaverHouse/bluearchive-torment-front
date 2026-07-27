@@ -43,7 +43,7 @@ export function SeasonNoteCard({ raidId }: { raidId: string }) {
         links={[
           { label: t("party.note.full"), href: `/guide/${doc.slug}`, icon: BookOpen },
           {
-            label: t("arona.entry.ask"),
+            label: t("common.askArona"),
             href: `/guide`,
             icon: MessageCircle,
           },

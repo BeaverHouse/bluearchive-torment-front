@@ -179,7 +179,7 @@ export function VideoList({ videos }: VideoListProps) {
                     {video.raid_id && (
                       <div className="text-xs">
                         <span className="font-medium text-card-foreground">
-                          {t("videoAnalysis.list.raidLabel")}
+                          {t("common.raidLabel")}
                         </span>
                         <span className="text-muted-foreground ml-1">
                           {getRaidName(video.raid_id)}

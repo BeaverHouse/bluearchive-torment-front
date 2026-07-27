@@ -97,7 +97,7 @@ export function SearchableSelect({
         <Command>
           <CommandInput placeholder={t("ui.search.placeholder")} className="text-xs" />
           <CommandList>
-            <CommandEmpty>{t("ui.search.empty")}</CommandEmpty>
+            <CommandEmpty>{t("common.noResults")}</CommandEmpty>
             <CommandGroup className="max-h-48 overflow-y-auto">
               {options.map((option) => (
                 <CommandItem

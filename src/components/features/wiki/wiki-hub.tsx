@@ -98,7 +98,7 @@ export function WikiHub({ compact = false }: { compact?: boolean }) {
       >
         <div className="flex flex-wrap gap-1.5">
           <TabButton active={tab === "all"} onClick={() => setTab("all")} count={counts.all}>
-            {t("guide.tab.all")}
+            {t("common.all")}
           </TabButton>
           {TAB_META.map(({ key, icon: Icon }) => (
             <TabButton key={key} active={tab === key} onClick={() => setTab(key)} count={counts[key]}>

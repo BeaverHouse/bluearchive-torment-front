@@ -74,7 +74,7 @@ export function AddVideoDialog({ raids }: AddVideoDialogProps) {
           icon: "info",
           showCancelButton: true,
           confirmButtonText: t("video.add.existing.go"),
-          cancelButtonText: t("video.add.existing.cancel"),
+          cancelButtonText: t("common.cancel"),
         });
         if (swalResult.isConfirmed) {
           window.location.href = `/video-analysis/${videoId}?raid_id=${existingRaidId}`;
@@ -152,7 +152,7 @@ export function AddVideoDialog({ raids }: AddVideoDialogProps) {
               onClick={handleAddToQueue}
               disabled={submitting || !raidId || !videoInput}
             >
-              {submitting ? t("video.edit.saving") : t("video.add.submit")}
+              {submitting ? t("common.saving") : t("video.add.submit")}
             </Button>
           </div>
         </div>

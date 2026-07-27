@@ -39,7 +39,7 @@ export function TrustFooter({
       {frontmatter.sources.length > 0 && (
         <div className="text-muted-foreground">
           <div className="mb-1 text-xs font-semibold uppercase tracking-wide">
-            {t("wiki.trust.sources")}
+            {t("common.sources")}
           </div>
           <ul className="space-y-1 text-xs leading-relaxed">
             {frontmatter.sources.map((s, i) => (
@@ -60,7 +60,7 @@ export function TrustFooter({
             className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3.5 py-1.5 font-medium text-primary transition hover:bg-primary/15"
           >
             <MessageCircle className="h-4 w-4" />
-            {t("wiki.trust.askArona")}
+            {t("common.askArona")}
           </Link>
         )}
       </div>

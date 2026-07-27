@@ -72,7 +72,7 @@ function NoSample({ studentName }: { studentName: string }) {
   };
 
   if (state === "done") {
-    return <p className="text-sm text-emerald-700 dark:text-emerald-300">{t("students.build.reportDone")}</p>;
+    return <p className="text-sm text-emerald-700 dark:text-emerald-300">{t("feedback.thanks")}</p>;
   }
 
   return (
@@ -83,7 +83,7 @@ function NoSample({ studentName }: { studentName: string }) {
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && send()}
-          placeholder={t("students.build.reportPlaceholder")}
+          placeholder={t("feedback.buildPlaceholder")}
           className="min-w-0 flex-1 rounded-lg border bg-background px-3 py-1.5 text-sm outline-none focus:ring-1 focus:ring-sky-400"
         />
         <button
@@ -93,11 +93,11 @@ function NoSample({ studentName }: { studentName: string }) {
           className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-sky-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-sky-500 disabled:opacity-50"
         >
           {state === "sending" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Megaphone className="h-4 w-4" />}
-          {t("students.build.send")}
+          {t("feedback.submit")}
         </button>
       </div>
       {state === "fail" && (
-        <p className="text-xs text-red-600 dark:text-red-400">{t("students.build.reportFail")}</p>
+        <p className="text-xs text-red-600 dark:text-red-400">{t("feedback.error")}</p>
       )}
     </div>
   );

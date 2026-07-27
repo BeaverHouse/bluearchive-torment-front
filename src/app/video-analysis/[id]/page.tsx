@@ -117,7 +117,7 @@ export default function VideoDetailPage() {
           <h1 className="text-2xl font-bold mb-2">{videoDetail.title}</h1>
           {videoDetail.raid_id && (
             <p className="text-muted-foreground">
-              <span className="font-medium">{t("videoAnalysis.detail.raidLabel")}</span>{" "}
+              <span className="font-medium">{t("common.raidLabel")}</span>{" "}
               {getRaidName(videoDetail.raid_id)}
             </p>
           )}

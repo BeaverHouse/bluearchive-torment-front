@@ -147,7 +147,7 @@ function PartyFilterComponent({
         {/* 점수 범위 칩 */}
         {showScoreButtons && (
           <ScoreChip
-            label={t("party.filter.scoreLabel")}
+            label={t("common.score")}
             presets={SCORE_PRESETS}
             scoreRange={filters.scoreRange}
             onChange={handleScoreRangeChange}
@@ -182,7 +182,7 @@ function PartyFilterComponent({
                 <p className="text-sm font-medium">{t("party.filter.scoreMove")}</p>
                 <Input
                   type="number"
-                  placeholder={t("party.filter.scoreLabel")}
+                  placeholder={t("common.score")}
                   value={jumpScore}
                   onChange={(e) => setJumpScore(e.target.value)}
                   onKeyDown={(e) => {
@@ -257,7 +257,7 @@ function PartyFilterComponent({
 
       {/* 조력자 Filter */}
       <div className="mb-4">
-        <label className="text-sm font-medium mb-2 block">{t("party.filter.assist")}</label>
+        <label className="text-sm font-medium mb-2 block">{t("common.assist")}</label>
         <Cascader
           options={assistOptions}
           value={assistValue}

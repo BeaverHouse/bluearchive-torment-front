@@ -45,7 +45,7 @@ export function StarDistChart({ characterData }: StarDistChartProps) {
       const num = starDist.raidId.replace("3S", "");
       raidName = `${t("raid.eliminate")} S${num}`;
     } else {
-      raidName = `${t("raid.total")} ${starDist.raidId}`;
+      raidName = `${t("common.totalAssault")} ${starDist.raidId}`;
     }
 
     // 합계 계산

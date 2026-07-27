@@ -316,7 +316,7 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
   }, [results, searchModeContext.kind]);
 
   const displayCount = groupedResults?.length ?? results.length;
-  const resultSummary = `${t("party.filter.results").replace("{n}", String(displayCount))}${groupedResults ? ` (${results.length})` : ""}`;
+  const resultSummary = `${t("common.searchResults").replace("{n}", String(displayCount))}${groupedResults ? ` (${results.length})` : ""}`;
 
   const handleScoreJump = useCallback((targetScore: number) => {
     if (groupedResults) {

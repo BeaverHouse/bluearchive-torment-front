@@ -148,7 +148,7 @@ export const MultiSelect = React.memo(function MultiSelect({
         )}
         <div className="max-h-60 overflow-y-auto p-1">
           {filteredOptions.length === 0 ? (
-            <div className="p-2 text-sm text-muted-foreground">{t("ui.search.empty")}</div>
+            <div className="p-2 text-sm text-muted-foreground">{t("common.noResults")}</div>
           ) : (
             filteredOptions.map((option) => {
               const isOptionSelected = isSelected(option.value);

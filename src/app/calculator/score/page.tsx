@@ -17,7 +17,7 @@ export default function ScoreCalculatorPage() {
   return (
     <div className="container mx-auto">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">{t("calc.title")}</h1>
+        <h1 className="text-3xl font-bold mb-2">{t("common.scoreCalculator")}</h1>
         <p className="text-muted-foreground">{t("calc.subtitle")}</p>
       </div>
 

@@ -69,7 +69,7 @@ const SUBTYPE_KEY: Record<string, string> = {
   "관통": "subtype.piercing",
   "신비": "subtype.mystic",
   "진동": "subtype.vibration",
-  "총력전": "subtype.totalAssault",
+  "총력전": "common.totalAssault",
   "LUNATIC": "subtype.lunatic",
 };
 

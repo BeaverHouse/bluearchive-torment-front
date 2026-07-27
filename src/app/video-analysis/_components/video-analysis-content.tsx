@@ -53,7 +53,7 @@ export function VideoAnalysisContent({
 
   const raidsSelectOptions = useMemo(
     () => [
-      { value: "all", label: t("raid.all") },
+      { value: "all", label: t("common.all") },
       ...raids.map((raid) => ({
         value: raid.id,
         label: getRaidName(raid, locale),
@@ -68,7 +68,7 @@ export function VideoAnalysisContent({
 
   return (
     <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
-      <h1 className="text-2xl font-bold">{t("nav.video")}</h1>
+      <h1 className="text-2xl font-bold">{t("common.videos")}</h1>
       <div className="mt-1 mb-8 flex items-center gap-2">
         <p className="text-muted-foreground">
           {t("videoAnalysis.intro")}
@@ -102,7 +102,7 @@ export function VideoAnalysisContent({
               handleRaidChange(value);
               trackEvent("video_filter_apply", { raid_filter: value });
             }}
-            placeholder={t("videoAnalysis.raidSelectPlaceholder")}
+            placeholder={t("common.raidSelectPlaceholder")}
           />
           {selectedRaid !== "all" && (() => {
             const selectedRaidInfo = raids.find((r) => r.id === selectedRaid);
@@ -134,7 +134,7 @@ export function VideoAnalysisContent({
       </div>
 
       <div className="mx-auto mb-5 w-full">
-        {t("videoAnalysis.searchResults").replace("{n}", String(filterModePagination.total))}
+        {t("common.searchResults").replace("{n}", String(filterModePagination.total))}
       </div>
 
       {/* 페이지네이션 */}

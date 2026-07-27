@@ -67,7 +67,7 @@ export function RaidUsageTable({ data, type, limit = 5 }: RaidUsageTableProps) {
                     key={i}
                     className="w-[48px] bg-card px-0.5 text-center text-[10px] font-medium text-muted-foreground sm:w-[56px] sm:text-xs"
                   >
-                    {t("totalAnalysis.raidUsage.rank").replace("{n}", String(i + 1))}
+                    {t("common.rank").replace("{n}", String(i + 1))}
                   </TableHead>
                 ))}
               </TableRow>

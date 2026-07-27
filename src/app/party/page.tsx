@@ -114,7 +114,7 @@ export default function PartyPage() {
           }))}
           value={season}
           onChange={setV3Season}
-          placeholder={t("party.placeholder.season")}
+          placeholder={t("common.raidSelectPlaceholder")}
         />
       </div>
       <br />

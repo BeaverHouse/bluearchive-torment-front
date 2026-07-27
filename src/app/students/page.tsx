@@ -51,7 +51,7 @@ export default function StudentsPage() {
 
   return (
     <div className="mx-auto max-w-5xl py-4 sm:px-4 sm:py-6">
-      <h1 className="text-2xl font-bold">{t("students.title")}</h1>
+      <h1 className="text-2xl font-bold">{t("common.students")}</h1>
       <p className="mt-1 text-sm text-muted-foreground">{t("students.subtitle")}</p>
 
       <div className="mt-5 flex flex-wrap items-center gap-2">
@@ -89,7 +89,7 @@ export default function StudentsPage() {
 
       {students.length === 0 && (
         <p className="mt-16 text-center text-sm text-muted-foreground">
-          {t("students.empty")}
+          {t("common.noResults")}
         </p>
       )}
     </div>

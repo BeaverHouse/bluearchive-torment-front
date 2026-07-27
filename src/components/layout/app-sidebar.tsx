@@ -40,14 +40,14 @@ type MenuItem = {
 
 const menuItems: MenuItem[] = [
   { titleKey: "nav.home", url: "/", icon: Home },
-  { titleKey: "nav.guide", url: "/guide", image: "/arona.webp" },
-  { titleKey: "nav.party", url: "/party", icon: Search },
-  { titleKey: "nav.students", url: "/students", icon: Users },
-  { titleKey: "nav.video", url: "/video-analysis", icon: Video },
+  { titleKey: "common.aronaArchive", url: "/guide", image: "/arona.webp" },
+  { titleKey: "common.partyFinder", url: "/party", icon: Search },
+  { titleKey: "common.students", url: "/students", icon: Users },
+  { titleKey: "common.videos", url: "/video-analysis", icon: Video },
   {
     titleKey: "nav.calculator",
     icon: Calculator,
-    subItems: [{ titleKey: "nav.calculator.score", url: "/calculator/score" }],
+    subItems: [{ titleKey: "common.scoreCalculator", url: "/calculator/score" }],
   },
 ];
 

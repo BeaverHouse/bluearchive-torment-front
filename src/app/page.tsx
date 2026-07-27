@@ -27,21 +27,21 @@ type Feature = {
 
 const features: Feature[] = [
   {
-    titleKey: "home.party.title",
+    titleKey: "common.partyFinder",
     descKey: "home.party.desc",
     href: "/party",
     feature: "party_search",
     icon: Search,
   },
   {
-    titleKey: "home.students.title",
+    titleKey: "common.students",
     descKey: "home.students.desc",
     href: "/students",
     feature: "total_analysis",
     icon: Users,
   },
   {
-    titleKey: "home.archive.title",
+    titleKey: "common.aronaArchive",
     descKey: "home.archive.desc",
     href: "/guide",
     feature: "guide",
@@ -49,14 +49,14 @@ const features: Feature[] = [
     badge: "Beta",
   },
   {
-    titleKey: "home.video.title",
+    titleKey: "common.videos",
     descKey: "home.video.desc",
     href: "/video-analysis",
     feature: "video",
     icon: Video,
   },
   {
-    titleKey: "home.calculator.title",
+    titleKey: "common.scoreCalculator",
     descKey: "home.calculator.desc",
     href: "/calculator/score",
     feature: "calculator",
@@ -151,7 +151,7 @@ export default function Home() {
             >
               Plana Stats
             </a>
-            {t("home.data.raid.suffix")}
+            {t("home.data.sourceSuffix")}
           </p>
           <p>
             {t("home.data.ingame.prefix")}
@@ -163,7 +163,7 @@ export default function Home() {
             >
               Schale DB
             </a>
-            {t("home.data.ingame.suffix")}
+            {t("home.data.sourceSuffix")}
           </p>
         </div>
       </div>

@@ -142,7 +142,7 @@ export default function StudentDetailPage({
             defaultOpen
             links={[
               { label: t("students.buildReport"), href: "/guide/notes/skill_build_trends", icon: BookOpen },
-              { label: t("arona.entry.ask"), href: "/guide", icon: MessageCircle },
+              { label: t("common.askArona"), href: "/guide", icon: MessageCircle },
             ]}
           >
             <BuildNote build={build} studentName={name} />

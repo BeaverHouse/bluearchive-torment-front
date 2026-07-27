@@ -1,9 +1,7 @@
 "use client";
 
-// Lightweight in-house i18n. Phase 1 of workspace i18n task — covers a single
-// route (home) and the language switch UI. Locale is persisted in localStorage,
-// no URL prefix (no `next-intl`). If/when i18n grows past a couple of routes,
-// migrate to `next-intl` with `[locale]` routing for SEO.
+// Lightweight in-house i18n for the client UI. Locale is persisted in
+// localStorage and does not affect the URL.
 //
 // SSR renders the default locale (`ko`); client hydration may switch and
 // re-render. The temporary `lang` attribute mismatch is acceptable for Phase 1.
@@ -23,13 +21,14 @@ export const LOCALE_LABELS: Record<Locale, string> = {
   zh: "中文",
 };
 
+export type MessageKey = keyof typeof koMessages;
 type Messages = Record<string, string>;
 
-const MESSAGES: Record<Locale, Messages> = {
+const MESSAGES = {
   ko: koMessages,
   en: enMessages,
   zh: zhMessages,
-};
+} satisfies Record<Locale, Record<MessageKey, string>>;
 
 const STORAGE_KEY = "ba-torment.locale";
 
@@ -75,8 +74,8 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const value = useMemo<I18nContextValue>(() => {
-    const dict = MESSAGES[locale];
-    const fallback = MESSAGES[DEFAULT_LOCALE];
+    const dict: Messages = MESSAGES[locale];
+    const fallback: Messages = MESSAGES[DEFAULT_LOCALE];
     return {
       locale,
       setLocale,

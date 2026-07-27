@@ -45,7 +45,7 @@ export function CopyAnswerButton({
   const { t } = useTranslations();
   const [copied, setCopied] = useState(false);
   const resolvedLabel = label ?? t("arona.copy.label");
-  const resolvedCopiedLabel = copiedLabel ?? t("arona.copy.copied");
+  const resolvedCopiedLabel = copiedLabel ?? t("common.copied");
 
   const handleCopy = () => {
     const cleaned = stripInlineTags(text);

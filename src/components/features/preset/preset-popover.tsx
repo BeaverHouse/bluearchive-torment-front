@@ -289,7 +289,7 @@ export default function PresetPopover(props: PresetPopoverProps) {
               ) : (
                 <Copy className="h-4 w-4" />
               )}
-              <span>{copied ? t("preset.copied") : t("preset.copy")}</span>
+              <span>{copied ? t("common.copied") : t("common.copy")}</span>
             </Button>
             <Button
               variant="outline"
