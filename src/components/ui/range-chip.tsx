@@ -57,7 +57,7 @@ function RangeChipComponent({
 
   const displayText = useMemo(() =>
     minValue === min && maxValue === max
-      ? t("raid.all")
+      ? t("common.all")
       : minValue === maxValue
         ? `${minValue}${suffix}`
         : `${minValue}~${maxValue}${suffix}`,

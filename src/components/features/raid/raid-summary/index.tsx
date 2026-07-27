@@ -2,18 +2,17 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Users, Target, TrendingUp, Search, Copy, Check, Youtube,
-  ChevronRight, ChevronDown, Star,
+  ChevronRight, ChevronDown, Star, Award,
 } from "lucide-react";
 import { VideoIcon } from "@radix-ui/react-icons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Card, CardHeader, CardTitle, CardContent,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RaidComponentProps, RaidSummaryData } from "@/types/raid";
 import PartyCard from "../party-card";
 import Loading from "@/components/common/loading";
@@ -24,6 +23,7 @@ import { CharacterAvatar } from "@/components/common/character-image";
 import { getCharacterName } from "@/utils/character";
 import { PartyCompositionChart } from "./PartyCompositionChart";
 import { CharacterGrowthStats } from "./CharacterGrowthStats";
+import { AronaCardComment } from "@/components/features/wiki/arona-card-comment";
 import {
   createCharTableData,
   createPartyCountData,
@@ -79,19 +79,20 @@ function CollapsibleCard({
   children,
   defaultOpen = false,
 }: {
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
   title: string;
   children: React.ReactNode;
   defaultOpen?: boolean;
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <Card className="my-2 mx-0 gap-3">
-      <CardHeader>
+    <Card className="mx-0 my-2 gap-3">
+      <CardHeader className="px-3 sm:px-6">
         <button
           type="button"
           onClick={() => setOpen(!open)}
-          className="flex items-center justify-between w-full"
+          aria-expanded={open}
+          className="flex w-full items-center justify-between text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
         >
           <CardTitle className="flex items-center gap-2">
             {icon}
@@ -104,7 +105,9 @@ function CollapsibleCard({
           />
         </button>
       </CardHeader>
-      {open && <CardContent className="px-2 py-1">{children}</CardContent>}
+      {open && (
+        <CardContent className="px-3 py-1 sm:px-6">{children}</CardContent>
+      )}
     </Card>
   );
 }
@@ -369,7 +372,9 @@ const RaidSummary = ({
     <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
       {data.essentialCharacters!.map((char) => (
         <div key={char.studentId} className="flex flex-col items-center gap-1 p-1">
-          <CharacterAvatar studentId={char.studentId} name={getCharacterName(char.studentId, studentsMap)} />
+          <Link href={`/students/${char.studentId}`}>
+            <CharacterAvatar studentId={char.studentId} name={getCharacterName(char.studentId, studentsMap)} />
+          </Link>
           <span className="text-xs font-medium truncate w-full text-center">
             {getCharacterName(char.studentId, studentsMap)}
           </span>
@@ -383,7 +388,9 @@ const RaidSummary = ({
 
   const renderCharRow = (char: { studentId: string; name: string; percent: number }) => (
     <div key={char.studentId} className="flex items-center gap-3 p-2 rounded-lg">
-      <CharacterAvatar studentId={char.studentId} name={char.name} />
+      <Link href={`/students/${char.studentId}`}>
+        <CharacterAvatar studentId={char.studentId} name={char.name} />
+      </Link>
       <div className="flex-1 min-w-0">
         <div className="font-bold text-sm truncate">{char.name}</div>
         <div className="text-sm font-bold text-sky-600 dark:text-sky-400">
@@ -397,7 +404,9 @@ const RaidSummary = ({
     <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
       {data.highImpactCharacters!.map((char) => (
         <div key={char.studentId} className="flex items-center gap-3 p-2 rounded-lg">
-          <CharacterAvatar studentId={char.studentId} name={getCharacterName(char.studentId, studentsMap)} />
+          <Link href={`/students/${char.studentId}`}>
+            <CharacterAvatar studentId={char.studentId} name={getCharacterName(char.studentId, studentsMap)} />
+          </Link>
           <div className="flex-1 min-w-0">
             <div className="font-bold text-sm truncate">
               {getCharacterName(char.studentId, studentsMap)}
@@ -411,6 +420,11 @@ const RaidSummary = ({
         </div>
       ))}
     </div>
+  );
+
+  const isLunatic = level === "L";
+  const aronaStrip = (section: SectionId) => (
+    <AronaCardComment raidId={season} section={section} lunatic={isLunatic} />
   );
 
   const renderAssistsList = () => (
@@ -475,8 +489,8 @@ const RaidSummary = ({
                 )}
                 <span>
                   {copied
-                    ? t("party.summary.copied")
-                    : t("party.summary.copy")}
+                    ? t("common.copied")
+                    : t("common.copy")}
                 </span>
               </Button>
               <a
@@ -488,7 +502,7 @@ const RaidSummary = ({
                 <Button
                   type="button"
                   size="sm"
-                  className="w-full gap-1 bg-red-500 hover:bg-red-600"
+                  className="w-full gap-1 border border-rose-300 bg-rose-50 text-rose-700 hover:bg-rose-100 dark:border-rose-900 dark:bg-rose-950/45 dark:text-rose-200 dark:hover:bg-rose-950/70"
                 >
                   <Youtube className="h-4 w-4" />
                   <span>YouTube</span>
@@ -538,6 +552,7 @@ const RaidSummary = ({
                   : undefined
               }
             />
+            {aronaStrip("platinum_stats")}
           </SummarySection>
         )}
 
@@ -589,6 +604,7 @@ const RaidSummary = ({
                     : renderAssistsList()
               )}
             </CardWrapper>
+            {aronaStrip("key_characters")}
           </SummarySection>
         )}
 
@@ -610,6 +626,7 @@ const RaidSummary = ({
                   return (
                     <PartyCard
                       key={idx}
+                      embedded
                       rank={idx + 1}
                       value={count}
                       valueSuffix={t("party.summary.users")}
@@ -620,10 +637,12 @@ const RaidSummary = ({
               )}
             </div>
           </CardWrapper>
+          {aronaStrip("top_5_party")}
         </SummarySection>
 
         <SummarySection section="party_composition">
           <PartyCompositionChart data={partyCountData} />
+          {aronaStrip("party_composition")}
         </SummarySection>
 
         {/* ═══ TIER 3: Deep Dive (collapsed) ═══ */}
@@ -631,7 +650,7 @@ const RaidSummary = ({
         {hasSpecialClears && (
           <SummarySection section="special_clears">
             <CollapsibleCard
-              icon={<Target className="h-5 w-5 text-sky-500" />}
+              icon={<Award className="h-5 w-5 text-sky-500" />}
               title={t("party.summary.specialClears")}
             >
               <div className="space-y-4">
@@ -648,9 +667,10 @@ const RaidSummary = ({
                       </span>
                     </h4>
                     <PartyCard
+                      embedded
                       rank={data.minUEUser.rank}
                       value={data.minUEUser.score}
-                      valueSuffix={t("party.summary.points")}
+                      valueSuffix={t("common.points")}
                       parties={data.minUEUser.partyData}
                     />
                   </div>
@@ -668,15 +688,17 @@ const RaidSummary = ({
                       </span>
                     </h4>
                     <PartyCard
+                      embedded
                       rank={data.maxPartyUser.rank}
                       value={data.maxPartyUser.score}
-                      valueSuffix={t("party.summary.points")}
+                      valueSuffix={t("common.points")}
                       parties={data.maxPartyUser.partyData}
                     />
                   </div>
                 )}
               </div>
             </CollapsibleCard>
+            {aronaStrip("special_clears")}
           </SummarySection>
         )}
 
@@ -697,6 +719,7 @@ const RaidSummary = ({
               />
             </div>
           </CollapsibleCard>
+          {aronaStrip("character_details")}
         </SummarySection>
       </div>
     </div>

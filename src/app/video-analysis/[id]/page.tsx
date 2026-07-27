@@ -111,13 +111,13 @@ export default function VideoDetailPage() {
   }
 
   return (
-    <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
+    <div className="container mx-auto py-4 sm:px-4 sm:py-6">
       {videoDetail && (
         <div className="mb-6">
           <h1 className="text-2xl font-bold mb-2">{videoDetail.title}</h1>
           {videoDetail.raid_id && (
             <p className="text-muted-foreground">
-              <span className="font-medium">{t("videoAnalysis.detail.raidLabel")}</span>{" "}
+              <span className="font-medium">{t("common.raidLabel")}</span>{" "}
               {getRaidName(videoDetail.raid_id)}
             </p>
           )}

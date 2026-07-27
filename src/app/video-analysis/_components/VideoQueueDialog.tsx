@@ -74,10 +74,10 @@ export function VideoQueueDialog({ raids }: VideoQueueDialogProps) {
       <DialogTrigger asChild>
         <Button
           variant="outline"
+          size="sm"
           onClick={handleFetchQueueStatus}
-          className="w-full sm:w-auto"
         >
-          <Clock className="h-4 w-4 mr-2" />
+          <Clock className="h-4 w-4" />
           {t("videoAnalysis.queue.button")}
         </Button>
       </DialogTrigger>

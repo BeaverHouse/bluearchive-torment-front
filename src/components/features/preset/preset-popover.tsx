@@ -16,7 +16,6 @@ import { useTranslations } from "@/lib/i18n";
 
 const SCHEMA_TYPE = "ba-torment-preset";
 const SCHEMA_VERSION = 1;
-const LEGACY_POOL_TYPE = "ba-torment-pool";
 
 const FILTER_KEYS: (keyof PartyFilterState)[] = [
   "scoreRange",
@@ -92,26 +91,16 @@ function parseFilterPreset(raw: unknown): Partial<PartyFilterState> {
   }
   const obj = raw as Record<string, unknown>;
 
-  // 새 통합 포맷
-  if (obj.type === SCHEMA_TYPE) {
-    if (obj.schemaVersion !== SCHEMA_VERSION) {
-      throw new PresetError("preset.error.unsupportedVersion", {
-        version: String(obj.schemaVersion),
-      });
-    }
-    const filter = extractFilter(obj.filter);
-    if (!filter) throw new PresetError("preset.error.noFilterData");
-    return filter;
+  if (obj.type !== SCHEMA_TYPE) {
+    throw new PresetError("preset.error.invalidPreset");
   }
-
-  // 레거시 풀 포맷 → 필터 진입점에서는 거부
-  if (obj.type === LEGACY_POOL_TYPE) {
-    throw new PresetError("preset.error.poolOnly");
+  if (obj.schemaVersion !== SCHEMA_VERSION) {
+    throw new PresetError("preset.error.unsupportedVersion", {
+      version: String(obj.schemaVersion),
+    });
   }
-
-  // 레거시 필터 raw 포맷
-  const filter = extractFilter(obj);
-  if (!filter) throw new PresetError("preset.error.notFilterPreset");
+  const filter = extractFilter(obj.filter);
+  if (!filter) throw new PresetError("preset.error.noFilterData");
   return filter;
 }
 
@@ -121,32 +110,17 @@ function parsePoolPreset(raw: unknown): StudentPool {
   }
   const obj = raw as Record<string, unknown>;
 
-  // 새 통합 포맷
-  if (obj.type === SCHEMA_TYPE) {
-    if (obj.schemaVersion !== SCHEMA_VERSION) {
-      throw new PresetError("preset.error.unsupportedVersion", {
-        version: String(obj.schemaVersion),
-      });
-    }
-    const pool = extractPool(obj.pool);
-    if (!pool) throw new PresetError("preset.error.noPoolData");
-    return pool;
+  if (obj.type !== SCHEMA_TYPE) {
+    throw new PresetError("preset.error.invalidPreset");
   }
-
-  // 레거시 풀 포맷
-  if (obj.type === LEGACY_POOL_TYPE) {
-    const pool = extractPool(obj.pool);
-    if (!pool) throw new PresetError("preset.error.emptyPreset");
-    return pool;
+  if (obj.schemaVersion !== SCHEMA_VERSION) {
+    throw new PresetError("preset.error.unsupportedVersion", {
+      version: String(obj.schemaVersion),
+    });
   }
-
-  // 레거시 필터 raw 포맷 → 풀 진입점에서는 거부
-  const filterKeys = FILTER_KEYS.some((k) => k in obj);
-  if (filterKeys) {
-    throw new PresetError("preset.error.filterOnly");
-  }
-
-  throw new PresetError("preset.error.notPoolPreset");
+  const pool = extractPool(obj.pool);
+  if (!pool) throw new PresetError("preset.error.noPoolData");
+  return pool;
 }
 
 function formatDate(): string {
@@ -289,7 +263,7 @@ export default function PresetPopover(props: PresetPopoverProps) {
               ) : (
                 <Copy className="h-4 w-4" />
               )}
-              <span>{copied ? t("preset.copied") : t("preset.copy")}</span>
+              <span>{copied ? t("common.copied") : t("common.copy")}</span>
             </Button>
             <Button
               variant="outline"

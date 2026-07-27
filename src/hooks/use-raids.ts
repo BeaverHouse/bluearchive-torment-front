@@ -46,3 +46,15 @@ export function getRaidName(raid: RaidInfo, locale: Locale): string {
     : raid.name_ko;
   return localized || raid.name_ko || raid.name;
 }
+
+/** Terrain label embedded in the localized raid title produced by data-process. */
+export function getRaidTerrain(raid: RaidInfo, locale: Locale): string | null {
+  const name = getRaidName(raid, locale);
+  const patterns =
+    locale === "en"
+      ? ["Street", "Outdoor", "Indoor"]
+      : locale === "zh"
+        ? ["街区", "户外", "室内"]
+        : ["시가지", "야외", "실내"];
+  return patterns.find((terrain) => name.includes(terrain)) ?? null;
+}

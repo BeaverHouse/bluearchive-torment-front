@@ -120,7 +120,7 @@ export default function PoolStudentGrid({
         </div>
       ) : (
         <div className="text-xs text-muted-foreground">
-          {t("pool.grid.noSearchResults")}
+          {t("common.noResults")}
         </div>
       )}
     </section>
@@ -129,7 +129,7 @@ export default function PoolStudentGrid({
   if (!isLoaded) {
     return (
       <div className="text-center text-muted-foreground py-8">
-        {t("pool.grid.loadingStudents")}
+        {t("common.loadingStudents")}
       </div>
     );
   }

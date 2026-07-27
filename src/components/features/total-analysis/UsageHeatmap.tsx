@@ -169,7 +169,7 @@ export function UsageHeatmap({
   ];
 
   return (
-    <Card className="max-w-full overflow-hidden">
+    <Card className="max-w-full overflow-hidden rounded-2xl shadow-sm">
       <CardHeader className="pb-1 px-2 sm:px-3">
         <CardTitle className="text-sm sm:text-base">
           {t("totalAnalysis.usageHeatmap.title")}
@@ -177,7 +177,7 @@ export function UsageHeatmap({
       </CardHeader>
       <CardContent className="px-2 sm:px-3 py-0">
         <div className="overflow-x-auto pb-2">
-          <div className="min-w-0 sm:min-w-[580px]">
+          <div className="min-w-0 sm:min-w-[580px] w-fit mx-auto">
             <div className="flex mb-2">
               <div className="w-[45px] sm:w-[90px]" />
               {COLUMN_TYPES.map((type) => (

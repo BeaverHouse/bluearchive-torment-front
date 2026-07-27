@@ -22,7 +22,7 @@ export function BasicInfoEditor({
         <div className="grid grid-cols-1 gap-3">
           <div>
             <label className="text-xs font-medium mb-2 block text-muted-foreground">
-              {t("videoAnalysis.edit.score")}
+              {t("common.score")}
             </label>
             <Input
               type="number"
@@ -35,7 +35,7 @@ export function BasicInfoEditor({
         </div>
         <div>
           <label className="text-xs font-medium mb-2 block text-muted-foreground">
-            {t("videoAnalysis.edit.description")}
+            {t("common.description")}
           </label>
           <Textarea
             value={description || ""}

@@ -37,7 +37,7 @@ async function fetchPrompt(kind: "persona" | "instruction", locale: string): Pro
   return "";
 }
 
-export function AISearchChat() {
+export function AISearchChat({ embedded = false }: { embedded?: boolean } = {}) {
   const { t, locale } = useTranslations();
   const [personaPrompt, setPersonaPrompt] = useState<string>("");
   const [instructionPrompt, setInstructionPrompt] = useState<string>("");
@@ -89,7 +89,7 @@ export function AISearchChat() {
   }, []);
 
   useEffect(() => {
-    scrollToBottom();
+    if (messages.length > 0 || currentAnswer) scrollToBottom();
   }, [messages, currentAnswer, scrollToBottom]);
 
   const handleSendMessage = useCallback((e?: React.FormEvent) => {
@@ -100,8 +100,14 @@ export function AISearchChat() {
   const isEmpty = messages.length === 0 && !currentAnswer && !isLoading;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-200px)] max-w-4xl mx-auto">
-      <div className="flex items-center justify-between mb-4">
+    <div
+      className={
+        embedded
+          ? "flex flex-col h-[calc(100dvh-330px)] min-h-[420px]"
+          : "flex flex-col h-[calc(100vh-200px)] max-w-4xl mx-auto"
+      }
+    >
+      {!embedded && <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <Image
             src="/arona.webp"
@@ -119,7 +125,7 @@ export function AISearchChat() {
                 Beta
               </Badge>
             </div>
-          </div>
+              </div>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={openApiKeyModal}>
@@ -133,13 +139,17 @@ export function AISearchChat() {
             </Button>
           )}
         </div>
-      </div>
+      </div>}
 
       <Card className="flex-1 mb-4 overflow-hidden">
         <CardContent className="p-0 h-full">
           <div className="h-full overflow-y-auto p-4" ref={scrollAreaRef}>
             {isEmpty ? (
-              <EmptyState hasApiKey={!!apiKey} onSetupApiKey={openApiKeyModal} />
+              <EmptyState
+                hasApiKey={!!apiKey}
+                onSetupApiKey={openApiKeyModal}
+                showSetupAction={!embedded}
+              />
             ) : (
               <ChatMessages
                 messages={messages}
@@ -164,16 +174,32 @@ export function AISearchChat() {
         placeholder={apiKey ? t("arona.placeholder.ready") : t("arona.placeholder.noKey")}
       />
 
-      <div className="mt-2 text-center text-xs text-muted-foreground">
-        Powered by{" "}
-        <a
-          href="https://tinyclover.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline underline-offset-2 hover:text-foreground transition-colors"
-        >
-          🍀 Tiny Clover
-        </a>
+      <div className="mt-2 flex min-h-8 items-center justify-between gap-3 text-xs text-muted-foreground">
+        {embedded ? (
+          <div className="flex gap-2">
+            <Button variant="ghost" size="sm" onClick={openApiKeyModal}>
+              <Key className="mr-1 h-4 w-4" />
+              {apiKey ? t("arona.keyChange") : t("arona.keySet")}
+            </Button>
+            {messages.length > 0 && (
+              <Button variant="ghost" size="sm" onClick={clearChat}>
+                <Trash2 className="mr-1 h-4 w-4" />
+                {t("arona.reset")}
+              </Button>
+            )}
+          </div>
+        ) : <span />}
+        <span>
+          Powered by{" "}
+          <a
+            href="https://tinyclover.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2 transition-colors hover:text-foreground"
+          >
+            🍀 Tiny Clover
+          </a>
+        </span>
       </div>
 
       <ApiKeyModal

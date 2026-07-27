@@ -7,8 +7,8 @@ export default function PrivacyPolicyPage() {
   const { t } = useTranslations();
   return (
     <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">{t("privacy.title")}</h1>
-      <p className="text-muted-foreground mb-8">{t("privacy.updated")}</p>
+      <h1 className="text-3xl font-bold mb-6">{t("common.privacyPolicy")}</h1>
+      <p className="text-muted-foreground mb-8">{t("legal.updated")}</p>
 
       <div className="space-y-6">
         <Card>
@@ -97,7 +97,7 @@ export default function PrivacyPolicyPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>{t("privacy.s7.title")}</CardTitle>
+            <CardTitle>{t("legal.contactTitle")}</CardTitle>
           </CardHeader>
           <CardContent>
             <p>{t("privacy.s7.body")}</p>

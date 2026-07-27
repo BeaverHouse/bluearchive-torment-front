@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, PieChart, Video, Calculator, Sprout, Heart } from "lucide-react";
+import { Search, Users, Video, Calculator, Sprout, Heart } from "lucide-react";
 import { SupportModal } from "@/components/common/support-modal";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/utils/analytics";
@@ -19,56 +19,48 @@ type Feature = {
   titleKey: string;
   descKey: string;
   href: string;
-  feature: "party_search" | "total_analysis" | "video" | "arona" | "calculator";
+  feature: "party_search" | "total_analysis" | "video" | "arona" | "calculator" | "guide";
 } & (
-  | { icon: typeof Search; color: string; bgColor: string }
+  | { icon: typeof Search }
   | { image: string; badge: string }
 );
 
 const features: Feature[] = [
   {
-    titleKey: "home.party.title",
+    titleKey: "common.partyFinder",
     descKey: "home.party.desc",
     href: "/party",
     feature: "party_search",
     icon: Search,
-    color: "text-blue-500",
-    bgColor: "bg-blue-500/10",
   },
   {
-    titleKey: "home.analysis.title",
-    descKey: "home.analysis.desc",
-    href: "/analysis",
+    titleKey: "common.students",
+    descKey: "home.students.desc",
+    href: "/students",
     feature: "total_analysis",
-    icon: PieChart,
-    color: "text-purple-500",
-    bgColor: "bg-purple-500/10",
+    icon: Users,
   },
   {
-    titleKey: "home.video.title",
-    descKey: "home.video.desc",
-    href: "/video-analysis",
-    feature: "video",
-    icon: Video,
-    color: "text-rose-500",
-    bgColor: "bg-rose-500/10",
-  },
-  {
-    titleKey: "home.arona.title",
-    descKey: "home.arona.desc",
-    href: "/arona",
-    feature: "arona",
+    titleKey: "common.aronaArchive",
+    descKey: "home.archive.desc",
+    href: "/guide",
+    feature: "guide",
     image: "/arona.webp",
     badge: "Beta",
   },
   {
-    titleKey: "home.calculator.title",
+    titleKey: "common.videos",
+    descKey: "home.video.desc",
+    href: "/video-analysis",
+    feature: "video",
+    icon: Video,
+  },
+  {
+    titleKey: "common.scoreCalculator",
     descKey: "home.calculator.desc",
     href: "/calculator/score",
     feature: "calculator",
     icon: Calculator,
-    color: "text-emerald-500",
-    bgColor: "bg-emerald-500/10",
   },
 ];
 
@@ -106,9 +98,9 @@ export default function Home() {
                       />
                     ) : (
                       <div
-                        className={`w-10 h-10 rounded-lg ${feature.bgColor} flex items-center justify-center flex-shrink-0`}
+                        className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10"
                       >
-                        <feature.icon className={`w-5 h-5 ${feature.color}`} />
+                        <feature.icon className="h-5 w-5 text-primary" />
                       </div>
                     )}
                     <CardTitle className="text-lg flex items-center gap-2">
@@ -130,13 +122,13 @@ export default function Home() {
 
       <div className="mt-4">
         <Link
-          href="/guide"
+          href="/guide/guides/beginner"
           onClick={() => trackEvent("home_feature_click", { feature: "guide" })}
         >
-          <div className="flex items-center gap-3 px-4 py-3 rounded-lg border border-[#27a567]/40 bg-[#27a567]/10 hover:bg-[#27a567]/20 transition-colors cursor-pointer">
-            <Sprout className="w-5 h-5 text-[#27a567] shrink-0" />
-            <span className="text-sm font-medium text-[#27a567]">{t("home.guide.question")}</span>
-            <span className="text-xs text-[#27a567]/80 ml-auto">{t("home.guide.cta")}</span>
+          <div className="flex cursor-pointer items-center gap-3 rounded-lg border border-primary/30 bg-primary/10 px-4 py-3 transition-colors hover:bg-primary/15">
+            <Sprout className="h-5 w-5 shrink-0 text-primary" />
+            <span className="text-sm font-medium text-primary">{t("home.guide.question")}</span>
+            <span className="ml-auto text-xs text-primary/80">{t("home.guide.cta")}</span>
           </div>
         </Link>
       </div>
@@ -159,7 +151,7 @@ export default function Home() {
             >
               Plana Stats
             </a>
-            {t("home.data.raid.suffix")}
+            {t("home.data.sourceSuffix")}
           </p>
           <p>
             {t("home.data.ingame.prefix")}
@@ -171,7 +163,7 @@ export default function Home() {
             >
               Schale DB
             </a>
-            {t("home.data.ingame.suffix")}
+            {t("home.data.sourceSuffix")}
           </p>
         </div>
       </div>

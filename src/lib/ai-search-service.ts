@@ -29,14 +29,6 @@ class AISearchService {
 
     const apiUrl = `${LLM_BASE_URL}/v1/call/free`;
 
-    onUpdate({
-      type: "status",
-      title: "",
-      title_key: "connecting",
-      content: "",
-      timestamp: new Date().toISOString(),
-    });
-
     const requestBody: AISearchRequest = {
       question,
       language: language ?? "ko",

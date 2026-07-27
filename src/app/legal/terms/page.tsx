@@ -7,8 +7,8 @@ export default function TermsOfServicePage() {
   const { t } = useTranslations();
   return (
     <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">{t("terms.title")}</h1>
-      <p className="text-muted-foreground mb-8">{t("terms.updated")}</p>
+      <h1 className="text-3xl font-bold mb-6">{t("common.terms")}</h1>
+      <p className="text-muted-foreground mb-8">{t("legal.updated")}</p>
 
       <div className="space-y-6">
         <Card>
@@ -88,7 +88,7 @@ export default function TermsOfServicePage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>{t("terms.s7.title")}</CardTitle>
+            <CardTitle>{t("legal.contactTitle")}</CardTitle>
           </CardHeader>
           <CardContent>
             <p>{t("terms.s7.body")}</p>

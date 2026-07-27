@@ -104,7 +104,7 @@ function SortableSlot({
               className="w-3 h-3 rounded border-gray-300"
             />
             <label htmlFor={`assist-${partyIndex}-${charIndex}`} className="text-xs select-none">
-              {t("videoAnalysis.edit.slotAssist")}
+              {t("common.assist")}
             </label>
           </div>
 
@@ -193,7 +193,7 @@ function SortableParty({
             >
               <GripVertical className="h-4 w-4 text-muted-foreground" />
             </button>
-            <Badge variant="outline" className="font-medium">{t("videoAnalysis.edit.partyN").replace("{n}", String(partyIndex + 1))}</Badge>
+            <Badge variant="outline" className="font-medium">{t("common.partyN").replace("{n}", String(partyIndex + 1))}</Badge>
           </div>
           <Button
             size="sm"
@@ -288,7 +288,7 @@ export function PartyEditor({
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle>{t("videoAnalysis.edit.partyTitle")}</CardTitle>
+          <CardTitle>{t("common.partyComposition")}</CardTitle>
           <Button size="sm" onClick={onAddParty}>
             <Plus className="h-4 w-4 mr-2" />
             {t("videoAnalysis.edit.partyAdd")}

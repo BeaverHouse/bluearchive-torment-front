@@ -15,14 +15,14 @@ export function VideoAnalysisContent({ video }: VideoAnalysisContentProps) {
       <PartyCard
         rank={-1}
         value={video.analysis_result.score}
-        valueSuffix={t("videoAnalysis.detail.scoreSuffix")}
+        valueSuffix={t("common.points")}
         parties={video.analysis_result.partyData}
         showModeBadge={false}
       />
 
       {video.analysis_result.description && (
         <div className="bg-card border rounded-lg p-4">
-          <h4 className="text-lg font-semibold mb-3">{t("videoAnalysis.detail.description")}</h4>
+          <h4 className="text-lg font-semibold mb-3">{t("common.description")}</h4>
           <p className="text-sm text-muted-foreground whitespace-pre-wrap">
             {video.analysis_result.description}
           </p>

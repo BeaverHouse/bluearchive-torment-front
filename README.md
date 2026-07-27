@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BA Torment Web
 
-## Getting Started
+Next.js frontend for BA Torment.
 
-First, run the development server:
+## Features
+
+- Total Assault and Grand Assault party search, summaries, and statistics
+- Student usage, synergy, and build recommendations
+- Arona’s Archive: chat, boss guides, season reports, and build notes
+- YouTube and Bilibili clear-video browsing and analysis
+- Raid and Joint Firing Drill score calculators
+
+## Local development
+
+The complete local stack and dependency order are documented in the workspace
+`RUNBOOK.md`. The frontend uses pnpm and runs on port `3001`:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+pnpm dev -p 3001
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Port `3000` is intentionally left available for manual work.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Backend dependencies
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Static raid and student data: configured public CDN
+- Video analysis: `ba-analyzer` on port `8085`
+- Arona chat: `llm-client` on port `8080`
+- Wiki tools: `data-aggregator` MCP on port `8102`
+- LLM gateway: Bifrost on port `4101`
 
-## Learn More
+## Verification
 
-To learn more about Next.js, take a look at the following resources:
+Use the repository harness:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+austincli agent check
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Pull requests receive a Netlify preview. Production deploys after the approved
+change is merged.

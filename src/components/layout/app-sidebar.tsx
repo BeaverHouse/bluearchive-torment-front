@@ -8,9 +8,8 @@ import {
   Video,
   Calculator,
   ChevronDown,
-  PieChart,
+  Users,
   Search,
-  Sprout,
 } from "lucide-react";
 import {
   Sidebar,
@@ -41,15 +40,14 @@ type MenuItem = {
 
 const menuItems: MenuItem[] = [
   { titleKey: "nav.home", url: "/", icon: Home },
-  { titleKey: "nav.guide", url: "/guide", icon: Sprout },
-  { titleKey: "nav.party", url: "/party", icon: Search },
-  { titleKey: "nav.analysis", url: "/analysis", icon: PieChart },
-  { titleKey: "nav.video", url: "/video-analysis", icon: Video },
-  { titleKey: "nav.arona", url: "/arona", image: "/arona.webp" },
+  { titleKey: "common.aronaArchive", url: "/guide", image: "/arona.webp" },
+  { titleKey: "common.partyFinder", url: "/party", icon: Search },
+  { titleKey: "common.students", url: "/students", icon: Users },
+  { titleKey: "common.videos", url: "/video-analysis", icon: Video },
   {
     titleKey: "nav.calculator",
     icon: Calculator,
-    subItems: [{ titleKey: "nav.calculator.score", url: "/calculator/score" }],
+    subItems: [{ titleKey: "common.scoreCalculator", url: "/calculator/score" }],
   },
 ];
 
@@ -123,7 +121,7 @@ export function AppSidebar() {
                 const Icon = item.icon;
                 return (
                   <SidebarMenuItem key={item.titleKey}>
-                    <SidebarMenuButton asChild isActive={pathname === item.url}>
+                    <SidebarMenuButton asChild isActive={item.url === "/" ? pathname === "/" : pathname === item.url || pathname.startsWith(`${item.url}/`)}>
                       <Link href={item.url!} onClick={handleMenuClick}>
                         {item.image ? (
                           <Image

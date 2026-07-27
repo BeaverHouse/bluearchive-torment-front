@@ -23,12 +23,12 @@ export default function PoolToolbar({ ownedCount }: PoolToolbarProps) {
       '[data-slot="dialog-content"]'
     ) as HTMLElement | null;
     const result = await Swal.fire({
-      title: t("pool.toolbar.clearTitle"),
+      title: t("pool.clear"),
       text: t("pool.toolbar.clearText").replace("{n}", String(ownedCount)),
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: t("pool.toolbar.confirmClear"),
-      cancelButtonText: t("pool.toolbar.cancel"),
+      cancelButtonText: t("common.cancel"),
       target: dialogContent || document.body,
       heightAuto: false,
     });
@@ -43,7 +43,7 @@ export default function PoolToolbar({ ownedCount }: PoolToolbarProps) {
       className="h-8 w-8"
       onClick={confirmClear}
       disabled={ownedCount === 0}
-      title={t("pool.toolbar.tooltip")}
+      title={t("pool.clear")}
     >
       <RotateCcw className="h-4 w-4" />
     </Button>

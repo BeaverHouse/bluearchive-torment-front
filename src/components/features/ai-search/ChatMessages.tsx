@@ -276,7 +276,7 @@ function AssistantMarkdown({
     return (
       <section className="not-prose mt-4 border-t border-border/60 pt-3">
         <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          {t("arona.sources.title")}
+          {t("common.sources")}
         </h4>
         {cited.length > 0 && <ol className="space-y-1.5">{cited.map(renderSourceEntry)}</ol>}
         {uncited.length > 0 && (
@@ -385,8 +385,10 @@ export function ChatMessages({
             />
           )}
           <div
-            className={`max-w-[80%] rounded-lg px-4 py-2 ${
-              msg.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted"
+            className={`max-w-[85%] rounded-2xl px-4 py-2.5 ${
+              msg.role === "user"
+                ? "rounded-br-md border border-border bg-muted text-foreground shadow-sm"
+                : "rounded-bl-md border border-primary/15 bg-card shadow-sm"
             }`}
           >
             {msg.role === "assistant" ? (
@@ -420,7 +422,7 @@ export function ChatMessages({
             height={32}
             className="w-8 h-8 rounded-full flex-shrink-0 mt-1 object-cover"
           />
-          <div className="max-w-[80%] rounded-lg px-4 py-2 bg-muted">
+          <div className="max-w-[85%] rounded-2xl rounded-bl-md border border-primary/15 bg-card px-4 py-2.5 shadow-sm">
             {currentStatus && (
               <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                 <Loader2 className="h-4 w-4 animate-spin" />

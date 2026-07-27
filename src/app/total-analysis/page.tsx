@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function TotalAnalysisPage() {
-  redirect("/analysis");
+  redirect("/students");
 }

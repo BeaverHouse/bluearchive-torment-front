@@ -98,7 +98,7 @@ export function VideoDetail({
         ) : (
           <Copy className="h-4 w-4 mr-2" />
         )}
-        {copiedId === video.id ? t("videoAnalysis.detail.copied") : t("videoAnalysis.detail.htmlCopy")}
+        {copiedId === video.id ? t("common.copied") : t("videoAnalysis.detail.htmlCopy")}
       </Button>
       <Button onClick={handleStartEdit} size="sm">
         <Edit3 className="h-4 w-4 mr-2" />

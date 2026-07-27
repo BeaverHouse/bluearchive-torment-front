@@ -13,91 +13,75 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface RaidUsageTableProps {
   data: TotalAnalysisData;
   type: "striker" | "special" | "assist";
-  title: string;
   limit?: number;
 }
 
-export function RaidUsageTable({
-  data,
-  type,
-  title,
-  limit = 5,
-}: RaidUsageTableProps) {
+export function RaidUsageTable({ data, type, limit = 5 }: RaidUsageTableProps) {
   const { t, locale } = useTranslations();
   const { raids } = useRaids();
 
   const processedData = useMemo(() => {
-    // 단순 역순 정렬
+    // 최신 시즌이 위로 오도록 역순 정렬
     const reversedAnalyses = [...data.raidAnalyses].reverse();
 
     return reversedAnalyses.map((raid) => {
-      // raids.json에서 name을 가져와서 축약
       const raidInfo = raids.find((r) => r.id === raid.raidId);
       const fullName = raidInfo ? getRaidName(raidInfo, locale) : raid.raidId;
-      // 총력전/대결전 SXX 제거 (ko 데이터의 prefix만 매칭)
+      // 총력전/대결전 SXX 접두사 제거
       const displayName = fullName.replace(/^(총력전|대결전)\s+S\d+\s+/, "");
 
-      // 대결전: 괄호 앞에서 줄바꿈 (2줄로 분리)
-      // "시가지 예로니무스 (경장갑,토먼트)" → { main: "시가지 예로니무스", sub: "(경장갑,토먼트)" }
+      // 대결전: "시가지 예로니무스 (경장갑,토먼트)" → 본문 + 괄호(2줄)
       const bracketMatch = displayName.match(/^(.+?)\s*(\(.+\))$/);
       const nameParts = bracketMatch
         ? { main: bracketMatch[1], sub: bracketMatch[2] }
         : { main: displayName, sub: null };
 
-      let students;
-      if (type === "striker") students = raid.topStrikers;
-      else if (type === "special") students = raid.topSpecials;
-      else students = raid.topAssists;
+      const students =
+        type === "striker"
+          ? raid.topStrikers
+          : type === "special"
+            ? raid.topSpecials
+            : raid.topAssists;
 
-      const topItems = Array.from({ length: limit }).map(
-        (_, i) => students[i] || null
-      );
+      const topItems = Array.from({ length: limit }).map((_, i) => students[i] || null);
 
-      return {
-        id: raid.raidId,
-        name: displayName,
-        nameParts,
-        students: topItems,
-      };
+      return { id: raid.raidId, nameParts, students: topItems };
     });
   }, [data, raids, type, limit, locale]);
 
   return (
-    <Card className="h-[400px] sm:h-[500px] flex flex-col max-w-full overflow-hidden">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-sm sm:text-base">{title}</CardTitle>
-      </CardHeader>
-      <CardContent className="flex-1 overflow-hidden p-0 px-2 sm:px-4 pb-4 max-w-full">
-        <div className="h-full overflow-auto max-w-full">
+    <Card className="flex h-[480px] max-w-full flex-col overflow-hidden sm:h-[620px]">
+      <CardContent className="max-w-full flex-1 overflow-hidden p-0">
+        <div className="h-full max-w-full overflow-auto">
           <Table>
             <TableHeader className="sticky top-0 z-10">
               <TableRow className="bg-card hover:bg-card">
-                <TableHead className="w-[90px] sm:w-[140px] text-[9px] sm:text-xs bg-card pl-1 pr-1">
-                  {t("totalAnalysis.raidUsage.headerRaid")}
-                </TableHead>
+                <TableHead className="w-[76px] bg-card px-2 sm:w-[136px]" />
                 {Array.from({ length: limit }).map((_, i) => (
                   <TableHead
                     key={i}
-                    className="w-[36px] sm:w-[48px] text-center text-[9px] sm:text-xs px-0.5 bg-card"
+                    className="w-[48px] bg-card px-0.5 text-center text-[10px] font-medium text-muted-foreground sm:w-[56px] sm:text-xs"
                   >
-                    {t("totalAnalysis.raidUsage.rank").replace("{n}", String(i + 1))}
+                    {t("common.rank").replace("{n}", String(i + 1))}
                   </TableHead>
                 ))}
               </TableRow>
             </TableHeader>
             <TableBody>
               {processedData.map((row) => (
-                <TableRow key={row.id} className="hover:bg-muted/50">
-                  <TableCell className="font-medium text-[9px] sm:text-[11px] py-1.5 pr-1 pl-1 w-[90px] sm:w-[140px]">
+                <TableRow key={row.id} className="hover:bg-muted/40">
+                  <TableCell className="w-[76px] px-2 py-2 align-middle sm:w-[136px]">
                     <div className="leading-tight">
-                      <div className="truncate">{row.nameParts.main}</div>
+                      <div className="truncate text-[11px] font-semibold sm:text-xs">
+                        {row.nameParts.main}
+                      </div>
                       {row.nameParts.sub && (
-                        <div className="text-muted-foreground text-[8px] sm:text-[10px] truncate">
+                        <div className="truncate text-[9px] text-muted-foreground sm:text-[10px]">
                           {row.nameParts.sub}
                         </div>
                       )}
@@ -106,22 +90,18 @@ export function RaidUsageTable({
                   {row.students.map((student, index) => (
                     <TableCell
                       key={index}
-                      className="w-[36px] sm:w-[48px] text-center p-0.5 sm:p-1"
+                      className="w-[48px] px-0.5 py-1.5 text-center align-top sm:w-[56px]"
                     >
-                      <div className="flex flex-col items-center justify-center">
-                        {student ? (
-                          <>
-                            <StudentImage code={student.studentId} size={24} />
-                            <span className="text-[8px] sm:text-[9px] text-muted-foreground leading-tight">
-                              {student.usageCount.toLocaleString()}
-                            </span>
-                          </>
-                        ) : (
-                          <span className="text-muted-foreground text-xs">
-                            -
+                      {student ? (
+                        <div className="flex flex-col items-center gap-0.5">
+                          <StudentImage code={student.studentId} size={40} />
+                          <span className="text-[9px] leading-none text-muted-foreground">
+                            {student.usageCount.toLocaleString()}
                           </span>
-                        )}
-                      </div>
+                        </div>
+                      ) : (
+                        <span className="text-xs text-muted-foreground/50">–</span>
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>

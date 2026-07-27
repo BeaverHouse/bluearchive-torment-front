@@ -6,12 +6,6 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Play, Calendar, Star, Award } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { VideoListItem, platformFromVideoId } from "@/types/video";
 import { useRaids, getRaidName as getLocalizedRaidName } from "@/hooks/use-raids";
 import { trackEvent } from "@/utils/analytics";
@@ -179,7 +173,7 @@ export function VideoList({ videos }: VideoListProps) {
                     {video.raid_id && (
                       <div className="text-xs">
                         <span className="font-medium text-card-foreground">
-                          {t("videoAnalysis.list.raidLabel")}
+                          {t("common.raidLabel")}
                         </span>
                         <span className="text-muted-foreground ml-1">
                           {getRaidName(video.raid_id)}
@@ -188,33 +182,17 @@ export function VideoList({ videos }: VideoListProps) {
                     )}
                   </div>
                   {video.verify_level > 0 && (
-                    <div className="absolute bottom-1 right-1">
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div
-                              className={`rounded-full p-1 ${
-                                video.verify_level === 1
-                                  ? "bg-orange-500"
-                                  : "bg-yellow-500"
-                              }`}
-                            >
-                              {video.verify_level === 1 ? (
-                                <Star className="h-3 w-3 text-white" />
-                              ) : (
-                                <Award className="h-3 w-3 text-white" />
-                              )}
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>
-                              {video.verify_level === 1
-                                ? t("videoAnalysis.list.verifyPartyOk")
-                                : t("videoAnalysis.list.verifyAllOk")}
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                    <div
+                      aria-hidden="true"
+                      className={`absolute right-1 bottom-1 rounded-full p-1 ${
+                        video.verify_level === 1 ? "bg-orange-500" : "bg-yellow-500"
+                      }`}
+                    >
+                      {video.verify_level === 1 ? (
+                        <Star className="h-3 w-3 text-white" />
+                      ) : (
+                        <Award className="h-3 w-3 text-white" />
+                      )}
                     </div>
                   )}
                 </div>

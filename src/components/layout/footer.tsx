@@ -35,14 +35,14 @@ export function Footer() {
               href="/legal/privacy"
               className="hover:text-foreground transition-colors"
             >
-              {t("footer.privacy")}
+              {t("common.privacyPolicy")}
             </Link>
             <span>|</span>
             <Link
               href="/legal/terms"
               className="hover:text-foreground transition-colors"
             >
-              {t("footer.terms")}
+              {t("common.terms")}
             </Link>
           </div>
 
