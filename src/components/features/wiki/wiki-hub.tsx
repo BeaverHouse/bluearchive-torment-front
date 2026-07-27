@@ -62,7 +62,6 @@ export function WikiHub({ compact = false }: { compact?: boolean }) {
           const summary =
             reportSummary ||
             (doc && cat === "raids" ? raidGuideSummary(doc.body) : "") ||
-            (doc && (cat === "basics" || cat === "builds") ? firstParagraph(doc.body) : "") ||
             e.summary;
           return { ...e, cat, title, summary };
         })

@@ -27,15 +27,18 @@ export function EmptyState({
         className="rounded-full mb-4 object-cover"
       />
       <p className="text-lg font-medium mb-3">{t("arona.empty.greeting")}</p>
-      <div className="text-sm text-muted-foreground space-y-1 mb-4">
+      <div className="mb-4 space-y-1.5 text-sm text-muted-foreground">
         <p>
-          🔍 <strong>{t("arona.empty.search.label")}</strong> - {t("arona.empty.search.desc")}
+          🔎 <strong>{t("arona.empty.student.label")}</strong> - {t("arona.empty.student.desc")}
         </p>
         <p>
-          📋 <strong>{t("arona.empty.skill.label")}</strong> - {t("arona.empty.skill.desc")}
+          📚 <strong>{t("arona.empty.guide.label")}</strong> - {t("arona.empty.guide.desc")}
         </p>
         <p>
-          ⚔️ <strong>{t("arona.empty.damage.label")}</strong> - {t("arona.empty.damage.desc")}
+          📊 <strong>{t("arona.empty.party.label")}</strong> - {t("arona.empty.party.desc")}
+        </p>
+        <p>
+          🧮 <strong>{t("arona.empty.calculate.label")}</strong> - {t("arona.empty.calculate.desc")}
         </p>
       </div>
       {showSetupAction && !hasApiKey && (

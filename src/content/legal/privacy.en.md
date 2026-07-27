@@ -14,7 +14,7 @@ BA Torment ("Service") is an unofficial fan site for Blue Archive. This Privacy 
 - IP address (anonymized)
 
 ### 2.2 Information You Provide
-- Gemini API key entered when using A.R.O.N.A feature (temporarily stored in session storage, automatically deleted after 30 minutes)
+- Gemini API key entered when using A.R.O.N.A (temporarily stored in session storage, automatically deleted 10 minutes after the last chat activity)
 
 ## 3. Purpose of Information Use
 
@@ -38,7 +38,7 @@ This Service uses cookies to improve user experience and for statistical analysi
 
 ## 6. Information Retention and Deletion
 
-- API keys: Temporarily stored in session storage, automatically deleted after 30 minutes
+- API keys: Temporarily stored in session storage, automatically deleted 10 minutes after the last chat activity
 - Analytics data: Subject to Google Analytics data retention policy
 
 ## 7. Contact
