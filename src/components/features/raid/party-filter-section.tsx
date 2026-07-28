@@ -101,21 +101,9 @@ export function PartyFilterSection({
   return (
     <div className="mx-auto mb-5 w-full">
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-        <div className="flex items-center rounded-lg border border-gray-200 dark:border-gray-700">
-          <CollapsibleTrigger className="group flex min-w-0 flex-1 items-center justify-between p-4 text-left hover:bg-gray-50 dark:hover:bg-gray-800">
-            <span className="flex min-w-0 flex-col gap-1">
-              <span className="text-sm font-medium">{t("party.search.filter")}</span>
-              {resultSummary && (
-                <span className="flex items-center gap-2 text-xs font-normal text-muted-foreground sm:hidden">
-                  {resultSummary}
-                  {activeFilterCount > 0 && (
-                    <Badge variant="secondary">
-                      {t("party.filter.appliedCount").replace("{n}", String(activeFilterCount))}
-                    </Badge>
-                  )}
-                </span>
-              )}
-            </span>
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center rounded-lg border border-gray-200 dark:border-gray-700">
+          <CollapsibleTrigger className="group flex min-w-0 items-center justify-between p-3 text-left hover:bg-gray-50 sm:p-4 dark:hover:bg-gray-800">
+            <span className="text-sm font-medium">{t("party.search.filter")}</span>
             <ChevronDownIcon className="h-4 w-4 shrink-0 transition-transform group-data-[state=open]:rotate-180" />
           </CollapsibleTrigger>
           <div className="flex items-center gap-1 pr-2">
@@ -125,7 +113,6 @@ export function PartyFilterSection({
               items={
                 hideIncludeExclude
                   ? [
-                      t("party.help.filter.partyCount"),
                       t("party.help.filter.scoreMove"),
                       t("party.help.filter.assist"),
                       t("party.help.filter.duplicate"),
@@ -133,7 +120,6 @@ export function PartyFilterSection({
                   : [
                       t("party.help.filter.include"),
                       t("party.help.filter.exclude"),
-                      t("party.help.filter.partyCount"),
                       t("party.help.filter.scoreMove"),
                       t("party.help.filter.duplicate"),
                     ]
@@ -165,6 +151,16 @@ export function PartyFilterSection({
               <RotateCcw className="h-4 w-4" />
             </Button>
           </div>
+          {resultSummary && (
+            <div className="col-span-2 flex flex-wrap items-center gap-2 px-3 pb-3 text-xs text-muted-foreground sm:hidden">
+              <span>{resultSummary}</span>
+              {activeFilterCount > 0 && (
+                <Badge variant="secondary">
+                  {t("party.filter.appliedCount").replace("{n}", String(activeFilterCount))}
+                </Badge>
+              )}
+            </div>
+          )}
         </div>
         <CollapsibleContent className="border-l border-r border-b border-gray-200 p-4 dark:border-gray-700">
           <PartyFilter
