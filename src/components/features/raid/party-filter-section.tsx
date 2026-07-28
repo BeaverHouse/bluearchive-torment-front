@@ -17,6 +17,7 @@ import { FilterOption } from "@/types/raid";
 import { PartyFilterState } from "@/types/filter";
 import { StudentSearchData } from "@/utils/search";
 import { useTranslations } from "@/lib/i18n";
+import { ContextHelp } from "@/components/common/context-help";
 
 interface PartyFilterSectionProps {
   // 필터 상태
@@ -118,6 +119,26 @@ export function PartyFilterSection({
             <ChevronDownIcon className="h-4 w-4 shrink-0 transition-transform group-data-[state=open]:rotate-180" />
           </CollapsibleTrigger>
           <div className="flex items-center gap-1 pr-2">
+            <ContextHelp
+              label={t("common.contextHelp")}
+              title={t("party.help.filter.title")}
+              items={
+                hideIncludeExclude
+                  ? [
+                      t("party.help.filter.partyCount"),
+                      t("party.help.filter.scoreMove"),
+                      t("party.help.filter.assist"),
+                      t("party.help.filter.duplicate"),
+                    ]
+                  : [
+                      t("party.help.filter.include"),
+                      t("party.help.filter.exclude"),
+                      t("party.help.filter.partyCount"),
+                      t("party.help.filter.scoreMove"),
+                      t("party.help.filter.duplicate"),
+                    ]
+              }
+            />
             {showPresetPopover && onLoadPreset && (
               <PresetPopover
                 mode="filter"

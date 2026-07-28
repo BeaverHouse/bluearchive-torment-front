@@ -15,6 +15,7 @@ import {
 import { scoreInfo } from "@/constants/score";
 import { parseTimeToSeconds, formatSecondsToTime } from "@/utils/time";
 import { useTranslations } from "@/lib/i18n";
+import { ContextHelp } from "@/components/common/context-help";
 
 type Difficulty = "normal" | "hard" | "veryHard" | "hardcore" | "extreme" | "insane" | "torment" | "lunatic";
 type TimeLimit = "3min" | "4min" | "4min30s";
@@ -204,7 +205,20 @@ export function RaidScoreCalculator() {
       <CardHeader>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <CardTitle>{t("calc.raid.cardTitle")}</CardTitle>
+            <div className="flex items-center gap-1">
+              <CardTitle>{t("calc.raid.cardTitle")}</CardTitle>
+              <ContextHelp
+                label={t("common.contextHelp")}
+                title={t("calc.help.raid.title")}
+                items={[
+                  t("calc.help.raid.elapsed"),
+                  t("calc.help.raid.limit"),
+                  t("calc.help.raid.total"),
+                  t("calc.help.reset"),
+                ]}
+                align="start"
+              />
+            </div>
             <CardDescription>{t("calc.raid.cardDesc")}</CardDescription>
           </div>
           {totalScore > 0 && (

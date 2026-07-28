@@ -20,6 +20,7 @@ import {
   type ReportRef,
 } from "@/lib/wiki";
 import { useTranslations } from "@/lib/i18n";
+import { ContextHelp } from "@/components/common/context-help";
 
 export default function StudentDetailPage({
   params,
@@ -106,16 +107,29 @@ export default function StudentDetailPage({
               </div>
             </div>
           </div>
-          <a
-            href={schaleDbStudentUrl(studentId)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-full border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:text-foreground hover:ring-1 hover:ring-foreground/20"
-          >
-            <Database className="h-3.5 w-3.5" />
-            SchaleDB
-            <ExternalLink className="h-3 w-3" />
-          </a>
+          <div className="flex shrink-0 items-center gap-1">
+            <ContextHelp
+              label={t("common.contextHelp")}
+              title={t("students.help.stats.title")}
+              items={[
+                t("students.help.stats.rank"),
+                t("students.help.stats.synergy"),
+                t("students.help.stats.heatmap"),
+                t("students.help.stats.star"),
+                t("students.help.stats.build"),
+              ]}
+            />
+            <a
+              href={schaleDbStudentUrl(studentId)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-full border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:text-foreground hover:ring-1 hover:ring-foreground/20"
+            >
+              <Database className="h-3.5 w-3.5" />
+              SchaleDB
+              <ExternalLink className="h-3 w-3" />
+            </a>
+          </div>
         </div>
 
         {char && (
