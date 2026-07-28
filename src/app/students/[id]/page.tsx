@@ -2,7 +2,8 @@
 
 import { use, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Loader2, ArrowLeft, ExternalLink, BookOpen, MessageCircle, Search, Database } from "lucide-react";
+import Image from "next/image";
+import { Loader2, ArrowLeft, ExternalLink, BookOpen, MessageCircle, Search } from "lucide-react";
 import { useTotalAnalysis } from "@/hooks/use-total-analysis";
 import { useStudentMaps } from "@/hooks/use-student-maps";
 import { StudentImage } from "@/components/features/student/student-image";
@@ -127,7 +128,13 @@ export default function StudentDetailPage({
               aria-label="SchaleDB"
               title="SchaleDB"
             >
-              <Database className="h-3.5 w-3.5" />
+              <Image
+                src="/schaledb_icon.png"
+                alt=""
+                width={18}
+                height={18}
+                className="rounded-[3px]"
+              />
               <span className="hidden sm:inline">SchaleDB</span>
               <ExternalLink className="hidden h-3 w-3 sm:block" />
             </a>
