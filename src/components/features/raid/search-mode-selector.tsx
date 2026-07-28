@@ -31,25 +31,30 @@ export default function SearchModeSelector() {
         setMode(next);
         trackEvent("party_search_mode", { mode: next });
       }}
-      className="w-full mb-4"
+      className="mb-4 w-full"
     >
-      <div className="flex items-center gap-1">
-        <TabsList className="grid min-w-0 flex-1 grid-cols-3">
+      <div className="rounded-xl bg-muted/50 p-2">
+        <div className="mb-1.5 flex items-center justify-between px-1">
+          <span className="text-xs font-medium text-muted-foreground">
+            {t("party.help.mode.title")}
+          </span>
+          <ContextHelp
+            label={t("common.contextHelp")}
+            title={t("party.help.mode.title")}
+            items={[
+              t("party.help.mode.filter"),
+              t("party.help.mode.pool"),
+              t("party.help.mode.single"),
+            ]}
+          />
+        </div>
+        <TabsList className="grid w-full grid-cols-3 bg-background/70">
           {MODES.map((m) => (
             <TabsTrigger key={m.value} value={m.value}>
               {t(m.tkey)}
             </TabsTrigger>
           ))}
         </TabsList>
-        <ContextHelp
-          label={t("common.contextHelp")}
-          title={t("party.help.mode.title")}
-          items={[
-            t("party.help.mode.filter"),
-            t("party.help.mode.pool"),
-            t("party.help.mode.single"),
-          ]}
-        />
       </div>
     </Tabs>
   );

@@ -123,10 +123,25 @@ export default function PartyPage() {
         onValueChange={(v) => setPartyTab(v as "search" | "summary" | "trends")}
         className="w-full max-w-4xl"
       >
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="search">{t("party.tab.search")}</TabsTrigger>
-          <TabsTrigger value="summary">{t("party.tab.summary")}</TabsTrigger>
-          <TabsTrigger value="trends">{t("party.tab.trends")}</TabsTrigger>
+        <TabsList className="grid h-11 w-full grid-cols-3 rounded-xl bg-primary/10 p-1">
+          <TabsTrigger
+            value="search"
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground dark:data-[state=active]:bg-primary dark:data-[state=active]:text-primary-foreground"
+          >
+            {t("party.tab.search")}
+          </TabsTrigger>
+          <TabsTrigger
+            value="summary"
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground dark:data-[state=active]:bg-primary dark:data-[state=active]:text-primary-foreground"
+          >
+            {t("party.tab.summary")}
+          </TabsTrigger>
+          <TabsTrigger
+            value="trends"
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground dark:data-[state=active]:bg-primary dark:data-[state=active]:text-primary-foreground"
+          >
+            {t("party.tab.trends")}
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="search">
           <RaidSearch
