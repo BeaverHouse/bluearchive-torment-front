@@ -32,6 +32,13 @@ export function Footer() {
 
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
             <Link
+              href="/help"
+              className="hover:text-foreground transition-colors"
+            >
+              {t("common.siteGuide")}
+            </Link>
+            <span>|</span>
+            <Link
               href="/legal/privacy"
               className="hover:text-foreground transition-colors"
             >

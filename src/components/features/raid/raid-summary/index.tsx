@@ -32,6 +32,7 @@ import { generateSearchKeyword } from "@/utils/raid";
 import { useSectionView } from "@/hooks/use-section-view";
 import { trackEvent } from "@/utils/analytics";
 import { useTranslations } from "@/lib/i18n";
+import { ContextHelp } from "@/components/common/context-help";
 
 /* ------------------------------------------------------------------ */
 /*  Types & helpers                                                    */
@@ -191,6 +192,18 @@ function SummaryNav({
               {t(SECTION_LABELS[id])}
             </button>
           ))}
+          <ContextHelp
+            label={t("common.contextHelp")}
+            title={t("party.help.summary.title")}
+            items={[
+              t("party.help.summary.sample"),
+              t("party.help.summary.essential"),
+              t("party.help.summary.impact"),
+              t("party.help.summary.partyCount"),
+              t("party.help.summary.top5"),
+            ]}
+            align="start"
+          />
         </div>
       </div>
     </nav>

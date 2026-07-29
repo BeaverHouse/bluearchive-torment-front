@@ -2,7 +2,8 @@
 
 import { use, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Loader2, ArrowLeft, ExternalLink, BookOpen, MessageCircle, Search, Database } from "lucide-react";
+import Image from "next/image";
+import { Loader2, ArrowLeft, ExternalLink, BookOpen, MessageCircle, Search } from "lucide-react";
 import { useTotalAnalysis } from "@/hooks/use-total-analysis";
 import { useStudentMaps } from "@/hooks/use-student-maps";
 import { StudentImage } from "@/components/features/student/student-image";
@@ -20,6 +21,7 @@ import {
   type ReportRef,
 } from "@/lib/wiki";
 import { useTranslations } from "@/lib/i18n";
+import { ContextHelp } from "@/components/common/context-help";
 
 export default function StudentDetailPage({
   params,
@@ -91,8 +93,8 @@ export default function StudentDetailPage({
       </Link>
 
       {/* Header */}
-      <div className="rounded-2xl border bg-card p-5 shadow-sm">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+      <div className="rounded-2xl border bg-card p-4 shadow-sm sm:p-5">
+        <div className="flex items-start justify-between gap-2 sm:gap-4">
           <div className="flex min-w-0 items-center gap-3 sm:gap-4">
             <div className="shrink-0 overflow-hidden rounded-2xl ring-1 ring-border">
               <StudentImage code={studentId} size={72} />
@@ -106,20 +108,41 @@ export default function StudentDetailPage({
               </div>
             </div>
           </div>
-          <a
-            href={schaleDbStudentUrl(studentId)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-full border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:text-foreground hover:ring-1 hover:ring-foreground/20"
-          >
-            <Database className="h-3.5 w-3.5" />
-            SchaleDB
-            <ExternalLink className="h-3 w-3" />
-          </a>
+          <div className="flex shrink-0 items-center gap-1">
+            <ContextHelp
+              label={t("common.contextHelp")}
+              title={t("students.help.stats.title")}
+              items={[
+                t("students.help.stats.rank"),
+                t("students.help.stats.synergy"),
+                t("students.help.stats.heatmap"),
+                t("students.help.stats.star"),
+                t("students.help.stats.build"),
+              ]}
+            />
+            <a
+              href={schaleDbStudentUrl(studentId)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-8 w-8 shrink-0 items-center justify-center gap-1.5 rounded-full border bg-background text-xs font-medium text-muted-foreground transition hover:text-foreground hover:ring-1 hover:ring-foreground/20 sm:w-auto sm:px-3"
+              aria-label="SchaleDB"
+              title="SchaleDB"
+            >
+              <Image
+                src="/schaledb_icon.png"
+                alt=""
+                width={18}
+                height={18}
+                className="rounded-[3px]"
+              />
+              <span className="hidden sm:inline">SchaleDB</span>
+              <ExternalLink className="hidden h-3 w-3 sm:block" />
+            </a>
+          </div>
         </div>
 
         {char && (
-          <div className="mt-5 grid grid-cols-4 gap-2 border-t pt-4 text-center">
+          <div className="mt-4 grid grid-cols-4 gap-2 border-t pt-4 text-center sm:mt-5">
             {stats.map((s, i) => (
               <div key={i} className="flex flex-col gap-0.5">
                 <span className="text-[11px] text-muted-foreground">{s.label}</span>

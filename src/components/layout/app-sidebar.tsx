@@ -8,6 +8,7 @@ import {
   Video,
   Calculator,
   ChevronDown,
+  CircleHelp,
   Users,
   Search,
 } from "lucide-react";
@@ -44,6 +45,7 @@ const menuItems: MenuItem[] = [
   { titleKey: "common.partyFinder", url: "/party", icon: Search },
   { titleKey: "common.students", url: "/students", icon: Users },
   { titleKey: "common.videos", url: "/video-analysis", icon: Video },
+  { titleKey: "common.siteGuide", url: "/help", icon: CircleHelp },
   {
     titleKey: "nav.calculator",
     icon: Calculator,

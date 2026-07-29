@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { parseTimeToSeconds, formatSecondsToTime } from "@/utils/time";
 import { useTranslations } from "@/lib/i18n";
+import { ContextHelp } from "@/components/common/context-help";
 
 type Stage = "stage3" | "stage4";
 
@@ -228,7 +229,20 @@ export function TacticalChallengeCalculator() {
       <CardHeader>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <CardTitle>{t("calc.tactical.cardTitle")}</CardTitle>
+            <div className="flex items-center gap-1">
+              <CardTitle>{t("calc.tactical.cardTitle")}</CardTitle>
+              <ContextHelp
+                label={t("common.contextHelp")}
+                title={t("calc.help.tactical.title")}
+                items={[
+                  t("calc.help.tactical.elapsed"),
+                  t("calc.help.tactical.limit"),
+                  t("calc.help.tactical.total"),
+                  t("calc.help.reset"),
+                ]}
+                align="start"
+              />
+            </div>
             <CardDescription>{t("calc.tactical.cardDesc")}</CardDescription>
           </div>
           {totalScore > 0 && (
