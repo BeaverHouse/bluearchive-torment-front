@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,6 +32,7 @@ interface AddVideoDialogProps {
 
 export function AddVideoDialog({ raids }: AddVideoDialogProps) {
   const { t, locale } = useTranslations();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [raidId, setRaidId] = useState<string>("");
   const [videoInput, setVideoInput] = useState<string>("");
@@ -77,7 +79,7 @@ export function AddVideoDialog({ raids }: AddVideoDialogProps) {
           cancelButtonText: t("common.cancel"),
         });
         if (swalResult.isConfirmed) {
-          window.location.href = `/video-analysis/${videoId}?raid_id=${existingRaidId}`;
+          router.push(`/video-analysis/${videoId}?raid_id=${existingRaidId}`);
         }
         return;
       }

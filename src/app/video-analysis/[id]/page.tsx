@@ -38,38 +38,6 @@ export default function VideoDetailPage() {
         setLoading(true);
         setError(null);
 
-        // 편집 완료 후 업데이터된 데이터가 있는지 확인
-        const updatedData = sessionStorage.getItem("updatedVideoData");
-        if (updatedData) {
-          try {
-            const { updatedVideos, updatedCurrentVideo } =
-              JSON.parse(updatedData);
-
-            // API 호출해서 최신 title, raid_id 가져오기
-            const response = await getVideoDetail(
-              videoId,
-              raidId || undefined
-            );
-            setVideoDetail({
-              video_id: videoId,
-              data: updatedVideos, // 편집된 데이터 사용
-              title: response.data.title,
-              raid_id: response.data.raid_id,
-              platform: response.data.platform,
-              thumbnail_url: response.data.thumbnail_url,
-            });
-            setCurrentVideo(updatedCurrentVideo);
-
-            // 사용한 데이터 제거
-            sessionStorage.removeItem("updatedVideoData");
-            setLoading(false);
-            return;
-          } catch (parseError) {
-            console.error("업데이트된 데이터 파싱 실패:", parseError);
-            sessionStorage.removeItem("updatedVideoData");
-          }
-        }
-
         // 일반적인 API 호출
         const response = await getVideoDetail(videoId, raidId || undefined);
         if (response.data.data && response.data.data.length > 0) {

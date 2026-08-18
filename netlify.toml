@@ -6,7 +6,7 @@
   package = "@netlify/plugin-nextjs"
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "24"
 
 # Deploy Preview에서만 프록시 설정 (CORS 우회)
 [context.deploy-preview.environment]
