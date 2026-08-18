@@ -35,6 +35,7 @@ export default function GroupedPartyCard({
         value={party.score}
         valueSuffix={valueSuffix}
         parties={party.partyData}
+        skillOrders={party.skillOrders}
         video_id={party.video_id}
         raid_id={party.video_id ? (party.raid_id || season) : undefined}
         missingCodes={representative.missingCodes}
@@ -54,6 +55,7 @@ export default function GroupedPartyCard({
         value={party.score}
         valueSuffix={valueSuffix}
         parties={party.partyData}
+        skillOrders={party.skillOrders}
         video_id={party.video_id}
         raid_id={party.video_id ? (party.raid_id || season) : undefined}
         missingCodes={representative.missingCodes}
@@ -83,6 +85,7 @@ export default function GroupedPartyCard({
                   value={member.party.score}
                   valueSuffix={valueSuffix}
                   parties={member.party.partyData}
+                  skillOrders={member.party.skillOrders}
                   video_id={member.party.video_id}
                   raid_id={
                     member.party.video_id

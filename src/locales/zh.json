@@ -215,6 +215,7 @@
   "party.note.full": "查看完整报告",
   "party.party.missing": "未持有 {n} 名",
   "party.party.morePartys": "查看第 5 队及以后",
+  "party.party.skillOrder": "起手技能第 {n} 位",
   "party.party.otherCompositions": "查看其他 {n} 套编成",
   "party.party.uses": "使用 {n} 次",
   "party.party.video": "视频",

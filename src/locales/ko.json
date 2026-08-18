@@ -215,6 +215,7 @@
   "party.note.full": "전체 리포트 보기",
   "party.party.missing": "미보유 {n}명",
   "party.party.morePartys": "5파티 이후 보기",
+  "party.party.skillOrder": "시작 스킬 {n}번째",
   "party.party.otherCompositions": "다른 편성 {n}개 보기",
   "party.party.uses": "{n}회 사용",
   "party.party.video": "영상",

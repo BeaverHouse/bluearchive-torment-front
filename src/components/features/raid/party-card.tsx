@@ -21,6 +21,7 @@ interface PartyCardProps {
   value: number;
   valueSuffix: string;
   parties: number[][];
+  skillOrders?: number[][];
   video_id?: string;
   raid_id?: string;
   /** 단일 파티 매칭된 sub-party 인덱스 (배경 틴트 강조) */
@@ -35,6 +36,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
   value,
   valueSuffix,
   parties,
+  skillOrders,
   video_id,
   raid_id,
   matchedSubPartyIndexes,
@@ -104,6 +106,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
         {parties.slice(0, 4).map((party, partyIdx) => (
           <SingleParty
             party={party}
+            skillOrders={skillOrders?.[partyIdx]}
             key={"party" + partyIdx}
             highlighted={matchedSet.has(partyIdx)}
             showModeBadge={showModeBadge}
@@ -122,6 +125,7 @@ const PartyCard: React.FC<PartyCardProps> = ({
                   {parties.slice(4).map((party, partyIdx) => (
                     <SingleParty
                       party={party}
+                      skillOrders={skillOrders?.[partyIdx + 4]}
                       key={"party" + partyIdx}
                       highlighted={matchedSet.has(partyIdx + 4)}
                       showModeBadge={showModeBadge}
