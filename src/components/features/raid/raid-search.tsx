@@ -435,6 +435,7 @@ const RaidSearch = ({ season, studentsMap, studentSearchMap }: RaidComponentProp
                     value={party.score}
                     valueSuffix={t("party.filter.score").replace("{n}", "").trim()}
                     parties={party.partyData}
+                    skillOrders={party.skillOrders}
                     video_id={party.video_id}
                     raid_id={party.video_id ? (party.raid_id || season) : undefined}
                     matchedSubPartyIndexes={matchedSubPartyIndexes}

@@ -685,6 +685,7 @@ const RaidSummary = ({
                       value={data.minUEUser.score}
                       valueSuffix={t("common.points")}
                       parties={data.minUEUser.partyData}
+                      skillOrders={data.minUEUser.skillOrders}
                     />
                   </div>
                 )}
@@ -706,6 +707,7 @@ const RaidSummary = ({
                       value={data.maxPartyUser.score}
                       valueSuffix={t("common.points")}
                       parties={data.maxPartyUser.partyData}
+                      skillOrders={data.maxPartyUser.skillOrders}
                     />
                   </div>
                 )}

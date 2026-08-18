@@ -215,6 +215,7 @@
   "party.note.full": "Read full report",
   "party.party.missing": "Missing {n}",
   "party.party.morePartys": "Show parties 5+",
+  "party.party.skillOrder": "Starting skill #{n}",
   "party.party.otherCompositions": "Show {n} other comps",
   "party.party.uses": "Used {n} times",
   "party.party.video": "Video",

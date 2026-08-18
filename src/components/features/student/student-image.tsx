@@ -20,6 +20,7 @@ interface StudentImageProps {
   size?: number;
   showModeBadge?: boolean;
   missing?: boolean;
+  skillOrder?: number;
 }
 
 /**
@@ -27,7 +28,13 @@ interface StudentImageProps {
  * @param code Student code (5-digit or 8-digit)
  * @param name Student name (to use in tooltip)
  */
-export function StudentImage({ code, size = 40, showModeBadge = true, missing = false }: StudentImageProps) {
+export function StudentImage({
+  code,
+  size = 40,
+  showModeBadge = true,
+  missing = false,
+  skillOrder,
+}: StudentImageProps) {
   const { t } = useTranslations();
   const { studentsMap } = useStudentMaps();
 
@@ -60,6 +67,10 @@ export function StudentImage({ code, size = 40, showModeBadge = true, missing = 
   const modeIcon = getModeIcon(studentID);
   const modeLabelKey = getModeLabelKey(studentID);
   const modeLabel = modeLabelKey ? t(modeLabelKey) : undefined;
+  const hasSkillOrder = skillOrder !== undefined && skillOrder >= 1 && skillOrder <= 5;
+  const skillOrderLabel = hasSkillOrder
+    ? t("party.party.skillOrder").replace("{n}", String(skillOrder))
+    : undefined;
 
   return (
     <TooltipProvider>
@@ -89,6 +100,19 @@ export function StudentImage({ code, size = 40, showModeBadge = true, missing = 
                   )}
                 </div>
               )}
+              {hasSkillOrder && (
+                <div
+                  aria-label={skillOrderLabel}
+                  role="img"
+                  className={`absolute -right-1 -top-1 z-10 flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-background px-1 text-[11px] font-bold leading-none shadow-sm ${
+                    skillOrder !== undefined && skillOrder >= 4
+                      ? "bg-sky-500 text-white"
+                      : "bg-amber-400 text-slate-950"
+                  }`}
+                >
+                  {skillOrder}
+                </div>
+              )}
             </div>
             {gradeKey >= 10 && (
               <div
@@ -109,6 +133,7 @@ export function StudentImage({ code, size = 40, showModeBadge = true, missing = 
             {showModeBadge && modeLabel ? ` (${modeLabel})` : ""}
             {isAssist ? " (A)" : ""}
           </p>
+          {skillOrderLabel && <p className="text-xs text-sky-500">{skillOrderLabel}</p>}
         </HybridTooltipContent>
       </HybridTooltip>
     </TooltipProvider>

@@ -14,6 +14,7 @@ export interface PartyData {
   rank: number;
   score: number;
   partyData: number[][];
+  skillOrders?: number[][];
   video_id?: string;
   raid_id?: string;
 }
@@ -104,10 +105,12 @@ export interface RaidSummaryData {
     score: number;
     ueCount: number;
     partyData: number[][];
+    skillOrders?: number[][];
   };
   maxPartyUser?: {
     rank: number;
     score: number;
     partyData: number[][];
+    skillOrders?: number[][];
   };
 }
