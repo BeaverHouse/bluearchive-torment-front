@@ -42,3 +42,10 @@ austincli agent check
 
 Pull requests receive a Netlify preview. Production deploys after the approved
 change is merged.
+
+## Pending upgrades
+
+- TypeScript 7. Held at 6.x because typescript-eslint does not support it, so
+  `pnpm lint` fails to start. Type checking and the build both pass on 7, so
+  this is only waiting on the linter. Tracking:
+  [typescript-eslint#10940](https://github.com/typescript-eslint/typescript-eslint/issues/10940).
