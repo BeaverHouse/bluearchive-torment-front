@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ArrowLeft, Edit3, Copy, Check } from "lucide-react";
@@ -39,6 +40,8 @@ export function VideoDetail({
     return 0;
   });
 
+  const router = useRouter();
+
   const handleStartEdit = () => {
     if (window.innerWidth < 1024) {
       Swal.fire({
@@ -50,19 +53,8 @@ export function VideoDetail({
       return;
     }
 
-    if (!raidId) {
-      window.location.href = "/video-analysis";
-      return;
-    }
-
-    const editData = {
-      videos: videos,
-      currentVideo: currentVideo,
-      activeTab: activeTab,
-    };
-
-    sessionStorage.setItem("editVideoData", JSON.stringify(editData));
-    window.location.href = `/video-analysis/${currentVideo.video_id}/edit?raid_id=${raidId}`;
+    const editPath = `/video-analysis/${currentVideo.video_id}/edit`;
+    router.push(raidId ? `${editPath}?raid_id=${raidId}` : editPath);
   };
 
   const handleTabChange = (value: string) => {

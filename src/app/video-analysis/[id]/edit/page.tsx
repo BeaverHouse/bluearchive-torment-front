@@ -7,14 +7,9 @@ import { ArrowLeft } from "lucide-react";
 import { VideoEmbed } from "@/components/features/video/video-embed";
 import { EditableAnalysisResult } from "../_components/editable-analysis-result";
 import { VideoAnalysisData, platformFromVideoId } from "@/types/video";
+import { getVideoDetail } from "@/lib/api";
 import { trackEvent } from "@/utils/analytics";
 import { useTranslations } from "@/lib/i18n";
-
-interface EditVideoData {
-  videos: VideoAnalysisData[];
-  currentVideo: VideoAnalysisData;
-  activeTab: string;
-}
 
 export default function VideoEditPage() {
   const params = useParams();
@@ -32,40 +27,33 @@ export default function VideoEditPage() {
   }, [videoId]);
 
   useEffect(() => {
-    if (!raidId) {
-      router.replace('/video-analysis');
-      return;
-    }
+    if (!videoId) return;
 
-    try {
-      const savedData = sessionStorage.getItem('editVideoData');
-      if (!savedData) {
-        router.replace('/video-analysis');
-        return;
+    const loadVideo = async () => {
+      try {
+        const response = await getVideoDetail(videoId, raidId || undefined);
+        const analyses = response.data.data;
+        // The same choice the detail page makes, so opening the editor shows
+        // the analysis the reader was just looking at.
+        setCurrentVideo(analyses?.find((analysis) => analysis.analysis_type !== "ai") ?? analyses?.[0] ?? null);
+      } catch {
+        setCurrentVideo(null);
+      } finally {
+        setIsLoading(false);
       }
+    };
 
-      const editData: EditVideoData = JSON.parse(savedData);
-      if (!editData.videos || !editData.currentVideo || editData.currentVideo.video_id !== videoId) {
-        router.replace('/video-analysis');
-        return;
-      }
-
-      setCurrentVideo(editData.currentVideo);
-      setIsLoading(false);
-      sessionStorage.removeItem('editVideoData');
-    } catch {
-      router.replace('/video-analysis');
-    }
-  }, [videoId, router, raidId]);
+    loadVideo();
+  }, [videoId, raidId]);
 
   const handleVideoPlayStateChange = useCallback(() => {}, []);
 
   const handleUpdateVideo = () => {
     if (!raidId) {
-      window.location.href = '/video-analysis';
+      router.push('/video-analysis');
       return;
     }
-    window.location.href = `/video-analysis/${videoId}?raid_id=${raidId}`;
+    router.push(`/video-analysis/${videoId}?raid_id=${raidId}`);
   };
 
   const handleCancelEdit = () => {
