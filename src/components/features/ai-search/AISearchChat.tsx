@@ -13,6 +13,7 @@ import { EmptyState } from "./EmptyState";
 import { useApiKey } from "./hooks/useApiKey";
 import { useChat } from "./hooks/useChat";
 import { useTranslations, DEFAULT_LOCALE } from "@/lib/i18n";
+import { stripHtmlComments } from "@/lib/wiki";
 
 // Persona/instruction MDs are only authored in Korean for now. en/zh prompts
 // will be added later — until then we fall back so non-ko sessions still work.
@@ -26,7 +27,7 @@ async function fetchPrompt(kind: "persona" | "instruction", locale: string): Pro
     const res = await fetch(`/data/${kind}_${lang}.md`);
     if (!res.ok) return null;
     const text = await res.text();
-    return text.replace(/<!--[\s\S]*?-->\s*/g, "").trim();
+    return stripHtmlComments(text).trim();
   };
   const localized = await tryFetch(locale);
   if (localized) return localized;
