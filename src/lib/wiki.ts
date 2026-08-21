@@ -118,9 +118,21 @@ function parseInlineList(value: string): string[] {
     .filter(Boolean);
 }
 
-/** Strip HTML comments (AI-only instructions live there). */
-function stripHtmlComments(s: string): string {
-  return s.replace(/<!--[\s\S]*?-->\s*/g, "");
+/**
+ * Strip HTML comments (AI-only instructions live there).
+ *
+ * One pass is not enough. `<!--<!-- x -->-->` leaves a bare `-->` behind, and
+ * the instructions this removes would survive inside it, so it repeats until
+ * the text stops changing.
+ */
+export function stripHtmlComments(s: string): string {
+  let stripped = s;
+  for (let before = ""; before !== stripped; ) {
+    before = stripped;
+    stripped = stripped.replace(/<!--[\s\S]*?-->\s*/g, "");
+  }
+
+  return stripped;
 }
 
 /** Read one document. Returns null when missing or the API is unreachable. */

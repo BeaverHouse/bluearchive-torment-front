@@ -7,9 +7,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
-  Users, Target, TrendingUp, Search, Copy, Check, Youtube,
+  Users, Target, TrendingUp, Search, Copy, Check,
   ChevronRight, ChevronDown, Star, Award,
 } from "lucide-react";
+import { Youtube } from "@/components/ui/brand-icons";
 import { VideoIcon } from "@radix-ui/react-icons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
