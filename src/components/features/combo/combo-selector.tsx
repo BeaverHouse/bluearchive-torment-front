@@ -65,6 +65,7 @@ function StudentSlot({
         height={48}
         className="object-cover rounded w-full h-full"
         draggable={false}
+        unoptimized
       />
       {onClear && (
         <button
@@ -171,6 +172,7 @@ export default function ComboSelector() {
                         selected ? "" : "grayscale opacity-70"
                       }`}
                       draggable={false}
+                      unoptimized
                     />
                     {modeIcon && (
                       <div className="absolute bottom-0 right-0 bg-gray-700/90 text-white rounded-sm p-0.5">

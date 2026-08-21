@@ -40,6 +40,7 @@ const OptionImage = ({ value, label }: { value: string | number; label: string }
       height={16}
       className="rounded object-cover flex-shrink-0"
       onError={() => setError(true)}
+      unoptimized
     />
   );
 }

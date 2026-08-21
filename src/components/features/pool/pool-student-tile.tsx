@@ -73,7 +73,7 @@ function PoolStudentTileInner({
         className={`object-cover rounded mb-1 ${owned ? "" : "grayscale opacity-60"}`}
         draggable={false}
         loading="lazy"
-        quality={75}
+        unoptimized
       />
       <div className="text-xs text-center w-full truncate" title={name}>
         {name}
