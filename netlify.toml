@@ -8,6 +8,30 @@
 [build.environment]
   NODE_VERSION = "24"
 
+# Next marks prerendered pages must-revalidate, so every page view reached the
+# function even though the durable cache already held the page: 100% of
+# requests to /help, /party and the rest were function invocations. The pages
+# carry no per-visitor data, so a shared cache serves them all.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Netlify-CDN-Cache-Control = "public, durable, s-maxage=600, stale-while-revalidate=86400"
+
+# 60% of all requests were the same optimized images fetched again, because the
+# response tells browsers to revalidate every time. The URL already encodes the
+# transformation, so a stale one cannot be served under it.
+[[headers]]
+  for = "/_next/image*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+    Netlify-CDN-Cache-Control = "public, durable, s-maxage=2592000"
+
+# Requested 183 times an hour under the same must-revalidate default.
+[[headers]]
+  for = "/favicon.ico"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
 # Deploy Preview에서만 프록시 설정 (CORS 우회)
 [context.deploy-preview.environment]
   NEXT_PUBLIC_API_URL = "/api/proxy"

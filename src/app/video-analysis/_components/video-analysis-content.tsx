@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import { VideoList } from "./video-list";
 import { VideoQueueDialog } from "./VideoQueueDialog";
 import { AddVideoDialog } from "./AddVideoDialog";
@@ -19,13 +20,8 @@ import { PartyFilterSection } from "@/components/features/raid/party-filter-sect
 import Loading from "@/components/common/loading";
 import { trackEvent } from "@/utils/analytics";
 
-interface VideoAnalysisContentProps {
-  initialRaid: string;
-}
-
-export function VideoAnalysisContent({
-  initialRaid,
-}: VideoAnalysisContentProps) {
+export function VideoAnalysisContent() {
+  const initialRaid = useSearchParams().get("raid") || "all";
   const { studentsMap, studentSearchMap } = useStudentMaps();
   const { raids } = useRaids();
   const { t, locale } = useTranslations();

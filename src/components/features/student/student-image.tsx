@@ -88,7 +88,11 @@ export function StudentImage({
                 className={`object-cover rounded mb-1 ${borderClass}`}
                 draggable={false}
                 loading="lazy"
-                quality={75}
+                // The CDN already serves these as webp at icon size, so the
+                // optimizer had nothing to gain and every icon still cost a
+                // request and its bandwidth on the host: student icons alone
+                // were 60% of all requests to the site.
+                unoptimized
                 placeholder="empty"
               />
               {showModeBadge && modeIcon && (
