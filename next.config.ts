@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Stops next dev writing AGENTS.md and CLAUDE.md into the repo root.
+  agentRules: false,
   // output: 'standalone',
   images: {
     remotePatterns: [
