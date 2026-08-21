@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Github, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
+import { Github } from "@/components/ui/brand-icons";
 import { SupportButton } from "@/components/common/support-modal";
 import { useTranslations } from "@/lib/i18n";
 
