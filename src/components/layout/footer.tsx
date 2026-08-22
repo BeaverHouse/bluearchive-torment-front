@@ -31,9 +31,15 @@ export function Footer() {
             <SupportButton />
           </div>
 
+          {/* The footer is on every page, so prefetching these three made them
+              as busy as the home page: /legal alone drew 262 requests an hour,
+              every one of them referred by another page rather than clicked.
+              Nobody browses to the terms from the footer often enough to pay
+              for that, and the pages are static and about 7 KB. */}
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
             <Link
               href="/help"
+              prefetch={false}
               className="hover:text-foreground transition-colors"
             >
               {t("common.siteGuide")}
@@ -41,6 +47,7 @@ export function Footer() {
             <span>|</span>
             <Link
               href="/legal/privacy"
+              prefetch={false}
               className="hover:text-foreground transition-colors"
             >
               {t("common.privacyPolicy")}
@@ -48,6 +55,7 @@ export function Footer() {
             <span>|</span>
             <Link
               href="/legal/terms"
+              prefetch={false}
               className="hover:text-foreground transition-colors"
             >
               {t("common.terms")}
