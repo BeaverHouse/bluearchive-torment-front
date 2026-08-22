@@ -17,20 +17,29 @@
   [headers.values]
     Netlify-CDN-Cache-Control = "public, durable, s-maxage=600, stale-while-revalidate=86400"
 
-# 60% of all requests were the same optimized images fetched again, because the
-# response tells browsers to revalidate every time. The URL already encodes the
-# transformation, so a stale one cannot be served under it.
+# Netlify hands the source image's headers to the /_next/image result, so a
+# rule on the transformation endpoint never applies: an earlier /_next/image*
+# rule sat here doing nothing. Rules on the files themselves cover both the
+# original request and the optimized one. Unlike everything under
+# /_next/static, these names carry no content hash, so a day is as long as a
+# replaced file should keep serving from a browser.
 [[headers]]
-  for = "/_next/image*"
-  [headers.values]
-    Cache-Control = "public, max-age=2592000"
-    Netlify-CDN-Cache-Control = "public, durable, s-maxage=2592000"
-
-# Requested 183 times an hour under the same must-revalidate default.
-[[headers]]
-  for = "/favicon.ico"
+  for = "/*.png"
   [headers.values]
     Cache-Control = "public, max-age=86400"
+    Netlify-CDN-Cache-Control = "public, durable, s-maxage=2592000"
+
+[[headers]]
+  for = "/*.webp"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+    Netlify-CDN-Cache-Control = "public, durable, s-maxage=2592000"
+
+[[headers]]
+  for = "/*.ico"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+    Netlify-CDN-Cache-Control = "public, durable, s-maxage=2592000"
 
 # Deploy Preview에서만 프록시 설정 (CORS 우회)
 [context.deploy-preview.environment]
