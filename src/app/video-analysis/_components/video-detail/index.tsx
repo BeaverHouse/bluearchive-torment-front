@@ -13,6 +13,9 @@ import { useStudentMaps } from "@/hooks/use-student-maps";
 import { VideoAnalysisContent } from "./VideoAnalysisContent";
 import { generateHTML } from "./utils/generateHTML";
 import { useTranslations } from "@/lib/i18n";
+import { FeedbackForm } from "@/components/shared/feedback-form";
+import { submitVideoFeedback } from "@/lib/api";
+import { LOCAL_EDIT_ENABLED } from "@/constants/video-edit";
 
 interface VideoDetailProps {
   videos: VideoAnalysisData[];
@@ -92,10 +95,12 @@ export function VideoDetail({
         )}
         {copiedId === video.id ? t("common.copied") : t("videoAnalysis.detail.htmlCopy")}
       </Button>
-      <Button onClick={handleStartEdit} size="sm">
-        <Edit3 className="h-4 w-4 mr-2" />
-        {t("videoAnalysis.detail.edit")}
-      </Button>
+      {LOCAL_EDIT_ENABLED && (
+        <Button onClick={handleStartEdit} size="sm">
+          <Edit3 className="h-4 w-4 mr-2" />
+          {t("videoAnalysis.detail.edit")}
+        </Button>
+      )}
     </div>
   );
 
@@ -144,6 +149,13 @@ export function VideoDetail({
           </div>
           <VideoAnalysisContent video={currentVideo} />
         </div>
+      )}
+
+      {raidId && (
+        <FeedbackForm
+          placeholder={t("feedback.videoPlaceholder")}
+          onSubmit={(input) => submitVideoFeedback(currentVideo.video_id, raidId, input)}
+        />
       )}
     </div>
   );

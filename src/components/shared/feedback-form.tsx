@@ -4,15 +4,19 @@ import { useState } from "react";
 import { Flag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { submitWikiFeedback } from "@/lib/wiki";
 import { useTranslations } from "@/lib/i18n";
 
 const MAX_LEN = 2000;
 
+interface FeedbackFormProps {
+  placeholder: string;
+  onSubmit: (input: { comment: string; trap: string }) => Promise<boolean>;
+}
+
 // Inline "something wrong?" form. No GitHub / login concept is exposed to the
 // user — a single textarea. `trap` is a honeypot: hidden from humans, so a
 // filled value marks an automated submission that the server discards.
-export function FeedbackForm({ slug }: { slug: string }) {
+export function FeedbackForm({ placeholder, onSubmit }: FeedbackFormProps) {
   const { t } = useTranslations();
   const [open, setOpen] = useState(false);
   const [comment, setComment] = useState("");
@@ -38,7 +42,7 @@ export function FeedbackForm({ slug }: { slug: string }) {
   const submit = async () => {
     if (!comment.trim()) return;
     setState("sending");
-    const ok = await submitWikiFeedback({ slug, comment: comment.trim(), trap });
+    const ok = await onSubmit({ comment: comment.trim(), trap });
     setState(ok ? "done" : "error");
   };
 
@@ -47,7 +51,7 @@ export function FeedbackForm({ slug }: { slug: string }) {
       <Textarea
         value={comment}
         onChange={(e) => setComment(e.target.value.slice(0, MAX_LEN))}
-        placeholder={t("feedback.wikiPlaceholder")}
+        placeholder={placeholder}
         rows={3}
         className="min-h-24 resize-y text-sm"
       />
