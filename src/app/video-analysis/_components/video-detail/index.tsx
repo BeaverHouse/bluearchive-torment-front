@@ -24,6 +24,8 @@ interface VideoDetailProps {
   onVideoChange: (video: VideoAnalysisData) => void;
   raidId: string | null;
   platform?: VideoPlatform;
+  /** Called after verifying, which removes the other analyses of this video on the server. */
+  onAnalysesChanged?: () => void;
 }
 
 export function VideoDetail({
@@ -32,6 +34,7 @@ export function VideoDetail({
   onVideoChange,
   raidId,
   platform,
+  onAnalysesChanged,
 }: VideoDetailProps) {
   const [copiedId, setCopiedId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState(currentVideo.id.toString());
@@ -155,9 +158,10 @@ export function VideoDetail({
             is_verified: verifiedChanges[currentVideo.id] ?? currentVideo.is_verified,
           }}
           raidId={raidId}
-          onVerifiedChange={(isVerified) =>
-            setVerifiedChanges((changes) => ({ ...changes, [currentVideo.id]: isVerified }))
-          }
+          onVerifiedChange={(isVerified) => {
+            setVerifiedChanges((changes) => ({ ...changes, [currentVideo.id]: isVerified }));
+            if (isVerified) onAnalysesChanged?.();
+          }}
         />
       )}
 

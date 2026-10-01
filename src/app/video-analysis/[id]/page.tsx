@@ -25,6 +25,7 @@ export default function VideoDetailPage() {
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [reloadCount, setReloadCount] = useState(0);
 
   const getRaidName = (raidIdParam: string | null): string | null => {
     if (!raidIdParam) return null;
@@ -64,7 +65,7 @@ export default function VideoDetailPage() {
     if (videoId) {
       fetchVideo();
     }
-  }, [videoId, raidId, t]);
+  }, [videoId, raidId, t, reloadCount]);
 
   if (loading) {
     return <Loading />;
@@ -97,6 +98,7 @@ export default function VideoDetailPage() {
         onVideoChange={setCurrentVideo}
         raidId={raidId}
         platform={videoDetail?.platform}
+        onAnalysesChanged={() => setReloadCount((count) => count + 1)}
       />
     </div>
   );
