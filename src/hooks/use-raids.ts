@@ -49,6 +49,35 @@ export function getRaidName(raid: RaidInfo, locale: Locale): string {
   return localized || raid.name_ko || raid.name;
 }
 
+export type RaidStatus = "upcoming" | "ongoing" | "ended";
+
+// Every Total Assault and Grand Assault season runs for exactly one week.
+const RAID_DURATION_MS = 7 * 24 * 60 * 60 * 1000;
+
+/** Where the season stands at `now`; null when the payload has no start date. */
+export function getRaidStatus(raid: RaidInfo, now: number): RaidStatus | null {
+  if (!raid.start_date) return null;
+  const start = new Date(raid.start_date).getTime();
+  if (now < start) return "upcoming";
+  if (now < start + RAID_DURATION_MS) return "ongoing";
+  return "ended";
+}
+
+/** Raid title for a picker, with the season status appended while it has not ended. */
+export function getRaidOptionLabel(
+  raid: RaidInfo,
+  locale: Locale,
+  t: (key: string) => string,
+  now: number
+): string {
+  const name = getRaidName(raid, locale);
+  const status = getRaidStatus(raid, now);
+  if (status === "upcoming" || status === "ongoing") {
+    return `${name} (${t(`raid.status.${status}`)})`;
+  }
+  return name;
+}
+
 /** Terrain label embedded in the localized raid title produced by data-process. */
 export function getRaidTerrain(raid: RaidInfo, locale: Locale): string | null {
   const name = getRaidName(raid, locale);
