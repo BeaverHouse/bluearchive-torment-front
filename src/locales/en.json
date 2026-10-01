@@ -418,6 +418,7 @@
   "videoAnalysis.detail.fetchError": "Failed to load video details",
   "videoAnalysis.detail.htmlCopy": "Copy HTML",
   "videoAnalysis.detail.notFound": "Video not found",
+  "videoAnalysis.detail.report": "Report an error",
   "videoAnalysis.detail.tabAi": "AI Analysis",
   "videoAnalysis.detail.tabUser": "User Analysis v{n}",
   "videoAnalysis.edit.back": "Back",

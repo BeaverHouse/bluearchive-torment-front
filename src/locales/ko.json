@@ -418,6 +418,7 @@
   "videoAnalysis.detail.fetchError": "비디오 상세 정보를 불러오는 데 실패했어요..",
   "videoAnalysis.detail.htmlCopy": "HTML 복사",
   "videoAnalysis.detail.notFound": "비디오를 찾을 수 없습니다",
+  "videoAnalysis.detail.report": "오류 제보",
   "videoAnalysis.detail.tabAi": "AI 분석",
   "videoAnalysis.detail.tabUser": "사용자 분석 v{n}",
   "videoAnalysis.edit.back": "뒤로가기",

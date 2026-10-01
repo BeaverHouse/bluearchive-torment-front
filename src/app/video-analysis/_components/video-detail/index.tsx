@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { ArrowLeft, Edit3, Copy, Check } from "lucide-react";
+import { ArrowLeft, Edit3, Copy, Check, Flag } from "lucide-react";
 import Swal from "sweetalert2";
 import { VideoEmbed } from "@/components/features/video/video-embed";
 import { VideoAnalysisData, VideoPlatform } from "@/types/video";
@@ -13,7 +13,7 @@ import { useStudentMaps } from "@/hooks/use-student-maps";
 import { VideoAnalysisContent } from "./VideoAnalysisContent";
 import { generateHTML } from "./utils/generateHTML";
 import { useTranslations } from "@/lib/i18n";
-import { FeedbackForm } from "@/components/shared/feedback-form";
+import { FeedbackPanel } from "@/components/shared/feedback-form";
 import { submitVideoFeedback } from "@/lib/api";
 import { LOCAL_EDIT_ENABLED } from "@/constants/video-edit";
 
@@ -34,6 +34,7 @@ export function VideoDetail({
 }: VideoDetailProps) {
   const [copiedId, setCopiedId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState(currentVideo.id.toString());
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const { studentsMap } = useStudentMaps();
   const { t } = useTranslations();
 
@@ -82,6 +83,17 @@ export function VideoDetail({
 
   const renderActionButtons = (video: VideoAnalysisData) => (
     <div className="flex gap-2">
+      {raidId && (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setFeedbackOpen((open) => !open)}
+          aria-expanded={feedbackOpen}
+        >
+          <Flag className="h-4 w-4 mr-2" />
+          {t("videoAnalysis.detail.report")}
+        </Button>
+      )}
       <Button
         variant="outline"
         size="sm"
@@ -101,6 +113,16 @@ export function VideoDetail({
           {t("videoAnalysis.detail.edit")}
         </Button>
       )}
+    </div>
+  );
+
+  const feedbackPanel = feedbackOpen && raidId && (
+    <div className="rounded-lg border bg-card p-4">
+      <FeedbackPanel
+        placeholder={t("feedback.videoPlaceholder")}
+        onSubmit={(input) => submitVideoFeedback(currentVideo.video_id, raidId, input)}
+        onCancel={() => setFeedbackOpen(false)}
+      />
     </div>
   );
 
@@ -135,6 +157,7 @@ export function VideoDetail({
             </TabsList>
             {renderActionButtons(currentVideo)}
           </div>
+          {feedbackPanel && <div className="mb-4">{feedbackPanel}</div>}
 
           {sortedVideos.map((video) => (
             <TabsContent key={video.id} value={video.id.toString()}>
@@ -147,15 +170,9 @@ export function VideoDetail({
           <div className="flex gap-2 justify-end">
             {renderActionButtons(currentVideo)}
           </div>
+          {feedbackPanel}
           <VideoAnalysisContent video={currentVideo} />
         </div>
-      )}
-
-      {raidId && (
-        <FeedbackForm
-          placeholder={t("feedback.videoPlaceholder")}
-          onSubmit={(input) => submitVideoFeedback(currentVideo.video_id, raidId, input)}
-        />
       )}
     </div>
   );

@@ -418,6 +418,7 @@
   "videoAnalysis.detail.fetchError": "加载视频详情失败",
   "videoAnalysis.detail.htmlCopy": "复制 HTML",
   "videoAnalysis.detail.notFound": "找不到该视频",
+  "videoAnalysis.detail.report": "报告错误",
   "videoAnalysis.detail.tabAi": "AI 分析",
   "videoAnalysis.detail.tabUser": "用户分析 v{n}",
   "videoAnalysis.edit.back": "返回",
