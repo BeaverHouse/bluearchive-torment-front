@@ -16,6 +16,7 @@ import { useTranslations } from "@/lib/i18n";
 import { FeedbackPanel } from "@/components/shared/feedback-form";
 import { submitVideoFeedback } from "@/lib/api";
 import { LOCAL_EDIT_ENABLED } from "@/constants/video-edit";
+import { EditReviewPanel } from "../edit-review-panel";
 
 interface VideoDetailProps {
   videos: VideoAnalysisData[];
@@ -35,6 +36,8 @@ export function VideoDetail({
   const [copiedId, setCopiedId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState(currentVideo.id.toString());
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  // Verified flags changed on this page, by analysis id, so switching tabs does not show stale values.
+  const [verifiedChanges, setVerifiedChanges] = useState<Record<number, boolean>>({});
   const { studentsMap } = useStudentMaps();
   const { t } = useTranslations();
 
@@ -142,6 +145,21 @@ export function VideoDetail({
         title={`Video ${currentVideo.id}`}
         platform={platform}
       />
+
+      {/* keyed by analysis so the verified flag follows the selected tab */}
+      {LOCAL_EDIT_ENABLED && raidId && (
+        <EditReviewPanel
+          key={currentVideo.id}
+          analysis={{
+            ...currentVideo,
+            is_verified: verifiedChanges[currentVideo.id] ?? currentVideo.is_verified,
+          }}
+          raidId={raidId}
+          onVerifiedChange={(isVerified) =>
+            setVerifiedChanges((changes) => ({ ...changes, [currentVideo.id]: isVerified }))
+          }
+        />
+      )}
 
       {videos.length > 1 ? (
         <Tabs value={activeTab} onValueChange={handleTabChange}>

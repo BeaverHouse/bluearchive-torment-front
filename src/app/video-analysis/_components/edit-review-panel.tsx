@@ -15,11 +15,12 @@ import { useTranslations } from "@/lib/i18n";
 interface EditReviewPanelProps {
   analysis: VideoAnalysisData;
   raidId: string;
+  onVerifiedChange?: (isVerified: boolean) => void;
 }
 
-// Local-only review tools beside the editor: the verification flag of the analysis being edited
-// and the visitors' pending correction suggestions for this video.
-export function EditReviewPanel({ analysis, raidId }: EditReviewPanelProps) {
+// Local-only review tools on the detail and edit pages: the verification flag of the shown
+// analysis and the visitors' pending correction suggestions for this video.
+export function EditReviewPanel({ analysis, raidId, onVerifiedChange }: EditReviewPanelProps) {
   const { t } = useTranslations();
   const [isVerified, setIsVerified] = useState(analysis.is_verified ?? false);
   const [feedback, setFeedback] = useState<VideoFeedbackItem[]>([]);
@@ -35,6 +36,7 @@ export function EditReviewPanel({ analysis, raidId }: EditReviewPanelProps) {
     try {
       await setAnalysisVerified(analysis.id, !isVerified);
       setIsVerified(!isVerified);
+      onVerifiedChange?.(!isVerified);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     }

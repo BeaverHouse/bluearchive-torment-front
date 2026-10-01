@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { VideoEmbed } from "@/components/features/video/video-embed";
 import { EditableAnalysisResult } from "../_components/editable-analysis-result";
-import { EditReviewPanel } from "../_components/edit-review-panel";
+import { EditReviewPanel } from "../../_components/edit-review-panel";
 import { LOCAL_EDIT_ENABLED } from "@/constants/video-edit";
 import { VideoAnalysisData, platformFromVideoId } from "@/types/video";
 import { getVideoDetail } from "@/lib/api";
