@@ -22,9 +22,11 @@ export function useRaids() {
       try {
         const res = await fetch(RAIDS_URL);
         if (!res.ok) throw new Error("Failed to fetch raids");
-        const data = await res.json();
-        raidsCache = data;
-        setRaids(data);
+        const data: RaidInfo[] = await res.json();
+        // raids.json lists seasons oldest first; every raid picker shows the newest first.
+        const newestFirst = [...data].reverse();
+        raidsCache = newestFirst;
+        setRaids(newestFirst);
       } catch (error) {
         console.error("Failed to fetch raids:", error);
       } finally {
