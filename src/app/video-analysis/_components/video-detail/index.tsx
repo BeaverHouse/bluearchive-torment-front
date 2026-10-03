@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { ArrowLeft, Edit3, Copy, Check, Flag } from "lucide-react";
+import { ArrowLeft, BadgeCheck, Edit3, Copy, Check, Flag } from "lucide-react";
 import Swal from "sweetalert2";
 import { VideoEmbed } from "@/components/features/video/video-embed";
 import { VideoAnalysisData, VideoPlatform } from "@/types/video";
@@ -122,6 +122,15 @@ export function VideoDetail({
     </div>
   );
 
+  const analysisLabel = (video: VideoAnalysisData) =>
+    t(video.analysis_type === "ai" ? "videoAnalysis.detail.tabAi" : "videoAnalysis.detail.tabUser");
+
+  const isVerified = (video: VideoAnalysisData) => verifiedChanges[video.id] ?? video.is_verified ?? false;
+
+  const verifiedIcon = (
+    <BadgeCheck className="h-4 w-4 text-emerald-600" aria-label={t("videoAnalysis.detail.verified")} />
+  );
+
   const feedbackPanel = feedbackOpen && raidId && (
     <div className="rounded-lg border bg-card p-4">
       <FeedbackPanel
@@ -170,10 +179,9 @@ export function VideoDetail({
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
             <TabsList>
               {sortedVideos.map((video) => (
-                <TabsTrigger key={video.id} value={video.id.toString()}>
-                  {video.analysis_type === "ai"
-                    ? t("videoAnalysis.detail.tabAi")
-                    : t("videoAnalysis.detail.tabUser").replace("{n}", String(video.version))}
+                <TabsTrigger key={video.id} value={video.id.toString()} className="gap-1.5">
+                  {analysisLabel(video)}
+                  {isVerified(video) && verifiedIcon}
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -189,7 +197,16 @@ export function VideoDetail({
         </Tabs>
       ) : (
         <div className="space-y-4">
-          <div className="flex gap-2 justify-end">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <span className="inline-flex w-fit items-center gap-1.5 rounded-md bg-muted px-3 py-1.5 text-sm font-medium">
+              {analysisLabel(currentVideo)}
+              {isVerified(currentVideo) && (
+                <>
+                  {verifiedIcon}
+                  <span className="text-emerald-700 dark:text-emerald-400">{t("videoAnalysis.detail.verified")}</span>
+                </>
+              )}
+            </span>
             {renderActionButtons(currentVideo)}
           </div>
           {feedbackPanel}
