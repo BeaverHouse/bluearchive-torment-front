@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 import { Youtube } from "@/components/ui/brand-icons";
 import { useStudentMaps } from "@/hooks/use-student-maps";
-import { useRaids, getRaidOptionLabel, getRaidStatus } from "@/hooks/use-raids";
+import { useRaids, getRaidName, getRaidStatus, getRaidStatusText } from "@/hooks/use-raids";
 import { useTranslations } from "@/lib/i18n";
 import ErrorPage from "@/components/common/error-page";
 import { generateSearchKeyword } from "@/utils/raid";
@@ -54,7 +54,8 @@ export function VideoAnalysisContent() {
       { value: "all", label: t("common.all") },
       ...raids.map((raid) => ({
         value: raid.id,
-        label: getRaidOptionLabel(raid, locale, t, now),
+        label: getRaidName(raid, locale),
+        badge: getRaidStatusText(raid, t, now),
       })),
     ],
     [raids, locale, t, now]

@@ -63,19 +63,13 @@ export function getRaidStatus(raid: RaidInfo, now: number): RaidStatus | null {
   return "ended";
 }
 
-/** Raid title for a picker, with the season status appended while it has not ended. */
-export function getRaidOptionLabel(
-  raid: RaidInfo,
-  locale: Locale,
-  t: (key: string) => string,
-  now: number
-): string {
-  const name = getRaidName(raid, locale);
+/** Status text for a picker badge while the season has not ended; null once it has ended. */
+export function getRaidStatusText(raid: RaidInfo, t: (key: string) => string, now: number): string | null {
   const status = getRaidStatus(raid, now);
   if (status === "upcoming" || status === "ongoing") {
-    return `${name} (${t(`raid.status.${status}`)})`;
+    return t(`raid.status.${status}`);
   }
-  return name;
+  return null;
 }
 
 /** Terrain label embedded in the localized raid title produced by data-process. */
