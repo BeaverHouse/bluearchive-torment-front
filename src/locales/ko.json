@@ -420,7 +420,7 @@
   "videoAnalysis.detail.notFound": "비디오를 찾을 수 없습니다",
   "videoAnalysis.detail.report": "오류 제보",
   "videoAnalysis.detail.tabAi": "AI 분석",
-  "videoAnalysis.detail.tabUser": "사용자 분석",
+  "videoAnalysis.detail.tabUser": "분석 결과",
   "videoAnalysis.detail.verified": "검증됨",
   "videoAnalysis.edit.back": "뒤로가기",
   "videoAnalysis.empty.default": "조건에 맞는 영상이 없어요.",

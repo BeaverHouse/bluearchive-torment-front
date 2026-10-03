@@ -420,7 +420,7 @@
   "videoAnalysis.detail.notFound": "Video not found",
   "videoAnalysis.detail.report": "Report an error",
   "videoAnalysis.detail.tabAi": "AI Analysis",
-  "videoAnalysis.detail.tabUser": "User Analysis",
+  "videoAnalysis.detail.tabUser": "Analysis",
   "videoAnalysis.detail.verified": "Verified",
   "videoAnalysis.edit.back": "Back",
   "videoAnalysis.empty.default": "No videos match these conditions.",

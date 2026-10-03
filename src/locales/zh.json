@@ -420,7 +420,7 @@
   "videoAnalysis.detail.notFound": "找不到该视频",
   "videoAnalysis.detail.report": "报告错误",
   "videoAnalysis.detail.tabAi": "AI 分析",
-  "videoAnalysis.detail.tabUser": "用户分析",
+  "videoAnalysis.detail.tabUser": "分析结果",
   "videoAnalysis.detail.verified": "已验证",
   "videoAnalysis.edit.back": "返回",
   "videoAnalysis.empty.default": "没有符合条件的视频。",
