@@ -39,6 +39,8 @@ export function VideoQueueDialog({ raids }: VideoQueueDialogProps) {
     }
   };
 
+  const [urlPrefix, urlSuffix] = t("videoAnalysis.queue.urlLabel").split("{n}");
+
   const getRaidName = (raidId: string) => {
     const raid = raids.find((r) => r.id === raidId);
     return raid ? getLocalizedRaidName(raid, locale) : raidId;
@@ -108,27 +110,39 @@ export function VideoQueueDialog({ raids }: VideoQueueDialogProps) {
             <div className="text-center py-8 text-muted-foreground">{t("videoAnalysis.queue.empty")}</div>
           ) : (
             <div className="space-y-3 max-h-96 overflow-y-auto">
-              {queueItems.map((item) => (
-                <div key={item.id} className="border rounded-lg p-4">
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-sm font-medium">#{item.id}</span>
-                        {getStatusBadge(item.status)}
+              {queueItems.map((item) => {
+                const videoUrl = buildVideoUrl(item.platform, item.video_id);
+                return (
+                  <div key={item.id} className="border rounded-lg p-4">
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-sm font-medium">#{item.id}</span>
+                          {getStatusBadge(item.status)}
+                        </div>
+                        <div className="text-sm text-muted-foreground mb-1">
+                          {t("videoAnalysis.queue.raidLabel").replace("{n}", getRaidName(item.raid_id))}
+                        </div>
+                        <div className="text-xs text-muted-foreground truncate">
+                          {urlPrefix}
+                          <a
+                            href={videoUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="!underline underline-offset-2 hover:text-foreground"
+                          >
+                            {videoUrl}
+                          </a>
+                          {urlSuffix}
+                        </div>
                       </div>
-                      <div className="text-sm text-muted-foreground mb-1">
-                        {t("videoAnalysis.queue.raidLabel").replace("{n}", getRaidName(item.raid_id))}
+                      <div className="text-xs text-muted-foreground ml-4">
+                        {new Date(item.created_at).toLocaleString("ko-KR")}
                       </div>
-                      <div className="text-xs text-muted-foreground truncate">
-                        {t("videoAnalysis.queue.urlLabel").replace("{n}", buildVideoUrl(item.platform, item.video_id))}
-                      </div>
-                    </div>
-                    <div className="text-xs text-muted-foreground ml-4">
-                      {new Date(item.created_at).toLocaleString("ko-KR")}
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

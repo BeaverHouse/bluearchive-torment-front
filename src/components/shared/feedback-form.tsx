@@ -1,0 +1,98 @@
+"use client";
+
+import { useState } from "react";
+import { Flag } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { useTranslations } from "@/lib/i18n";
+
+const MAX_LEN = 2000;
+
+interface FeedbackPanelProps {
+  placeholder: string;
+  onSubmit: (input: { comment: string; trap: string }) => Promise<boolean>;
+  onCancel: () => void;
+}
+
+// The open "something wrong?" form. No GitHub or login concept is exposed to the user, only a
+// single textarea. `trap` is a honeypot: hidden from humans, so a filled value marks an
+// automated submission that the server discards.
+export function FeedbackPanel({ placeholder, onSubmit, onCancel }: FeedbackPanelProps) {
+  const { t } = useTranslations();
+  const [comment, setComment] = useState("");
+  const [trap, setTrap] = useState("");
+  const [state, setState] = useState<"idle" | "sending" | "done" | "error">("idle");
+
+  if (state === "done") {
+    return <p className="text-sm text-muted-foreground">{t("feedback.thanks")}</p>;
+  }
+
+  const submit = async () => {
+    if (!comment.trim()) return;
+    setState("sending");
+    const ok = await onSubmit({ comment: comment.trim(), trap });
+    setState(ok ? "done" : "error");
+  };
+
+  return (
+    <div className="w-full space-y-2">
+      <Textarea
+        value={comment}
+        onChange={(e) => setComment(e.target.value.slice(0, MAX_LEN))}
+        placeholder={placeholder}
+        rows={3}
+        className="min-h-24 resize-y text-sm"
+      />
+      {/* honeypot: visually hidden, off-screen, not announced to assistive technology */}
+      <input
+        type="text"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        value={trap}
+        onChange={(e) => setTrap(e.target.value)}
+        className="absolute left-[-9999px] h-0 w-0 opacity-0"
+      />
+      <div className="flex items-center gap-2">
+        <Button size="sm" onClick={submit} disabled={state === "sending" || !comment.trim()}>
+          {state === "sending" ? t("feedback.sending") : t("feedback.submit")}
+        </Button>
+        <button onClick={onCancel} className="text-sm text-muted-foreground hover:underline">
+          {t("common.cancel")}
+        </button>
+        {state === "error" && (
+          <span className="text-sm text-destructive">{t("feedback.error")}</span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+interface FeedbackFormProps {
+  placeholder: string;
+  onSubmit: (input: { comment: string; trap: string }) => Promise<boolean>;
+}
+
+// A pill that opens the feedback panel in place.
+export function FeedbackForm({ placeholder, onSubmit }: FeedbackFormProps) {
+  const { t } = useTranslations();
+  const [open, setOpen] = useState(false);
+
+  if (!open) {
+    return (
+      <button
+        onClick={() => setOpen(true)}
+        className="inline-flex items-center gap-1.5 rounded-full bg-background px-3.5 py-1.5 text-sm font-medium text-muted-foreground ring-1 ring-border transition hover:text-foreground hover:ring-foreground/30"
+      >
+        <Flag className="h-3.5 w-3.5" />
+        {t("feedback.open")}
+      </button>
+    );
+  }
+
+  return (
+    <div className="max-w-2xl">
+      <FeedbackPanel placeholder={placeholder} onSubmit={onSubmit} onCancel={() => setOpen(false)} />
+    </div>
+  );
+}

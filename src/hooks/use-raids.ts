@@ -22,9 +22,11 @@ export function useRaids() {
       try {
         const res = await fetch(RAIDS_URL);
         if (!res.ok) throw new Error("Failed to fetch raids");
-        const data = await res.json();
-        raidsCache = data;
-        setRaids(data);
+        const data: RaidInfo[] = await res.json();
+        // raids.json lists seasons oldest first; every raid picker shows the newest first.
+        const newestFirst = [...data].reverse();
+        raidsCache = newestFirst;
+        setRaids(newestFirst);
       } catch (error) {
         console.error("Failed to fetch raids:", error);
       } finally {
@@ -45,6 +47,29 @@ export function getRaidName(raid: RaidInfo, locale: Locale): string {
     : locale === "zh" ? raid.name_zh
     : raid.name_ko;
   return localized || raid.name_ko || raid.name;
+}
+
+export type RaidStatus = "upcoming" | "ongoing" | "ended";
+
+// Every Total Assault and Grand Assault season runs for exactly one week.
+const RAID_DURATION_MS = 7 * 24 * 60 * 60 * 1000;
+
+/** Where the season stands at `now`; null when the payload has no start date. */
+export function getRaidStatus(raid: RaidInfo, now: number): RaidStatus | null {
+  if (!raid.start_date) return null;
+  const start = new Date(raid.start_date).getTime();
+  if (now < start) return "upcoming";
+  if (now < start + RAID_DURATION_MS) return "ongoing";
+  return "ended";
+}
+
+/** Status text for a picker badge while the season has not ended; null once it has ended. */
+export function getRaidStatusText(raid: RaidInfo, t: (key: string) => string, now: number): string | null {
+  const status = getRaidStatus(raid, now);
+  if (status === "upcoming" || status === "ongoing") {
+    return t(`raid.status.${status}`);
+  }
+  return null;
 }
 
 /** Terrain label embedded in the localized raid title produced by data-process. */

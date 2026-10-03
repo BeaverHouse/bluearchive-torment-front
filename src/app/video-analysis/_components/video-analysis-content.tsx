@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { VideoList } from "./video-list";
 import { VideoQueueDialog } from "./VideoQueueDialog";
@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 import { Youtube } from "@/components/ui/brand-icons";
 import { useStudentMaps } from "@/hooks/use-student-maps";
-import { useRaids, getRaidName } from "@/hooks/use-raids";
+import { useRaids, getRaidName, getRaidStatus, getRaidStatusText } from "@/hooks/use-raids";
 import { useTranslations } from "@/lib/i18n";
 import ErrorPage from "@/components/common/error-page";
 import { generateSearchKeyword } from "@/utils/raid";
@@ -25,6 +25,7 @@ export function VideoAnalysisContent() {
   const { studentsMap, studentSearchMap } = useStudentMaps();
   const { raids } = useRaids();
   const { t, locale } = useTranslations();
+  const [now] = useState(() => Date.now());
 
   const {
     loading,
@@ -54,10 +55,18 @@ export function VideoAnalysisContent() {
       ...raids.map((raid) => ({
         value: raid.id,
         label: getRaidName(raid, locale),
+        badge: getRaidStatusText(raid, t, now),
       })),
     ],
-    [raids, locale, t]
+    [raids, locale, t, now]
   );
+
+  const selectedRaidInfo = raids.find((r) => r.id === selectedRaid);
+  const selectedRaidStatus = selectedRaidInfo ? getRaidStatus(selectedRaidInfo, now) : null;
+  const emptyMessageKey =
+    selectedRaidStatus === "upcoming" || selectedRaidStatus === "ongoing"
+      ? `videoAnalysis.empty.${selectedRaidStatus}`
+      : "videoAnalysis.empty.default";
 
   if (error) {
     return <ErrorPage />;
@@ -101,10 +110,7 @@ export function VideoAnalysisContent() {
             }}
             placeholder={t("common.raidSelectPlaceholder")}
           />
-          {selectedRaid !== "all" && (() => {
-            const selectedRaidInfo = raids.find((r) => r.id === selectedRaid);
-            if (!selectedRaidInfo) return null;
-
+          {selectedRaidInfo && (() => {
             const searchKeyword = generateSearchKeyword(selectedRaidInfo.name_ko ?? selectedRaidInfo.name, "");
             const youtubeSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(searchKeyword)}`;
 
@@ -153,6 +159,8 @@ export function VideoAnalysisContent() {
 
       {loading ? (
         <Loading />
+      ) : displayVideos.length === 0 ? (
+        <p className="py-12 text-center text-muted-foreground">{t(emptyMessageKey)}</p>
       ) : (
         <VideoList videos={displayVideos} />
       )}

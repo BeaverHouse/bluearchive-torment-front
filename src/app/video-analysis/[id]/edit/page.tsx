@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { notFound, useParams, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { VideoEmbed } from "@/components/features/video/video-embed";
 import { EditableAnalysisResult } from "../_components/editable-analysis-result";
+import { EditReviewPanel } from "../../_components/edit-review-panel";
+import { LOCAL_EDIT_ENABLED } from "@/constants/video-edit";
 import { VideoAnalysisData, platformFromVideoId } from "@/types/video";
 import { getVideoDetail } from "@/lib/api";
 import { trackEvent } from "@/utils/analytics";
@@ -60,6 +62,10 @@ export default function VideoEditPage() {
     router.back();
   };
 
+  if (!LOCAL_EDIT_ENABLED) {
+    notFound();
+  }
+
   if (isLoading || !currentVideo) {
     return (
       <div className="space-y-6 min-w-0">
@@ -99,6 +105,7 @@ export default function VideoEditPage() {
 
       {/* 편집 영역 */}
       <div className="lg:ml-[40%] space-y-6">
+        {raidId && <EditReviewPanel analysis={currentVideo} raidId={raidId} />}
         <EditableAnalysisResult
           videoData={currentVideo}
           raidId={raidId || undefined}

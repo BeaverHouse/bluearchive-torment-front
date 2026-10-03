@@ -26,6 +26,8 @@ export interface VideoAnalysisData {
   analysis_result: AnalysisResult
   analysis_type: string
   version: number
+  /** Absent from servers deployed before the field was added. */
+  is_verified?: boolean
   created_at: string
   updated_at: string
 }

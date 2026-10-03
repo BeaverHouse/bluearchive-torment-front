@@ -130,3 +130,43 @@ export interface QueueResponse {
 export async function getQueueStatus(): Promise<QueueResponse> {
   return fetchAPI<QueueResponse>('/video/analysis/queue')
 }
+
+export async function submitVideoFeedback(videoId: string, raidId: string, input: { comment: string; trap: string }): Promise<boolean> {
+  try {
+    await fetchAPI(`/video/analysis/${videoId}/feedback`, {
+      method: 'POST',
+      body: { raid_id: raidId, ...input },
+    })
+    return true
+  } catch {
+    return false
+  }
+}
+
+export interface VideoFeedbackItem {
+  id: number
+  comment: string
+  created_at: string
+}
+
+interface VideoFeedbackResponse {
+  data: {
+    data: VideoFeedbackItem[]
+  }
+}
+
+export async function getPendingVideoFeedback(videoId: string, raidId: string): Promise<VideoFeedbackItem[]> {
+  const response = await fetchAPI<VideoFeedbackResponse>(`/video/analysis/${videoId}/feedback?raid_id=${encodeURIComponent(raidId)}`)
+  return response.data.data
+}
+
+export async function resolveVideoFeedback(feedbackId: number): Promise<void> {
+  await fetchAPI(`/video/feedback/${feedbackId}/resolve`, { method: 'PATCH' })
+}
+
+export async function setAnalysisVerified(analysisId: number, isVerified: boolean): Promise<void> {
+  await fetchAPI(`/video/analysis/${analysisId}/verify`, {
+    method: 'PATCH',
+    body: { is_verified: isVerified },
+  })
+}

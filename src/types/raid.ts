@@ -8,6 +8,8 @@ export interface RaidInfo {
   name_zh?: string;
   top_level: string;
   party_updated: boolean;
+  /** ISO timestamp of the season start. Absent on payloads data-process wrote before it added the field. */
+  start_date?: string;
 }
 
 export interface PartyData {

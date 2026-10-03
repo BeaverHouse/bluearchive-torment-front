@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { Sparkles, BadgeCheck, MessageCircle } from "lucide-react";
-import { FeedbackForm } from "./feedback-form";
-import type { WikiFrontmatter } from "@/lib/wiki";
+import { FeedbackForm } from "@/components/shared/feedback-form";
+import { submitWikiFeedback, type WikiFrontmatter } from "@/lib/wiki";
 import { useTranslations } from "@/lib/i18n";
 
 // Fixed panel under every wiki render: states the content is AI-authored, cites
@@ -53,7 +53,10 @@ export function TrustFooter({
       )}
 
       <div className="grid gap-3 border-t pt-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
-        <FeedbackForm slug={slug} />
+        <FeedbackForm
+          placeholder={t("feedback.wikiPlaceholder")}
+          onSubmit={(input) => submitWikiFeedback({ slug, ...input })}
+        />
         {askAronaQuery && (
           <Link
             href={`/arona?q=${encodeURIComponent(askAronaQuery)}`}
