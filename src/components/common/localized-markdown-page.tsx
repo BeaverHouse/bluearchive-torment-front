@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { MarkdownDoc } from "@/components/features/wiki/markdown-doc";
 import { useTranslations } from "@/lib/i18n";
 
-type MarkdownPageName = "guide" | "privacy" | "terms";
+type MarkdownPageName = "guide" | "privacy" | "terms" | "release";
 
 export function LocalizedMarkdownPage({ name }: { name: MarkdownPageName }) {
   const { locale, t } = useTranslations();

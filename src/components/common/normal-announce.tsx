@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { X } from "lucide-react";
 import { useTranslations } from "@/lib/i18n";
 
-const ANNOUNCE_DATE = "26.07.27";
+const ANNOUNCE_DATE = "26.10.12";
 const ANNOUNCE_ITEM_KEYS = ["announce.item.1", "announce.item.2"];
 const STORAGE_KEY = "batorment_announce_dismissed";
 
@@ -38,6 +39,9 @@ function NormalAnnounce() {
             </li>
           ))}
         </ul>
+        <Link href="/release" prefetch={false} className="mt-0.5 text-xs font-medium underline underline-offset-2 hover:text-sky-700 dark:hover:text-sky-300">
+          {t("announce.release")}
+        </Link>
       </div>
       <button
         onClick={handleDismiss}

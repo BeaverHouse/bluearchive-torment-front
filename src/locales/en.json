@@ -1,7 +1,8 @@
 {
   "announce.close": "Close",
-  "announce.item.1": "Guides, season reports, and build notes are now easier to browse in Arona’s Archive.",
-  "announce.item.2": "When internal records are insufficient, Arona now verifies with Google Search and resolves official names.",
+  "announce.item.1": "You can now ask Arona without an API key. Today's free answers are shown as Pyroxene.",
+  "announce.item.2": "Ask Arona straight from the home page.",
+  "announce.release": "See the release notes",
   "announce.update": "Update",
   "apiKey.desc.line1": "Chatting with ARONA requires a Google Gemini API key.",
   "apiKey.desc.line2": "The key is not stored on the server and is kept for 10 minutes (auto-extended while chatting).",
@@ -155,6 +156,7 @@
   "common.raidLabel": "Raid:",
   "common.raidSelectPlaceholder": "Select a Total Assault / Grand Assault",
   "common.rank": "#{n}",
+  "common.releaseNotes": "Release Notes",
   "common.reset": "Reset",
   "common.saving": "Saving…",
   "common.score": "Score",

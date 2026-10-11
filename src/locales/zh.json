@@ -1,7 +1,8 @@
 {
   "announce.close": "关闭",
-  "announce.item.1": "现在可以在阿罗娜的记录室中更方便地浏览攻略、赛季报告与培养笔记。",
-  "announce.item.2": "内部记录不足时，阿罗娜会先用 Google 搜索核实，再按正式名称回答。",
+  "announce.item.1": "现在无需 API 密钥也能向阿罗娜提问。每天的免费回答量以青辉石显示。",
+  "announce.item.2": "可以在首页直接向阿罗娜提问。",
+  "announce.release": "查看更新日志",
   "announce.update": "更新",
   "apiKey.desc.line1": "与阿罗娜对话需要 Google Gemini API 密钥。",
   "apiKey.desc.line2": "密钥不会保存在服务器,仅保留 10 分钟(对话期间自动延长)。",
@@ -155,6 +156,7 @@
   "common.raidLabel": "副本:",
   "common.raidSelectPlaceholder": "选择总力战 / 大决战",
   "common.rank": "第 {n} 名",
+  "common.releaseNotes": "更新日志",
   "common.reset": "重置",
   "common.saving": "保存中…",
   "common.score": "分数",

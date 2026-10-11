@@ -1,7 +1,8 @@
 {
   "announce.close": "닫기",
-  "announce.item.1": "아로나의 기록실에서 공략·시즌 리포트·육성 노트를 더 편하게 찾아볼 수 있어요.",
-  "announce.item.2": "내부 기록만으로 부족한 질문은 Google 검색으로 확인하고 정식 명칭에 맞춰 답하도록 개선했어요.",
+  "announce.item.1": "이제 API 키 없이도 아로나에게 물어볼 수 있어요. 하루 무료 답변량은 청휘석으로 보여 드려요.",
+  "announce.item.2": "홈 화면에서 바로 아로나에게 질문할 수 있어요.",
+  "announce.release": "릴리스 노트 보기",
   "announce.update": "Update",
   "apiKey.desc.line1": "아로나와 대화하려면 Google Gemini API 키가 필요해요.",
   "apiKey.desc.line2": "API 키는 서버에 저장되지 않고, 10분간 유지돼요. (대화하면 자동 연장)",
@@ -155,6 +156,7 @@
   "common.raidLabel": "레이드:",
   "common.raidSelectPlaceholder": "총력전/대결전 선택",
   "common.rank": "{n}위",
+  "common.releaseNotes": "릴리스 노트",
   "common.reset": "초기화",
   "common.saving": "저장 중...",
   "common.score": "점수",

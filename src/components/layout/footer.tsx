@@ -46,6 +46,14 @@ export function Footer() {
             </Link>
             <span>|</span>
             <Link
+              href="/release"
+              prefetch={false}
+              className="hover:text-foreground transition-colors"
+            >
+              {t("common.releaseNotes")}
+            </Link>
+            <span>|</span>
+            <Link
               href="/legal/privacy"
               prefetch={false}
               className="hover:text-foreground transition-colors"
