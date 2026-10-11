@@ -9,9 +9,10 @@ import { cn } from "@/lib/utils";
 
 export const GUEST_CREDIT_QUERY_KEY = ["guestCredit"];
 
-// The daily free credit is shown as Pyroxene, the game's premium currency. A
-// full day's credit is 16,800, and the badge shows the share that is left.
-const DAILY_PYROXENE = 16800;
+// The daily free credit is shown as Pyroxene, the game's premium currency. One
+// Pyroxene is $0.0001, so the site's $1.68 day is 16,800 and an answer costs
+// exactly what it spent.
+const PYROXENE_PER_USD = 10000;
 
 /**
  * Today's free answers left, as Pyroxene. Hidden when the site has no free
@@ -29,9 +30,7 @@ export function PyroxeneBadge({ className }: { className?: string }) {
 
   // The exhausted flag already holds back what one answer needs, so it decides
   // zero rather than the raw remainder.
-  const pyroxene = data.exhausted
-    ? 0
-    : Math.floor((data.remaining_usd / data.limit_usd) * DAILY_PYROXENE);
+  const pyroxene = data.exhausted ? 0 : Math.floor(data.remaining_usd * PYROXENE_PER_USD);
   const resetsAt = data.resets_at
     ? new Date(data.resets_at).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" })
     : null;
