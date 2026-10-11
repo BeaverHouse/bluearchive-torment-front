@@ -9,6 +9,7 @@ Only what teachers need to know, recorded from October 2026.
 - You can now ask Arona without an API key.
   - Today's free answers are shown as Pyroxene. Each question uses what it costs, and Pyroxene refills every day.
   - When Pyroxene runs out, set a Gemini API key to keep asking.
+  - Free answers run on a budget of 50 USD a month. If Anthropic's policy changes or development and operation can no longer continue, the free amount may change or end.
 - Ask Arona straight from the home page. Press Shift+Enter for a new line.
 - For questions that need interpretation, such as guides, terms and recommendations, Arona reads the records before answering.
 - Arona no longer makes up the meaning of a nickname or phrase she cannot verify. She says she could not confirm it.
