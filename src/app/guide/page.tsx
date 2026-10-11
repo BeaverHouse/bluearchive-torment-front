@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useCallback, useState } from "react";
 import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
 import { BookOpen, MessageCircle } from "lucide-react";
 import { WikiHub } from "@/components/features/wiki/wiki-hub";
 import { AISearchChat } from "@/components/features/ai-search/AISearchChat";
@@ -13,8 +14,23 @@ import { cn } from "@/lib/utils";
 // converse in, the records fell below the fold — invisible on mobile), so they
 // are segmented tabs instead: the tab labels themselves make both discoverable.
 export default function GuidePage() {
+  // useSearchParams needs a Suspense boundary so the rest of the page can
+  // still be prerendered.
+  return (
+    <Suspense>
+      <GuideContent />
+    </Suspense>
+  );
+}
+
+function GuideContent() {
   const { t } = useTranslations();
+  const router = useRouter();
+  // A question typed on the home page arrives as ?q= and is asked right away.
+  const question = useSearchParams().get("q") ?? undefined;
   const [view, setView] = useState<"ask" | "records">("ask");
+  // Dropping ?q= keeps a reload from asking the same question again.
+  const clearQuestion = useCallback(() => router.replace("/guide", { scroll: false }), [router]);
 
   return (
     <div className="mx-auto max-w-7xl py-2 sm:px-2 sm:py-4 lg:px-4">
@@ -90,7 +106,7 @@ export default function GuidePage() {
             role="tabpanel"
             className={cn("p-2 lg:block lg:p-4", view === "ask" ? "block" : "hidden")}
           >
-            <AISearchChat embedded />
+            <AISearchChat embedded initialQuestion={question} onInitialQuestionSent={clearQuestion} />
           </section>
         </div>
       </div>

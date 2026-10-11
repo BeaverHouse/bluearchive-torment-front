@@ -10,6 +10,7 @@ import { ApiKeyModal } from "./ApiKeyModal";
 import { ChatMessages } from "./ChatMessages";
 import { ChatInput } from "./ChatInput";
 import { EmptyState } from "./EmptyState";
+import { PyroxeneBadge } from "./PyroxeneBadge";
 import { useApiKey } from "./hooks/useApiKey";
 import { useChat } from "./hooks/useChat";
 import { useTranslations, DEFAULT_LOCALE } from "@/lib/i18n";
@@ -38,10 +39,20 @@ async function fetchPrompt(kind: "persona" | "instruction", locale: string): Pro
   return "";
 }
 
-export function AISearchChat({ embedded = false }: { embedded?: boolean } = {}) {
+interface AISearchChatProps {
+  embedded?: boolean;
+  /** A question asked elsewhere (the home page), sent once the prompts load. */
+  initialQuestion?: string;
+  /** Called after initialQuestion was sent, so the caller can drop it. */
+  onInitialQuestionSent?: () => void;
+}
+
+export function AISearchChat({ embedded = false, initialQuestion, onInitialQuestionSent }: AISearchChatProps = {}) {
   const { t, locale } = useTranslations();
   const [personaPrompt, setPersonaPrompt] = useState<string>("");
   const [instructionPrompt, setInstructionPrompt] = useState<string>("");
+  const [promptsLoaded, setPromptsLoaded] = useState(false);
+  const initialQuestionSentRef = useRef(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -63,6 +74,7 @@ export function AISearchChat({ embedded = false }: { embedded?: boolean } = {}) 
     currentSourceResults,
     currentStatus,
     error,
+    creditExhausted,
     sendMessage,
     stopGeneration,
     clearChat,
@@ -80,8 +92,18 @@ export function AISearchChat({ embedded = false }: { embedded?: boolean } = {}) 
         setPersonaPrompt(persona);
         setInstructionPrompt(instruction);
       })
-      .catch((err) => console.error("Failed to load prompts:", err));
+      .catch((err) => console.error("Failed to load prompts:", err))
+      .finally(() => setPromptsLoaded(true));
   }, [locale]);
+
+  // The question arrives through the URL, outside this component, and must
+  // wait for the prompts so it is answered in Arona's voice.
+  useEffect(() => {
+    if (!initialQuestion || !promptsLoaded || initialQuestionSentRef.current) return;
+    initialQuestionSentRef.current = true;
+    sendMessage(undefined, initialQuestion);
+    onInitialQuestionSent?.();
+  }, [initialQuestion, promptsLoaded, sendMessage, onInitialQuestionSent]);
 
   const scrollToBottom = useCallback(() => {
     if (scrollAreaRef.current) {
@@ -142,7 +164,7 @@ export function AISearchChat({ embedded = false }: { embedded?: boolean } = {}) 
         </div>
       </div>}
 
-      <Card className="flex-1 mb-4 overflow-hidden">
+      <Card className="flex-1 mb-4 overflow-hidden border-sky-200 dark:border-sky-800">
         <CardContent className="p-0 h-full">
           <div className="h-full overflow-y-auto p-4" ref={scrollAreaRef}>
             {isEmpty ? (
@@ -159,6 +181,7 @@ export function AISearchChat({ embedded = false }: { embedded?: boolean } = {}) 
                 currentSourceResults={currentSourceResults}
                 currentStatus={currentStatus}
                 error={error}
+                creditExhausted={creditExhausted}
               />
             )}
           </div>
@@ -171,13 +194,14 @@ export function AISearchChat({ embedded = false }: { embedded?: boolean } = {}) 
         onSubmit={handleSendMessage}
         onStop={stopGeneration}
         isLoading={isLoading}
-        disabled={!apiKey}
-        placeholder={apiKey ? t("arona.placeholder.ready") : t("arona.placeholder.noKey")}
+        placeholder={t("arona.placeholder.ready")}
+        submitLabel={t("home.ask.submit")}
       />
 
       <div className="mt-2 flex min-h-8 items-center justify-between gap-3 text-xs text-muted-foreground">
         {embedded ? (
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
+            <PyroxeneBadge />
             <Button variant="ghost" size="sm" onClick={openApiKeyModal}>
               <Key className="mr-1 h-4 w-4" />
               {apiKey ? t("arona.keyChange") : t("arona.keySet")}
@@ -189,7 +213,7 @@ export function AISearchChat({ embedded = false }: { embedded?: boolean } = {}) 
               </Button>
             )}
           </div>
-        ) : <span />}
+        ) : <PyroxeneBadge />}
         <span>
           Powered by{" "}
           <a
