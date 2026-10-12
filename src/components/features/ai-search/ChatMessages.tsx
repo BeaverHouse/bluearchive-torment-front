@@ -358,6 +358,8 @@ interface ChatMessagesProps {
   currentSourceResults: Record<string, SourceData>;
   currentStatus: string;
   error: string | null;
+  /** The free credit ran out: the error is Arona's own tired reply. */
+  creditExhausted?: boolean;
 }
 
 export function ChatMessages({
@@ -367,6 +369,7 @@ export function ChatMessages({
   currentSourceResults,
   currentStatus,
   error,
+  creditExhausted = false,
 }: ChatMessagesProps) {
   return (
     <div className="space-y-4">
@@ -388,7 +391,7 @@ export function ChatMessages({
             className={`max-w-[85%] rounded-2xl px-4 py-2.5 ${
               msg.role === "user"
                 ? "rounded-br-md border border-border bg-muted text-foreground shadow-sm"
-                : "rounded-bl-md border border-primary/15 bg-card shadow-sm"
+                : "rounded-bl-md border border-l-4 border-sky-200 border-l-sky-400 bg-card shadow-sm dark:border-sky-800 dark:border-l-sky-500"
             }`}
           >
             {msg.role === "assistant" ? (
@@ -422,7 +425,7 @@ export function ChatMessages({
             height={32}
             className="w-8 h-8 rounded-full flex-shrink-0 mt-1 object-cover"
           />
-          <div className="max-w-[85%] rounded-2xl rounded-bl-md border border-primary/15 bg-card px-4 py-2.5 shadow-sm">
+          <div className="max-w-[85%] rounded-2xl rounded-bl-md border border-l-4 border-sky-200 border-l-sky-400 bg-card px-4 py-2.5 shadow-sm dark:border-sky-800 dark:border-l-sky-500">
             {currentStatus && (
               <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -440,8 +443,22 @@ export function ChatMessages({
         </div>
       )}
 
+      {/* 무료 크레딧 소진: 지친 아로나가 직접 말한다 */}
+      {error && creditExhausted && (
+        <div className="flex flex-col items-center gap-2 py-2 text-center">
+          <Image
+            src="/arona-exhausted.png"
+            alt="ARONA"
+            width={120}
+            height={120}
+            className="h-28 w-28 rounded-full object-cover"
+          />
+          <p className="max-w-sm text-sm text-muted-foreground">{error}</p>
+        </div>
+      )}
+
       {/* 에러 메시지 */}
-      {error && (
+      {error && !creditExhausted && (
         <div className="flex justify-center">
           <div className="bg-destructive/10 text-destructive rounded-lg px-4 py-2 text-sm">
             {error}

@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Users, Video, Calculator, Sprout, Heart } from "lucide-react";
 import { SupportModal } from "@/components/common/support-modal";
 import { Button } from "@/components/ui/button";
+import { AskArona } from "@/components/features/ai-search/AskArona";
 import { trackEvent } from "@/utils/analytics";
 import { useTranslations } from "@/lib/i18n";
 
@@ -73,6 +74,8 @@ export default function Home() {
         <h1 className="text-3xl sm:text-4xl font-bold mb-3">BA Torment</h1>
         <p className="text-muted-foreground text-sm sm:text-base">{t("site.tagline")}</p>
       </div>
+
+      <AskArona />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {features.map((feature) => {

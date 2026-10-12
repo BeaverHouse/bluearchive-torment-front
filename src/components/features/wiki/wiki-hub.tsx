@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ChevronRight, Search, Sprout, Swords, LineChart, Wrench } from "lucide-react";
+import { ChevronDown, ChevronRight, Search, Sprout, Swords, LineChart, Wrench } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import {
@@ -41,10 +41,18 @@ const TAB_META: { key: Cat; icon: typeof Sprout }[] = [
   { key: "builds", icon: Wrench },
 ];
 
+// Records are grouped by kind under headers that fold, like a document
+// sidebar: every kind stays visible at a glance, and a search opens every
+// group so no match is hidden.
 export function WikiHub({ compact = false }: { compact?: boolean }) {
   const { t } = useTranslations();
   const [entries, setEntries] = useState<HubEntry[]>([]);
-  const [tab, setTab] = useState<Cat | "all">("all");
+  const [open, setOpen] = useState<Record<Cat, boolean>>({
+    basics: true,
+    raids: false,
+    reports: false,
+    builds: false,
+  });
   const [query, setQuery] = useState("");
 
   useEffect(() => {
@@ -73,104 +81,88 @@ export function WikiHub({ compact = false }: { compact?: boolean }) {
     };
   }, []);
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return entries.filter(
-      (e) =>
-        (tab === "all" || e.cat === tab) &&
-        (!q || e.title.toLowerCase().includes(q) || e.summary.toLowerCase().includes(q))
-    );
-  }, [entries, tab, query]);
-
-  const counts = useMemo(() => {
-    const c: Record<string, number> = { all: entries.length };
-    for (const e of entries) c[e.cat] = (c[e.cat] ?? 0) + 1;
-    return c;
-  }, [entries]);
+  const q = query.trim().toLowerCase();
+  const groups = useMemo(
+    () =>
+      TAB_META.map(({ key, icon }) => ({
+        key,
+        icon,
+        items: entries.filter(
+          (e) =>
+            e.cat === key &&
+            (!q || e.title.toLowerCase().includes(q) || e.summary.toLowerCase().includes(q))
+        ),
+      })).filter((g) => g.items.length > 0),
+    [entries, q]
+  );
 
   return (
     <div>
-      <div
-        className={cn(
-          "mb-4 flex flex-col gap-3",
-          !compact && "sm:flex-row sm:items-center sm:justify-between"
-        )}
-      >
-        <div className="flex flex-wrap gap-1.5">
-          <TabButton active={tab === "all"} onClick={() => setTab("all")} count={counts.all}>
-            {t("common.all")}
-          </TabButton>
-          {TAB_META.map(({ key, icon: Icon }) => (
-            <TabButton key={key} active={tab === key} onClick={() => setTab(key)} count={counts[key]}>
-              <Icon className="h-3.5 w-3.5" />
-              {t(`guide.section.${key}`)}
-            </TabButton>
-          ))}
-        </div>
-        <div className={cn("relative", !compact && "sm:w-56")}>
-          <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={t("guide.search")}
-            className="pl-8"
-          />
-        </div>
+      <div className={cn("relative mb-3", !compact && "sm:w-56")}>
+        <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={t("guide.search")}
+          className="pl-8"
+        />
       </div>
 
-      {filtered.length === 0 ? (
+      {entries.length > 0 && groups.length === 0 ? (
         <p className="py-16 text-center text-sm text-muted-foreground">{t("guide.empty")}</p>
       ) : (
-        <ul className={cn("grid gap-2", !compact && "sm:grid-cols-2")}>
-          {filtered.map((e) => (
-            <li key={e.slug}>
-              <Link
-                href={`/guide/${e.slug}`}
-                className="group flex items-center gap-3 rounded-xl border bg-card p-3 shadow-sm transition-all hover:border-primary/40 hover:shadow-md"
-              >
-                <div className="min-w-0 flex-1">
-                  <span className="block truncate text-sm font-semibold group-hover:text-primary">
-                    {e.title}
-                  </span>
-                  {e.summary && (
-                    <span className="mt-0.5 line-clamp-1 block text-xs text-muted-foreground">
-                      {e.summary}
-                    </span>
-                  )}
-                </div>
-                <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <div className="space-y-2">
+          {groups.map(({ key, icon: Icon, items }) => {
+            const expanded = q !== "" || open[key];
+            const listId = `wiki-group-${key}`;
+            return (
+              <section key={key}>
+                <button
+                  type="button"
+                  aria-expanded={expanded}
+                  aria-controls={listId}
+                  onClick={() => setOpen((prev) => ({ ...prev, [key]: !prev[key] }))}
+                  className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-semibold text-sky-900 transition-colors hover:bg-sky-100/70 dark:text-sky-100 dark:hover:bg-sky-900/40"
+                >
+                  <Icon className="h-4 w-4 text-sky-500" />
+                  {t(`guide.section.${key}`)}
+                  <span className="text-xs font-normal text-muted-foreground">{items.length}</span>
+                  <ChevronDown
+                    className={cn(
+                      "ml-auto h-4 w-4 text-muted-foreground transition-transform",
+                      expanded && "rotate-180"
+                    )}
+                  />
+                </button>
+                {expanded && (
+                  <ul id={listId} className={cn("mt-1 grid gap-1.5", !compact && "sm:grid-cols-2")}>
+                    {items.map((e) => (
+                      <li key={e.slug}>
+                        <Link
+                          href={`/guide/${e.slug}`}
+                          className="group flex items-center gap-3 rounded-lg border border-l-4 border-sky-100 border-l-sky-300 bg-card px-3 py-2 transition-all hover:border-sky-300 hover:border-l-sky-500 hover:shadow-sm dark:border-sky-900 dark:border-l-sky-700"
+                        >
+                          <div className="min-w-0 flex-1">
+                            <span className="block truncate text-sm font-semibold group-hover:text-primary">
+                              {e.title}
+                            </span>
+                            {e.summary && (
+                              <span className="mt-0.5 line-clamp-1 block text-xs text-muted-foreground">
+                                {e.summary}
+                              </span>
+                            )}
+                          </div>
+                          <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
+            );
+          })}
+        </div>
       )}
     </div>
-  );
-}
-
-function TabButton({
-  active,
-  onClick,
-  count,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  count?: number;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      aria-pressed={active}
-      onClick={onClick}
-      className={cn(
-        "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
-        active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-foreground"
-      )}
-    >
-      {children}
-      {count != null && <span className="text-xs opacity-70">{count}</span>}
-    </button>
   );
 }

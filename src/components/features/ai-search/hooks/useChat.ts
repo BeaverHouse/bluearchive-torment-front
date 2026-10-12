@@ -1,5 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { aiSearchService } from "@/lib/ai-search-service";
+import { useQueryClient } from "@tanstack/react-query";
+import { aiSearchService, AISearchRequestError } from "@/lib/ai-search-service";
+import { GUEST_CREDIT_QUERY_KEY } from "../PyroxeneBadge";
 import type {
   ChatMessage,
   ItemCardData,
@@ -21,6 +23,7 @@ interface UseChatProps {
 
 export function useChat({ apiKey, personaPrompt, instructionPrompt, language, onApiKeyRequired }: UseChatProps) {
   const { t } = useTranslations();
+  const queryClient = useQueryClient();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -32,6 +35,8 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, language, on
   // 과정"으로 붙인다.
   const [currentSteps, setCurrentSteps] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
+  // The site's free credit ran out: shown as tired Arona rather than an error.
+  const [creditExhausted, setCreditExhausted] = useState(false);
 
   const abortControllerRef = useRef<AbortController | null>(null);
   const wasLoadingRef = useRef(false);
@@ -89,22 +94,17 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, language, on
     }
   }, [t]);
 
-  // 메시지 전송
-  const sendMessage = async (e?: React.FormEvent) => {
+  // 메시지 전송. text가 있으면 입력창 대신 그 질문을 보낸다 (홈에서 넘어온 질문).
+  const sendMessage = async (e?: React.FormEvent, text?: string) => {
     e?.preventDefault();
 
-    if (!input.trim() || isLoading) return;
+    const question = (text ?? input).trim();
+    if (!question || isLoading) return;
 
-    if (!apiKey) {
-      trackEvent("arona_query_send", { has_api_key: false });
-      onApiKeyRequired();
-      return;
-    }
-
-    trackEvent("arona_query_send", { has_api_key: true });
-    const question = input.trim();
+    trackEvent("arona_query_send", { has_api_key: !!apiKey });
     setInput("");
     setError(null);
+    setCreditExhausted(false);
     setCurrentAnswer("");
     setCurrentItemResults({});
     setCurrentSourceResults({});
@@ -136,6 +136,13 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, language, on
     } catch (err) {
       if ((err as Error).name === "AbortError") {
         setCurrentAnswer((prev) => (prev ? prev + `\n\n${t("arona.error.aborted")}` : ""));
+      } else if (err instanceof AISearchRequestError && err.code === "LLM_GUEST_CREDIT_EXHAUSTED") {
+        setError(t("arona.error.creditExhausted"));
+        setCreditExhausted(true);
+        onApiKeyRequired();
+      } else if (err instanceof AISearchRequestError && err.code === "LLM_BYOK_REQUIRED") {
+        setError(t("arona.error.keyRequired"));
+        onApiKeyRequired();
       } else {
         setError((err as Error).message || t("arona.error.generic"));
       }
@@ -143,6 +150,8 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, language, on
       setIsLoading(false);
       setCurrentStatus("");
       abortControllerRef.current = null;
+      // The answer spent the site's free credit, so the Pyroxene shown is stale.
+      queryClient.invalidateQueries({ queryKey: GUEST_CREDIT_QUERY_KEY });
     }
   };
 
@@ -190,6 +199,7 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, language, on
     setCurrentStatus("");
     setCurrentSteps([]);
     setError(null);
+    setCreditExhausted(false);
   };
 
   return {
@@ -202,6 +212,7 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, language, on
     currentSourceResults,
     currentStatus,
     error,
+    creditExhausted,
     sendMessage,
     stopGeneration,
     clearChat,

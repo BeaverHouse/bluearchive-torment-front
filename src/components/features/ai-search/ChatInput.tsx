@@ -10,8 +10,8 @@ interface ChatInputProps {
   onSubmit: (e?: React.FormEvent) => void;
   onStop: () => void;
   isLoading: boolean;
-  disabled: boolean;
   placeholder: string;
+  submitLabel: string;
 }
 
 export function ChatInput({
@@ -20,11 +20,13 @@ export function ChatInput({
   onSubmit,
   onStop,
   isLoading,
-  disabled,
   placeholder,
+  submitLabel,
 }: ChatInputProps) {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    // Enter that ends a Korean or Chinese IME composition only commits the
+    // character; sending then would leave that character behind in the box.
+    if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
       e.preventDefault();
       onSubmit();
     }
@@ -37,8 +39,8 @@ export function ChatInput({
         onChange={(e) => onInputChange(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
-        disabled={isLoading || disabled}
-        className="min-h-[80px] max-h-[200px] resize-none pr-14 pb-12"
+        disabled={isLoading}
+        className="min-h-[80px] max-h-[200px] resize-none border-sky-200 pr-14 pb-12 dark:border-sky-800"
         rows={3}
       />
       <div className="absolute right-3 bottom-3">
@@ -56,7 +58,8 @@ export function ChatInput({
           <Button
             type="submit"
             size="icon"
-            disabled={!input.trim() || disabled}
+            disabled={!input.trim()}
+            aria-label={submitLabel}
             className="h-9 w-9 rounded-full"
           >
             <Send className="h-4 w-4" />
