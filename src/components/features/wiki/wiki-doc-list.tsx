@@ -5,10 +5,6 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { getWikiIndexEntries, getWikiDoc, type WikiIndexEntry } from "@/lib/wiki";
 
-interface Resolved extends WikiIndexEntry {
-  verified?: boolean;
-}
-
 // True when the index used the file name as the link text (raids table does).
 const looksLikeFilename = (title: string, slug: string) =>
   title.endsWith(".md") || title === slug.split("/").pop();
@@ -17,7 +13,7 @@ const looksLikeFilename = (title: string, slug: string) =>
 // bare file names get resolved to the document's frontmatter title. Renders
 // nothing while empty / on fetch failure (no error box).
 export function WikiDocList({ match }: { match: (slug: string) => boolean }) {
-  const [entries, setEntries] = useState<Resolved[]>([]);
+  const [entries, setEntries] = useState<WikiIndexEntry[]>([]);
 
   useEffect(() => {
     let alive = true;
@@ -29,7 +25,6 @@ export function WikiDocList({ match }: { match: (slug: string) => boolean }) {
           return {
             ...e,
             title: doc?.frontmatter.title ?? e.title.replace(/\.md$/, ""),
-            verified: doc?.frontmatter.status === "human-verified",
           };
         })
       );

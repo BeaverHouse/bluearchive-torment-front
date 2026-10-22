@@ -9,7 +9,6 @@ export const WIKI_DOMAIN = "bluearchive";
 export interface WikiFrontmatter {
   title?: string;
   type?: string;
-  status?: string;
   aliases: string[];
   raidIds: string[];
   sources: string[];
@@ -82,9 +81,6 @@ function splitFrontmatter(raw: string): [WikiFrontmatter, string] {
         break;
       case "type":
         fm.type = stripQuotes(value);
-        break;
-      case "status":
-        fm.status = stripQuotes(value);
         break;
       case "aliases":
         fm.aliases = parseInlineList(value);
