@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Sparkles, BadgeCheck, MessageCircle } from "lucide-react";
+import { Sparkles, MessageCircle } from "lucide-react";
 import { FeedbackForm } from "@/components/shared/feedback-form";
 import { submitWikiFeedback, type WikiFrontmatter } from "@/lib/wiki";
 import { useTranslations } from "@/lib/i18n";
@@ -19,7 +19,6 @@ export function TrustFooter({
   askAronaQuery?: string;
 }) {
   const { t } = useTranslations();
-  const verified = frontmatter.status === "human-verified";
 
   return (
     <div className="mt-10 space-y-4 rounded-2xl border bg-muted/30 p-5 text-sm">
@@ -28,12 +27,6 @@ export function TrustFooter({
           <Sparkles className="h-3.5 w-3.5" />
           {t("wiki.trust.aiBadge")}
         </span>
-        {verified && (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
-            <BadgeCheck className="h-3.5 w-3.5" />
-            {t("wiki.trust.verified")}
-          </span>
-        )}
       </div>
 
       {frontmatter.sources.length > 0 && (
