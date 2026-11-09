@@ -11,6 +11,7 @@ import {
   confirmReview,
   getReviewWorkspace,
   moveReviewRaid,
+  resolveReviewFeedback,
   saveReviewAnalysis,
   withdrawReview,
 } from "@/lib/api";
@@ -184,6 +185,7 @@ function useActions(
       run(async () => {
         const reading = readingOf(ws);
         await confirmReview(videoId, raidId ?? "", result);
+        reload();
         callbacks.onConfirmed(videoId);
         notify(t("videoAnalysis.review.confirmed"), {
           label: t("videoAnalysis.review.undo"),
@@ -296,7 +298,14 @@ function Editor({
               onChoose={(entry) => setResult(entryResult(entry))}
             />
           )}
-          <Feedback items={ws.feedback} onResolved={reload} />
+          <Feedback
+            items={ws.feedback}
+            onResolve={(id) =>
+              resolveReviewFeedback(id).then(reload, (err) =>
+                notify(message(err)),
+              )
+            }
+          />
         </div>
       </div>
     </div>

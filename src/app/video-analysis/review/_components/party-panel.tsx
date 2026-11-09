@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import PartyCard from "@/components/features/raid/party-card";
 import SingleParty from "@/components/features/raid/single-party";
 import { useStudentMaps } from "@/hooks/use-student-maps";
-import { resolveReviewFeedback } from "@/lib/api";
 import { useTranslations } from "@/lib/i18n";
 import { AnalysisResult, ReviewEntry, VideoFeedbackItem } from "@/types/video";
 import { BasicInfoEditor } from "../../_components/party-editor/BasicInfoEditor";
@@ -118,10 +117,10 @@ export function Candidates({
 // Visitors' pending correction suggestions, each marked done once handled.
 export function Feedback({
   items,
-  onResolved,
+  onResolve,
 }: {
   items: VideoFeedbackItem[];
-  onResolved: () => void;
+  onResolve: (feedbackId: number) => void;
 }) {
   const { t } = useTranslations();
   if (items.length === 0) return null;
@@ -147,7 +146,7 @@ export function Feedback({
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => resolveReviewFeedback(item.id).then(onResolved)}
+              onClick={() => onResolve(item.id)}
             >
               <Check className="mr-1 h-4 w-4" />
               {t("videoAnalysis.edit.feedbackResolve")}
