@@ -1,7 +1,20 @@
 import { useCallback } from "react";
 import { AnalysisResult } from "@/types/video";
 import { parseCharacterInfo } from "@/utils/character";
-import { CharacterOption, PartyCharacter } from "../types";
+import { CharacterOption, PartyCharacter } from "./types";
+
+// One assist per run: giving it to a slot takes it from every other slot (the last digit).
+function withoutAssists(
+  partyData: number[][],
+  keepParty: number,
+  keepSlot: number,
+): number[][] {
+  return partyData.map((party, pi) =>
+    party.map((value, ci) =>
+      pi === keepParty && ci === keepSlot ? value : value - (value % 10),
+    ),
+  );
+}
 
 interface UsePartyEditorProps {
   analysisResult: AnalysisResult;
@@ -36,7 +49,7 @@ export function usePartyEditor({
         }))
         .sort((a, b) => a.label.localeCompare(b.label, "ko"));
     },
-    [studentsMap]
+    [studentsMap],
   );
 
   const updatePartyData = useCallback(
@@ -58,7 +71,8 @@ export function usePartyEditor({
           const star = Math.floor((existingChar % 1000) / 100);
           const weapon = Math.floor((existingChar % 100) / 10);
           const assist = existingChar % 10;
-          newCharValue = newCharacterCode * 1000 + star * 100 + weapon * 10 + assist;
+          newCharValue =
+            newCharacterCode * 1000 + star * 100 + weapon * 10 + assist;
         }
 
         newParty[characterIndex] = newCharValue;
@@ -66,7 +80,7 @@ export function usePartyEditor({
         return { ...prev, partyData: newPartyData };
       });
     },
-    [setAnalysisResult]
+    [setAnalysisResult],
   );
 
   const updateCharacterDetails = useCallback(
@@ -74,47 +88,28 @@ export function usePartyEditor({
       partyIndex: number,
       characterIndex: number,
       field: "star" | "weapon" | "assist",
-      value: number
+      value: number,
     ) => {
       setAnalysisResult((prev) => {
-        const newPartyData = [...prev.partyData];
-        const newParty = [...newPartyData[partyIndex]];
-        const currentChar = newParty[characterIndex];
-
-        if (currentChar === 0) return prev;
-
-        const info = parseCharacterInfo(currentChar);
+        const info = parseCharacterInfo(
+          prev.partyData[partyIndex][characterIndex],
+        );
         if (!info) return prev;
 
-        if (field === "assist" && value === 1) {
-          for (let pi = 0; pi < newPartyData.length; pi++) {
-            const party = pi === partyIndex ? newParty : [...newPartyData[pi]];
-            for (let ci = 0; ci < party.length; ci++) {
-              if (pi === partyIndex && ci === characterIndex) continue;
-              if (party[ci] === 0) continue;
-              const otherInfo = parseCharacterInfo(party[ci]);
-              if (otherInfo && otherInfo.assist === 1) {
-                party[ci] =
-                  otherInfo.code * 1000 + otherInfo.star * 100 + otherInfo.weapon * 10 + 0;
-              }
-            }
-            if (pi !== partyIndex) newPartyData[pi] = party;
-          }
-        }
-
+        const newPartyData =
+          field === "assist" && value === 1
+            ? withoutAssists(prev.partyData, partyIndex, characterIndex)
+            : prev.partyData.map((party) => [...party]);
         const updates = { ...info, [field]: value };
-        const newCharValue =
+        newPartyData[partyIndex][characterIndex] =
           updates.code * 1000 +
           updates.star * 100 +
           updates.weapon * 10 +
           updates.assist;
-
-        newParty[characterIndex] = newCharValue;
-        newPartyData[partyIndex] = newParty;
         return { ...prev, partyData: newPartyData };
       });
     },
-    [setAnalysisResult]
+    [setAnalysisResult],
   );
 
   const addParty = useCallback(() => {
@@ -127,7 +122,11 @@ export function usePartyEditor({
   const removeParty = useCallback(
     (partyIndex: number) => {
       if (analysisResult.partyData.length <= 1) {
-        alert(t ? t("videoAnalysis.edit.minPartyAlert") : "videoAnalysis.edit.minPartyAlert");
+        alert(
+          t
+            ? t("videoAnalysis.edit.minPartyAlert")
+            : "videoAnalysis.edit.minPartyAlert",
+        );
         return;
       }
 
@@ -136,7 +135,7 @@ export function usePartyEditor({
         partyData: prev.partyData.filter((_, index) => index !== partyIndex),
       }));
     },
-    [analysisResult.partyData.length, setAnalysisResult, t]
+    [analysisResult.partyData.length, setAnalysisResult, t],
   );
 
   const reorderParty = useCallback(
@@ -148,7 +147,7 @@ export function usePartyEditor({
         return { ...prev, partyData: newPartyData };
       });
     },
-    [setAnalysisResult]
+    [setAnalysisResult],
   );
 
   const swapCharacter = useCallback(
@@ -156,36 +155,42 @@ export function usePartyEditor({
       setAnalysisResult((prev) => {
         const newPartyData = [...prev.partyData];
         const newParty = [...newPartyData[partyIndex]];
-        [newParty[oldSlot], newParty[newSlot]] = [newParty[newSlot], newParty[oldSlot]];
+        [newParty[oldSlot], newParty[newSlot]] = [
+          newParty[newSlot],
+          newParty[oldSlot],
+        ];
         newPartyData[partyIndex] = newParty;
         return { ...prev, partyData: newPartyData };
       });
     },
-    [setAnalysisResult]
+    [setAnalysisResult],
   );
 
   const getPartyCharacters = useCallback(
     (partyIndex: number): (PartyCharacter | null)[] => {
       if (!analysisResult.partyData[partyIndex]) return [];
 
-      return analysisResult.partyData[partyIndex].map((charValue, slotIndex) => {
-        if (charValue === 0) return null;
+      return analysisResult.partyData[partyIndex].map(
+        (charValue, slotIndex) => {
+          if (charValue === 0) return null;
 
-        const info = parseCharacterInfo(charValue);
-        if (!info) return null;
+          const info = parseCharacterInfo(charValue);
+          if (!info) return null;
 
-        const name = studentsMap[info.code.toString()] || `Character ${info.code}`;
+          const name =
+            studentsMap[info.code.toString()] || `Character ${info.code}`;
 
-        return {
-          code: info.code,
-          name,
-          slotIndex,
-          type: slotIndex < 4 ? "striker" : "special",
-          order: (slotIndex < 4 ? slotIndex : slotIndex - 4) + 1,
-        };
-      });
+          return {
+            code: info.code,
+            name,
+            slotIndex,
+            type: slotIndex < 4 ? "striker" : "special",
+            order: (slotIndex < 4 ? slotIndex : slotIndex - 4) + 1,
+          };
+        },
+      );
     },
-    [analysisResult.partyData, studentsMap]
+    [analysisResult.partyData, studentsMap],
   );
 
   return {

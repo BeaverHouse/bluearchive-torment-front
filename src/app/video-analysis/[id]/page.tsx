@@ -5,7 +5,10 @@ import { getVideoDetail } from "@/lib/api";
 import { VideoAnalysisData, VideoDetailResponse } from "@/types/video";
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
-import { useRaids, getRaidName as getLocalizedRaidName } from "@/hooks/use-raids";
+import {
+  useRaids,
+  getRaidName as getLocalizedRaidName,
+} from "@/hooks/use-raids";
 import ErrorPage from "@/components/common/error-page";
 import Loading from "@/components/common/loading";
 import { useTranslations } from "@/lib/i18n";
@@ -21,11 +24,10 @@ export default function VideoDetailPage() {
     VideoDetailResponse["data"] | null
   >(null);
   const [currentVideo, setCurrentVideo] = useState<VideoAnalysisData | null>(
-    null
+    null,
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [reloadCount, setReloadCount] = useState(0);
 
   const getRaidName = (raidIdParam: string | null): string | null => {
     if (!raidIdParam) return null;
@@ -45,7 +47,7 @@ export default function VideoDetailPage() {
           setVideoDetail(response.data);
           // 사용자 분석이 있으면 우선 선택, 없으면 첫 번째 선택
           const userAnalysis = response.data.data.find(
-            (video) => video.analysis_type !== "ai"
+            (video) => video.analysis_type !== "ai",
           );
           setCurrentVideo(userAnalysis || response.data.data[0]);
         } else {
@@ -55,7 +57,7 @@ export default function VideoDetailPage() {
         setError(
           err instanceof Error
             ? err.message
-            : t("videoAnalysis.detail.fetchError")
+            : t("videoAnalysis.detail.fetchError"),
         );
       } finally {
         setLoading(false);
@@ -65,7 +67,7 @@ export default function VideoDetailPage() {
     if (videoId) {
       fetchVideo();
     }
-  }, [videoId, raidId, t, reloadCount]);
+  }, [videoId, raidId, t]);
 
   if (loading) {
     return <Loading />;
@@ -98,7 +100,6 @@ export default function VideoDetailPage() {
         onVideoChange={setCurrentVideo}
         raidId={raidId}
         platform={videoDetail?.platform}
-        onAnalysesChanged={() => setReloadCount((count) => count + 1)}
       />
     </div>
   );
