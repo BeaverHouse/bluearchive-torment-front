@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import { TotalAnalysisData } from "@/types/total-analysis";
 
-const DATA_URL =
-  "https://twauaebyyujvvvusbrwe.supabase.co/storage/v1/object/public/pb7h4uvn2b6m0lyu7i6r3j8ac/batorment/v3/total-analysis.json";
+const DATA_URL = `${process.env.NEXT_PUBLIC_CDN_URL}/batorment/v3/total-analysis.json`;
 
 let totalAnalysisCache: TotalAnalysisData | null = null;
 
 export function useTotalAnalysis() {
   const [data, setData] = useState<TotalAnalysisData | null>(
-    totalAnalysisCache
+    totalAnalysisCache,
   );
   const [isLoading, setIsLoading] = useState(!totalAnalysisCache);
 

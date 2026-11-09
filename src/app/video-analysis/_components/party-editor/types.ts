@@ -1,12 +1,4 @@
-import { AnalysisResult, VideoAnalysisData } from "@/types/video";
 import { StudentSearchData } from "@/utils/search";
-
-export interface EditableAnalysisResultProps {
-  videoData: VideoAnalysisData;
-  raidId?: string;
-  onUpdate: (updatedData: VideoAnalysisData) => void;
-  onCancel: () => void;
-}
 
 export interface CharacterOption {
   value: number;
@@ -23,17 +15,25 @@ export interface PartyCharacter {
 
 export interface PartyEditorProps {
   partyData: number[][];
-  onUpdateParty: (partyIndex: number, characterIndex: number, newCharacterCode: number) => void;
+  onUpdateParty: (
+    partyIndex: number,
+    characterIndex: number,
+    newCharacterCode: number,
+  ) => void;
   onUpdateCharacterDetails: (
     partyIndex: number,
     characterIndex: number,
     field: "star" | "weapon" | "assist",
-    value: number
+    value: number,
   ) => void;
   onAddParty: () => void;
   onRemoveParty: (partyIndex: number) => void;
   onReorderParty: (oldIndex: number, newIndex: number) => void;
-  onSwapCharacter: (partyIndex: number, oldSlot: number, newSlot: number) => void;
+  onSwapCharacter: (
+    partyIndex: number,
+    oldSlot: number,
+    newSlot: number,
+  ) => void;
   studentSearchMap: StudentSearchData;
 }
 
@@ -43,5 +43,3 @@ export interface BasicInfoEditorProps {
   onUpdateScore: (score: number) => void;
   onUpdateDescription: (description: string) => void;
 }
-
-export type { AnalysisResult, VideoAnalysisData };

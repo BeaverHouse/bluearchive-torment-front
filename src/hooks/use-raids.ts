@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { RaidInfo } from "@/types/raid";
 import { Locale } from "@/lib/i18n";
 
-const RAIDS_URL =
-  "https://twauaebyyujvvvusbrwe.supabase.co/storage/v1/object/public/pb7h4uvn2b6m0lyu7i6r3j8ac/batorment/v3/raids.json";
+const RAIDS_URL = `${process.env.NEXT_PUBLIC_CDN_URL}/batorment/v3/raids.json`;
 
 let raidsCache: RaidInfo[] | null = null;
 
@@ -43,9 +42,11 @@ export function useRaids() {
 /** Pick a localized raid title. Falls back to ko, then to legacy `name`. */
 export function getRaidName(raid: RaidInfo, locale: Locale): string {
   const localized =
-    locale === "en" ? raid.name_en
-    : locale === "zh" ? raid.name_zh
-    : raid.name_ko;
+    locale === "en"
+      ? raid.name_en
+      : locale === "zh"
+        ? raid.name_zh
+        : raid.name_ko;
   return localized || raid.name_ko || raid.name;
 }
 
@@ -64,7 +65,11 @@ export function getRaidStatus(raid: RaidInfo, now: number): RaidStatus | null {
 }
 
 /** Status text for a picker badge while the season has not ended; null once it has ended. */
-export function getRaidStatusText(raid: RaidInfo, t: (key: string) => string, now: number): string | null {
+export function getRaidStatusText(
+  raid: RaidInfo,
+  t: (key: string) => string,
+  now: number,
+): string | null {
   const status = getRaidStatus(raid, now);
   if (status === "upcoming" || status === "ongoing") {
     return t(`raid.status.${status}`);

@@ -16,7 +16,6 @@ import { useTranslations } from "@/lib/i18n";
 import { FeedbackPanel } from "@/components/shared/feedback-form";
 import { submitVideoFeedback } from "@/lib/api";
 import { LOCAL_EDIT_ENABLED } from "@/constants/video-edit";
-import { EditReviewPanel } from "../edit-review-panel";
 
 interface VideoDetailProps {
   videos: VideoAnalysisData[];
@@ -24,8 +23,6 @@ interface VideoDetailProps {
   onVideoChange: (video: VideoAnalysisData) => void;
   raidId: string | null;
   platform?: VideoPlatform;
-  /** Called after verifying, which removes the other analyses of this video on the server. */
-  onAnalysesChanged?: () => void;
 }
 
 export function VideoDetail({
@@ -34,13 +31,10 @@ export function VideoDetail({
   onVideoChange,
   raidId,
   platform,
-  onAnalysesChanged,
 }: VideoDetailProps) {
   const [copiedId, setCopiedId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState(currentVideo.id.toString());
   const [feedbackOpen, setFeedbackOpen] = useState(false);
-  // Verified flags changed on this page, by analysis id, so switching tabs does not show stale values.
-  const [verifiedChanges, setVerifiedChanges] = useState<Record<number, boolean>>({});
   const { studentsMap } = useStudentMaps();
   const { t } = useTranslations();
 
@@ -63,8 +57,8 @@ export function VideoDetail({
       return;
     }
 
-    const editPath = `/video-analysis/${currentVideo.video_id}/edit`;
-    router.push(raidId ? `${editPath}?raid_id=${raidId}` : editPath);
+    const editPath = `/video-analysis/review?video_id=${currentVideo.video_id}`;
+    router.push(raidId ? `${editPath}&raid_id=${raidId}` : editPath);
   };
 
   const handleTabChange = (value: string) => {
@@ -111,7 +105,9 @@ export function VideoDetail({
         ) : (
           <Copy className="h-4 w-4 mr-2" />
         )}
-        {copiedId === video.id ? t("common.copied") : t("videoAnalysis.detail.htmlCopy")}
+        {copiedId === video.id
+          ? t("common.copied")
+          : t("videoAnalysis.detail.htmlCopy")}
       </Button>
       {LOCAL_EDIT_ENABLED && (
         <Button onClick={handleStartEdit} size="sm">
@@ -123,19 +119,28 @@ export function VideoDetail({
   );
 
   const analysisLabel = (video: VideoAnalysisData) =>
-    t(video.analysis_type === "ai" ? "videoAnalysis.detail.tabAi" : "videoAnalysis.detail.tabUser");
+    t(
+      video.analysis_type === "ai"
+        ? "videoAnalysis.detail.tabAi"
+        : "videoAnalysis.detail.tabUser",
+    );
 
-  const isVerified = (video: VideoAnalysisData) => verifiedChanges[video.id] ?? video.is_verified ?? false;
+  const isVerified = (video: VideoAnalysisData) => video.is_verified ?? false;
 
   const verifiedIcon = (
-    <BadgeCheck className="h-4 w-4 text-emerald-600" aria-label={t("videoAnalysis.detail.verified")} />
+    <BadgeCheck
+      className="h-4 w-4 text-emerald-600"
+      aria-label={t("videoAnalysis.detail.verified")}
+    />
   );
 
   const feedbackPanel = feedbackOpen && raidId && (
     <div className="rounded-lg border bg-card p-4">
       <FeedbackPanel
         placeholder={t("feedback.videoPlaceholder")}
-        onSubmit={(input) => submitVideoFeedback(currentVideo.video_id, raidId, input)}
+        onSubmit={(input) =>
+          submitVideoFeedback(currentVideo.video_id, raidId, input)
+        }
         onCancel={() => setFeedbackOpen(false)}
       />
     </div>
@@ -158,28 +163,16 @@ export function VideoDetail({
         platform={platform}
       />
 
-      {/* keyed by analysis so the verified flag follows the selected tab */}
-      {LOCAL_EDIT_ENABLED && raidId && (
-        <EditReviewPanel
-          key={currentVideo.id}
-          analysis={{
-            ...currentVideo,
-            is_verified: verifiedChanges[currentVideo.id] ?? currentVideo.is_verified,
-          }}
-          raidId={raidId}
-          onVerifiedChange={(isVerified) => {
-            setVerifiedChanges((changes) => ({ ...changes, [currentVideo.id]: isVerified }));
-            if (isVerified) onAnalysesChanged?.();
-          }}
-        />
-      )}
-
       {videos.length > 1 ? (
         <Tabs value={activeTab} onValueChange={handleTabChange}>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
             <TabsList>
               {sortedVideos.map((video) => (
-                <TabsTrigger key={video.id} value={video.id.toString()} className="gap-1.5">
+                <TabsTrigger
+                  key={video.id}
+                  value={video.id.toString()}
+                  className="gap-1.5"
+                >
                   {analysisLabel(video)}
                   {isVerified(video) && verifiedIcon}
                 </TabsTrigger>
@@ -203,7 +196,9 @@ export function VideoDetail({
               {isVerified(currentVideo) && (
                 <>
                   {verifiedIcon}
-                  <span className="text-emerald-700 dark:text-emerald-400">{t("videoAnalysis.detail.verified")}</span>
+                  <span className="text-emerald-700 dark:text-emerald-400">
+                    {t("videoAnalysis.detail.verified")}
+                  </span>
                 </>
               )}
             </span>
