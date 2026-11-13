@@ -21,6 +21,15 @@ class APIError extends Error {
   }
 }
 
+// The server's own reason; a body that is not the API's JSON falls back to the status.
+async function apiError(response: Response): Promise<APIError> {
+  const body = await response.json().catch(() => null);
+  return new APIError(
+    body?.message ?? `API 요청 실패: ${response.status} ${response.statusText}`,
+    response.status,
+  );
+}
+
 interface FetchAPIOptions {
   method?: string;
   body?: unknown;
@@ -48,12 +57,7 @@ async function fetchAPI<T>(
 
     if (options.rawResponse) return response as unknown as T;
 
-    if (!response.ok) {
-      throw new APIError(
-        `API 요청 실패: ${response.status} ${response.statusText}`,
-        response.status,
-      );
-    }
+    if (!response.ok) throw await apiError(response);
 
     return response.json();
   } catch (error) {
@@ -125,15 +129,10 @@ export async function addVideoToQueue(
         },
       };
     }
-    throw new APIError("영상이 이미 처리되었습니다.", 409);
+    throw new APIError(data.message, 409);
   }
 
-  if (!response.ok) {
-    throw new APIError(
-      `API 요청 실패: ${response.status} ${response.statusText}`,
-      response.status,
-    );
-  }
+  if (!response.ok) throw await apiError(response);
 
   return { success: true };
 }

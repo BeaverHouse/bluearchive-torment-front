@@ -17,7 +17,7 @@ export const translations: Record<string, string> = {
   시가지: "市街地",
   야외: "屋外",
   실내: "屋内",
-  특수장갑: "特殊装甲", 
+  특수장갑: "特殊装甲",
   경장갑: "軽装備",
   중장갑: "重装備",
   탄력장갑: "弾力装甲",
@@ -34,6 +34,8 @@ export const translations: Record<string, string> = {
   쿠로카게: "クロカゲ",
   게부라: "ゲブラ",
   예소드: "イェソド",
+  "드럼통 게": "ドラム缶ガニ",
+  "악몽 열차": "悪夢急行",
 };
 
 export const basePartyCounts: number[] = [
