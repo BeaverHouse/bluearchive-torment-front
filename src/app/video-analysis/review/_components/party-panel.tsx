@@ -1,11 +1,16 @@
 "use client";
 
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import PartyCard from "@/components/features/raid/party-card";
 import SingleParty from "@/components/features/raid/single-party";
 import { useStudentMaps } from "@/hooks/use-student-maps";
 import { useTranslations } from "@/lib/i18n";
+import { createCDNQueryOptions } from "@/lib/queries";
+import { RaidData } from "@/types/raid";
 import { AnalysisResult, ReviewEntry, VideoFeedbackItem } from "@/types/video";
 import { BasicInfoEditor } from "../../_components/party-editor/BasicInfoEditor";
 import { PartyEditor } from "../../_components/party-editor/PartyEditor";
@@ -67,7 +72,7 @@ export function PartyPanel({
   );
 }
 
-// The ranking entries the worker could not choose between; picking one loads it into the party.
+// The ranking entries the worker matched, with their ranks; picking one loads it into the party.
 export function Candidates({
   candidates,
   chosen,
@@ -78,7 +83,7 @@ export function Candidates({
   onChoose: (entry: ReviewEntry) => void;
 }) {
   const { t } = useTranslations();
-  if (candidates.length < 2) return null;
+  if (candidates.length === 0) return null;
   const isChosen = (entry: ReviewEntry) =>
     JSON.stringify(entry.partyData) === JSON.stringify(chosen.partyData);
   return (
@@ -111,6 +116,48 @@ export function Candidates({
         </button>
       ))}
     </section>
+  );
+}
+
+// Loads the published ranking entry of a typed rank into the party, for a video the worker matched to
+// the wrong entry or to none.
+export function RankLoader({
+  raidId,
+  onLoad,
+}: {
+  raidId: string;
+  onLoad: (entry: ReviewEntry) => void;
+}) {
+  const { t } = useTranslations();
+  const [rank, setRank] = useState("");
+  const ranking = useQuery(createCDNQueryOptions<RaidData>("party", raidId));
+  const entry = ranking.data?.parties.find((p) => p.rank === Number(rank));
+  return (
+    <form
+      className="flex items-center gap-2"
+      onSubmit={(event) => {
+        event.preventDefault();
+        if (entry) onLoad(entry);
+      }}
+    >
+      <Input
+        type="number"
+        min={1}
+        className="w-32"
+        aria-label={t("videoAnalysis.review.rank")}
+        placeholder={t("videoAnalysis.review.rank")}
+        value={rank}
+        onChange={(event) => setRank(event.target.value)}
+      />
+      <Button type="submit" variant="outline" disabled={!entry}>
+        {t("videoAnalysis.review.loadRank")}
+      </Button>
+      {rank && ranking.isSuccess && !entry && (
+        <span className="text-sm text-muted-foreground">
+          {t("videoAnalysis.review.rankMissing")}
+        </span>
+      )}
+    </form>
   );
 }
 
