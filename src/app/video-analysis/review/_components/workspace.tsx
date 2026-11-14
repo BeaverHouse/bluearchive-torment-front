@@ -18,13 +18,14 @@ import {
 import { useTranslations } from "@/lib/i18n";
 import {
   AnalysisResult,
+  ReviewEntry,
   ReviewProposal,
   ReviewWorkspace,
   buildVideoUrl,
   platformFromVideoId,
 } from "@/types/video";
 import { Evidence } from "./evidence";
-import { Candidates, Feedback, PartyPanel } from "./party-panel";
+import { Candidates, Feedback, PartyPanel, RankLoader } from "./party-panel";
 import {
   entryResult,
   isVerified,
@@ -214,6 +215,35 @@ function useShortcuts(save: () => void, confirm: () => void) {
   }, [save, confirm]);
 }
 
+// The ranking entries the party can be loaded from: the worker's match, or any rank typed in.
+function RankingEntries({
+  ws,
+  result,
+  onLoad,
+}: {
+  ws: ReviewWorkspace;
+  result: AnalysisResult;
+  onLoad: (entry: ReviewEntry) => void;
+}) {
+  const proposal = ws.proposal;
+  return (
+    <>
+      {proposal && (
+        <Candidates
+          candidates={
+            proposal.candidates.length > 0 || !proposal.proposed
+              ? proposal.candidates
+              : [proposal.proposed]
+          }
+          chosen={result}
+          onChoose={onLoad}
+        />
+      )}
+      <RankLoader raidId={ws.video.raid_id ?? ""} onLoad={onLoad} />
+    </>
+  );
+}
+
 function Editor({
   ws,
   reload,
@@ -291,13 +321,11 @@ function Editor({
             </p>
           )}
           <PartyPanel result={result} setResult={setResult} editing={editing} />
-          {ws.proposal && (
-            <Candidates
-              candidates={ws.proposal.candidates}
-              chosen={result}
-              onChoose={(entry) => setResult(entryResult(entry))}
-            />
-          )}
+          <RankingEntries
+            ws={ws}
+            result={result}
+            onLoad={(entry) => setResult(entryResult(entry))}
+          />
           <Feedback
             items={ws.feedback}
             onResolve={(id) =>
