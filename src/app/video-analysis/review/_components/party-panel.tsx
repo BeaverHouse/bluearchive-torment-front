@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import PartyCard from "@/components/features/raid/party-card";
 import SingleParty from "@/components/features/raid/single-party";
+import { useRaids } from "@/hooks/use-raids";
 import { useStudentMaps } from "@/hooks/use-student-maps";
 import { useTranslations } from "@/lib/i18n";
 import { createCDNQueryOptions } from "@/lib/queries";
@@ -120,7 +121,7 @@ export function Candidates({
 }
 
 // Loads the published ranking entry of a typed rank into the party, for a video the worker matched to
-// the wrong entry or to none.
+// the wrong entry or to none. A raid whose ranking is not published yet has nothing to load from.
 export function RankLoader({
   raidId,
   onLoad,
@@ -130,7 +131,15 @@ export function RankLoader({
 }) {
   const { t } = useTranslations();
   const [rank, setRank] = useState("");
-  const ranking = useQuery(createCDNQueryOptions<RaidData>("party", raidId));
+  const { raids } = useRaids();
+  const published = raids.some(
+    (raid) => raid.id === raidId && raid.party_updated,
+  );
+  const ranking = useQuery({
+    ...createCDNQueryOptions<RaidData>("party", raidId),
+    enabled: published,
+  });
+  if (!published) return null;
   const entry = ranking.data?.parties.find((p) => p.rank === Number(rank));
   return (
     <form
