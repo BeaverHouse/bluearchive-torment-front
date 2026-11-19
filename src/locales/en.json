@@ -39,7 +39,7 @@
   "arona.fallback": "Sensei, sorry! Arona couldn't prepare an answer. Could you ask again?",
   "arona.keyChange": "Change Key",
   "arona.keySet": "Set Key",
-  "arona.notice": "Answers are AI-generated and can be wrong. Records follow the Japanese server. Arona is a chatbot that guides you through Blue Archive information. She does not answer sexual or violent conversations about students. Questions and answers are stored to improve quality. Do not enter personal information.",
+  "arona.notice": "Answers are AI-generated and can be wrong. Records follow the Japanese server. Arona is a chatbot that guides you through Blue Archive information. She does not answer sexual conversations about students. Questions and answers are stored to improve quality. Do not enter personal information.",
   "arona.placeholder.ready": "Type your question…",
   "arona.refs.party": "Party",
   "arona.refs.student": "Student",
