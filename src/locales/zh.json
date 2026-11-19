@@ -1,7 +1,7 @@
 {
   "announce.close": "关闭",
-  "announce.item.1": "现在无需 API 密钥也能向阿罗娜提问。每天的免费回答量以青辉石显示。",
-  "announce.item.2": "可以在首页直接向阿罗娜提问。",
+  "announce.item.1": "阿罗娜能更准确地理解学生名字和条件，记录里没有的昵称会到网上查找。",
+  "announce.item.2": "为提升回答质量，会保存与阿罗娜的问答。隐私政策已更新。",
   "announce.release": "查看更新日志",
   "announce.update": "更新",
   "apiKey.desc.line1": "与阿罗娜对话需要 Google Gemini API 密钥。",

@@ -2,6 +2,22 @@
 
 Only what teachers need to know, recorded from October 2026.
 
+## 2026-11-19
+
+### Arona
+
+- Arona reads growth conditions such as "UE4" or "3★" and student nicknames more accurately.
+- She no longer mixes up students who share a name with another version (Swimsuit and so on). When she cannot tell which one you mean, she asks.
+- She looks up nicknames and memes that are not in the records on the web.
+- She answers in the site language, even when you ask in another language.
+- She does not answer sexual or violent questions about students.
+- Questions and answers sent without signing in are stored to improve answer quality. Anything that looks like personal information, such as a phone number or email, is masked before storage, and stored chats are deleted after 90 days. See the Privacy Policy for details.
+
+### Videos
+
+- The YouTube search for Drumbarka seasons now includes the boss name.
+- When a video cannot be added to the analysis queue, you see why, such as the video already being registered.
+
 ## 2026-10-12
 
 ### Arona

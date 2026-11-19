@@ -1,7 +1,7 @@
 {
   "announce.close": "Close",
-  "announce.item.1": "You can now ask Arona without an API key. Today's free answers are shown as Pyroxene.",
-  "announce.item.2": "Ask Arona straight from the home page.",
+  "announce.item.1": "Arona reads student names and conditions more accurately, and looks up nicknames missing from the records on the web.",
+  "announce.item.2": "Questions and answers with Arona are now stored to improve quality. The Privacy Policy has been updated.",
   "announce.release": "See the release notes",
   "announce.update": "Update",
   "apiKey.desc.line1": "Chatting with ARONA requires a Google Gemini API key.",

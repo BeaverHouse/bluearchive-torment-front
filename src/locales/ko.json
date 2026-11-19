@@ -1,7 +1,7 @@
 {
   "announce.close": "닫기",
-  "announce.item.1": "이제 API 키 없이도 아로나에게 물어볼 수 있어요. 하루 무료 답변량은 청휘석으로 보여 드려요.",
-  "announce.item.2": "홈 화면에서 바로 아로나에게 질문할 수 있어요.",
+  "announce.item.1": "아로나가 학생 이름과 조건을 더 정확하게 읽고, 기록에 없는 별명은 웹에서 찾아봐요.",
+  "announce.item.2": "품질 개선을 위해 아로나와 나눈 질문과 답변을 저장해요. 개인정보 처리방침을 바꿨어요.",
   "announce.release": "릴리스 노트 보기",
   "announce.update": "Update",
   "apiKey.desc.line1": "아로나와 대화하려면 Google Gemini API 키가 필요해요.",
