@@ -11,7 +11,7 @@ Only what teachers need to know, recorded from October 2026.
 - She looks up nicknames and memes that are not in the records on the web.
 - She answers in the site language, even when you ask in another language.
 - She does not answer sexual or violent questions about students.
-- Questions and answers sent without signing in are stored to improve answer quality. Anything that looks like personal information, such as a phone number or email, is masked before storage, and stored chats are deleted after 90 days. See the Privacy Policy for details.
+- Questions and answers sent without signing in are stored to improve answer quality. Anything that looks like personal information, such as a Korean phone number or email, is masked before storage, and stored chats are deleted after 90 days. See the Privacy Policy for details.
 
 ## 2026-11-13
 
