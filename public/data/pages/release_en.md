@@ -13,6 +13,8 @@ Only what teachers need to know, recorded from October 2026.
 - She does not answer sexual or violent questions about students.
 - Questions and answers sent without signing in are stored to improve answer quality. Anything that looks like personal information, such as a phone number or email, is masked before storage, and stored chats are deleted after 90 days. See the Privacy Policy for details.
 
+## 2026-11-13
+
 ### Videos
 
 - The YouTube search for Drumbarka seasons now includes the boss name.
