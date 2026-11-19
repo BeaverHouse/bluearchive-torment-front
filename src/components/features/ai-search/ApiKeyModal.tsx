@@ -102,8 +102,6 @@ export function ApiKeyModal({
             </div>
             <ul className="text-xs text-amber-700 dark:text-amber-400/80 space-y-1 list-disc list-inside">
               <li>{t("apiKey.notice.beta")}</li>
-              <li>{t("apiKey.notice.wrong")}</li>
-              <li>{t("apiKey.notice.feedback")}</li>
               <li>{t("apiKey.notice.limit")}</li>
             </ul>
           </div>

@@ -23,7 +23,10 @@ import { stripHtmlComments } from "@/lib/wiki";
 // links, which phase the file is injected into). They are for maintainers, not
 // the model, so they are stripped before the prompt is sent — otherwise they
 // burn tokens and feed the model instructions meant for us.
-async function fetchPrompt(kind: "persona" | "instruction", locale: string): Promise<string> {
+async function fetchPrompt(
+  kind: "persona" | "instruction",
+  locale: string,
+): Promise<string> {
   const tryFetch = async (lang: string) => {
     const res = await fetch(`/data/${kind}_${lang}.md`);
     if (!res.ok) return null;
@@ -47,7 +50,11 @@ interface AISearchChatProps {
   onInitialQuestionSent?: () => void;
 }
 
-export function AISearchChat({ embedded = false, initialQuestion, onInitialQuestionSent }: AISearchChatProps = {}) {
+export function AISearchChat({
+  embedded,
+  initialQuestion,
+  onInitialQuestionSent,
+}: AISearchChatProps) {
   const { t, locale } = useTranslations();
   const [personaPrompt, setPersonaPrompt] = useState<string>("");
   const [instructionPrompt, setInstructionPrompt] = useState<string>("");
@@ -87,7 +94,10 @@ export function AISearchChat({ embedded = false, initialQuestion, onInitialQuest
   });
 
   useEffect(() => {
-    Promise.all([fetchPrompt("persona", locale), fetchPrompt("instruction", locale)])
+    Promise.all([
+      fetchPrompt("persona", locale),
+      fetchPrompt("instruction", locale),
+    ])
       .then(([persona, instruction]) => {
         setPersonaPrompt(persona);
         setInstructionPrompt(instruction);
@@ -99,7 +109,8 @@ export function AISearchChat({ embedded = false, initialQuestion, onInitialQuest
   // The question arrives through the URL, outside this component, and must
   // wait for the prompts so it is answered in Arona's voice.
   useEffect(() => {
-    if (!initialQuestion || !promptsLoaded || initialQuestionSentRef.current) return;
+    if (!initialQuestion || !promptsLoaded || initialQuestionSentRef.current)
+      return;
     initialQuestionSentRef.current = true;
     sendMessage(undefined, initialQuestion);
     onInitialQuestionSent?.();
@@ -115,12 +126,16 @@ export function AISearchChat({ embedded = false, initialQuestion, onInitialQuest
     if (messages.length > 0 || currentAnswer) scrollToBottom();
   }, [messages, currentAnswer, scrollToBottom]);
 
-  const handleSendMessage = useCallback((e?: React.FormEvent) => {
-    refreshApiKey();
-    sendMessage(e);
-  }, [refreshApiKey, sendMessage]);
+  const handleSendMessage = useCallback(
+    (e?: React.FormEvent) => {
+      refreshApiKey();
+      sendMessage(e);
+    },
+    [refreshApiKey, sendMessage],
+  );
 
   const isEmpty = messages.length === 0 && !currentAnswer && !isLoading;
+  const keyLabel = apiKey ? t("arona.keyChange") : t("arona.keySet");
 
   return (
     <div
@@ -130,39 +145,41 @@ export function AISearchChat({ embedded = false, initialQuestion, onInitialQuest
           : "flex flex-col h-[calc(100vh-200px)] max-w-4xl mx-auto"
       }
     >
-      {!embedded && <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <Image
-            src="/arona.webp"
-            alt="ARONA"
-            width={48}
-            height={48}
-            className="rounded-full object-cover"
-          />
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold text-sky-600 dark:text-sky-400">
-                A.R.O.N.A
-              </h1>
-              <Badge variant="secondary" className="text-xs">
-                Beta
-              </Badge>
-            </div>
+      {!embedded && (
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <Image
+              src="/arona.webp"
+              alt="ARONA"
+              width={48}
+              height={48}
+              className="rounded-full object-cover"
+            />
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-2xl font-bold text-sky-600 dark:text-sky-400">
+                  A.R.O.N.A
+                </h1>
+                <Badge variant="secondary" className="text-xs">
+                  Beta
+                </Badge>
               </div>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={openApiKeyModal}>
-            <Key className="h-4 w-4 mr-1" />
-            {apiKey ? t("arona.keyChange") : t("arona.keySet")}
-          </Button>
-          {messages.length > 0 && (
-            <Button variant="outline" size="sm" onClick={clearChat}>
-              <Trash2 className="h-4 w-4 mr-1" />
-              {t("arona.reset")}
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={openApiKeyModal}>
+              <Key className="h-4 w-4 mr-1" />
+              {keyLabel}
             </Button>
-          )}
+            {messages.length > 0 && (
+              <Button variant="outline" size="sm" onClick={clearChat}>
+                <Trash2 className="h-4 w-4 mr-1" />
+                {t("arona.reset")}
+              </Button>
+            )}
+          </div>
         </div>
-      </div>}
+      )}
 
       <Card className="flex-1 mb-4 overflow-hidden border-sky-200 dark:border-sky-800">
         <CardContent className="p-0 h-full">
@@ -198,13 +215,15 @@ export function AISearchChat({ embedded = false, initialQuestion, onInitialQuest
         submitLabel={t("home.ask.submit")}
       />
 
+      <p className="mt-2 text-xs text-muted-foreground">{t("arona.notice")}</p>
+
       <div className="mt-2 flex min-h-8 items-center justify-between gap-3 text-xs text-muted-foreground">
         {embedded ? (
           <div className="flex items-center gap-2">
             <PyroxeneBadge />
             <Button variant="ghost" size="sm" onClick={openApiKeyModal}>
               <Key className="mr-1 h-4 w-4" />
-              {apiKey ? t("arona.keyChange") : t("arona.keySet")}
+              {keyLabel}
             </Button>
             {messages.length > 0 && (
               <Button variant="ghost" size="sm" onClick={clearChat}>
@@ -213,7 +232,9 @@ export function AISearchChat({ embedded = false, initialQuestion, onInitialQuest
               </Button>
             )}
           </div>
-        ) : <PyroxeneBadge />}
+        ) : (
+          <PyroxeneBadge />
+        )}
         <span>
           Powered by{" "}
           <a
