@@ -2,7 +2,7 @@
 
 Only what teachers need to know, recorded from October 2026.
 
-## 2026-11-19
+## 2026-11-20
 
 ### Arona
 
