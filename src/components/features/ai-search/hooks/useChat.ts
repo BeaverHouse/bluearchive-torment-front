@@ -27,19 +27,23 @@ interface UseChatProps {
   onApiKeyRequired: () => void;
 }
 
-const countOf = (script: RegExp, text: string) =>
-  text.match(script)?.length ?? 0;
+// A question may name a student in another script ("Who is 호시노?",
+// "请问 마코토 需要几星"), so the script with the most words wins; on a tie the
+// earlier entry wins. A unit after a number ("100kg") is no English word.
+const SCRIPT_WORDS: [RegExp, string][] = [
+  [/[ㄱ-ㅣ가-힣]+/g, "ko"],
+  [/\p{Script=Han}+/gu, "zh"],
+  [/(?<!\d)[a-z]{2,}/gi, "en"],
+];
 
-// A question is answered in the language it is written in. Only Japanese uses
-// kana. A Chinese question can carry a student name in Hangul and a Korean one
-// a name in Latin, so the script with more letters wins and Latin comes last.
-// Units such as "100kg" are no English word and keep the page language.
+// A question is answered in the language it is written in. Only Japanese uses kana.
 function questionLanguage(question: string): string | undefined {
   if (/[ぁ-ヿ]/.test(question)) return "ja";
-  const hangul = countOf(/[ㄱ-ㅣ가-힣]/g, question);
-  const han = countOf(/\p{Script=Han}/gu, question);
-  if (hangul || han) return hangul >= han ? "ko" : "zh";
-  if (/[a-z]{3,}/i.test(question)) return "en";
+  const [words, language] = SCRIPT_WORDS.map(
+    ([word, language]) =>
+      [question.match(word)?.length ?? 0, language] as const,
+  ).reduce((best, next) => (next[0] > best[0] ? next : best));
+  return words ? language : undefined;
 }
 
 export function useChat({
