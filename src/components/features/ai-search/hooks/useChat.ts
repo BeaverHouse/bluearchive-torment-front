@@ -27,14 +27,20 @@ interface UseChatProps {
   onApiKeyRequired: () => void;
 }
 
-// A question is answered in the language it is written in. Order matters:
-// Japanese and Korean text also contains Han, and any of them may contain Latin.
-const SCRIPT_LANGUAGES: [RegExp, string][] = [
-  [/[ㄱ-ㅣ가-힣]/, "ko"],
-  [/[ぁ-ヿ]/, "ja"],
-  [/\p{Script=Han}/u, "zh"],
-  [/[a-z]/i, "en"],
-];
+const countOf = (script: RegExp, text: string) =>
+  text.match(script)?.length ?? 0;
+
+// A question is answered in the language it is written in. Only Japanese uses
+// kana. A Chinese question can carry a student name in Hangul and a Korean one
+// a name in Latin, so the script with more letters wins and Latin comes last.
+// Units such as "100kg" are no English word and keep the page language.
+function questionLanguage(question: string): string | undefined {
+  if (/[ぁ-ヿ]/.test(question)) return "ja";
+  const hangul = countOf(/[ㄱ-ㅣ가-힣]/g, question);
+  const han = countOf(/\p{Script=Han}/gu, question);
+  if (hangul || han) return hangul >= han ? "ko" : "zh";
+  if (/[a-z]{3,}/i.test(question)) return "en";
+}
 
 export function useChat({
   apiKey,
@@ -193,9 +199,7 @@ export function useChat({
         messages: previousMessages,
         personaPrompt: personaPrompt || undefined,
         instructionPrompt: instructionPrompt || undefined,
-        language:
-          SCRIPT_LANGUAGES.find(([script]) => script.test(question))?.[1] ??
-          language,
+        language: questionLanguage(question) ?? language,
         sessionId,
         onUpdate: handleStreamUpdate,
         signal: abortControllerRef.current.signal,
