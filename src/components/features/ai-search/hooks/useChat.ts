@@ -27,26 +27,25 @@ interface UseChatProps {
   onApiKeyRequired: () => void;
 }
 
-// A question may name a student in another script ("Who is 호시노?",
-// "请问 마코토 需要几星", "How many stars for マコト?"), so the script with the
-// most words wins; on a tie the earlier entry wins. A run of Han with kana in it
-// is Japanese, Han alone is Chinese, and a unit after a number ("100kg") is no
-// English word.
-const SCRIPT_WORDS: [RegExp, string][] = [
-  [/[ㄱ-ㅣ가-힣]+/g, "ko"],
-  [/[\p{Script=Han}ぁ-ヿ]*[ぁ-ヿ][\p{Script=Han}ぁ-ヿ]*/gu, "ja"],
-  [
-    /(?<![ぁ-ヿ\p{Script=Han}])\p{Script=Han}+(?![ぁ-ヿ\p{Script=Han}])/gu,
-    "zh",
-  ],
-  [/(?<!\d)[a-z]{2,}/gi, "en"],
-];
-
-// A question is answered in the language it is written in.
+// A question is answered in the language it is written in. It may name a
+// student or a game term in another script ("Who is 호시노?", "请问 마코토 需要几星",
+// "Lunaticの編成はDPS重視？"), so the language with the most words wins and a
+// tie goes to the earlier one. Han is Japanese when the question has kana.
+// Capitalised words after the first are names and terms, not English, and a
+// unit after a number ("100kg") is no word.
 function questionLanguage(question: string): string | undefined {
-  const [words, language] = SCRIPT_WORDS.map(
-    ([word, language]) =>
-      [question.match(word)?.length ?? 0, language] as const,
+  const englishWords = [
+    ...question.matchAll(/(?<![\p{L}\d])[A-Za-z]{2,}/gu),
+  ].filter((word) => word.index === 0 || /[a-z]/.test(word[0][0])).length;
+  const [words, language] = (
+    [
+      [question.match(/[ㄱ-ㅣ가-힣]+/g)?.length ?? 0, "ko"],
+      [
+        question.match(/[\p{Script=Han}ぁ-ヿ]+/gu)?.length ?? 0,
+        /[ぁ-ヿ]/.test(question) ? "ja" : "zh",
+      ],
+      [englishWords, "en"],
+    ] as const
   ).reduce((best, next) => (next[0] > best[0] ? next : best));
   return words ? language : undefined;
 }
