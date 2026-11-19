@@ -28,17 +28,22 @@ interface UseChatProps {
 }
 
 // A question may name a student in another script ("Who is 호시노?",
-// "请问 마코토 需要几星"), so the script with the most words wins; on a tie the
-// earlier entry wins. A unit after a number ("100kg") is no English word.
+// "请问 마코토 需要几星", "How many stars for マコト?"), so the script with the
+// most words wins; on a tie the earlier entry wins. A run of Han with kana in it
+// is Japanese, Han alone is Chinese, and a unit after a number ("100kg") is no
+// English word.
 const SCRIPT_WORDS: [RegExp, string][] = [
   [/[ㄱ-ㅣ가-힣]+/g, "ko"],
-  [/\p{Script=Han}+/gu, "zh"],
+  [/[\p{Script=Han}ぁ-ヿ]*[ぁ-ヿ][\p{Script=Han}ぁ-ヿ]*/gu, "ja"],
+  [
+    /(?<![ぁ-ヿ\p{Script=Han}])\p{Script=Han}+(?![ぁ-ヿ\p{Script=Han}])/gu,
+    "zh",
+  ],
   [/(?<!\d)[a-z]{2,}/gi, "en"],
 ];
 
-// A question is answered in the language it is written in. Only Japanese uses kana.
+// A question is answered in the language it is written in.
 function questionLanguage(question: string): string | undefined {
-  if (/[ぁ-ヿ]/.test(question)) return "ja";
   const [words, language] = SCRIPT_WORDS.map(
     ([word, language]) =>
       [question.match(word)?.length ?? 0, language] as const,
