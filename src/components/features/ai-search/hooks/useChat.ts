@@ -27,30 +27,6 @@ interface UseChatProps {
   onApiKeyRequired: () => void;
 }
 
-// A question is answered in the language it is written in. It may name a
-// student or a game term in another script ("Who is 호시노?", "请问 마코토 需要几星",
-// "Lunaticの編成はDPS重視？"), so the language with the most words wins and a
-// tie goes to the earlier one. Korean questions seldom hold Han while Chinese
-// and Japanese ones hold Hangul names, so Han comes first; it is Japanese when
-// the question has kana. Capitalised words after the first are names and
-// terms, not English, and a unit after a number ("100kg") is no word.
-function questionLanguage(question: string): string | undefined {
-  const englishWords = [
-    ...question.matchAll(/(?<![\p{L}\d])[A-Za-z]{2,}/gu),
-  ].filter((word) => word.index === 0 || /[a-z]/.test(word[0][0])).length;
-  const [words, language] = (
-    [
-      [
-        question.match(/[\p{Script=Han}ぁ-ヿ]+/gu)?.length ?? 0,
-        /[ぁ-ヿ]/.test(question) ? "ja" : "zh",
-      ],
-      [question.match(/[ㄱ-ㅣ가-힣]+/g)?.length ?? 0, "ko"],
-      [englishWords, "en"],
-    ] as const
-  ).reduce((best, next) => (next[0] > best[0] ? next : best));
-  return words ? language : undefined;
-}
-
 export function useChat({
   apiKey,
   personaPrompt,
@@ -208,7 +184,7 @@ export function useChat({
         messages: previousMessages,
         personaPrompt: personaPrompt || undefined,
         instructionPrompt: instructionPrompt || undefined,
-        language: questionLanguage(question) ?? language,
+        language,
         sessionId,
         onUpdate: handleStreamUpdate,
         signal: abortControllerRef.current.signal,
