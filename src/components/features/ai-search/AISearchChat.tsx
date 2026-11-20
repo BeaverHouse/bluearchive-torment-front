@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -215,7 +216,16 @@ export function AISearchChat({
         submitLabel={t("home.ask.submit")}
       />
 
-      <p className="mt-2 text-xs text-muted-foreground">{t("arona.notice")}</p>
+      <p className="mt-2 text-xs text-muted-foreground">
+        {t("arona.notice")}{" "}
+        <Link
+          href="/legal/privacy"
+          prefetch={false}
+          className="underline underline-offset-2"
+        >
+          {t("arona.noticeLink")}
+        </Link>
+      </p>
 
       <div className="mt-2 flex min-h-8 items-center justify-between gap-3 text-xs text-muted-foreground">
         {embedded ? (
