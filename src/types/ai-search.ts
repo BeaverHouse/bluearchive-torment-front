@@ -10,7 +10,8 @@ export interface Message {
 }
 
 // SSE 스트림 메시지 타입
-export type StreamMessageType = "status" | "answer" | "item_result" | "source_result" | "error";
+export type StreamMessageType =
+  "status" | "answer" | "item_result" | "source_result" | "error";
 
 // 기본 스트림 메시지
 interface BaseStreamMessage {
@@ -19,7 +20,8 @@ interface BaseStreamMessage {
 }
 
 // 상태 키 타입
-export type StatusKey = "thinking" | "searching" | "tool_execution" | "answering" | "answer_complete";
+export type StatusKey =
+  "thinking" | "searching" | "tool_execution" | "answering" | "answer_complete";
 
 // 도구 이름 타입
 export type ToolName =
@@ -119,8 +121,10 @@ export type StreamMessage =
 // AI Search 요청 body
 export interface AISearchRequest {
   question: string;
-  /** BCP47-ish locale tag. llm-client expects max 5 chars; "ko" | "en" | "zh" today. */
+  /** BCP47-ish locale tag. llm-client expects max 5 chars; "ko" | "en" | "zh" | "ja" today. */
   language: string;
+  /** UUID v4 shared by every turn of one chat. */
+  session_id: string;
   fixed_service_ids: string[];
   messages?: Message[];
   persona_prompt?: string;

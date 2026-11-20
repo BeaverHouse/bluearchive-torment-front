@@ -7,9 +7,15 @@ import type {
   ItemCardData,
   Message,
   SourceData,
+  SourceResultMessage,
+  StatusMessage,
   StreamMessage,
 } from "@/types/ai-search";
-import { getStatusMessageKey, getToolResultMessageKey, AI_SEARCH_FALLBACK_KEY } from "@/constants/ai-search";
+import {
+  getStatusMessageKey,
+  getToolResultMessageKey,
+  AI_SEARCH_FALLBACK_KEY,
+} from "@/constants/ai-search";
 import { trackEvent } from "@/utils/analytics";
 import { useTranslations } from "@/lib/i18n";
 
@@ -21,15 +27,27 @@ interface UseChatProps {
   onApiKeyRequired: () => void;
 }
 
-export function useChat({ apiKey, personaPrompt, instructionPrompt, language, onApiKeyRequired }: UseChatProps) {
+export function useChat({
+  apiKey,
+  personaPrompt,
+  instructionPrompt,
+  language,
+  onApiKeyRequired,
+}: UseChatProps) {
   const { t } = useTranslations();
   const queryClient = useQueryClient();
+  // Groups the turns of one chat into a conversation on llm-client.
+  const [sessionId, setSessionId] = useState(() => crypto.randomUUID());
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [currentAnswer, setCurrentAnswer] = useState("");
-  const [currentItemResults, setCurrentItemResults] = useState<Record<string, ItemCardData>>({});
-  const [currentSourceResults, setCurrentSourceResults] = useState<Record<string, SourceData>>({});
+  const [currentItemResults, setCurrentItemResults] = useState<
+    Record<string, ItemCardData>
+  >({});
+  const [currentSourceResults, setCurrentSourceResults] = useState<
+    Record<string, SourceData>
+  >({});
   const [currentStatus, setCurrentStatus] = useState("");
   // 표시됐던 진행 단계 문구를 순서대로 누적 — 완료된 답변에 접힌 "진행
   // 과정"으로 붙인다.
@@ -41,58 +59,95 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, language, on
   const abortControllerRef = useRef<AbortController | null>(null);
   const wasLoadingRef = useRef(false);
 
-  // 스트림 업데이트 핸들러
-  const handleStreamUpdate = useCallback((message: StreamMessage) => {
-    switch (message.type) {
-      case "status": {
-        const { statusKey, toolName } = message.metadata ?? {};
-        if (statusKey === "answer_complete") break;
-        const tkey = getStatusMessageKey(statusKey, toolName);
-        const label = tkey ? t(tkey) : "";
-        setCurrentStatus(label);
-        if (label) setCurrentSteps((prev) => [...prev, label]);
-        break;
-      }
-      case "item_result": {
-        const { id, tool, item } = message.metadata ?? {};
-        // <item-ref .../> 태그는 LLM Client의 answer 청크에 이미 인라인으로 들어 있다.
-        // 여기서는 카드 원본 페이로드만 맵에 저장하고, answer 문자열은 건드리지 않는다.
-        if (id) {
-          setCurrentItemResults((prev) => ({
-            ...prev,
-            [id]: { tool: tool ?? "", item },
-          }));
-        }
-        setCurrentStatus(t(getToolResultMessageKey(tool)));
-        break;
-      }
-      case "source_result": {
-        // 웹 출처 payload (B3). 같은 id 재수신 = 갱신(교체).
-        const meta = message.metadata ?? {};
-        if (meta.id) {
-          const id = meta.id;
-          setCurrentSourceResults((prev) => ({
-            ...prev,
-            [id]: {
-              tool: meta.tool ?? "",
-              origin: meta.origin ?? "tool",
-              title: meta.title ?? "",
-              url: meta.url ?? "",
-              snippet: meta.snippet ?? "",
-            },
-          }));
-        }
-        break;
-      }
-      case "answer":
-        setCurrentAnswer((prev) => prev + message.content);
-        setCurrentStatus("");
-        break;
-      case "error":
-        setError(message.content || message.title || t("arona.error.generic"));
-        break;
+  const handleStatus = useCallback(
+    (message: StatusMessage) => {
+      const { statusKey, toolName } = message.metadata ?? {};
+      if (statusKey === "answer_complete") return;
+      const tkey = getStatusMessageKey(statusKey, toolName);
+      const label = tkey ? t(tkey) : "";
+      setCurrentStatus(label);
+      if (label) setCurrentSteps((prev) => [...prev, label]);
+    },
+    [t],
+  );
+
+  // 웹 출처 payload (B3). 같은 id 재수신 = 갱신(교체).
+  const handleSource = useCallback((message: SourceResultMessage) => {
+    const meta = message.metadata ?? {};
+    if (meta.id) {
+      const id = meta.id;
+      setCurrentSourceResults((prev) => ({
+        ...prev,
+        [id]: {
+          tool: meta.tool ?? "",
+          origin: meta.origin ?? "tool",
+          title: meta.title ?? "",
+          url: meta.url ?? "",
+          snippet: meta.snippet ?? "",
+        },
+      }));
     }
-  }, [t]);
+  }, []);
+
+  // 스트림 업데이트 핸들러
+  const handleStreamUpdate = useCallback(
+    (message: StreamMessage) => {
+      switch (message.type) {
+        case "status":
+          handleStatus(message);
+          break;
+        case "item_result": {
+          const { id, tool, item } = message.metadata ?? {};
+          // <item-ref .../> 태그는 LLM Client의 answer 청크에 이미 인라인으로 들어 있다.
+          // 여기서는 카드 원본 페이로드만 맵에 저장하고, answer 문자열은 건드리지 않는다.
+          if (id) {
+            setCurrentItemResults((prev) => ({
+              ...prev,
+              [id]: { tool: tool ?? "", item },
+            }));
+          }
+          setCurrentStatus(t(getToolResultMessageKey(tool)));
+          break;
+        }
+        case "source_result":
+          handleSource(message);
+          break;
+        case "answer":
+          setCurrentAnswer((prev) => prev + message.content);
+          setCurrentStatus("");
+          break;
+        case "error":
+          setError(
+            message.content || message.title || t("arona.error.generic"),
+          );
+          break;
+      }
+    },
+    [t, handleStatus, handleSource],
+  );
+
+  const handleStreamError = (err: unknown) => {
+    if ((err as Error).name === "AbortError") {
+      setCurrentAnswer((prev) =>
+        prev ? prev + `\n\n${t("arona.error.aborted")}` : "",
+      );
+    } else if (
+      err instanceof AISearchRequestError &&
+      err.code === "LLM_GUEST_CREDIT_EXHAUSTED"
+    ) {
+      setError(t("arona.error.creditExhausted"));
+      setCreditExhausted(true);
+      onApiKeyRequired();
+    } else if (
+      err instanceof AISearchRequestError &&
+      err.code === "LLM_BYOK_REQUIRED"
+    ) {
+      setError(t("arona.error.keyRequired"));
+      onApiKeyRequired();
+    } else {
+      setError((err as Error).message || t("arona.error.generic"));
+    }
+  };
 
   // 메시지 전송. text가 있으면 입력창 대신 그 질문을 보낸다 (홈에서 넘어온 질문).
   const sendMessage = async (e?: React.FormEvent, text?: string) => {
@@ -130,22 +185,12 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, language, on
         personaPrompt: personaPrompt || undefined,
         instructionPrompt: instructionPrompt || undefined,
         language,
+        sessionId,
         onUpdate: handleStreamUpdate,
         signal: abortControllerRef.current.signal,
       });
     } catch (err) {
-      if ((err as Error).name === "AbortError") {
-        setCurrentAnswer((prev) => (prev ? prev + `\n\n${t("arona.error.aborted")}` : ""));
-      } else if (err instanceof AISearchRequestError && err.code === "LLM_GUEST_CREDIT_EXHAUSTED") {
-        setError(t("arona.error.creditExhausted"));
-        setCreditExhausted(true);
-        onApiKeyRequired();
-      } else if (err instanceof AISearchRequestError && err.code === "LLM_BYOK_REQUIRED") {
-        setError(t("arona.error.keyRequired"));
-        onApiKeyRequired();
-      } else {
-        setError((err as Error).message || t("arona.error.generic"));
-      }
+      handleStreamError(err);
     } finally {
       setIsLoading(false);
       setCurrentStatus("");
@@ -164,8 +209,14 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, language, on
           {
             role: "assistant",
             content: currentAnswer,
-            itemResults: Object.keys(currentItemResults).length > 0 ? currentItemResults : undefined,
-            sourceResults: Object.keys(currentSourceResults).length > 0 ? currentSourceResults : undefined,
+            itemResults:
+              Object.keys(currentItemResults).length > 0
+                ? currentItemResults
+                : undefined,
+            sourceResults:
+              Object.keys(currentSourceResults).length > 0
+                ? currentSourceResults
+                : undefined,
             steps: currentSteps.length > 0 ? currentSteps : undefined,
           },
         ]);
@@ -181,7 +232,15 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, language, on
       }
     }
     wasLoadingRef.current = isLoading;
-  }, [isLoading, currentAnswer, currentItemResults, currentSourceResults, currentSteps, error, t]);
+  }, [
+    isLoading,
+    currentAnswer,
+    currentItemResults,
+    currentSourceResults,
+    currentSteps,
+    error,
+    t,
+  ]);
 
   // 요청 중단
   const stopGeneration = () => {
@@ -192,6 +251,7 @@ export function useChat({ apiKey, personaPrompt, instructionPrompt, language, on
 
   // 대화 초기화
   const clearChat = () => {
+    setSessionId(crypto.randomUUID());
     setMessages([]);
     setCurrentAnswer("");
     setCurrentItemResults({});

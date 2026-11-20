@@ -1,7 +1,12 @@
-import type { StreamMessage, Message, AISearchRequest } from "@/types/ai-search";
+import type {
+  StreamMessage,
+  Message,
+  AISearchRequest,
+} from "@/types/ai-search";
 
 // LLM API Base URL - 환경변수에서 가져오거나 기본값 사용
-const LLM_BASE_URL = process.env.NEXT_PUBLIC_LLM_BASE_URL || "http://127.0.0.1:8080";
+const LLM_BASE_URL =
+  process.env.NEXT_PUBLIC_LLM_BASE_URL || "http://127.0.0.1:8080";
 
 /**
  * A request llm-client refused before streaming. `code` is its error code,
@@ -27,6 +32,7 @@ interface AISearchStreamOptions {
   instructionPrompt?: string;
   /** BCP47-ish locale tag forwarded to llm-client; the LLM responds in this language. */
   language?: string;
+  sessionId: string;
   onUpdate: (message: StreamMessage) => void;
   signal?: AbortSignal;
 }
@@ -41,13 +47,24 @@ class AISearchService {
    * /v1/call/free 엔드포인트 사용
    */
   async streamSearch(options: AISearchStreamOptions): Promise<void> {
-    const { apiKey, question, messages, personaPrompt, instructionPrompt, language, onUpdate, signal } = options;
+    const {
+      apiKey,
+      question,
+      messages,
+      personaPrompt,
+      instructionPrompt,
+      language,
+      sessionId,
+      onUpdate,
+      signal,
+    } = options;
 
     const apiUrl = `${LLM_BASE_URL}/v1/call/free`;
 
     const requestBody: AISearchRequest = {
       question,
       language: language ?? "ko",
+      session_id: sessionId,
       fixed_service_ids: ["batorment", "gamewiki"],
     };
 
@@ -80,44 +97,60 @@ class AISearchService {
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new AISearchRequestError(response.status, errorCode(errorText), `API Error: ${response.status} - ${errorText}`);
+      throw new AISearchRequestError(
+        response.status,
+        errorCode(errorText),
+        `API Error: ${response.status} - ${errorText}`,
+      );
     }
 
     const reader = response.body?.getReader();
     if (!reader) throw new Error("No response body");
 
-    const decoder = new TextDecoder();
-    let buffer = "";
-
     try {
-      while (true) {
-        const { done, value } = await reader.read();
-
-        if (done) {
-          buffer += decoder.decode();
-        } else {
-          buffer += decoder.decode(value, { stream: true });
-        }
-
-        const lines = buffer.split("\n");
-        buffer = done ? "" : (lines.pop() || "");
-
-        for (const line of lines) {
-          if (line.startsWith("data: ")) {
-            try {
-              const data = JSON.parse(line.slice(6)) as StreamMessage;
-              onUpdate(data);
-            } catch (parseError) {
-              console.error("Error parsing stream data:", parseError, "Line:", line);
-            }
-          }
-        }
-
-        if (done) break;
-      }
+      await readEvents(reader, onUpdate);
     } finally {
       reader.releaseLock();
     }
+  }
+}
+
+async function readEvents(
+  reader: ReadableStreamDefaultReader<Uint8Array>,
+  onUpdate: (message: StreamMessage) => void,
+): Promise<void> {
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+
+    if (done) {
+      buffer += decoder.decode();
+    } else {
+      buffer += decoder.decode(value, { stream: true });
+    }
+
+    const lines = buffer.split("\n");
+    buffer = done ? "" : lines.pop() || "";
+
+    for (const line of lines) {
+      if (line.startsWith("data: ")) {
+        try {
+          const data = JSON.parse(line.slice(6)) as StreamMessage;
+          onUpdate(data);
+        } catch (parseError) {
+          console.error(
+            "Error parsing stream data:",
+            parseError,
+            "Line:",
+            line,
+          );
+        }
+      }
+    }
+
+    if (done) break;
   }
 }
 
