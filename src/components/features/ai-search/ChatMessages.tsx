@@ -439,16 +439,20 @@ export function ChatMessages({
       {messages.map((msg, idx) => (
         <div
           key={idx}
-          className={`flex gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+          className={
+            msg.role === "user"
+              ? "flex justify-end"
+              : "flex flex-col items-start gap-1 sm:flex-row sm:gap-2"
+          }
         >
-          {/* 좁은 화면에서는 아바타를 숨기고 답변을 넓혀 근거 카드의 학생 얼굴이 보이게 한다. */}
+          {/* 좁은 화면에서는 아바타를 답변 위에 두어 답변이 폭을 다 쓰고 근거 카드의 학생 얼굴이 보이게 한다. */}
           {msg.role === "assistant" && (
             <Image
               src="/arona.webp"
               alt="ARONA"
               width={32}
               height={32}
-              className="hidden w-8 h-8 rounded-full flex-shrink-0 mt-1 object-cover sm:block"
+              className="w-8 h-8 rounded-full flex-shrink-0 mt-1 object-cover"
             />
           )}
           <div
@@ -481,13 +485,13 @@ export function ChatMessages({
 
       {/* 현재 스트리밍 중인 답변 */}
       {(currentAnswer || currentStatus) && (
-        <div className="flex gap-2 justify-start">
+        <div className="flex flex-col items-start gap-1 sm:flex-row sm:gap-2">
           <Image
             src="/arona.webp"
             alt="ARONA"
             width={32}
             height={32}
-            className="hidden w-8 h-8 rounded-full flex-shrink-0 mt-1 object-cover sm:block"
+            className="w-8 h-8 rounded-full flex-shrink-0 mt-1 object-cover"
           />
           <div className="max-w-full rounded-2xl rounded-bl-md border border-l-4 border-sky-200 border-l-sky-400 bg-card px-4 py-2.5 shadow-sm sm:max-w-[85%] dark:border-sky-800 dark:border-l-sky-500">
             {currentStatus && (
