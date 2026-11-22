@@ -1,7 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { Check, ChevronDown, ChevronRight, Loader2, ExternalLink } from "lucide-react";
+import {
+  Check,
+  ChevronDown,
+  ChevronRight,
+  Loader2,
+  ExternalLink,
+} from "lucide-react";
 import { useId, useState, type ReactNode } from "react";
 import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -17,7 +23,8 @@ import { useTranslations } from "@/lib/i18n";
 import type { ChatMessage, ItemCardData, SourceData } from "@/types/ai-search";
 
 // <item-ref id="..."/> (데이터 카드) 와 <source-ref id="..."/> (웹 출처, B3).
-const REF_TAG = /<(item|source)-ref\s+id="([^"]*)"\s*(?:\/>|><\/(?:item|source)-ref>)/g;
+const REF_TAG =
+  /<(item|source)-ref\s+id="([^"]*)"\s*(?:\/>|><\/(?:item|source)-ref>)/g;
 
 // 근거 항목이 이 수 이상이면 풀 카드 대신 한 줄 요약 리스트로 렌더한다.
 const COMPACT_REFS_THRESHOLD = 5;
@@ -68,7 +75,9 @@ function layoutRefs(
   if (sourceResults) {
     const uncited = Object.keys(sourceResults)
       .filter((id) => !(id in sourceNo))
-      .sort((a, b) => Number(a.replace(/\D/g, "")) - Number(b.replace(/\D/g, "")));
+      .sort(
+        (a, b) => Number(a.replace(/\D/g, "")) - Number(b.replace(/\D/g, "")),
+      );
     for (const id of uncited) {
       sourceOrder.push(id);
       sourceNo[id] = sourceOrder.length;
@@ -79,11 +88,14 @@ function layoutRefs(
 }
 
 function nodeToText(node: ReactNode): string {
-  if (node === null || node === undefined || typeof node === "boolean") return "";
+  if (node === null || node === undefined || typeof node === "boolean")
+    return "";
   if (typeof node === "string" || typeof node === "number") return String(node);
   if (Array.isArray(node)) return node.map(nodeToText).join("");
   if (typeof node === "object" && "props" in node) {
-    return nodeToText((node as { props: { children?: ReactNode } }).props.children);
+    return nodeToText(
+      (node as { props: { children?: ReactNode } }).props.children,
+    );
   }
   return "";
 }
@@ -115,6 +127,10 @@ function sourceDisplayTitle(src: SourceData): string {
   }
 }
 
+function hasItemCard(data: ItemCardData | undefined): boolean {
+  return !!data && !!resolveItemCard(data.tool);
+}
+
 function AssistantMarkdown({
   content,
   itemResults,
@@ -128,23 +144,22 @@ function AssistantMarkdown({
   const anchor = useId().replace(/[^a-zA-Z0-9_-]/g, "");
   // 미인용 출처는 접힘이 기본 — 검색 잔여물이 출처 목록을 도배하지 않게.
   const [showUncitedSources, setShowUncitedSources] = useState(false);
-  const { processed, citedItems, citedSources, sourceOrder, sourceNo } = layoutRefs(
-    content,
-    sourceResults,
-  );
+  const { processed, citedItems, citedSources, sourceOrder, sourceNo } =
+    layoutRefs(content, sourceResults);
 
   const refMarker = (props: { kind?: string; refid?: string; n?: string }) => {
     const { kind, refid, n } = props;
     if (!refid || !n) return null;
     // 앵커 대상이 실제로 렌더될 때만 마커를 그린다 (죽은 마커 방지).
     if (kind === "item") {
-      const data = itemResults?.[refid];
-      if (!data || !resolveItemCard(data.tool)) return null;
+      if (!hasItemCard(itemResults?.[refid])) return null;
     } else if (!sourceResults?.[refid]?.url) {
       return null;
     }
-    const target = kind === "item" ? `${anchor}-item-${refid}` : `${anchor}-src-${refid}`;
-    const label = kind === "item" ? `[${n}]` : `(${n})`;
+    const [target, label] =
+      kind === "item"
+        ? [`${anchor}-item-${refid}`, `[${n}]`]
+        : [`${anchor}-src-${refid}`, `(${n})`];
     return (
       <a
         href={`#${target}`}
@@ -186,7 +201,7 @@ function AssistantMarkdown({
     if (!itemResults || citedItems.length === 0) return null;
     const entries = citedItems
       .map((id, i) => ({ id, n: i + 1, data: itemResults[id] }))
-      .filter((e) => e.data && resolveItemCard(e.data.tool));
+      .filter((e) => hasItemCard(e.data));
     if (entries.length === 0) return null;
     const compact = entries.length >= COMPACT_REFS_THRESHOLD;
     return (
@@ -201,11 +216,17 @@ function AssistantMarkdown({
               const label = labelKey ? t(labelKey) : data!.tool;
               const summary = resolveItemSummary(data!.tool, data!.item);
               return (
-                <li key={id} id={`${anchor}-item-${id}`} className="flex items-center gap-2 text-sm">
+                <li
+                  key={id}
+                  id={`${anchor}-item-${id}`}
+                  className="flex items-center gap-2 text-sm"
+                >
                   <span className="flex-shrink-0 text-xs font-medium text-blue-600 dark:text-blue-400">
                     [{n}]
                   </span>
-                  <span className="min-w-0 truncate">{summary?.title || label}</span>
+                  <span className="min-w-0 truncate">
+                    {summary?.title || label}
+                  </span>
                   <span className="flex-shrink-0 rounded bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">
                     {label}
                   </span>
@@ -218,9 +239,16 @@ function AssistantMarkdown({
             {entries.map(({ id, n, data }) => {
               const labelKey = ITEM_TOOL_LABEL_KEYS[data!.tool];
               return (
-                <div key={id} id={`${anchor}-item-${id}`} className="flex gap-2">
-                  <div className="flex flex-col items-center gap-1 pt-1">
-                    <span className="text-xs font-medium text-blue-600 dark:text-blue-400">[{n}]</span>
+                <div
+                  key={id}
+                  id={`${anchor}-item-${id}`}
+                  className="flex flex-col gap-1 sm:flex-row sm:gap-2"
+                >
+                  {/* 좁은 화면에서는 번호를 카드 위에 두어 카드가 말풍선 폭을 다 쓰게 한다. */}
+                  <div className="flex items-center gap-1 sm:flex-col sm:pt-1">
+                    <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
+                      [{n}]
+                    </span>
                     <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">
                       {labelKey ? t(labelKey) : data!.tool}
                     </span>
@@ -241,9 +269,23 @@ function AssistantMarkdown({
   // B3: 웹 출처 목록 — 인용된 출처는 항상 표시, 미인용 출처(그라운딩·모델이
   // 태그를 안 단 도구 출처)는 "더 보기" 접힘 뒤에 둔다 (web-tiny-clover와
   // 동일 계약).
-  const renderSourceEntry = ({ id, n, src }: { id: string; n: number; src: SourceData }) => (
-    <li key={id} id={`${anchor}-src-${id}`} className="flex items-baseline gap-2 text-sm">
-      <span className="flex-shrink-0 text-xs font-medium text-blue-600 dark:text-blue-400">({n})</span>
+  const renderSourceEntry = ({
+    id,
+    n,
+    src,
+  }: {
+    id: string;
+    n: number;
+    src: SourceData;
+  }) => (
+    <li
+      key={id}
+      id={`${anchor}-src-${id}`}
+      className="flex items-baseline gap-2 text-sm"
+    >
+      <span className="flex-shrink-0 text-xs font-medium text-blue-600 dark:text-blue-400">
+        ({n})
+      </span>
       <div className="min-w-0">
         <a
           href={src.url}
@@ -255,10 +297,14 @@ function AssistantMarkdown({
           <span className="truncate">{sourceDisplayTitle(src)}</span>
         </a>
         <span className="ml-2 rounded bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">
-          {src.origin === "grounding" ? t("arona.sources.grounding") : t("arona.sources.web")}
+          {src.origin === "grounding"
+            ? t("arona.sources.grounding")
+            : t("arona.sources.web")}
         </span>
         {src.snippet && (
-          <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">{src.snippet}</p>
+          <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">
+            {src.snippet}
+          </p>
         )}
       </div>
     </li>
@@ -269,7 +315,9 @@ function AssistantMarkdown({
     const citedSet = new Set(citedSources);
     const entries = sourceOrder
       .map((id) => ({ id, n: sourceNo[id], src: sourceResults[id] }))
-      .filter((e): e is { id: string; n: number; src: SourceData } => !!e.src?.url);
+      .filter(
+        (e): e is { id: string; n: number; src: SourceData } => !!e.src?.url,
+      );
     if (entries.length === 0) return null;
     const cited = entries.filter((e) => citedSet.has(e.id));
     const uncited = entries.filter((e) => !citedSet.has(e.id));
@@ -278,7 +326,9 @@ function AssistantMarkdown({
         <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           {t("common.sources")}
         </h4>
-        {cited.length > 0 && <ol className="space-y-1.5">{cited.map(renderSourceEntry)}</ol>}
+        {cited.length > 0 && (
+          <ol className="space-y-1.5">{cited.map(renderSourceEntry)}</ol>
+        )}
         {uncited.length > 0 && (
           <>
             <button
@@ -297,7 +347,9 @@ function AssistantMarkdown({
               </span>
             </button>
             {showUncitedSources && (
-              <ol className="mt-2 space-y-1.5">{uncited.map(renderSourceEntry)}</ol>
+              <ol className="mt-2 space-y-1.5">
+                {uncited.map(renderSourceEntry)}
+              </ol>
             )}
           </>
         )}
@@ -308,7 +360,11 @@ function AssistantMarkdown({
   return (
     <div className="prose prose-sm dark:prose-invert max-w-none">
       {processed.trim() && (
-        <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={components}>
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          rehypePlugins={[rehypeRaw]}
+          components={components}
+        >
           {fixCjkStrongEmphasis(processed)}
         </ReactMarkdown>
       )}
@@ -332,7 +388,11 @@ function CollapsedSteps({ titles }: { titles: string[] }) {
         className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
         aria-expanded={open}
       >
-        {open ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+        {open ? (
+          <ChevronDown className="h-3.5 w-3.5" />
+        ) : (
+          <ChevronRight className="h-3.5 w-3.5" />
+        )}
         <span>
           {t("arona.steps.title")} · {titles.length}
         </span>
@@ -340,7 +400,10 @@ function CollapsedSteps({ titles }: { titles: string[] }) {
       {open && (
         <div className="mt-2 space-y-1.5 pl-1">
           {titles.map((title, i) => (
-            <div key={`step-${i}`} className="flex items-start gap-2 text-xs text-muted-foreground">
+            <div
+              key={`step-${i}`}
+              className="flex items-start gap-2 text-xs text-muted-foreground"
+            >
               <Check className="h-3.5 w-3.5 text-green-500 mt-0.5 shrink-0" />
               <span>{title}</span>
             </div>
@@ -376,8 +439,13 @@ export function ChatMessages({
       {messages.map((msg, idx) => (
         <div
           key={idx}
-          className={`flex gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+          className={
+            msg.role === "user"
+              ? "flex justify-end"
+              : "flex flex-col items-start gap-1 sm:flex-row sm:gap-2"
+          }
         >
+          {/* 좁은 화면에서는 아바타를 답변 위에 두어 답변이 폭을 다 쓰고 근거 카드의 학생 얼굴이 보이게 한다. */}
           {msg.role === "assistant" && (
             <Image
               src="/arona.webp"
@@ -388,10 +456,10 @@ export function ChatMessages({
             />
           )}
           <div
-            className={`max-w-[85%] rounded-2xl px-4 py-2.5 ${
+            className={`rounded-2xl px-4 py-2.5 ${
               msg.role === "user"
-                ? "rounded-br-md border border-border bg-muted text-foreground shadow-sm"
-                : "rounded-bl-md border border-l-4 border-sky-200 border-l-sky-400 bg-card shadow-sm dark:border-sky-800 dark:border-l-sky-500"
+                ? "max-w-[85%] rounded-br-md border border-border bg-muted text-foreground shadow-sm"
+                : "max-w-full rounded-bl-md border border-l-4 border-sky-200 border-l-sky-400 bg-card shadow-sm sm:max-w-[85%] dark:border-sky-800 dark:border-l-sky-500"
             }`}
           >
             {msg.role === "assistant" ? (
@@ -417,7 +485,7 @@ export function ChatMessages({
 
       {/* 현재 스트리밍 중인 답변 */}
       {(currentAnswer || currentStatus) && (
-        <div className="flex gap-2 justify-start">
+        <div className="flex flex-col items-start gap-1 sm:flex-row sm:gap-2">
           <Image
             src="/arona.webp"
             alt="ARONA"
@@ -425,7 +493,7 @@ export function ChatMessages({
             height={32}
             className="w-8 h-8 rounded-full flex-shrink-0 mt-1 object-cover"
           />
-          <div className="max-w-[85%] rounded-2xl rounded-bl-md border border-l-4 border-sky-200 border-l-sky-400 bg-card px-4 py-2.5 shadow-sm dark:border-sky-800 dark:border-l-sky-500">
+          <div className="max-w-full rounded-2xl rounded-bl-md border border-l-4 border-sky-200 border-l-sky-400 bg-card px-4 py-2.5 shadow-sm sm:max-w-[85%] dark:border-sky-800 dark:border-l-sky-500">
             {currentStatus && (
               <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                 <Loader2 className="h-4 w-4 animate-spin" />
