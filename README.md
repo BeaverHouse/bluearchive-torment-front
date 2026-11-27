@@ -12,8 +12,7 @@ Next.js frontend for BA Torment.
 
 ## Local development
 
-The complete local stack and dependency order are documented in the workspace
-`RUNBOOK.md`. The frontend uses pnpm and runs on port `3001`:
+The frontend uses pnpm and runs on port `3001`:
 
 ```bash
 pnpm install
@@ -29,14 +28,6 @@ Port `3000` is intentionally left available for manual work.
 - Arona chat: `llm-client` on port `8080`
 - Wiki tools: `data-aggregator` MCP on port `8102`
 - LLM gateway: Bifrost on port `4101`
-
-## Verification
-
-Use the repository harness:
-
-```bash
-austincli agent check
-```
 
 ## Deployment
 
